@@ -15,6 +15,11 @@ run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+TimeSystem="*res://scripts/autoload/time_system.gd"
+Schedule="*res://scripts/autoload/schedule.gd"
+
 [display]
 
 window/stretch/mode="canvas_items"

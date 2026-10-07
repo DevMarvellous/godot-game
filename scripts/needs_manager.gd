@@ -6,6 +6,7 @@ extends Node
 
 signal stat_changed(stat_name: StringName, current_value: float, max_value: float)
 signal need_depleted(stat_name: StringName)
+signal player_passed_out(reason: String)
 
 @export var max_energy: float = 100.0
 @export var max_hunger: float = 100.0
@@ -18,22 +19,56 @@ var faith: float = 70.0
 var cgpa: float = 3.50
 var money: int = 5000 # Starting allowance in Naira (₦)
 
-# Passive decay timer
-var decay_timer: float = 0.0
-@export var decay_interval: float = 3.0 # Every 3 seconds stats decay slightly
+# Decay per in-game minute. 16 waking hours ≈ -48 energy, -77 hunger.
+@export var energy_decay_per_minute: float = 0.05
+@export var hunger_decay_per_minute: float = 0.08
+@export var faith_decay_per_minute: float = 0.01
+
+var is_handling_passout: bool = false
 
 
 func _ready() -> void:
+	TimeSystem.minute_passed.connect(_on_minute_passed)
+	Schedule.lecture_missed.connect(_on_lecture_missed)
 	emit_all_stats()
 
 
-func _process(delta: float) -> void:
-	decay_timer += delta
-	if decay_timer >= decay_interval:
-		decay_timer = 0.0
-		# Energy slowly drains, hunger increases (hunger stat represents fullness)
-		modify_energy(-0.5)
-		modify_hunger(-1.0)
+func _on_minute_passed() -> void:
+	if is_handling_passout:
+		return
+
+	# Hunger stat represents fullness, so it goes down over time.
+	modify_energy(-energy_decay_per_minute)
+	modify_hunger(-hunger_decay_per_minute)
+	modify_faith(-faith_decay_per_minute)
+
+	# Late night collapse: if awake at 02:00 AM or energy hits 0, collapse from exhaustion
+	if TimeSystem.get_hour() == 2 and TimeSystem.get_minute() == 0:
+		_trigger_passout("Stayed up past 02:00 AM! Passed out from exhaustion.")
+	elif energy <= 0.0:
+		_trigger_passout("Out of energy! Collapsed from burnout.")
+
+
+func _on_lecture_missed(lecture_name: String) -> void:
+	modify_cgpa(-0.10)
+	var player: Node = get_parent()
+	if player and player.has_method("display_notification"):
+		player.display_notification("MISSED %s! CGPA -0.10" % lecture_name)
+
+
+func _trigger_passout(reason: String) -> void:
+	is_handling_passout = true
+	player_passed_out.emit(reason)
+	var player: Node = get_parent()
+	if player and player.has_method("display_notification"):
+		player.display_notification(reason)
+
+	# Teleport / wake up at 08:00 AM in Hostel Bed with penalty
+	TimeSystem.sleep_until(8)
+	energy = 45.0
+	modify_hunger(-20.0)
+	is_handling_passout = false
+	emit_all_stats()
 
 
 func emit_all_stats() -> void:
@@ -74,4 +109,3 @@ func modify_money(amount: int) -> bool:
 	money += amount
 	stat_changed.emit(&"money", float(money), 0.0)
 	return true
-

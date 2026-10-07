@@ -20,33 +20,50 @@
 ## 3. Implemented Architecture & Current State
 The game is a **3D Top-Down / Isometric Campus Life Simulator** inspired by *Lagos Life* and *The Sims*:
 
+### Autoload Singletons:
+1. **TimeSystem (`scripts/autoload/time_system.gd`)**:
+   - Master in-game 24h clock: 1 real second = 2 game minutes.
+   - Day counter with weekdays (Monday to Sunday).
+   - Signals: `minute_passed`, `hour_changed`, `day_started`, `slept`.
+   - Supports minute-by-minute fast-forward so sleeping processes hunger and missed classes realistically.
+2. **Schedule (`scripts/autoload/schedule.gd`)**:
+   - Timetable manager for Monday-Friday:
+     - 09:00 - 11:00: GST 101 Lecture
+     - 14:00 - 16:00: Lab Practical
+     - 17:00 - 19:00: Chapel Fellowship (daily)
+     - 22:00: Hostel Curfew
+   - Signals: `lecture_started`, `lecture_attended`, `lecture_missed`.
+
 ### Core Systems & Scenes:
 1. **Main World (`scenes/main.tscn`, `scripts/main.gd`)**:
-   - 3D courtyard level with `DirectionalLight3D` (sunlight + soft shadows) and procedural sky.
-   - Four primary campus sectors with 3D boundaries:
-     - **Hostel Bedroom**: Contains `HostelBed`.
-     - **Study Hall**: Contains `StudyDesk`.
-     - **Food Court**: Contains `Cafeteria` (Buka).
-     - **Fellowship Ground**: Contains `Chapel` Altar.
-     - **Courtyard**: Contains `ATM` terminal.
+   - 3D courtyard level with dynamic **Day/Night Cycle lighting**:
+     - 06:00 - 08:00: Golden Sunrise.
+     - 08:00 - 17:00: Bright Daylight with soft shadows.
+     - 17:00 - 19:30: Amber Sunset.
+     - 19:30 - 06:00: Deep Blue Moonlight.
+   - 4 Sectors: Hostel Room, Study Hall, Cafeteria (Buka), Chapel Fellowship, plus Central ATM.
 2. **Player Controller (`scenes/player_3d.tscn`, `scripts/player_3d.gd`)**:
    - `CharacterBody3D` with Jolt physics collision, smooth 3D rotation toward movement direction.
    - Overhead angled 3D camera (`Camera3D`) following the player.
    - 3D Billboard labels above the player's head for interaction prompts and popups.
 3. **Stat Management (`scripts/needs_manager.gd`)**:
-   - Tracks 5 core student stats:
-     - **Energy** (0-100): Decays over time; restored by sleeping in Hostel Bed.
-     - **Hunger** (0-100 fullness): Decays over time; restored by buying food at Cafeteria.
-     - **Faith / Spiritual** (0-100): Restored by praying at Chapel Altar.
-     - **CGPA** (0.00-5.00): Boosted by studying at Study Desk (consumes Energy).
-     - **Wallet / Allowance** (Naira ₦): Spent on food, replenished via ATM.
-4. **Interaction System (`scripts/interactable_3d.gd`, `scripts/campus_objects_3d.gd`)**:
-   - `Area3D` proximity triggers that signal nearby players and execute modular effects on interaction.
-5. **HUD Overlay (`scenes/hud.tscn`, `scripts/hud.gd`)**:
-   - 2D `CanvasLayer` displaying real-time wallet counter (₦), CGPA, and progress bars.
+   - Stats decay per in-game minute:
+     - **Energy**: Restored by sleeping in Hostel Bed (sleeps until 07:00).
+     - **Hunger**: Restored by eating at Buka.
+     - **Faith**: Restored by prayer & chapel fellowship (bonus during 17:00-19:00 fellowship).
+     - **CGPA**: Boosted by attending scheduled lectures (+0.15) or revision (+0.05). Penalized (-0.10) if lecture missed!
+     - **Wallet**: Replenished via ATM (+₦2,000).
+   - **Pass-Out Mechanic**: Collapsing from exhaustion if Energy <= 0 or awake past 02:00 AM. Wakes up at 08:00 AM in Hostel Bed with penalties.
+4. **HUD Overlay (`scenes/hud.tscn`, `scripts/hud.gd`)**:
+   - Real-time Clock & Day (`07:00 • Day 1 (Mon)`).
+   - Live Timetable Banner (`Next: GST 101 Lecture at 09:00` / `NOW: GST 101 Lecture`).
+   - Wallet (₦), CGPA, Energy, Hunger, Faith bars.
 
-## 4. Upcoming Roadmap
-1. **Campus Clock / Time System**: Day & night cycle with scheduled lectures, chapel services, and curfew.
-2. **Interactive Menus**: Cafeteria menu selection (Jollof rice, Suya, Indomie with different prices/buffs).
-3. **NPC Students & Lecturers**: Basic AI agents walking paths, chatting, and reacting.
-4. **Sound Effects & Nigerian Ambience**: Ambient campus sounds, interaction chimes, afrobeat-lite background loop.
+## 4. Roadmap & Milestones
+- [x] **Milestone 1**: Core 3D movement, fixtures, and needs loop.
+- [x] **Milestone 2**: In-game clock, daily schedule, missed lecture penalties, day/night lighting, sleep cycle.
+- [ ] **Milestone 3**: Nigerian Buka food menu (Jollof, Suya, Indomie) and interactive choice dialogs.
+- [ ] **Milestone 4**: Animated student & lecturer NPCs walking around the courtyard.
+- [ ] **Milestone 5**: Semester targets (win/lose conditions).
+- [ ] **Milestone 6**: Low-poly art models and Nigerian campus audio.
+- [ ] **Milestone 7**: Web release on itch.io.
