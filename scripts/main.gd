@@ -2,7 +2,7 @@ class_name Main
 extends Node3D
 
 ## Main 3D Campus World scene.
-## Connects 3D Player, HUD, 3D fixtures, and the dynamic Day/Night lighting cycle.
+## Connects 3D Player, HUD, 3D fixtures, interactive modal menus, and dynamic Day/Night lighting.
 
 @onready var player: Player3D = $Player3D
 @onready var hud: HUD = $HUD
@@ -15,6 +15,9 @@ extends Node3D
 @onready var chapel: CampusObject3D = $WorldObjects/Chapel
 @onready var atm: CampusObject3D = $WorldObjects/ATM
 
+@onready var food_menu: Control = $MenusLayer/FoodMenu
+@onready var study_menu: Control = $MenusLayer/StudyMenu
+
 
 func _ready() -> void:
 	if player and hud:
@@ -25,12 +28,41 @@ func _ready() -> void:
 	TimeSystem.minute_passed.connect(_update_day_night_lighting)
 	_update_day_night_lighting()
 
+	# Connect menu modals
+	if cafeteria:
+		cafeteria.menu_requested.connect(_on_menu_requested)
+	if study_desk:
+		study_desk.menu_requested.connect(_on_menu_requested)
+
+	if food_menu:
+		food_menu.menu_closed.connect(_on_menu_closed)
+	if study_menu:
+		study_menu.menu_closed.connect(_on_menu_closed)
+
 	# Configure 3D world objects with distinct colors & types
 	_setup_3d_object(hostel_bed, CampusObject3D.ObjectType.BED, "Hostel Bed", Color(0.2, 0.45, 0.85))
 	_setup_3d_object(study_desk, CampusObject3D.ObjectType.DESK, "Lecture & Study Desk", Color(0.65, 0.42, 0.22))
 	_setup_3d_object(cafeteria, CampusObject3D.ObjectType.CAFETERIA, "Buka / Cafeteria", Color(0.9, 0.45, 0.15))
 	_setup_3d_object(chapel, CampusObject3D.ObjectType.FELLOWSHIP, "Chapel Altar", Color(0.85, 0.75, 0.2))
 	_setup_3d_object(atm, CampusObject3D.ObjectType.ATM, "Campus ATM", Color(0.18, 0.75, 0.35))
+
+
+func _on_menu_requested(menu_type: StringName, p: CharacterBody3D) -> void:
+	# Pause player physics while menu is open for clean user experience
+	if player:
+		player.set_physics_process(false)
+		player.velocity = Vector3.ZERO
+
+	if menu_type == &"food" and food_menu:
+		food_menu.open_menu(p)
+	elif menu_type == &"study" and study_menu:
+		study_menu.open_menu(p)
+
+
+func _on_menu_closed() -> void:
+	# Re-enable player movement
+	if player:
+		player.set_physics_process(true)
 
 
 func _update_day_night_lighting() -> void:
@@ -65,7 +97,6 @@ func _update_day_night_lighting() -> void:
 
 func _on_player_passed_out(_reason: String) -> void:
 	if player and hostel_bed:
-		# Move player back to hostel bed
 		player.global_position = hostel_bed.global_position + Vector3(0, 0.1, 2.0)
 
 

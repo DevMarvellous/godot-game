@@ -23,8 +23,8 @@ Each milestone ends with something you can play, then a git push.
 |---|-----------|-------------------------------|--------|
 | 1 | Core loop | Walk around, use bed/desk/food/chapel/ATM, see stats change | DONE |
 | 2 | Time & days | Clock runs, day/night lighting, lectures on schedule, missed lecture penalty, sleep/passout | DONE |
-| 3 | Choices & menus | Food menu with Nigerian dishes and prices, choices with consequences | NEXT |
-| 4 | People | NPC students walking around, simple talk interactions | TODO |
+| 3 | Choices & menus | Food menu with Nigerian dishes and prices, study & lecture choices | DONE |
+| 4 | People | NPC students walking around courtyard, simple greetings & chats | NEXT |
 | 5 | Semester goal | Win/lose condition: finish semester with CGPA + money + faith targets | TODO |
 | 6 | Look & sound | Replace boxes with low-poly models, add sounds and music | TODO |
 | 7 | Web release | Export to HTML5, host on itch.io, get friends to test | TODO |

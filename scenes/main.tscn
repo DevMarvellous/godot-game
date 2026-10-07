@@ -1,9 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://b3main3d001"]
+[gd_scene load_steps=17 format=3 uid="uid://b3main3d001"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main3d"]
 [ext_resource type="PackedScene" uid="uid://b3player3d01" path="res://scenes/player_3d.tscn" id="2_player3d"]
 [ext_resource type="PackedScene" uid="uid://c8hud001" path="res://scenes/hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" uid="uid://b3object3d01" path="res://scenes/campus_object_3d.tscn" id="4_campus_obj3d"]
+[ext_resource type="PackedScene" path="res://scenes/food_menu.tscn" id="5_food"]
+[ext_resource type="PackedScene" path="res://scenes/study_menu.tscn" id="6_study"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 sky_top_color = Color(0.38, 0.65, 0.98, 1)
@@ -147,3 +149,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -12)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 
 [node name="HUD" parent="." instance=ExtResource("3_hud")]
+layer = 1
+
+[node name="MenusLayer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="FoodMenu" parent="MenusLayer" instance=ExtResource("5_food")]
+
+[node name="StudyMenu" parent="MenusLayer" instance=ExtResource("6_study")]

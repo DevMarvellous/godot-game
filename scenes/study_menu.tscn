@@ -1,0 +1,139 @@
+[gd_scene load_steps=6 format=3 uid="uid://c8studymenu01"]
+
+[ext_resource type="Script" path="res://scripts/study_menu.gd" id="1_study"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.08, 0.1, 0.14, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.65, 0.95, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 20.0
+content_margin_top = 18.0
+content_margin_right = 20.0
+content_margin_bottom = 18.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font_size = 20
+font_color = Color(0.4, 0.85, 1, 1)
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_sub"]
+font_size = 14
+font_color = Color(0.9, 0.95, 1, 0.9)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lecture"]
+bg_color = Color(0.18, 0.28, 0.38, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.8, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[node name="StudyMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_study")
+
+[node name="DarkBackdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ModalPanel" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(560, 420)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/ModalPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HeaderHBox" type="HBoxContainer" parent="CenterContainer/ModalPanel/VBox"]
+layout_mode = 2
+
+[node name="TitleVBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/VBox/HeaderHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/HeaderHBox/TitleVBox"]
+layout_mode = 2
+text = "ACADEMICS & STUDY DESK"
+label_settings = SubResource("LabelSettings_title")
+
+[node name="StatusLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/HeaderHBox/TitleVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Current CGPA: 3.50 / 5.0  •  Energy: 100%"
+label_settings = SubResource("LabelSettings_sub")
+
+[node name="CloseButton" type="Button" parent="CenterContainer/ModalPanel/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+size_flags_vertical = 0
+text = "✕"
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/ModalPanel/VBox"]
+layout_mode = 2
+
+[node name="LectureBox" type="PanelContainer" parent="CenterContainer/ModalPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_lecture")
+
+[node name="LectureHBox" type="HBoxContainer" parent="CenterContainer/ModalPanel/VBox/LectureBox"]
+layout_mode = 2
+
+[node name="LectureTitle" type="Label" parent="CenterContainer/ModalPanel/VBox/LectureBox/LectureHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "CLASS IN SESSION: GST 101 Lecture"
+
+[node name="LectureBtn" type="Button" parent="CenterContainer/ModalPanel/VBox/LectureBox/LectureHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 36)
+layout_mode = 2
+text = "Attend Class (CGPA +0.15)"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer/ModalPanel/VBox"]
+custom_minimum_size = Vector2(0, 240)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="OptionsContainer" type="VBoxContainer" parent="CenterContainer/ModalPanel/VBox/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
