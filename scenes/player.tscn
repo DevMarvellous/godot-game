@@ -1,0 +1,63 @@
+[gd_scene load_steps=5 format=3 uid="uid://c8player001"]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_player"]
+[ext_resource type="Script" path="res://scripts/needs_manager.gd" id="2_needs"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_p1"]
+radius = 16.0
+height = 40.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_prompt"]
+font_size = 14
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_notif"]
+font_size = 15
+font_color = Color(1, 0.9, 0.2, 1)
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
+[node name="Player" type="CharacterBody2D"]
+collision_layer = 1
+collision_mask = 6
+script = ExtResource("1_player")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_p1")
+
+[node name="BodyVisual" type="Polygon2D" parent="."]
+color = Color(0.18, 0.55, 0.92, 1)
+polygon = PackedVector2Array(-14, -20, 14, -20, 16, 12, 10, 20, -10, 20, -16, 12)
+
+[node name="HeadVisual" type="Polygon2D" parent="."]
+position = Vector2(0, -28)
+color = Color(0.96, 0.77, 0.62, 1)
+polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
+
+[node name="NeedsManager" type="Node" parent="."]
+script = ExtResource("2_needs")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+
+[node name="PromptLabel" type="Label" parent="."]
+offset_left = -120.0
+offset_top = -65.0
+offset_right = 120.0
+offset_bottom = -42.0
+label_settings = SubResource("LabelSettings_prompt")
+horizontal_alignment = 1
+
+[node name="NotificationLabel" type="Label" parent="."]
+offset_left = -150.0
+offset_top = -95.0
+offset_right = 150.0
+offset_bottom = -70.0
+label_settings = SubResource("LabelSettings_notif")
+horizontal_alignment = 1
+
+[node name="NotifTimer" type="Timer" parent="."]
+one_shot = true
+

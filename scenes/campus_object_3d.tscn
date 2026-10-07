@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://b3object3d01"]
+
+[ext_resource type="Script" path="res://scripts/campus_objects_3d.gd" id="1_campus_obj3d"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_trigger"]
+size = Vector3(3.2, 2.5, 3.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_solid"]
+size = Vector3(2.0, 1.2, 2.0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fixture"]
+size = Vector3(2.0, 1.2, 2.0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_default"]
+albedo_color = Color(0.35, 0.55, 0.75, 1)
+roughness = 0.5
+
+[node name="CampusObject3D" type="Area3D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_campus_obj3d")
+
+[node name="TriggerShape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+shape = SubResource("BoxShape3D_trigger")
+
+[node name="SolidBody" type="StaticBody3D" parent="."]
+collision_layer = 4
+collision_mask = 1
+
+[node name="SolidShape" type="CollisionShape3D" parent="SolidBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+shape = SubResource("BoxShape3D_solid")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("BoxMesh_fixture")
+surface_material_override/0 = SubResource("StandardMaterial3D_default")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+billboard = 1
+text = "Campus Object"
+font_size = 32
+outline_size = 6

@@ -1,0 +1,120 @@
+[gd_scene load_steps=5 format=3 uid="uid://c8hud001"]
+
+[ext_resource type="Script" path="res://scripts/hud.gd" id="1_hud"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.1, 0.12, 0.16, 0.85)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_money"]
+font_size = 18
+font_color = Color(0.25, 0.9, 0.45, 1)
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_controls"]
+font_size = 13
+font_color = Color(0.8, 0.85, 0.9, 0.9)
+outline_size = 2
+outline_color = Color(0, 0, 0, 0.8)
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_hud")
+
+[node name="TopPanel" type="PanelContainer" parent="."]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 320.0
+offset_bottom = 180.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TopPanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="MoneyLabel" type="Label" parent="TopPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Wallet: ₦5,000"
+label_settings = SubResource("LabelSettings_money")
+
+[node name="CGPALabel" type="Label" parent="TopPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CGPA: 3.50 / 5.0"
+
+[node name="EnergyContainer" type="HBoxContainer" parent="TopPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TopPanel/VBoxContainer/EnergyContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "Energy"
+
+[node name="EnergyBar" type="ProgressBar" parent="TopPanel/VBoxContainer/EnergyContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 16)
+layout_mode = 2
+size_flags_vertical = 4
+value = 100.0
+show_percentage = false
+
+[node name="HungerContainer" type="HBoxContainer" parent="TopPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TopPanel/VBoxContainer/HungerContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "Hunger"
+
+[node name="HungerBar" type="ProgressBar" parent="TopPanel/VBoxContainer/HungerContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 16)
+layout_mode = 2
+size_flags_vertical = 4
+value = 100.0
+show_percentage = false
+
+[node name="FaithContainer" type="HBoxContainer" parent="TopPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TopPanel/VBoxContainer/FaithContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "Faith"
+
+[node name="FaithBar" type="ProgressBar" parent="TopPanel/VBoxContainer/FaithContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 16)
+layout_mode = 2
+size_flags_vertical = 4
+value = 70.0
+show_percentage = false
+
+[node name="ControlsPanel" type="PanelContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -220.0
+offset_top = -46.0
+offset_right = 220.0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="ControlsLabel" type="Label" parent="ControlsPanel"]
+layout_mode = 2
+text = "WASD / Arrows: Move  |  [E] or Space: Interact  |  Walk to Bed, Desk, Cafeteria"
+label_settings = SubResource("LabelSettings_controls")
+horizontal_alignment = 1
+

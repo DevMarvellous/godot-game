@@ -55,3 +55,4 @@ description: Godot 4.x game development standards, GDScript conventions, Jolt 3D
 ## 4. GDExtension / C++ Guidelines (When using C++)
 - Use C++ / GDExtension for performance-critical bottlenecks (pathfinding grids, procedural generation, intensive math).
 - Use GDScript for rapid prototyping, UI, game feel, and event wiring.
+
