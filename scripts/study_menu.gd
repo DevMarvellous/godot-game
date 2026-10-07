@@ -200,3 +200,4 @@ func _on_study_selected(opt: Dictionary) -> void:
 
 	_refresh_display()
 	study_completed.emit(String(opt["name"]), cgpa_gain, energy_cost)
+
