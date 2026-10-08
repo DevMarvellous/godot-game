@@ -9,6 +9,9 @@ extends CharacterBody3D
 @export var gravity: float = 20.0
 @export var rotation_speed: float = 12.0
 
+var nav_target_pos: Vector3 = Vector3.ZERO
+var has_nav_target: bool = false
+
 @onready var visual_root: Node3D = $Visuals
 @onready var needs_manager: NeedsManager = $NeedsManager
 @onready var prompt_label: Label3D = $PromptLabel
@@ -32,6 +35,23 @@ var mobile_input_vector: Vector2 = Vector2.ZERO
 
 func set_mobile_movement(vec: Vector2) -> void:
 	mobile_input_vector = vec
+	if vec != Vector2.ZERO:
+		has_nav_target = false # Joystick movement overrides tap-to-move
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	# Tap / Click anywhere on ground to walk there (Lagos Life tap navigation)
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		var cam: Camera3D = get_viewport().get_camera_3d()
+		if cam:
+			var from: Vector3 = cam.project_ray_origin(event.position)
+			var to: Vector3 = from + cam.project_ray_normal(event.position) * 100.0
+			var space_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
+			var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(from, to, 4) # layer 4 = Ground
+			var result: Dictionary = space_state.intersect_ray(query)
+			if result.has("position"):
+				nav_target_pos = Vector3(result.position.x, global_position.y, result.position.z)
+				has_nav_target = true
 
 
 func trigger_interaction() -> void:
@@ -46,23 +66,35 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y = 0.0
 
-	# Get movement input: Mobile Virtual Joystick takes priority, keyboard fallback
+	# Get movement input: Mobile Virtual Joystick takes priority, then keyboard, then tap-to-walk
 	var input_dir: Vector2 = Vector2.ZERO
 	if mobile_input_vector != Vector2.ZERO:
 		input_dir = mobile_input_vector
+		has_nav_target = false
 	else:
 		input_dir.x = Input.get_axis("move_left", "move_right")
 		input_dir.y = Input.get_axis("move_up", "move_down")
+		if input_dir != Vector2.ZERO:
+			has_nav_target = false
 
 	var target_vel: Vector3 = Vector3.ZERO
 	if input_dir != Vector2.ZERO:
 		input_dir = input_dir.normalized()
-		# Isometric ground movement: X is left/right, Z is forward/back
 		target_vel = Vector3(input_dir.x, 0.0, input_dir.y) * move_speed
-
-		# Smoothly rotate player visuals toward movement direction
 		var target_angle: float = atan2(-input_dir.x, -input_dir.y)
 		visual_root.rotation.y = lerp_angle(visual_root.rotation.y, target_angle, rotation_speed * delta)
+	elif has_nav_target:
+		# Tap to move towards target position
+		var to_target: Vector3 = nav_target_pos - global_position
+		to_target.y = 0.0
+		var dist: float = to_target.length()
+		if dist > 0.4:
+			var move_dir: Vector3 = to_target.normalized()
+			target_vel = move_dir * move_speed
+			var target_angle: float = atan2(-move_dir.x, -move_dir.z)
+			visual_root.rotation.y = lerp_angle(visual_root.rotation.y, target_angle, rotation_speed * delta)
+		else:
+			has_nav_target = false
 
 	velocity.x = move_toward(velocity.x, target_vel.x, acceleration * delta)
 	velocity.z = move_toward(velocity.z, target_vel.z, acceleration * delta)

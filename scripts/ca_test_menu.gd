@@ -12,7 +12,6 @@ signal test_closed
 
 @onready var title_label: Label = %TitleLabel
 @onready var course_label: Label = %CourseLabel
-@onready var timer_label: Label = %TimerLabel
 @onready var question_label: Label = %QuestionLabel
 @onready var options_container: VBoxContainer = %OptionsContainer
 @onready var progress_label: Label = %ProgressLabel
