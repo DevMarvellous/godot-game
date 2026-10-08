@@ -27,6 +27,18 @@ func _ready() -> void:
 		notif_timer.timeout.connect(_on_notif_timeout)
 
 
+var mobile_input_vector: Vector2 = Vector2.ZERO
+
+
+func set_mobile_movement(vec: Vector2) -> void:
+	mobile_input_vector = vec
+
+
+func trigger_interaction() -> void:
+	if current_interactable:
+		current_interactable.interact(self)
+
+
 func _physics_process(delta: float) -> void:
 	# Apply gravity
 	if not is_on_floor():
@@ -34,10 +46,13 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y = 0.0
 
-	# Get movement input (isometric / top-down perspective)
+	# Get movement input: Mobile Virtual Joystick takes priority, keyboard fallback
 	var input_dir: Vector2 = Vector2.ZERO
-	input_dir.x = Input.get_axis("move_left", "move_right")
-	input_dir.y = Input.get_axis("move_up", "move_down")
+	if mobile_input_vector != Vector2.ZERO:
+		input_dir = mobile_input_vector
+	else:
+		input_dir.x = Input.get_axis("move_left", "move_right")
+		input_dir.y = Input.get_axis("move_up", "move_down")
 
 	var target_vel: Vector3 = Vector3.ZERO
 	if input_dir != Vector2.ZERO:
@@ -55,8 +70,8 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 	# Interaction trigger
-	if Input.is_action_just_pressed("interact") and current_interactable:
-		current_interactable.interact(self)
+	if Input.is_action_just_pressed("interact"):
+		trigger_interaction()
 
 
 func set_interaction_target(target: Interactable3D) -> void:

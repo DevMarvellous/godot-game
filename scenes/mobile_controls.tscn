@@ -1,0 +1,217 @@
+[gd_scene format=3 uid="uid://c8mobile0001"]
+
+[ext_resource type="Script" path="res://scripts/mobile_controls.gd" id="1_mobile"]
+[ext_resource type="Script" path="res://scripts/virtual_joystick.gd" id="2_joystick"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_base"]
+bg_color = Color(0.12, 0.15, 0.2, 0.5)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.4, 0.6, 0.85, 0.6)
+corner_radius_top_left = 65
+corner_radius_top_right = 65
+corner_radius_bottom_right = 65
+corner_radius_bottom_left = 65
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_handle"]
+bg_color = Color(0.25, 0.65, 0.95, 0.8)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_interact"]
+bg_color = Color(0.95, 0.65, 0.15, 0.9)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.9, 0.5, 1)
+corner_radius_top_left = 46
+corner_radius_top_right = 46
+corner_radius_bottom_right = 46
+corner_radius_bottom_left = 46
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_map_btn"]
+bg_color = Color(0.1, 0.14, 0.2, 0.85)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.7, 0.5, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_transit"]
+bg_color = Color(0.08, 0.11, 0.16, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.7, 0.5, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 18.0
+content_margin_top = 16.0
+content_margin_right = 18.0
+content_margin_bottom = 16.0
+
+[node name="MobileControls" type="CanvasLayer"]
+layer = 3
+script = ExtResource("1_mobile")
+
+[node name="TouchZone" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="VirtualJoystick" type="Control" parent="TouchZone"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 28.0
+offset_top = -200.0
+offset_right = 208.0
+offset_bottom = -20.0
+grow_vertical = 0
+script = ExtResource("2_joystick")
+
+[node name="Base" type="Panel" parent="TouchZone/VirtualJoystick"]
+custom_minimum_size = Vector2(130, 130)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -65.0
+offset_top = -65.0
+offset_right = 65.0
+offset_bottom = 65.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_base")
+
+[node name="Handle" type="Panel" parent="TouchZone/VirtualJoystick/Base"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -25.0
+offset_right = 25.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_handle")
+
+[node name="InteractButton" type="Button" parent="TouchZone"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(92, 92)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -130.0
+offset_top = -140.0
+offset_right = -38.0
+offset_bottom = -48.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_interact")
+text = "INTERACT
+[TAP]"
+
+[node name="MapButton" type="Button" parent="TouchZone"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_top = 16.0
+offset_right = -18.0
+offset_bottom = 56.0
+grow_horizontal = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_map_btn")
+text = "🚌 CAMPUS MAP"
+
+[node name="TransitSheet" type="PanelContainer" parent="TouchZone"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 280)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -324.0
+offset_top = 64.0
+offset_right = -24.0
+offset_bottom = 350.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_transit")
+
+[node name="VBox" type="VBoxContainer" parent="TouchZone/TransitSheet"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="TouchZone/TransitSheet/VBox"]
+layout_mode = 2
+text = "QUICK CAMPUS TRANSIT"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="TouchZone/TransitSheet/VBox"]
+layout_mode = 2
+
+[node name="HostelBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "🛏 Hostel Bedroom"
+
+[node name="ClassBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "📚 Study Hall & Lectures"
+
+[node name="BukaBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "🍲 Buka / Food Court"
+
+[node name="ChapelBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "⛪ Fellowship Chapel"
+
+[node name="ATMBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "💳 Campus ATM"
+
+[node name="CloseMapBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "✕ Close"

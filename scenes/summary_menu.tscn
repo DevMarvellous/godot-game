@@ -145,3 +145,4 @@ custom_minimum_size = Vector2(220, 42)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Start Day 2"
+

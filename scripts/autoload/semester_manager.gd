@@ -134,3 +134,4 @@ func _get_player_needs() -> NeedsManager:
 	if player:
 		return player.get_node_or_null("NeedsManager") as NeedsManager
 	return null
+

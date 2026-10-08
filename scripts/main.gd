@@ -2,7 +2,7 @@ class_name Main
 extends Node3D
 
 ## Main 3D Campus World scene.
-## Connects 3D Player, HUD, 3D fixtures, interactive modal menus, Semester reporting, and dynamic Day/Night lighting.
+## Connects 3D Player, HUD, Mobile Touch Controls, fixtures, and interactive modal menus.
 
 @onready var player: Player3D = $Player3D
 @onready var hud: HUD = $HUD
@@ -18,12 +18,20 @@ extends Node3D
 @onready var food_menu: Control = $MenusLayer/FoodMenu
 @onready var study_menu: Control = $MenusLayer/StudyMenu
 @onready var summary_menu: Control = $MenusLayer/SummaryMenu
+@onready var mobile_controls: CanvasLayer = $MobileControls
 
 
 func _ready() -> void:
 	if player and hud:
 		hud.connect_player_needs(player.needs_manager)
 		player.needs_manager.player_passed_out.connect(_on_player_passed_out)
+
+	# Connect mobile touch controls
+	if mobile_controls and player:
+		if mobile_controls.has_method("bind_player"):
+			mobile_controls.bind_player(player)
+		if mobile_controls.has_signal("transit_requested"):
+			mobile_controls.transit_requested.connect(_on_transit_requested)
 
 	# Connect day/night lighting
 	TimeSystem.minute_passed.connect(_update_day_night_lighting)
@@ -55,6 +63,43 @@ func _ready() -> void:
 	_setup_3d_object(atm, CampusObject3D.ObjectType.ATM, "Campus ATM", Color(0.18, 0.75, 0.35))
 
 
+func _on_transit_requested(dest: StringName) -> void:
+	if not player:
+		return
+
+	var target_pos: Vector3 = Vector3.ZERO
+	var dest_title: String = ""
+
+	match dest:
+		&"hostel":
+			if hostel_bed:
+				target_pos = hostel_bed.global_position + Vector3(0, 0.1, 2.8)
+				dest_title = "Hostel Room"
+		&"class":
+			if study_desk:
+				target_pos = study_desk.global_position + Vector3(0, 0.1, 2.8)
+				dest_title = "Study Hall & Lectures"
+		&"buka":
+			if cafeteria:
+				target_pos = cafeteria.global_position + Vector3(0, 0.1, 2.8)
+				dest_title = "Buka Food Court"
+		&"chapel":
+			if chapel:
+				target_pos = chapel.global_position + Vector3(0, 0.1, 2.8)
+				dest_title = "Fellowship Chapel"
+		&"atm":
+			if atm:
+				target_pos = atm.global_position + Vector3(0, 0.1, 2.8)
+				dest_title = "Campus ATM"
+
+	if dest_title != "":
+		player.global_position = target_pos
+		player.velocity = Vector3.ZERO
+		TimeSystem.advance_minutes(5) # Walking travel time across campus
+		if player.has_method("display_notification"):
+			player.display_notification("Arrived at %s! (5m walk)" % dest_title)
+
+
 func _on_menu_requested(menu_type: StringName, p: CharacterBody3D) -> void:
 	if player:
 		player.set_physics_process(false)
@@ -72,7 +117,6 @@ func _on_menu_closed() -> void:
 
 
 func _on_day_ended(summary_data: Dictionary) -> void:
-	# Pause clock and player during report card review
 	TimeSystem.paused = true
 	if player:
 		player.set_physics_process(false)
@@ -91,7 +135,6 @@ func _on_semester_finished(final_results: Dictionary) -> void:
 
 
 func _on_summary_closed() -> void:
-	# Resume clock and player
 	TimeSystem.paused = false
 	if player:
 		player.set_physics_process(true)
@@ -104,24 +147,20 @@ func _update_day_night_lighting() -> void:
 	var hour: float = TimeSystem.get_hour_float()
 
 	if hour >= 6.0 and hour < 8.0:
-		# Sunrise
 		var t: float = (hour - 6.0) / 2.0
 		sun.light_color = Color(1.0, 0.72, 0.45).lerp(Color(1.0, 0.95, 0.88), t)
 		sun.light_energy = lerpf(0.3, 1.1, t)
 		sun.rotation_degrees.x = lerpf(-15.0, -45.0, t)
 	elif hour >= 8.0 and hour < 17.0:
-		# Daylight
 		sun.light_color = Color(1.0, 0.96, 0.9)
 		sun.light_energy = 1.15
 		sun.rotation_degrees.x = -50.0
 	elif hour >= 17.0 and hour < 19.5:
-		# Sunset
 		var t: float = (hour - 17.0) / 2.5
 		sun.light_color = Color(1.0, 0.96, 0.9).lerp(Color(0.98, 0.45, 0.2), t)
 		sun.light_energy = lerpf(1.15, 0.25, t)
 		sun.rotation_degrees.x = lerpf(-50.0, -10.0, t)
 	else:
-		# Night
 		sun.light_color = Color(0.35, 0.48, 0.8)
 		sun.light_energy = 0.18
 		sun.rotation_degrees.x = -35.0
