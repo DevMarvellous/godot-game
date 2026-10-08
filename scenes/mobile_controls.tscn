@@ -225,7 +225,7 @@ text = "🏢 Student Union (SUB)"
 [node name="GardenBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "🌳 Love Garden & Park"
+text = "🌳 Botanical Gardens & Park"
 
 [node name="SalonBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true

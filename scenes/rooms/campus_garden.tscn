@@ -55,9 +55,9 @@ size = Vector3(2.4, 0.5, 0.8)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_concrete"]
 albedo_color = Color(0.68, 0.7, 0.72, 1)
 
-[node name="CampusLoveGarden" type="Node3D"]
+[node name="CampusBotanicalGarden" type="Node3D"]
 script = ExtResource("1_room")
-room_name = "Campus Botanical Park / Love Garden"
+room_name = "Campus Botanical Gardens & Quiet Park"
 room_id = &"garden"
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
@@ -148,7 +148,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_concrete")
 [node name="GardenSign" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6, -11.5)
 billboard = 1
-text = "CAMPUS BOTANICAL PARK & LOVE GARDEN"
+text = "CAMPUS BOTANICAL GARDENS & PRAYER WALK"
 font_size = 38
 outline_size = 8
 
