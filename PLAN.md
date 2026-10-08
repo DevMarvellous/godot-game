@@ -1,36 +1,79 @@
-# Game Plan (living document — expected to change)
+# Master Game Plan: Campus Life Simulator (Nigeria)
 
-## What the game is (one sentence)
-A 3D top-down life simulator where you play a Nigerian university student who has to balance
-sleep, food, money, grades, and faith across a semester.
+> **Vision**: A 3D Top-Down / Isometric Nigerian University Life Simulator (inspired by *The Sims* and *Lagos Life*).
+> You play as an undergraduate student balancing survival (food, sleep), academics (CGPA, lectures), faith (fellowship, prayer), hustle (finances), and campus relationships over a university semester.
 
-## Who it's for (still open)
-- Option A: Campus Christians specifically (fellowship, devotion, moral choices are central).
-- Option B: Students in general (faith is one stat among many, not the focus).
-- Decision deadline: after Milestone 2 is playable. Do not block building on this.
+---
 
-## Platform order
-1. Web browser (HTML5 export) — first.
-2. Android (Play Store) — after the web version is fun.
-3. iOS — last.
+## 1. How the Game is Structured (The Architecture)
 
-Because web is first: keep 3D simple (low-poly shapes, few lights, Compatibility renderer).
+Everything is built in clean, isolated pieces so you can edit, scrap, or upgrade any part anytime without breaking the rest:
 
-## Milestones
-Each milestone ends with something you can play, then a git push.
+### A. The Master Scene (`scenes/main.tscn`)
+This is the campus container. It holds:
+- **Lighting & Sky**: `DirectionalLight3D` + `WorldEnvironment` (smooth Sunrise, Midday, Sunset, Night transitions).
+- **The Sectors / Zones**:
+  1. **Hostel Sector**: Bedroom with Bed (sleeping fast-forwards time, recovers Energy, ends the day).
+  2. **Academics Sector**: Study Hall with Lecture Desks (interactive study modal, attend scheduled classes).
+  3. **Cafeteria / Buka Sector**: Food counter (interactive Nigerian food menu).
+  4. **Chapel Sector**: Fellowship altar (prayer, bonus during 17:00-19:00 fellowship).
+  5. **Commercial / Courtyard**: Central ATM (allowance withdrawal).
+- **The Actors**: `Player3D` and roaming `NPCs` (Emeka, Sister Blessing, Dr. Adebayo).
+- **The Screen UI**: 2D `HUD` overlay + popup modal dialogs (`FoodMenu`, `StudyMenu`).
 
-| # | Milestone | What you can do when it's done | Status |
-|---|-----------|-------------------------------|--------|
-| 1 | Core loop | Walk around, use bed/desk/food/chapel/ATM, see stats change | DONE |
-| 2 | Time & days | Clock runs, day/night lighting, lectures on schedule, missed lecture penalty, sleep/passout | DONE |
-| 3 | Choices & menus | Food menu with Nigerian dishes and prices, study & lecture choices | DONE |
-| 4 | People | NPC students & lecturers roaming courtyard with Nigerian campus banter | DONE |
-| 5 | Semester goal | Win/lose condition: finish semester with CGPA + money + faith targets | NEXT |
-| 6 | Look & sound | Replace boxes with low-poly models, add sounds and music | TODO |
-| 7 | Web release | Export to HTML5, host on itch.io, get friends to test | TODO |
+### B. Global Engines (Autoload Singletons)
+- **`TimeSystem`**: The master clock. 1 real second = 2 game minutes. Powers day progression, schedules, and passive need decay.
+- **`Schedule`**: The timetable manager. Fires lectures at 09:00 & 14:00, fellowship at 17:00, curfew at 22:00. Penalizes skipping class (-0.10 CGPA).
 
-## Rules for scope
-- No multiplayer until Milestone 7 is shipped and people actually play it.
-- No custom 3D modeling until Milestone 6. Boxes are fine.
-- If a feature takes more than 2 sessions, cut it down.
+---
 
+## 2. Expanded Master Roadmap
+
+### Phase 1: Core Foundation & Semester Prototype (Current Phase)
+- [x] **Milestone 1**: 3D CharacterBody3D controls, 3D courtyard blockout, Bed, Desk, Cafe, Chapel, ATM, and HUD.
+- [x] **Milestone 2**: In-game 24h clock, campus timetable, day/night lighting, lecture attendance/skipping penalties, sleep & burnout collapse.
+- [x] **Milestone 3**: Interactive Nigerian Buka Food Menu (Jollof, Indomie, Egusi, Meat Pie, Sapa special) + Study & Lecture modal.
+- [x] **Milestone 4**: Roaming 3D student & lecturer NPCs with campus dialogue bubbles.
+- [x] **Milestone 5**: Semester Targets & Daily Report Card (Win/loss conditions: First Class, 2:1, Sapa bankruptcy, Probation, Spiritual burnout).
+- [ ] **Milestone 6**: Multiple Campus Interiors & Door Portals (Hostel room inside, Lecture hall inside, Chapel inside).
+- **Milestone 6: Multiple Campus Interiors & Door Portals**:
+  - Break campus into distinct interconnected rooms/scenes:
+    - *Hostel Hallway & Room* (wardrobe, bed, roommate).
+    - *Large Lecture Theatre* (steep lecture hall with 50 seats, chalkboard, lecturer podium).
+    - *Campus Chapel Auditorium* (pews, pulpit, choir instruments).
+    - *Campus Market / Student Union Building* (provision stores, printing business center, barber shop).
+- **Milestone 7: Money Side Hustles & Student Economy**:
+  - Laptop side gigs (freelance graphic design, coding, assignment typing).
+  - Hostel business (selling snacks, soft drinks, noodles to dorm mates).
+  - Urgent 2k calls home to parents (success depends on your current CGPA report).
+- **Milestone 8: Semester Exam Week & Mini-Games**:
+  - Midterm tests and Final Exams with interactive quiz mini-games or quick-time challenges.
+  - Moral dilemmas: Exam Malpractice temptations (cheating expo vs studying honestly).
+- **Milestone 9: Social Relationships & Dialogue Trees**:
+  - Relationship meters with NPCs: Stranger -> Classmate -> Close Friend -> Best Friend / Crush.
+  - Joining campus fellowships / departmental study groups.
+
+### Phase 3: Visual Polish & Nigerian Campus Audio
+- **Milestone 10: Character Customizer**:
+  - Choose gender, skin tone, hairstyles (braids, fade, dreads), varsity jackets, native attire.
+- **Milestone 11: Real Low-Poly 3D Assets**:
+  - Replace prototype boxes with stylized low-poly Nigerian campus models (danfo bus, hostel bunks, lecture benches, buka pots).
+- **Milestone 12: Sound & Ambience**:
+  - Campus footsteps, crowd chatter, chapel hymns, buka sizzling, ambient crickets at night, chill lofi-Afrobeats music.
+
+### Phase 4: Release & Deployment
+- **Milestone 13: Web Export (HTML5)**:
+  - Optimize build bundle for browsers. Host on itch.io or custom domain for one-click browser play.
+- **Milestone 14: Mobile Builds (Android / iOS)**:
+  - Add on-screen touch joystick and tap-to-move for phones, package Android APK for Google Play Store.
+
+### Phase 5: Long-Term Online Multiplayer (Future Expansion)
+- Once single-player is proven and popular:
+  - WebSocket lobby server for multiplayer campus hangouts (Lagos Life style chatrooms, visiting other students' rooms, trading items).
+
+---
+
+## 3. Scope & Golden Rules
+1. **Never break editability**: All data (dishes, dialogue, study options, quests) is stored in simple dictionaries or exported inspector fields so anyone can edit them.
+2. **Performance first**: Low-poly art, 60 FPS cap, event-driven scripts. Never use unoptimized loops that heat up devices.
+3. **Playable at every commit**: Each milestone ends with a working, runnable game.

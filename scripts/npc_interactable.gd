@@ -17,3 +17,4 @@ func interact(player: CharacterBody3D) -> void:
 	var npc: Node = get_parent()
 	if npc and npc.has_method("talk"):
 		npc.talk()
+

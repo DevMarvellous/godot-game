@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/food_menu.tscn" id="5_food"]
 [ext_resource type="PackedScene" path="res://scenes/study_menu.tscn" id="6_study"]
 [ext_resource type="PackedScene" path="res://scenes/npc_3d.tscn" id="7_npc"]
+[ext_resource type="PackedScene" path="res://scenes/summary_menu.tscn" id="8_summary"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 sky_top_color = Color(0.38, 0.65, 0.98, 1)
@@ -178,3 +179,5 @@ layer = 2
 [node name="FoodMenu" parent="MenusLayer" instance=ExtResource("5_food")]
 
 [node name="StudyMenu" parent="MenusLayer" instance=ExtResource("6_study")]
+
+[node name="SummaryMenu" parent="MenusLayer" instance=ExtResource("8_summary")]

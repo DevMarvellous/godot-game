@@ -70,3 +70,4 @@ script = ExtResource("2_npc_interact")
 [node name="TriggerShape" type="CollisionShape3D" parent="InteractArea"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("SphereShape3D_trigger")
+

@@ -139,3 +139,4 @@ func talk() -> void:
 func _on_speech_timeout() -> void:
 	if speech_label:
 		speech_label.visible = false
+

@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 
 TimeSystem="*res://scripts/autoload/time_system.gd"
 Schedule="*res://scripts/autoload/schedule.gd"
+SemesterManager="*res://scripts/autoload/semester_manager.gd"
 
 [display]
 

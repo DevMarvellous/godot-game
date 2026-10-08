@@ -5,7 +5,7 @@
 - **Never Be a Yes-Man**: Provide frank, realistic technical and design feedback. Flag bottlenecks immediately.
 - **Bias for Action**: Build minimal playable slices first, test immediately, and iterate.
 - **High Optimization**: Keep CPU/GPU footprint tiny so web/mobile builds run at 60 FPS without heating up devices.
-- **High Editability**: All catalogs (food dishes, study options, NPC dialogues, timetable) are easily editable.
+- **High Editability**: All catalogs (food dishes, study options, NPC dialogues, timetable, semester days & grade cutoffs) are easily editable.
 
 ## 2. Technical Stack & Engine Standards
 - **Engine**: Godot 4.7+ (Standard 64-bit edition).
@@ -25,13 +25,11 @@ The game is a **3D Top-Down / Isometric Campus Life Simulator** inspired by *Lag
 2. **Schedule (`scripts/autoload/schedule.gd`)**:
    - Timetable manager for Monday-Friday (Lectures at 09:00 & 14:00, Fellowship 17:00-19:00, Curfew 22:00).
    - Signals: `lecture_started`, `lecture_attended`, `lecture_missed`.
-
-### NPC System (`scripts/npc_3d.gd`, `scenes/npc_3d.tscn`, `scripts/npc_interactable.gd`):
-- Roaming 3D character agents with patrol waypoints, idle timers, and billboard speech bubbles.
-- Present on campus:
-  - **Emeka (Course Rep)**: Emerald shirt, roams near Study Hall with tips about tests and past questions.
-  - **Sister Blessing (Fellowship Exec)**: Royal purple shirt, roams near Chapel with fellowship reminders.
-  - **Dr. Adebayo (Course Lecturer)**: Burgundy shirt, patrols courtyard warning students about attendance.
+3. **SemesterManager (`scripts/autoload/semester_manager.gd`)**:
+   - Tracks 14-day university semester progression.
+   - Evaluates daily class attendance/absence.
+   - Calculates Nigerian grade classifications: First Class (>=4.50), 2:1 (>=3.50), 2:2 (>=2.40), 3rd Class (>=1.50), Probation (<1.50).
+   - Generates daily report card data and final semester graduation outcomes.
 
 ### Interactive Menus & Modals:
 1. **Buka Food Menu (`scenes/food_menu.tscn`, `scripts/food_menu.gd`)**:
@@ -39,12 +37,16 @@ The game is a **3D Top-Down / Isometric Campus Life Simulator** inspired by *Lag
 2. **Study & Lecture Menu (`scenes/study_menu.tscn`, `scripts/study_menu.gd`)**:
    - Attending active lectures for major CGPA boosts (+0.15).
    - Self-study options: Quick Revision, Past Questions Practice, Overnight Marathon.
+3. **Daily Report Card & Semester Finals (`scenes/summary_menu.tscn`, `scripts/summary_menu.gd`)**:
+   - Pops up automatically when the player sleeps to end each day.
+   - Displays classes attended, missed lectures, CGPA standing, faith, wallet balance, and commentary.
+   - Evaluates final degree outcome on Day 14 with restart capability.
 
 ### Core Systems & Scenes:
 1. **Main World (`scenes/main.tscn`, `scripts/main.gd`)**:
    - Dynamic Day/Night Cycle lighting (Sunrise, Daylight, Sunset, Night).
    - 4 Sectors: Hostel Room, Study Hall, Cafeteria (Buka), Chapel Fellowship, plus Central ATM.
-   - Houses roaming student NPCs.
+   - Roaming NPCs: Emeka (Course Rep), Sister Blessing (Chapel Exec), Dr. Adebayo (Lecturer).
 2. **Player Controller (`scenes/player_3d.tscn`, `scripts/player_3d.gd`)**:
    - `CharacterBody3D` with Jolt physics, smooth turning, overhead 3D camera.
 3. **Stat Management (`scripts/needs_manager.gd`)**:
@@ -59,6 +61,9 @@ The game is a **3D Top-Down / Isometric Campus Life Simulator** inspired by *Lag
 - [x] **Milestone 2**: In-game clock, daily schedule, missed lecture penalties, day/night lighting, sleep cycle.
 - [x] **Milestone 3**: Nigerian Buka food menu (Jollof, Suya, Indomie) and Study choices menu.
 - [x] **Milestone 4**: Animated student & lecturer NPCs walking around the courtyard.
-- [ ] **Milestone 5**: Semester targets (win/lose conditions).
-- [ ] **Milestone 6**: Low-poly art models and Nigerian campus audio.
-- [ ] **Milestone 7**: Web release on itch.io.
+- [x] **Milestone 5**: Semester Targets, Daily Report Card, and Win/Lose conditions.
+- [ ] **Milestone 6**: Campus Interiors & Door Portals (Hostel inside, Lecture hall inside, Chapel inside).
+- [ ] **Milestone 7**: Money Side Hustles (freelancing on laptop, selling snacks, calls home).
+- [ ] **Milestone 8**: Exam Week Mini-Games & Moral Dilemmas.
+- [ ] **Milestone 9**: Character Customizer & Low-Poly 3D Assets.
+- [ ] **Milestone 10**: Web & Android Release.

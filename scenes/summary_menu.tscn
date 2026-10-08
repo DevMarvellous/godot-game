@@ -1,0 +1,147 @@
+[gd_scene load_steps=7 format=3 uid="uid://c8summary001"]
+
+[ext_resource type="Script" path="res://scripts/summary_menu.gd" id="1_sum"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.08, 0.1, 0.14, 0.97)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.9, 0.75, 0.2, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 26.0
+content_margin_top = 22.0
+content_margin_right = 26.0
+content_margin_bottom = 22.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font_size = 22
+font_color = Color(1, 0.85, 0.25, 1)
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_grade"]
+font_size = 18
+font_color = Color(0.3, 0.9, 0.6, 1)
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.13, 0.16, 0.22, 0.95)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_comment"]
+font_size = 14
+font_color = Color(0.9, 0.95, 1, 0.95)
+
+[node name="SummaryMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_sum")
+
+[node name="DarkBackdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.65)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ModalPanel" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(520, 380)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/ModalPanel"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/ModalPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "📋 DAY 1 REPORT CARD"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+
+[node name="GradeLabel" type="Label" parent="CenterContainer/ModalPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CGPA: 3.50  •  Second Class Upper (2:1)"
+label_settings = SubResource("LabelSettings_grade")
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/ModalPanel/VBox"]
+layout_mode = 2
+
+[node name="StatsGrid" type="GridContainer" parent="CenterContainer/ModalPanel/VBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 24
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="AttendedLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/StatsGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Classes Attended: 0"
+
+[node name="MissedLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/StatsGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Classes Missed: 0"
+
+[node name="FaithLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/StatsGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Faith & Devotion: 70%"
+
+[node name="WalletLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/StatsGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Wallet Balance: ₦5,000"
+
+[node name="CommentBox" type="PanelContainer" parent="CenterContainer/ModalPanel/VBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="CommentLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/CommentBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+text = "Good day on campus. Rest well tonight for tomorrow's classes."
+label_settings = SubResource("LabelSettings_comment")
+autowrap_mode = 2
+
+[node name="Spacer" type="Control" parent="CenterContainer/ModalPanel/VBox"]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+
+[node name="ActionButton" type="Button" parent="CenterContainer/ModalPanel/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 42)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Start Day 2"
