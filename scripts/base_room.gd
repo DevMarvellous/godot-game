@@ -101,6 +101,10 @@ func _on_transit_requested(dest: StringName) -> void:
 			_go_to_scene("res://scenes/rooms/chapel_hall.tscn")
 		&"sub":
 			_go_to_scene("res://scenes/rooms/sub_building.tscn")
+		&"garden":
+			_go_to_scene("res://scenes/rooms/campus_garden.tscn")
+		&"salon":
+			_go_to_scene("res://scenes/rooms/barbing_salon.tscn")
 		&"atm":
 			_go_to_scene("res://scenes/main.tscn")
 

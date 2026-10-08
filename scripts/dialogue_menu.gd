@@ -95,3 +95,4 @@ func close_dialogue() -> void:
 	visible = false
 	current_player = null
 	dialogue_ended.emit()
+

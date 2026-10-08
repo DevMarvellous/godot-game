@@ -1,0 +1,183 @@
+[gd_scene format=3 uid="uid://rm_garden001"]
+
+[ext_resource type="Script" path="res://scripts/base_room.gd" id="1_room"]
+[ext_resource type="PackedScene" uid="uid://b3player3d01" path="res://scenes/player_3d.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://c8hud001" path="res://scenes/hud.tscn" id="3_hud"]
+[ext_resource type="PackedScene" uid="uid://b3object3d01" path="res://scenes/campus_object_3d.tscn" id="4_obj"]
+[ext_resource type="PackedScene" path="res://scenes/npc_3d.tscn" id="5_npc"]
+[ext_resource type="PackedScene" path="res://scenes/dialogue_menu.tscn" id="6_dialogue"]
+[ext_resource type="PackedScene" path="res://scenes/summary_menu.tscn" id="7_summary"]
+[ext_resource type="PackedScene" path="res://scenes/mobile_controls.tscn" id="8_mobile"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(26, 0.4, 24)
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+size = Vector3(26, 0.4, 24)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grass"]
+albedo_color = Color(0.22, 0.48, 0.26, 1)
+roughness = 0.9
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fence_h"]
+size = Vector3(26, 2.0, 0.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fence_h"]
+size = Vector3(26, 1.6, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wood"]
+albedo_color = Color(0.45, 0.3, 0.18, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fence_v"]
+size = Vector3(0.4, 2.0, 24)
+
+[sub_resource type="BoxMesh" id="BoxMesh_fence_v"]
+size = Vector3(0.3, 1.6, 24)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_tree_trunk"]
+top_radius = 0.3
+bottom_radius = 0.4
+height = 2.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bark"]
+albedo_color = Color(0.32, 0.2, 0.12, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_canopy"]
+radius = 1.6
+height = 2.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_leaves"]
+albedo_color = Color(0.18, 0.58, 0.24, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bench"]
+size = Vector3(2.4, 0.5, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_concrete"]
+albedo_color = Color(0.68, 0.7, 0.72, 1)
+
+[node name="CampusLoveGarden" type="Node3D"]
+script = ExtResource("1_room")
+room_name = "Campus Botanical Park / Love Garden"
+room_id = &"garden"
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 6, 14, 6)
+light_color = Color(1, 0.96, 0.88, 1)
+light_energy = 1.1
+
+[node name="Floor" type="StaticBody3D" parent="."]
+collision_layer = 4
+collision_mask = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+shape = SubResource("BoxShape3D_floor")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+mesh = SubResource("BoxMesh_floor")
+surface_material_override/0 = SubResource("StandardMaterial3D_grass")
+
+[node name="Fences" type="StaticBody3D" parent="."]
+collision_layer = 4
+collision_mask = 1
+
+[node name="NorthFence" type="CollisionShape3D" parent="Fences"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -12)
+shape = SubResource("BoxShape3D_fence_h")
+
+[node name="NorthMesh" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -12)
+mesh = SubResource("BoxMesh_fence_h")
+surface_material_override/0 = SubResource("StandardMaterial3D_wood")
+
+[node name="SouthFence" type="CollisionShape3D" parent="Fences"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 12)
+shape = SubResource("BoxShape3D_fence_h")
+
+[node name="SouthMesh" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 12)
+mesh = SubResource("BoxMesh_fence_h")
+surface_material_override/0 = SubResource("StandardMaterial3D_wood")
+
+[node name="WestFence" type="CollisionShape3D" parent="Fences"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0.8, 0)
+shape = SubResource("BoxShape3D_fence_v")
+
+[node name="WestMesh" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0.8, 0)
+mesh = SubResource("BoxMesh_fence_v")
+surface_material_override/0 = SubResource("StandardMaterial3D_wood")
+
+[node name="EastFence" type="CollisionShape3D" parent="Fences"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0.8, 0)
+shape = SubResource("BoxShape3D_fence_v")
+
+[node name="EastMesh" type="MeshInstance3D" parent="Fences"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0.8, 0)
+mesh = SubResource("BoxMesh_fence_v")
+surface_material_override/0 = SubResource("StandardMaterial3D_wood")
+
+[node name="GardenTrees" type="Node3D" parent="."]
+
+[node name="Tree1Trunk" type="MeshInstance3D" parent="GardenTrees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.2, -6)
+mesh = SubResource("CylinderMesh_tree_trunk")
+surface_material_override/0 = SubResource("StandardMaterial3D_bark")
+
+[node name="Tree1Leaves" type="MeshInstance3D" parent="GardenTrees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 3.2, -6)
+mesh = SubResource("SphereMesh_canopy")
+surface_material_override/0 = SubResource("StandardMaterial3D_leaves")
+
+[node name="Tree2Trunk" type="MeshInstance3D" parent="GardenTrees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.2, -6)
+mesh = SubResource("CylinderMesh_tree_trunk")
+surface_material_override/0 = SubResource("StandardMaterial3D_bark")
+
+[node name="Tree2Leaves" type="MeshInstance3D" parent="GardenTrees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 3.2, -6)
+mesh = SubResource("SphereMesh_canopy")
+surface_material_override/0 = SubResource("StandardMaterial3D_leaves")
+
+[node name="GardenBench" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -2.5)
+mesh = SubResource("BoxMesh_bench")
+surface_material_override/0 = SubResource("StandardMaterial3D_concrete")
+
+[node name="GardenSign" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6, -11.5)
+billboard = 1
+text = "CAMPUS BOTANICAL PARK & LOVE GARDEN"
+font_size = 38
+outline_size = 8
+
+[node name="WorldObjects" type="Node3D" parent="."]
+
+[node name="ParkBench" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
+object_type = 3
+object_name = "Park Relaxation Bench (+Energy, +Mood)"
+
+[node name="NPCs" type="Node3D" parent="."]
+
+[node name="StudentChilling" parent="NPCs" instance=ExtResource("5_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.1, 0)
+character_name = "Tobi"
+character_role = "Finalist (400L)"
+shirt_color = Color(0.9, 0.35, 0.15, 1)
+
+[node name="Player3D" parent="." instance=ExtResource("2_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 4.0)
+
+[node name="HUD" parent="." instance=ExtResource("3_hud")]
+layer = 1
+
+[node name="MenusLayer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="DialogueMenu" parent="MenusLayer" instance=ExtResource("6_dialogue")]
+
+[node name="SummaryMenu" parent="MenusLayer" instance=ExtResource("7_summary")]
+
+[node name="MobileControls" parent="." instance=ExtResource("8_mobile")]

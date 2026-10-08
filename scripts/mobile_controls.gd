@@ -31,6 +31,8 @@ func _ready() -> void:
 	_wire_transit_btn(%LibraryBtn, &"library")
 	_wire_transit_btn(%ChapelBtn, &"chapel")
 	_wire_transit_btn(%SUBBtn, &"sub")
+	_wire_transit_btn(%GardenBtn, &"garden")
+	_wire_transit_btn(%SalonBtn, &"salon")
 	_wire_transit_btn(%ATMBtn, &"atm")
 	_wire_transit_btn(%CloseMapBtn, &"close")
 

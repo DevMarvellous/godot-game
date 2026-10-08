@@ -100,3 +100,4 @@ static func get_dialogue(npc_name: String) -> Dictionary:
 			}
 		]
 	}
+
