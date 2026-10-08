@@ -4,6 +4,8 @@ extends CharacterBody3D
 ## Lightweight campus student & lecturer NPC.
 ## Moves between waypoints and provides Nigerian campus banter when talked to.
 
+signal dialogue_requested(npc: NPC3D, player: CharacterBody3D)
+
 @export var character_name: String = "Student"
 @export var character_role: String = "Course Mate"
 @export var shirt_color: Color = Color(0.85, 0.45, 0.2, 1.0)
@@ -118,6 +120,8 @@ func _on_body_exited(body: Node3D) -> void:
 
 
 func talk() -> void:
+	dialogue_requested.emit(self, current_player)
+
 	if dialogues.is_empty():
 		return
 

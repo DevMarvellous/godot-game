@@ -14,6 +14,7 @@ extends Node3D
 @onready var food_menu: Control = $MenusLayer/FoodMenu if has_node("MenusLayer/FoodMenu") else null
 @onready var study_menu: Control = $MenusLayer/StudyMenu if has_node("MenusLayer/StudyMenu") else null
 @onready var ca_test_menu: Control = $MenusLayer/CATestMenu if has_node("MenusLayer/CATestMenu") else null
+@onready var dialogue_menu: Control = $MenusLayer/DialogueMenu if has_node("MenusLayer/DialogueMenu") else null
 @onready var summary_menu: Control = $MenusLayer/SummaryMenu if has_node("MenusLayer/SummaryMenu") else null
 
 
@@ -34,6 +35,8 @@ func _ready() -> void:
 		study_menu.menu_closed.connect(_on_menu_closed)
 	if ca_test_menu:
 		ca_test_menu.test_closed.connect(_on_menu_closed)
+	if dialogue_menu:
+		dialogue_menu.dialogue_ended.connect(_on_menu_closed)
 	if summary_menu:
 		summary_menu.summary_closed.connect(_on_summary_closed)
 
@@ -54,6 +57,12 @@ func _connect_interactive_fixtures() -> void:
 		if child is CampusObject3D:
 			child.menu_requested.connect(_on_fixture_menu_requested)
 
+	var npcs: Node = get_node_or_null("NPCs")
+	if npcs:
+		for child: Node in npcs.get_children():
+			if child is NPC3D:
+				child.dialogue_requested.connect(_on_npc_dialogue_requested)
+
 
 func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> void:
 	if player:
@@ -70,6 +79,14 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 			study_menu.open_menu(p)
 
 
+func _on_npc_dialogue_requested(npc: NPC3D, p: CharacterBody3D) -> void:
+	if player:
+		player.set_physics_process(false)
+		player.velocity = Vector3.ZERO
+	if dialogue_menu:
+		dialogue_menu.open_dialogue(p, npc.character_name, npc.character_role)
+
+
 func _on_transit_requested(dest: StringName) -> void:
 	match dest:
 		&"hostel":
@@ -82,6 +99,8 @@ func _on_transit_requested(dest: StringName) -> void:
 			_go_to_scene("res://scenes/rooms/buka_court.tscn")
 		&"chapel":
 			_go_to_scene("res://scenes/rooms/chapel_hall.tscn")
+		&"sub":
+			_go_to_scene("res://scenes/rooms/sub_building.tscn")
 		&"atm":
 			_go_to_scene("res://scenes/main.tscn")
 

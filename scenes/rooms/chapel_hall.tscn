@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/npc_3d.tscn" id="5_npc"]
 [ext_resource type="PackedScene" path="res://scenes/summary_menu.tscn" id="6_summary"]
 [ext_resource type="PackedScene" path="res://scenes/mobile_controls.tscn" id="7_mobile"]
+[ext_resource type="PackedScene" path="res://scenes/dialogue_menu.tscn" id="8_dialogue"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(18, 0.4, 18)
@@ -147,6 +148,8 @@ layer = 1
 
 [node name="MenusLayer" type="CanvasLayer" parent="."]
 layer = 2
+
+[node name="DialogueMenu" parent="MenusLayer" instance=ExtResource("8_dialogue")]
 
 [node name="SummaryMenu" parent="MenusLayer" instance=ExtResource("6_summary")]
 

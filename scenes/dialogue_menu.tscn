@@ -1,6 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://c8catest001"]
+[gd_scene load_steps=6 format=3 uid="uid://c8dialogue001"]
 
-[ext_resource type="Script" path="res://scripts/ca_test_menu.gd" id="1_catest"]
+[ext_resource type="Script" path="res://scripts/dialogue_menu.gd" id="1_dialogue"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
 bg_color = Color(0.08, 0.1, 0.14, 0.98)
@@ -8,7 +8,7 @@ border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0.95, 0.75, 0.2, 1)
+border_color = Color(0.3, 0.7, 0.95, 1)
 corner_radius_top_left = 14
 corner_radius_top_right = 14
 corner_radius_bottom_right = 14
@@ -18,23 +18,23 @@ content_margin_top = 20.0
 content_margin_right = 22.0
 content_margin_bottom = 20.0
 
-[sub_resource type="LabelSettings" id="LabelSettings_title"]
+[sub_resource type="LabelSettings" id="LabelSettings_name"]
 font_size = 22
 font_color = Color(1, 0.85, 0.3, 1)
 outline_size = 3
 outline_color = Color(0, 0, 0, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_q"]
+[sub_resource type="LabelSettings" id="LabelSettings_speech"]
 font_size = 18
-font_color = Color(1, 1, 1, 1)
+font_color = Color(0.95, 0.96, 0.98, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_feedback"]
-bg_color = Color(0.12, 0.16, 0.22, 0.95)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_response"]
+bg_color = Color(0.12, 0.18, 0.25, 0.95)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.4, 0.75, 1, 1)
+border_color = Color(0.25, 0.85, 0.6, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -44,14 +44,14 @@ content_margin_top = 10.0
 content_margin_right = 14.0
 content_margin_bottom = 10.0
 
-[node name="CATestMenu" type="Control"]
+[node name="DialogueMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_catest")
+script = ExtResource("1_dialogue")
 
 [node name="DarkBackdrop" type="ColorRect" parent="."]
 layout_mode = 1
@@ -60,7 +60,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.65)
+color = Color(0, 0, 0, 0.6)
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -71,7 +71,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="ModalPanel" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(660, 780)
+custom_minimum_size = Vector2(660, 750)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
 
@@ -86,18 +86,18 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="TitleLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/Header/TitleBox"]
+[node name="NPCNameLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/Header/TitleBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "📝 CONTINUOUS ASSESSMENT TEST"
-label_settings = SubResource("LabelSettings_title")
+text = "Student Name"
+label_settings = SubResource("LabelSettings_name")
 
-[node name="CourseLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/Header/TitleBox"]
+[node name="NPCRoleLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/Header/TitleBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
 theme_override_font_sizes/font_size = 15
-text = "CSC 101: CONTINUOUS ASSESSMENT (30 MARKS)"
+text = "[ Course Rep ]"
 
 [node name="CloseBtn" type="Button" parent="CenterContainer/ModalPanel/VBox/Header"]
 unique_name_in_owner = true
@@ -109,19 +109,21 @@ text = "✕"
 [node name="HSeparator" type="HSeparator" parent="CenterContainer/ModalPanel/VBox"]
 layout_mode = 2
 
-[node name="ProgressLabel" type="Label" parent="CenterContainer/ModalPanel/VBox"]
-unique_name_in_owner = true
+[node name="SpeechPanel" type="PanelContainer" parent="CenterContainer/ModalPanel/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 1)
-theme_override_font_sizes/font_size = 15
-text = "Question 1 of 3"
 
-[node name="QuestionLabel" type="Label" parent="CenterContainer/ModalPanel/VBox"]
+[node name="SpeechText" type="Label" parent="CenterContainer/ModalPanel/VBox/SpeechPanel"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
-label_settings = SubResource("LabelSettings_q")
+label_settings = SubResource("LabelSettings_speech")
 autowrap_mode = 2
+
+[node name="ChoicesPrompt" type="Label" parent="CenterContainer/ModalPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 15
+text = "YOUR RESPONSE:"
 
 [node name="OptionsContainer" type="VBoxContainer" parent="CenterContainer/ModalPanel/VBox"]
 unique_name_in_owner = true
@@ -129,25 +131,24 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 10
 
-[node name="FeedbackPanel" type="PanelContainer" parent="CenterContainer/ModalPanel/VBox"]
+[node name="ResponsePanel" type="PanelContainer" parent="CenterContainer/ModalPanel/VBox"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_feedback")
+theme_override_styles/panel = SubResource("StyleBoxFlat_response")
 
-[node name="FeedbackVBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/VBox/FeedbackPanel"]
+[node name="VBox2" type="VBoxContainer" parent="CenterContainer/ModalPanel/VBox/ResponsePanel"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="FeedbackText" type="Label" parent="CenterContainer/ModalPanel/VBox/FeedbackPanel/FeedbackVBox"]
+[node name="ResponseText" type="Label" parent="CenterContainer/ModalPanel/VBox/ResponsePanel/VBox2"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 16
 autowrap_mode = 2
 
-[node name="NextBtn" type="Button" parent="CenterContainer/ModalPanel/VBox/FeedbackPanel/FeedbackVBox"]
+[node name="FinishBtn" type="Button" parent="CenterContainer/ModalPanel/VBox/ResponsePanel/VBox2"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
-text = "Next Question ➔"
-
+text = "Continue ➔"
