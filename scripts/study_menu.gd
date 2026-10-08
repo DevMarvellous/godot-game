@@ -124,7 +124,7 @@ func _create_study_card(opt: Dictionary, player_energy: float) -> PanelContainer
 	panel.add_theme_stylebox_override(&"panel", style)
 
 	var hbox: HBoxContainer = HBoxContainer.new()
-	hbox.theme_override_constants.separation = 12
+	hbox.add_theme_constant_override(&"separation", 12)
 	panel.add_child(hbox)
 
 	var vbox: VBoxContainer = VBoxContainer.new()

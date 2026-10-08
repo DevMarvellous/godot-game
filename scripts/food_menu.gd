@@ -117,7 +117,7 @@ func _create_food_card(item: Dictionary, player_money: int) -> PanelContainer:
 	panel.add_theme_stylebox_override(&"panel", style)
 
 	var hbox: HBoxContainer = HBoxContainer.new()
-	hbox.theme_override_constants.separation = 12
+	hbox.add_theme_constant_override(&"separation", 12)
 	panel.add_child(hbox)
 
 	# Info column (Name, description, stats)
@@ -182,4 +182,3 @@ func _format_number(n: int) -> String:
 		s = s.insert(idx, ",")
 		idx -= 3
 	return s
-

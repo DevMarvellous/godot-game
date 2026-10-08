@@ -83,7 +83,7 @@ func show_semester_results(result: Dictionary) -> void:
 
 	var title: String = String(result.get("title", "Semester Over"))
 	var desc: String = String(result.get("description", ""))
-	var cgpa: float = float(result.get("cgpa", 3.50))
+	var _cgpa: float = float(result.get("cgpa", 3.50))
 
 	if title_label:
 		title_label.text = "🎓 FINAL DEGREE OUTCOME"
@@ -114,4 +114,3 @@ func _format_number(n: int) -> String:
 		s = s.insert(idx, ",")
 		idx -= 3
 	return s
-

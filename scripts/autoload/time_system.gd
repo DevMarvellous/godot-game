@@ -56,7 +56,7 @@ func sleep_until(target_hour: int) -> void:
 	if diff <= 0:
 		diff += MINUTES_PER_DAY
 	advance_minutes(diff)
-	slept.emit(diff / 60)
+	slept.emit(int(float(diff) / 60.0))
 
 
 func get_hour() -> int:

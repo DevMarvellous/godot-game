@@ -49,7 +49,7 @@ func trigger_day_summary(day_number: int) -> void:
 	var cgpa: float = needs.cgpa if needs else 3.50
 	var faith: float = needs.faith if needs else 70.0
 	var money: int = needs.money if needs else 5000
-	var energy: float = needs.energy if needs else 100.0
+	var _energy: float = needs.energy if needs else 100.0
 
 	var grade_title: String = get_grade_classification(cgpa)
 

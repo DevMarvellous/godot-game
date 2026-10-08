@@ -108,7 +108,7 @@ func _on_body_entered(body: Node3D) -> void:
 	if body is CharacterBody3D and body.has_method("set_interaction_target"):
 		current_player = body as CharacterBody3D
 		# Pass dummy interactable proxy
-		var proxy: Dictionary = {"prompt_message": "[E] Talk to %s" % character_name}
+		var _proxy: Dictionary = {"prompt_message": "[E] Talk to %s" % character_name}
 		# Player can talk
 
 
@@ -139,4 +139,3 @@ func talk() -> void:
 func _on_speech_timeout() -> void:
 	if speech_label:
 		speech_label.visible = false
-
