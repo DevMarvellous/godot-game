@@ -119,3 +119,4 @@ func _on_summary_closed() -> void:
 func _on_player_passed_out(_reason: String) -> void:
 	# If collapsed outside the hostel, wake up back in the hostel
 	get_tree().change_scene_to_file("res://scenes/rooms/hostel_room.tscn")
+

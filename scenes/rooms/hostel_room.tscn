@@ -52,6 +52,15 @@ size = Vector3(1.2, 2.4, 0.8)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wood"]
 albedo_color = Color(0.42, 0.26, 0.16, 1)
 
+[sub_resource type="BoxMesh" id="BoxMesh_tabletop"]
+size = Vector3(1.8, 0.1, 1.0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_chair"]
+size = Vector3(0.6, 0.8, 0.6)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
+albedo_color = Color(0.2, 0.22, 0.25, 1)
+
 [node name="HostelRoom" type="Node3D"]
 script = ExtResource("1_room")
 room_name = "Hostel Room (Moremi / Hall 2)"
@@ -133,6 +142,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.9, -4.8)
 mesh = SubResource("BoxMesh_bunk")
 surface_material_override/0 = SubResource("StandardMaterial3D_bunk")
 
+[node name="DeskTable" type="MeshInstance3D" parent="RoomDecor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.75, -4.8)
+mesh = SubResource("BoxMesh_tabletop")
+surface_material_override/0 = SubResource("StandardMaterial3D_wood")
+
+[node name="DeskChair" type="MeshInstance3D" parent="RoomDecor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.45, -3.8)
+mesh = SubResource("BoxMesh_chair")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
 [node name="RoomTitle3D" type="Label3D" parent="RoomDecor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, -6.6)
 billboard = 1
@@ -166,3 +185,4 @@ layer = 2
 [node name="SummaryMenu" parent="MenusLayer" instance=ExtResource("6_summary")]
 
 [node name="MobileControls" parent="." instance=ExtResource("7_mobile")]
+
