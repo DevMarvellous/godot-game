@@ -1,6 +1,8 @@
 class_name DialogueMenu
 extends Control
 
+const DialogueSystem = preload("res://scripts/data/dialogue_system.gd")
+
 ## Interactive Branching Dialogue Modal for NPC conversations.
 ## Features realistic character responses, relationship feedback, and stats impacts.
 

@@ -57,6 +57,44 @@ const DIALOGUE_TREES: Dictionary = {
 			}
 		]
 	},
+	"Prof. Okonjo": {
+		"greeting": "Calculus requires mental discipline! If you don't master limits and integrals, engineering and computing will humble you.",
+		"choices": [
+			{
+				"text": "Professor, I solved the differential equation assignment on page 42.",
+				"response": "Excellent! That is the spirit of scholarship. You have earned bonus continuous assessment marks.",
+				"cgpa_boost": 0.12,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Sir, can you recommend an extra textbook for revision?",
+				"response": "Go to the Central Library and borrow Stroud Engineering Mathematics or Thomas Calculus.",
+				"cgpa_boost": 0.05,
+				"faith_boost": 0.0,
+				"money_change": 0
+			}
+		]
+	},
+	"Mrs. Folashade": {
+		"greeting": "Good day students! In GST 101, clarity of communication and proper diction are essential for future leaders.",
+		"choices": [
+			{
+				"text": "Good day ma! I wanted to confirm if our term paper requires APA referencing.",
+				"response": "Yes, strictly APA 7th edition! Plagiarism is a serious disciplinary offense in this university.",
+				"cgpa_boost": 0.06,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Ma, can we form study groups for the upcoming presentation?",
+				"response": "Highly encouraged! Peer learning sharpens your public speaking skills.",
+				"cgpa_boost": 0.04,
+				"faith_boost": 0.0,
+				"money_change": 0
+			}
+		]
+	},
 	"Sister Blessing": {
 		"greeting": "Praise the Lord, brother/sister! Hope your spirit is energized today?",
 		"choices": [

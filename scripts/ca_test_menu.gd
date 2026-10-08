@@ -1,6 +1,8 @@
 class_name CATestMenu
 extends Control
 
+const QuizTestSystem = preload("res://scripts/data/quiz_test_system.gd")
+
 ## Interactive In-Class Continuous Assessment (CA) Test Paper.
 ## Simulates real Nigerian university impromptu tests with Dr. Adebayo and lecturers.
 ## Your real answers determine your CA marks out of 30, feeding directly into your final semester grade!

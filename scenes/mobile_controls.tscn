@@ -200,7 +200,12 @@ text = "🛏 Hostel Bedroom"
 [node name="ClassBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "📚 Study Hall & Lectures"
+text = "📚 Faculty Lecture Hall (LT1)"
+
+[node name="Class2Btn" type="Button" parent="TouchZone/TransitSheet/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "📐 Sciences Auditorium (LT2)"
 
 [node name="LibraryBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true

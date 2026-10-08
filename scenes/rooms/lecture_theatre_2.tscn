@@ -1,0 +1,172 @@
+[gd_scene format=3 uid="uid://rm_lecture2_001"]
+
+[ext_resource type="Script" path="res://scripts/base_room.gd" id="1_room"]
+[ext_resource type="PackedScene" uid="uid://b3player3d01" path="res://scenes/player_3d.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://c8hud001" path="res://scenes/hud.tscn" id="3_hud"]
+[ext_resource type="PackedScene" uid="uid://b3object3d01" path="res://scenes/campus_object_3d.tscn" id="4_obj"]
+[ext_resource type="PackedScene" path="res://scenes/study_menu.tscn" id="5_study"]
+[ext_resource type="PackedScene" path="res://scenes/npc_3d.tscn" id="6_npc"]
+[ext_resource type="PackedScene" path="res://scenes/summary_menu.tscn" id="7_summary"]
+[ext_resource type="PackedScene" path="res://scenes/mobile_controls.tscn" id="8_mobile"]
+[ext_resource type="PackedScene" path="res://scenes/ca_test_menu.tscn" id="9_catest"]
+[ext_resource type="PackedScene" path="res://scenes/dialogue_menu.tscn" id="10_dialogue"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(24, 0.4, 20)
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+size = Vector3(24, 0.4, 20)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_color = Color(0.18, 0.22, 0.28, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_h"]
+size = Vector3(24, 4.5, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_h"]
+size = Vector3(24, 4.5, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wall"]
+albedo_color = Color(0.82, 0.84, 0.88, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_v"]
+size = Vector3(0.5, 4.5, 20)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_v"]
+size = Vector3(0.5, 4.5, 20)
+
+[sub_resource type="BoxMesh" id="BoxMesh_board"]
+size = Vector3(10.0, 2.2, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_board"]
+albedo_color = Color(0.1, 0.18, 0.32, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_podium"]
+size = Vector3(2.8, 1.1, 1.3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wood"]
+albedo_color = Color(0.38, 0.22, 0.14, 1)
+
+[node name="LectureTheatre2" type="Node3D"]
+script = ExtResource("1_room")
+room_name = "Mathematics & Sciences Auditorium (LT2)"
+room_id = &"lecture2"
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2, 0)
+light_color = Color(1, 0.98, 0.92, 1)
+light_energy = 1.4
+omni_range = 22.0
+
+[node name="Floor" type="StaticBody3D" parent="."]
+collision_layer = 4
+collision_mask = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+shape = SubResource("BoxShape3D_floor")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+mesh = SubResource("BoxMesh_floor")
+surface_material_override/0 = SubResource("StandardMaterial3D_floor")
+
+[node name="Walls" type="StaticBody3D" parent="."]
+collision_layer = 4
+collision_mask = 1
+
+[node name="NorthWall" type="CollisionShape3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, -10)
+shape = SubResource("BoxShape3D_wall_h")
+
+[node name="NorthMesh" type="MeshInstance3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, -10)
+mesh = SubResource("BoxMesh_wall_h")
+surface_material_override/0 = SubResource("StandardMaterial3D_wall")
+
+[node name="SouthWall" type="CollisionShape3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 10)
+shape = SubResource("BoxShape3D_wall_h")
+
+[node name="SouthMesh" type="MeshInstance3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 10)
+mesh = SubResource("BoxMesh_wall_h")
+surface_material_override/0 = SubResource("StandardMaterial3D_wall")
+
+[node name="WestWall" type="CollisionShape3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2.25, 0)
+shape = SubResource("BoxShape3D_wall_v")
+
+[node name="WestMesh" type="MeshInstance3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2.25, 0)
+mesh = SubResource("BoxMesh_wall_v")
+surface_material_override/0 = SubResource("StandardMaterial3D_wall")
+
+[node name="EastWall" type="CollisionShape3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 2.25, 0)
+shape = SubResource("BoxShape3D_wall_v")
+
+[node name="EastMesh" type="MeshInstance3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 2.25, 0)
+mesh = SubResource("BoxMesh_wall_v")
+surface_material_override/0 = SubResource("StandardMaterial3D_wall")
+
+[node name="LectureFixtures" type="Node3D" parent="."]
+
+[node name="BlueWhiteboard" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -9.7)
+mesh = SubResource("BoxMesh_board")
+surface_material_override/0 = SubResource("StandardMaterial3D_board")
+
+[node name="Podium" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -7.0)
+mesh = SubResource("BoxMesh_podium")
+surface_material_override/0 = SubResource("StandardMaterial3D_wood")
+
+[node name="Sign" type="Label3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0, -9.5)
+billboard = 1
+text = "AUDITORIUM 2 (MATHEMATICS & GENERAL STUDIES LT2)"
+font_size = 34
+outline_size = 6
+
+[node name="WorldObjects" type="Node3D" parent="."]
+
+[node name="StudyDesk" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
+object_type = 1
+object_name = "Auditorium Seat (MTH / GST Tests)"
+
+[node name="NPCs" type="Node3D" parent="."]
+
+[node name="ProfOkonjo" parent="NPCs" instance=ExtResource("6_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -5.8)
+character_name = "Prof. Okonjo"
+character_role = "Professor of Mathematics"
+shirt_color = Color(0.2, 0.35, 0.75, 1)
+
+[node name="MrsFolashade" parent="NPCs" instance=ExtResource("6_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0, 0.1, -4.5)
+character_name = "Mrs. Folashade"
+character_role = "GST 101 Coordinator"
+shirt_color = Color(0.85, 0.65, 0.2, 1)
+
+[node name="Player3D" parent="." instance=ExtResource("2_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 4.5)
+
+[node name="HUD" parent="." instance=ExtResource("3_hud")]
+layer = 1
+
+[node name="MenusLayer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="StudyMenu" parent="MenusLayer" instance=ExtResource("5_study")]
+
+[node name="CATestMenu" parent="MenusLayer" instance=ExtResource("9_catest")]
+
+[node name="DialogueMenu" parent="MenusLayer" instance=ExtResource("10_dialogue")]
+
+[node name="SummaryMenu" parent="MenusLayer" instance=ExtResource("7_summary")]
+
+[node name="MobileControls" parent="." instance=ExtResource("8_mobile")]
+
