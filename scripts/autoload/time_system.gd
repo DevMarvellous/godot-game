@@ -60,7 +60,7 @@ func sleep_until(target_hour: int) -> void:
 
 
 func get_hour() -> int:
-	return minute_of_day / 60
+	return floori(float(minute_of_day) / 60.0)
 
 
 func get_minute() -> int:
@@ -76,7 +76,7 @@ func get_weekday_index() -> int:
 
 
 func get_week_index() -> int:
-	return (day - 1) / 7
+	return floori(float(day - 1) / 7.0)
 
 
 func is_weekend() -> bool:
@@ -94,4 +94,3 @@ func get_time_string() -> String:
 
 func get_day_string() -> String:
 	return "Day %d (%s)" % [day, WEEKDAY_NAMES[get_weekday_index()]]
-

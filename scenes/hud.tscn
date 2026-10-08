@@ -14,48 +14,65 @@ content_margin_right = 14.0
 content_margin_bottom = 10.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_time"]
-font_size = 17
-font_color = Color(0.9, 0.95, 1, 1)
-outline_size = 2
+font_size = 28
+font_color = Color(1, 1, 1, 1)
+outline_size = 5
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_schedule"]
-font_size = 13
-font_color = Color(1, 0.85, 0.3, 1)
-outline_size = 2
+font_size = 22
+font_color = Color(1, 0.88, 0.35, 1)
+outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_money"]
-font_size = 18
-font_color = Color(0.25, 0.9, 0.45, 1)
-outline_size = 2
+font_size = 28
+font_color = Color(0.3, 0.95, 0.5, 1)
+outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_controls"]
-font_size = 13
-font_color = Color(0.8, 0.85, 0.9, 0.9)
-outline_size = 2
-outline_color = Color(0, 0, 0, 0.8)
+[sub_resource type="LabelSettings" id="LabelSettings_cgpa"]
+font_size = 24
+font_color = Color(0.4, 0.85, 1.0, 1)
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_stat"]
+font_size = 20
+font_color = Color(0.9, 0.92, 0.96, 1)
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_hud")
 
 [node name="TopPanel" type="PanelContainer" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
 offset_left = 16.0
 offset_top = 16.0
-offset_right = 340.0
-offset_bottom = 240.0
+offset_right = -16.0
+offset_bottom = 220.0
+grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TopPanel"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 
-[node name="TimeLabel" type="Label" parent="TopPanel/VBoxContainer"]
+[node name="Row1" type="HBoxContainer" parent="TopPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="TimeLabel" type="Label" parent="TopPanel/VBoxContainer/Row1"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 text = "07:00  •  Day 1 (Mon)"
 label_settings = SubResource("LabelSettings_time")
+
+[node name="MoneyLabel" type="Label" parent="TopPanel/VBoxContainer/Row1"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Wallet: ₦5,000"
+label_settings = SubResource("LabelSettings_money")
 
 [node name="ScheduleBanner" type="Label" parent="TopPanel/VBoxContainer"]
 unique_name_in_owner = true
@@ -66,81 +83,60 @@ label_settings = SubResource("LabelSettings_schedule")
 [node name="HSeparator" type="HSeparator" parent="TopPanel/VBoxContainer"]
 layout_mode = 2
 
-[node name="MoneyLabel" type="Label" parent="TopPanel/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Wallet: ₦5,000"
-label_settings = SubResource("LabelSettings_money")
-
 [node name="CGPALabel" type="Label" parent="TopPanel/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "CGPA: 3.50 / 5.0"
+text = "Academic CGPA: 3.50 / 5.0"
+label_settings = SubResource("LabelSettings_cgpa")
 
-[node name="EnergyContainer" type="HBoxContainer" parent="TopPanel/VBoxContainer"]
+[node name="StatsGrid" type="HBoxContainer" parent="TopPanel/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 12
 
-[node name="Label" type="Label" parent="TopPanel/VBoxContainer/EnergyContainer"]
-custom_minimum_size = Vector2(60, 0)
+[node name="EnergyContainer" type="VBoxContainer" parent="TopPanel/VBoxContainer/StatsGrid"]
 layout_mode = 2
-text = "Energy"
+size_flags_horizontal = 3
 
-[node name="EnergyBar" type="ProgressBar" parent="TopPanel/VBoxContainer/EnergyContainer"]
+[node name="Label" type="Label" parent="TopPanel/VBoxContainer/StatsGrid/EnergyContainer"]
+layout_mode = 2
+text = "⚡ Energy"
+label_settings = SubResource("LabelSettings_stat")
+
+[node name="EnergyBar" type="ProgressBar" parent="TopPanel/VBoxContainer/StatsGrid/EnergyContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(170, 16)
+custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
-size_flags_vertical = 4
 value = 100.0
 show_percentage = false
 
-[node name="HungerContainer" type="HBoxContainer" parent="TopPanel/VBoxContainer"]
+[node name="HungerContainer" type="VBoxContainer" parent="TopPanel/VBoxContainer/StatsGrid"]
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="TopPanel/VBoxContainer/HungerContainer"]
-custom_minimum_size = Vector2(60, 0)
+[node name="Label" type="Label" parent="TopPanel/VBoxContainer/StatsGrid/HungerContainer"]
 layout_mode = 2
-text = "Hunger"
+text = "🍲 Fullness"
+label_settings = SubResource("LabelSettings_stat")
 
-[node name="HungerBar" type="ProgressBar" parent="TopPanel/VBoxContainer/HungerContainer"]
+[node name="HungerBar" type="ProgressBar" parent="TopPanel/VBoxContainer/StatsGrid/HungerContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(170, 16)
+custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
-size_flags_vertical = 4
 value = 100.0
 show_percentage = false
 
-[node name="FaithContainer" type="HBoxContainer" parent="TopPanel/VBoxContainer"]
+[node name="FaithContainer" type="VBoxContainer" parent="TopPanel/VBoxContainer/StatsGrid"]
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="TopPanel/VBoxContainer/FaithContainer"]
-custom_minimum_size = Vector2(60, 0)
+[node name="Label" type="Label" parent="TopPanel/VBoxContainer/StatsGrid/FaithContainer"]
 layout_mode = 2
-text = "Faith"
+text = "🙏 Faith"
+label_settings = SubResource("LabelSettings_stat")
 
-[node name="FaithBar" type="ProgressBar" parent="TopPanel/VBoxContainer/FaithContainer"]
+[node name="FaithBar" type="ProgressBar" parent="TopPanel/VBoxContainer/StatsGrid/FaithContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(170, 16)
+custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
-size_flags_vertical = 4
 value = 70.0
 show_percentage = false
-
-[node name="ControlsPanel" type="PanelContainer" parent="."]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -230.0
-offset_top = -46.0
-offset_right = 230.0
-offset_bottom = -14.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
-
-[node name="ControlsLabel" type="Label" parent="ControlsPanel"]
-layout_mode = 2
-text = "WASD: Move  |  [E]: Interact  |  Sleep ends day  |  Attend lectures on time!"
-label_settings = SubResource("LabelSettings_controls")
-horizontal_alignment = 1

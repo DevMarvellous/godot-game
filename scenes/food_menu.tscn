@@ -55,7 +55,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="ModalPanel" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(560, 420)
+custom_minimum_size = Vector2(640, 750)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
 

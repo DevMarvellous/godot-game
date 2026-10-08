@@ -92,5 +92,5 @@ func _key(index: int) -> String:
 
 
 func _fmt(minutes: int) -> String:
-	return "%02d:%02d" % [minutes / 60, minutes % 60]
+	return "%02d:%02d" % [floori(float(minutes) / 60.0), minutes % 60]
 

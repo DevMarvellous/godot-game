@@ -1,0 +1,152 @@
+[gd_scene load_steps=6 format=3 uid="uid://c8catest001"]
+
+[ext_resource type="Script" path="res://scripts/ca_test_menu.gd" id="1_catest"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.08, 0.1, 0.14, 0.98)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.95, 0.75, 0.2, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 22.0
+content_margin_top = 20.0
+content_margin_right = 22.0
+content_margin_bottom = 20.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font_size = 22
+font_color = Color(1, 0.85, 0.3, 1)
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_q"]
+font_size = 18
+font_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_feedback"]
+bg_color = Color(0.12, 0.16, 0.22, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.75, 1, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+
+[node name="CATestMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_catest")
+
+[node name="DarkBackdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.65)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ModalPanel" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(660, 780)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/ModalPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="CenterContainer/ModalPanel/VBox"]
+layout_mode = 2
+
+[node name="TitleBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/Header/TitleBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "📝 CONTINUOUS ASSESSMENT TEST"
+label_settings = SubResource("LabelSettings_title")
+
+[node name="CourseLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/Header/TitleBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = "CSC 101: CONTINUOUS ASSESSMENT (30 MARKS)"
+
+[node name="CloseBtn" type="Button" parent="CenterContainer/ModalPanel/VBox/Header"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_vertical = 0
+text = "✕"
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/ModalPanel/VBox"]
+layout_mode = 2
+
+[node name="ProgressLabel" type="Label" parent="CenterContainer/ModalPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 1)
+theme_override_font_sizes/font_size = 15
+text = "Question 1 of 3"
+
+[node name="QuestionLabel" type="Label" parent="CenterContainer/ModalPanel/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+label_settings = SubResource("LabelSettings_q")
+autowrap_mode = 2
+
+[node name="OptionsContainer" type="VBoxContainer" parent="CenterContainer/ModalPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="FeedbackPanel" type="PanelContainer" parent="CenterContainer/ModalPanel/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_feedback")
+
+[node name="FeedbackVBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/VBox/FeedbackPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="FeedbackText" type="Label" parent="CenterContainer/ModalPanel/VBox/FeedbackPanel/FeedbackVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+autowrap_mode = 2
+
+[node name="NextBtn" type="Button" parent="CenterContainer/ModalPanel/VBox/FeedbackPanel/FeedbackVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "Next Question ➔"

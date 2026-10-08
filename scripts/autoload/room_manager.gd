@@ -1,4 +1,3 @@
-class_name RoomManager
 extends Node
 
 ## Manages room transitions across campus hubs without loading entire world at once.
@@ -39,4 +38,3 @@ func change_room(target_room: StringName) -> void:
 	else:
 		is_transitioning = false
 		push_error("Failed to load room scene: %s (Error %d)" % [target_path, err])
-

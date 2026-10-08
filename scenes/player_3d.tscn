@@ -55,24 +55,24 @@ mesh = SubResource("BoxMesh_visor")
 script = ExtResource("2_needs")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 12, 11)
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 8.5, 7.5)
 current = true
-fov = 48.0
+fov = 52.0
 
 [node name="PromptLabel" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, 0)
 billboard = 1
 text = "Press [E]"
-font_size = 28
-outline_size = 6
+font_size = 46
+outline_size = 10
 
 [node name="NotifLabel" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.65, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.9, 0)
 billboard = 1
 modulate = Color(1, 0.9, 0.2, 1)
 text = "Notice"
-font_size = 32
-outline_size = 8
+font_size = 48
+outline_size = 12
 
 [node name="NotifTimer" type="Timer" parent="."]
 one_shot = true

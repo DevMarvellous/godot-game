@@ -148,38 +148,44 @@ text = "INTERACT
 
 [node name="MapButton" type="Button" parent="TouchZone"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 50)
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -150.0
-offset_top = 16.0
-offset_right = -18.0
-offset_bottom = 56.0
+offset_left = -190.0
+offset_top = 236.0
+offset_right = -20.0
+offset_bottom = 286.0
 grow_horizontal = 0
+theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxFlat_map_btn")
 text = "🚌 CAMPUS MAP"
 
 [node name="TransitSheet" type="PanelContainer" parent="TouchZone"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 280)
+custom_minimum_size = Vector2(340, 360)
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -324.0
-offset_top = 64.0
-offset_right = -24.0
-offset_bottom = 350.0
-grow_horizontal = 0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -170.0
+offset_top = -180.0
+offset_right = 170.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_transit")
 
 [node name="VBox" type="VBoxContainer" parent="TouchZone/TransitSheet"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 10
 
 [node name="Title" type="Label" parent="TouchZone/TransitSheet/VBox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "QUICK CAMPUS TRANSIT"
 horizontal_alignment = 1
 
@@ -195,6 +201,11 @@ text = "🛏 Hostel Bedroom"
 unique_name_in_owner = true
 layout_mode = 2
 text = "📚 Study Hall & Lectures"
+
+[node name="LibraryBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "📖 University Library"
 
 [node name="BukaBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true

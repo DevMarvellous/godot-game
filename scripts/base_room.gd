@@ -13,6 +13,7 @@ extends Node3D
 
 @onready var food_menu: Control = $MenusLayer/FoodMenu if has_node("MenusLayer/FoodMenu") else null
 @onready var study_menu: Control = $MenusLayer/StudyMenu if has_node("MenusLayer/StudyMenu") else null
+@onready var ca_test_menu: Control = $MenusLayer/CATestMenu if has_node("MenusLayer/CATestMenu") else null
 @onready var summary_menu: Control = $MenusLayer/SummaryMenu if has_node("MenusLayer/SummaryMenu") else null
 
 
@@ -31,6 +32,8 @@ func _ready() -> void:
 		food_menu.menu_closed.connect(_on_menu_closed)
 	if study_menu:
 		study_menu.menu_closed.connect(_on_menu_closed)
+	if ca_test_menu:
+		ca_test_menu.test_closed.connect(_on_menu_closed)
 	if summary_menu:
 		summary_menu.summary_closed.connect(_on_summary_closed)
 
@@ -59,8 +62,12 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 
 	if menu_type == &"food" and food_menu:
 		food_menu.open_menu(p)
-	elif menu_type == &"study" and study_menu:
-		study_menu.open_menu(p)
+	elif menu_type == &"study":
+		if ca_test_menu and room_id == &"lecture":
+			# In lecture hall, taking a desk opens the CA Test Paper!
+			ca_test_menu.start_test(p, "CSC 101")
+		elif study_menu:
+			study_menu.open_menu(p)
 
 
 func _on_transit_requested(dest: StringName) -> void:
@@ -69,6 +76,8 @@ func _on_transit_requested(dest: StringName) -> void:
 			_go_to_scene("res://scenes/rooms/hostel_room.tscn")
 		&"class":
 			_go_to_scene("res://scenes/rooms/lecture_hall.tscn")
+		&"library":
+			_go_to_scene("res://scenes/rooms/library_hall.tscn")
 		&"buka":
 			_go_to_scene("res://scenes/rooms/buka_court.tscn")
 		&"chapel":
