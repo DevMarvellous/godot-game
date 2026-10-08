@@ -1,0 +1,153 @@
+[gd_scene format=3 uid="uid://rm_chapel001"]
+
+[ext_resource type="Script" path="res://scripts/base_room.gd" id="1_room"]
+[ext_resource type="PackedScene" uid="uid://b3player3d01" path="res://scenes/player_3d.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://c8hud001" path="res://scenes/hud.tscn" id="3_hud"]
+[ext_resource type="PackedScene" uid="uid://b3object3d01" path="res://scenes/campus_object_3d.tscn" id="4_obj"]
+[ext_resource type="PackedScene" path="res://scenes/npc_3d.tscn" id="5_npc"]
+[ext_resource type="PackedScene" path="res://scenes/summary_menu.tscn" id="6_summary"]
+[ext_resource type="PackedScene" path="res://scenes/mobile_controls.tscn" id="7_mobile"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(18, 0.4, 18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+size = Vector3(18, 0.4, 18)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_color = Color(0.24, 0.22, 0.25, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_h"]
+size = Vector3(18, 4.0, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_h"]
+size = Vector3(18, 4.0, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wall"]
+albedo_color = Color(0.88, 0.88, 0.92, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_v"]
+size = Vector3(0.5, 4.0, 18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_v"]
+size = Vector3(0.5, 4.0, 18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cross_v"]
+size = Vector3(0.5, 3.2, 0.15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cross_h"]
+size = Vector3(1.8, 0.5, 0.15)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gold"]
+albedo_color = Color(0.9, 0.78, 0.25, 1)
+
+[node name="ChapelHall" type="Node3D"]
+script = ExtResource("1_room")
+room_name = "Campus Chapel / Fellowship Auditorium"
+room_id = &"chapel"
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
+light_color = Color(1, 0.96, 0.85, 1)
+light_energy = 1.3
+omni_range = 18.0
+
+[node name="Floor" type="StaticBody3D" parent="."]
+collision_layer = 4
+collision_mask = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+shape = SubResource("BoxShape3D_floor")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+mesh = SubResource("BoxMesh_floor")
+surface_material_override/0 = SubResource("StandardMaterial3D_floor")
+
+[node name="Walls" type="StaticBody3D" parent="."]
+collision_layer = 4
+collision_mask = 1
+
+[node name="NorthWall" type="CollisionShape3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, -9)
+shape = SubResource("BoxShape3D_wall_h")
+
+[node name="NorthMesh" type="MeshInstance3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, -9)
+mesh = SubResource("BoxMesh_wall_h")
+surface_material_override/0 = SubResource("StandardMaterial3D_wall")
+
+[node name="SouthWall" type="CollisionShape3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, 9)
+shape = SubResource("BoxShape3D_wall_h")
+
+[node name="SouthMesh" type="MeshInstance3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, 9)
+mesh = SubResource("BoxMesh_wall_h")
+surface_material_override/0 = SubResource("StandardMaterial3D_wall")
+
+[node name="WestWall" type="CollisionShape3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 2.0, 0)
+shape = SubResource("BoxShape3D_wall_v")
+
+[node name="WestMesh" type="MeshInstance3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 2.0, 0)
+mesh = SubResource("BoxMesh_wall_v")
+surface_material_override/0 = SubResource("StandardMaterial3D_wall")
+
+[node name="EastWall" type="CollisionShape3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 2.0, 0)
+shape = SubResource("BoxShape3D_wall_v")
+
+[node name="EastMesh" type="MeshInstance3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 2.0, 0)
+mesh = SubResource("BoxMesh_wall_v")
+surface_material_override/0 = SubResource("StandardMaterial3D_wall")
+
+[node name="ChapelFixtures" type="Node3D" parent="."]
+
+[node name="CrossVertical" type="MeshInstance3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4, -8.7)
+mesh = SubResource("BoxMesh_cross_v")
+surface_material_override/0 = SubResource("StandardMaterial3D_gold")
+
+[node name="CrossHorizontal" type="MeshInstance3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, -8.7)
+mesh = SubResource("BoxMesh_cross_h")
+surface_material_override/0 = SubResource("StandardMaterial3D_gold")
+
+[node name="ChapelSign" type="Label3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, -8.5)
+billboard = 1
+text = "CAMPUS CHRISTIAN FELLOWSHIP AUDITORIUM"
+font_size = 32
+outline_size = 6
+
+[node name="WorldObjects" type="Node3D" parent="."]
+
+[node name="ChapelAltar" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
+object_type = 3
+object_name = "Chapel Fellowship Altar"
+
+[node name="NPCs" type="Node3D" parent="."]
+
+[node name="SisterBlessing" parent="NPCs" instance=ExtResource("5_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.1, -2.5)
+character_name = "Sister Blessing"
+character_role = "Fellowship Exec"
+shirt_color = Color(0.65, 0.35, 0.85, 1)
+
+[node name="Player3D" parent="." instance=ExtResource("2_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 2.5)
+
+[node name="HUD" parent="." instance=ExtResource("3_hud")]
+layer = 1
+
+[node name="MenusLayer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="SummaryMenu" parent="MenusLayer" instance=ExtResource("6_summary")]
+
+[node name="MobileControls" parent="." instance=ExtResource("7_mobile")]

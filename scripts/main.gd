@@ -64,40 +64,26 @@ func _ready() -> void:
 
 
 func _on_transit_requested(dest: StringName) -> void:
-	if not player:
-		return
-
-	var target_pos: Vector3 = Vector3.ZERO
-	var dest_title: String = ""
-
 	match dest:
 		&"hostel":
-			if hostel_bed:
-				target_pos = hostel_bed.global_position + Vector3(0, 0.1, 2.8)
-				dest_title = "Hostel Room"
+			TimeSystem.advance_minutes(5)
+			get_tree().change_scene_to_file("res://scenes/rooms/hostel_room.tscn")
 		&"class":
-			if study_desk:
-				target_pos = study_desk.global_position + Vector3(0, 0.1, 2.8)
-				dest_title = "Study Hall & Lectures"
+			TimeSystem.advance_minutes(5)
+			get_tree().change_scene_to_file("res://scenes/rooms/lecture_hall.tscn")
 		&"buka":
-			if cafeteria:
-				target_pos = cafeteria.global_position + Vector3(0, 0.1, 2.8)
-				dest_title = "Buka Food Court"
+			TimeSystem.advance_minutes(5)
+			get_tree().change_scene_to_file("res://scenes/rooms/buka_court.tscn")
 		&"chapel":
-			if chapel:
-				target_pos = chapel.global_position + Vector3(0, 0.1, 2.8)
-				dest_title = "Fellowship Chapel"
+			TimeSystem.advance_minutes(5)
+			get_tree().change_scene_to_file("res://scenes/rooms/chapel_hall.tscn")
 		&"atm":
-			if atm:
-				target_pos = atm.global_position + Vector3(0, 0.1, 2.8)
-				dest_title = "Campus ATM"
-
-	if dest_title != "":
-		player.global_position = target_pos
-		player.velocity = Vector3.ZERO
-		TimeSystem.advance_minutes(5) # Walking travel time across campus
-		if player.has_method("display_notification"):
-			player.display_notification("Arrived at %s! (5m walk)" % dest_title)
+			if atm and player:
+				player.global_position = atm.global_position + Vector3(0, 0.1, 2.8)
+				player.velocity = Vector3.ZERO
+				TimeSystem.advance_minutes(2)
+				if player.has_method("display_notification"):
+					player.display_notification("Arrived at Campus ATM!")
 
 
 func _on_menu_requested(menu_type: StringName, p: CharacterBody3D) -> void:
