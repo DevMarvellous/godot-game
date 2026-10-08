@@ -58,6 +58,25 @@ size = Vector3(1.8, 0.1, 1.0)
 [sub_resource type="BoxMesh" id="BoxMesh_chair"]
 size = Vector3(0.6, 0.8, 0.6)
 
+[sub_resource type="CylinderMesh" id="CylinderMesh_fan"]
+top_radius = 0.8
+bottom_radius = 0.8
+height = 0.08
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_bucket"]
+top_radius = 0.35
+bottom_radius = 0.28
+height = 0.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_plastic"]
+albedo_color = Color(0.12, 0.6, 0.85, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_laptop"]
+size = Vector3(0.5, 0.05, 0.38)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_laptop"]
+albedo_color = Color(0.15, 0.16, 0.18, 1)
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
 albedo_color = Color(0.2, 0.22, 0.25, 1)
 
@@ -150,6 +169,21 @@ surface_material_override/0 = SubResource("StandardMaterial3D_wood")
 [node name="DeskChair" type="MeshInstance3D" parent="RoomDecor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.45, -3.8)
 mesh = SubResource("BoxMesh_chair")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="Laptop" type="MeshInstance3D" parent="RoomDecor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.82, -4.8)
+mesh = SubResource("BoxMesh_laptop")
+surface_material_override/0 = SubResource("StandardMaterial3D_laptop")
+
+[node name="WaterBucket" type="MeshInstance3D" parent="RoomDecor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.8, 0.3, 3.2)
+mesh = SubResource("CylinderMesh_bucket")
+surface_material_override/0 = SubResource("StandardMaterial3D_plastic")
+
+[node name="CeilingFan" type="MeshInstance3D" parent="RoomDecor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
+mesh = SubResource("CylinderMesh_fan")
 surface_material_override/0 = SubResource("StandardMaterial3D_metal")
 
 [node name="RoomTitle3D" type="Label3D" parent="RoomDecor"]

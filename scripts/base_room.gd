@@ -117,7 +117,23 @@ func _go_to_scene(scene_path: String) -> void:
 			player.display_notification("Already here!")
 		return
 
-	TimeSystem.advance_minutes(5) # Walking travel time
+	# Campus Keke Shuttle fare (₦100) except walking to hostel
+	if player and scene_path != "res://scenes/rooms/hostel_room.tscn":
+		var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
+		if needs:
+			if not needs.modify_money(-100):
+				# Out of money: forced to walk (takes 20 mins instead of 3 mins)
+				TimeSystem.advance_minutes(20)
+				needs.modify_energy(-10.0)
+				if player.has_method("display_notification"):
+					player.display_notification("No Keke money! Trekked on foot (-10 Energy, 20m)")
+			else:
+				TimeSystem.advance_minutes(3) # Fast keke ride
+				if player.has_method("display_notification"):
+					player.display_notification("Took Campus Keke Shuttle! Paid ₦100")
+	else:
+		TimeSystem.advance_minutes(5) # Walking to hostel is free
+
 	get_tree().change_scene_to_file(scene_path)
 
 

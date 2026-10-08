@@ -55,9 +55,9 @@ mesh = SubResource("BoxMesh_visor")
 script = ExtResource("2_needs")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 8.5, 7.5)
+transform = Transform3D(1, 0, 0, 0, 0.951057, 0.309017, 0, -0.309017, 0.951057, 0, 3.2, 4.6)
 current = true
-fov = 52.0
+fov = 65.0
 
 [node name="PromptLabel" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, 0)

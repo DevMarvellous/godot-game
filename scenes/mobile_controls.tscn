@@ -146,18 +146,30 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_interact")
 text = "INTERACT
 [TAP]"
 
-[node name="MapButton" type="Button" parent="TouchZone"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(170, 50)
+[node name="ButtonsRow" type="HBoxContainer" parent="TouchZone"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -190.0
+offset_left = -370.0
 offset_top = 236.0
-offset_right = -20.0
+offset_right = -18.0
 offset_bottom = 286.0
 grow_horizontal = 0
+theme_override_constants/separation = 12
+
+[node name="PhoneButton" type="Button" parent="TouchZone/ButtonsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(165, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_map_btn")
+text = "📱 PHONE"
+
+[node name="MapButton" type="Button" parent="TouchZone/ButtonsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(175, 50)
+layout_mode = 2
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxFlat_map_btn")
 text = "🚌 CAMPUS MAP"
@@ -186,7 +198,14 @@ theme_override_constants/separation = 10
 [node name="Title" type="Label" parent="TouchZone/TransitSheet/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "QUICK CAMPUS TRANSIT"
+text = "CAMPUS SHUTTLE & TRANSIT"
+horizontal_alignment = 1
+
+[node name="SubTitle" type="Label" parent="TouchZone/TransitSheet/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "Campus Keke Shuttle: ₦100 per ride (Instant)"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="TouchZone/TransitSheet/VBox"]
@@ -195,47 +214,47 @@ layout_mode = 2
 [node name="HostelBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "🛏 Hostel Bedroom"
+text = "🛏 Hostel Bedroom (Walk Free)"
 
 [node name="ClassBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "📚 Faculty Lecture Hall (LT1)"
+text = "📚 Faculty Hall LT1 (Keke ₦100)"
 
 [node name="Class2Btn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "📐 Sciences Auditorium (LT2)"
+text = "📐 Sciences LT2 (Keke ₦100)"
 
 [node name="LibraryBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "📖 University Library"
+text = "📖 Central Library (Keke ₦100)"
 
 [node name="BukaBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "🍲 Buka / Food Court"
+text = "🍲 Food Court / Buka (Keke ₦100)"
 
 [node name="ChapelBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "⛪ Fellowship Chapel"
+text = "⛪ Fellowship Chapel (Keke ₦100)"
 
 [node name="SUBBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "🏢 Student Union (SUB)"
+text = "🏢 Student Union SUB (Keke ₦100)"
 
 [node name="GardenBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "🌳 Botanical Gardens & Park"
+text = "🌳 Botanical Gardens (Keke ₦100)"
 
 [node name="SalonBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "✂ Barber & Hair Salon"
+text = "✂ Barber & Salon (Keke ₦100)"
 
 [node name="ATMBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true
