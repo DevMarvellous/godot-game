@@ -198,6 +198,32 @@ const DIALOGUE_TREES: Dictionary = {
 				"money_change": 0
 			}
 		]
+	},
+	"Mama Cashout": {
+		"greeting": "My pikin! Welcome to Mama Cashout! Hot party jollof with spicy chicken, egusi soup, or late-night Indomie with double eggs... wetin you dey chop today?",
+		"choices": [
+			{
+				"text": "Mama, please add extra fried plantain (dodo) on my jollof rice!",
+				"response": "Aww, good student! Because you dey read well well, I put two extra pieces of dodo for you free of charge! Go make us proud!",
+				"cgpa_boost": 0.02,
+				"faith_boost": 5.0,
+				"money_change": 0
+			},
+			{
+				"text": "Mama, sapa dey hold me small today. Any student discount?",
+				"response": "Ehya! No student will starve inside my cafeteria! Take this warm meat pie and pure water, pay me whenever your pocket soft.",
+				"cgpa_boost": 0.0,
+				"faith_boost": 10.0,
+				"money_change": 0
+			},
+			{
+				"text": "Mama, your food sweet die! The smell alone dey revive person energy.",
+				"response": "Haha! God bless your mouth, my child! Eat well, food na fuel for brain during exam season!",
+				"cgpa_boost": 0.03,
+				"faith_boost": 5.0,
+				"money_change": 0
+			}
+		]
 	}
 }
 

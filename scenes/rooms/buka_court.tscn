@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" path="res://scenes/food_menu.tscn" id="5_food"]
 [ext_resource type="PackedScene" path="res://scenes/summary_menu.tscn" id="6_summary"]
 [ext_resource type="PackedScene" path="res://scenes/mobile_controls.tscn" id="7_mobile"]
+[ext_resource type="PackedScene" path="res://scenes/npc_3d.tscn" id="8_npc"]
+[ext_resource type="PackedScene" path="res://scenes/dialogue_menu.tscn" id="9_dialogue"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(18, 0.4, 16)
@@ -157,6 +159,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.0)
 object_type = 2
 object_name = "Campus Canteen Food Counter"
 
+[node name="NPCs" type="Node3D" parent="."]
+
+[node name="MamaCashout" parent="NPCs" instance=ExtResource("8_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -6.2)
+character_name = "Mama Cashout"
+character_role = "Campus Canteen Chief Caterer"
+shirt_color = Color(0.92, 0.45, 0.15, 1)
+
+[node name="Tobi" parent="NPCs" instance=ExtResource("8_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.1, 1.2)
+character_name = "Tobi"
+character_role = "Final Year Senior (400L)"
+shirt_color = Color(0.2, 0.55, 0.85, 1)
+
 [node name="Player3D" parent="." instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 2.5)
 
@@ -167,6 +183,8 @@ layer = 1
 layer = 2
 
 [node name="FoodMenu" parent="MenusLayer" instance=ExtResource("5_food")]
+
+[node name="DialogueMenu" parent="MenusLayer" instance=ExtResource("9_dialogue")]
 
 [node name="SummaryMenu" parent="MenusLayer" instance=ExtResource("6_summary")]
 

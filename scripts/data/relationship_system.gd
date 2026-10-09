@@ -8,6 +8,7 @@ static var character_affinity: Dictionary = {
 	"Emeka": 20,
 	"Dr. Adebayo": 10,
 	"Mr. Adepoju Marvellous": 20,
+	"Mama Cashout": 25,
 	"Prof. Okonjo": 10,
 	"Sister Blessing": 25,
 	"Brother Chinedu": 15,
@@ -57,6 +58,12 @@ static func get_perk_description(character_name: String) -> String:
 			elif aff >= 50:
 				return "✓ LAB PROTÉGÉ: Early access to assignment hints and optimization techniques."
 			return "Software Engineering Lecturer: Mentors aspiring programmers."
+		"Mama Cashout":
+			if aff >= 75:
+				return "★ VIP CHOPPING: Free extra protein and 20% meal discount on every dish!"
+			elif aff >= 50:
+				return "✓ CANTEEN FAVORITE: Extra fried plantain (dodo) added to all orders."
+			return "Canteen Caterer: Serves hot campus meals and survival rations."
 		"Sister Blessing":
 			if aff >= 75:
 				return "★ PRAYER PARTNER: Supernatural Peace (+25% Faith regeneration rate)."
