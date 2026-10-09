@@ -175,6 +175,24 @@ theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
 text = "💼 Student Hustle"
 
+[node name="OnlineAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
+text = "🌐 Campus Online"
+
+[node name="SettingsAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
+text = "⚙️ Settings"
+
 [node name="AppContent" type="PanelContainer" parent="CenterContainer/PhoneFrame/VBox"]
 unique_name_in_owner = true
 visible = false

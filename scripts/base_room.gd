@@ -15,9 +15,11 @@ const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const PhoneScene = preload("res://scenes/phone_system.tscn")
 const SalonScene = preload("res://scenes/salon_menu.tscn")
 const ChatScene = preload("res://scenes/chat_wheel.tscn")
+const NetworkPlayerScene = preload("res://scenes/network_player.tscn")
 var phone_menu: Control = null
 var salon_menu: Control = null
 var chat_menu: Control = null
+var remote_player_nodes: Dictionary = {}
 
 @onready var food_menu: Control = $MenusLayer/FoodMenu if has_node("MenusLayer/FoodMenu") else null
 @onready var study_menu: Control = $MenusLayer/StudyMenu if has_node("MenusLayer/StudyMenu") else null
@@ -223,4 +225,43 @@ func _on_summary_closed() -> void:
 func _on_player_passed_out(_reason: String) -> void:
 	# If collapsed outside the hostel, wake up back in the hostel
 	get_tree().change_scene_to_file("res://scenes/rooms/hostel_room.tscn")
+
+
+func _process(_delta: float) -> void:
+	if not NetworkManager or not NetworkManager.is_online():
+		return
+
+	var current_scene_name: String = String(name)
+	var active_peers: Dictionary = NetworkManager.remote_players
+
+	# Spawn or update remote player puppets in this room
+	for peer_id: int in active_peers.keys():
+		var p_data: Dictionary = active_peers[peer_id]
+		var peer_room: String = String(p_data.get("room", ""))
+
+		if peer_room == current_scene_name:
+			if not remote_player_nodes.has(peer_id):
+				var puppet: NetworkPlayer = NetworkPlayerScene.instantiate() as NetworkPlayer
+				puppet.peer_id = peer_id
+				puppet.student_name = String(p_data.get("name", "Student"))
+				add_child(puppet)
+				remote_player_nodes[peer_id] = puppet
+			var puppet_node: NetworkPlayer = remote_player_nodes[peer_id]
+			var pos: Vector3 = p_data.get("pos", Vector3.ZERO)
+			var rot_y: float = float(p_data.get("rot_y", 0.0))
+			var is_moving: bool = bool(p_data.get("is_moving", false))
+			puppet_node.update_network_transform(pos, rot_y, is_moving)
+		else:
+			# Player moved to another room
+			if remote_player_nodes.has(peer_id):
+				var puppet_to_remove: Node = remote_player_nodes[peer_id]
+				puppet_to_remove.queue_free()
+				remote_player_nodes.erase(peer_id)
+
+	# Clean up disconnected peers
+	for peer_id: int in remote_player_nodes.keys():
+		if not active_peers.has(peer_id):
+			var puppet_to_remove: Node = remote_player_nodes[peer_id]
+			puppet_to_remove.queue_free()
+			remote_player_nodes.erase(peer_id)
 

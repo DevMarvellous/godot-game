@@ -42,6 +42,8 @@ func _ready() -> void:
 	_wire_app_btn(%ChatAppBtn, "chat")
 	_wire_app_btn(%BankAppBtn, "bank")
 	_wire_app_btn(%HustleAppBtn, "hustle")
+	_wire_app_btn(%OnlineAppBtn, "online")
+	_wire_app_btn(%SettingsAppBtn, "settings")
 
 
 func _wire_app_btn(btn: Button, app_id: String) -> void:
@@ -129,9 +131,27 @@ func _open_app(app_id: String) -> void:
 
 		"hustle":
 			app_title.text = "💼 STUDENT HUSTLE HUB"
-			content_label.text = "AVAILABLE CAMPUS GIGS:\n1. SUB Business Centre Typing (+₦2,500)\n2. Fellowship Flyer Design (+₦4,500)\n3. Hostel Provision Sales (+₦1,800)\n\nEarn money between lectures to survive sapa!"
+			content_label.text = "AVAILABLE CAMPUS GIGS:\n1. SUB Business Centre Typing (+₦2,500)\n2. Fellowship Flyer Design (+₦4,500)\n3. Hostel Provision Sales (+₦1,800)\n4. Web & Software Gig with Mr. Marvellous (+₦8,500)\n\nEarn money between lectures to survive sapa!"
 			action_btn.visible = true
 			action_btn.text = "Work Assignment Typing (+₦2,500)"
+
+		"online":
+			app_title.text = "🌐 CAMPUS MULTIPLAYER LOBBY"
+			var is_conn: bool = NetworkManager.is_online() if NetworkManager else false
+			var active_count: int = NetworkManager.remote_players.size() if NetworkManager else 0
+			var status_str: String = "ONLINE (Connected)" if is_conn else "OFFLINE (Local Campus Mode)"
+			content_label.text = "NETWORK STATUS: %s\nSTUDENTS IN ROOM: %d\nSERVER: ws://127.0.0.1:8910\n\nConnect to see real players walking around campus and chatting in real time!" % [
+				status_str, active_count + 1
+			]
+			action_btn.visible = true
+			action_btn.text = "Disconnect from Server" if is_conn else "Connect to Online Campus"
+
+		"settings":
+			app_title.text = "⚙️ GAME SETTINGS"
+			var current_audio: String = "ACTIVE (Procedural In-Memory)"
+			content_label.text = "SOUND FX: %s\nGRAPHICS: Mobile Performance (GL Compatibility)\nINPUT: Touchscreen / Mouse Raycast\nVERSION: 1.0.0 (Web & Mobile)" % current_audio
+			action_btn.visible = true
+			action_btn.text = "Test Sound Bell / Alert"
 
 
 func _on_app_action_pressed() -> void:
@@ -172,6 +192,22 @@ func _on_app_action_pressed() -> void:
 			if SoundManager:
 				SoundManager.play_alert()
 			content_label.text = "⚠ Too exhausted to work! Go to the hostel bed and sleep first."
+
+	elif current_app_id == "online":
+		if NetworkManager:
+			if NetworkManager.is_online():
+				NetworkManager.disconnect_from_campus()
+				content_label.text = "Disconnected from campus server.\nRunning in offline single-player mode."
+				action_btn.text = "Connect to Online Campus"
+			else:
+				NetworkManager.connect_to_campus()
+				content_label.text = "Connecting to WebSocket campus server at ws://127.0.0.1:8910...\nIf server is active, other players will appear in your room."
+				action_btn.text = "Disconnect from Server"
+
+	elif current_app_id == "settings":
+		if SoundManager:
+			SoundManager.play_bell()
+			content_label.text = "🔔 Audio Bell tested successfully!\nAll game systems running with zero lag."
 
 
 func _get_class_text(cgpa: float) -> String:
