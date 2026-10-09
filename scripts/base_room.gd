@@ -110,12 +110,27 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 	if menu_type == &"food" and food_menu:
 		food_menu.open_menu(p)
 	elif menu_type == &"study":
-		if ca_test_menu and room_id == &"lecture":
-			# In LT1, taking a desk opens Dr. Adebayo's CSC 101 CA test
-			ca_test_menu.start_test(p, "CSC 101")
-		elif ca_test_menu and room_id == &"lecture2":
-			# In LT2, taking a desk tests CSC 104 (Mr. Marvellous) or MTH 101
-			ca_test_menu.start_test(p, "CSC 104")
+		if ca_test_menu and (room_id == &"lecture" or room_id == &"lecture2"):
+			const ProfileStore = preload("res://scripts/data/student_profile.gd")
+			var dept: String = ProfileStore.admitted_department
+			var course_to_test: String = "GST 101"
+
+			if room_id == &"lecture":
+				if dept == "CSC":
+					course_to_test = "CSC 101"
+				elif dept == "MAC":
+					course_to_test = "MAC 101"
+				elif dept == "ECN":
+					course_to_test = "ECN 101"
+			elif room_id == &"lecture2":
+				if dept == "CSC":
+					course_to_test = "CSC 104"
+				elif dept == "MAC":
+					course_to_test = "MAC 103"
+				elif dept == "ECN":
+					course_to_test = "ACC 101"
+
+			ca_test_menu.start_test(p, course_to_test)
 		elif study_menu:
 			study_menu.open_menu(p)
 	elif menu_type == &"salon" and salon_menu:

@@ -17,7 +17,8 @@ var walk_anim_time: float = 0.0
 @onready var torso_mesh: MeshInstance3D = $Visuals/TorsoMesh
 @onready var head_mesh: MeshInstance3D = $Visuals/HeadMesh
 @onready var hair_mesh: MeshInstance3D = $Visuals/HairMesh
-@onready var legs_mesh: MeshInstance3D = $Visuals/LegsMesh
+@onready var left_leg: MeshInstance3D = $Visuals/LeftLeg if has_node("Visuals/LeftLeg") else null
+@onready var right_leg: MeshInstance3D = $Visuals/RightLeg if has_node("Visuals/RightLeg") else null
 @onready var left_arm: MeshInstance3D = $Visuals/LeftArm
 @onready var right_arm: MeshInstance3D = $Visuals/RightArm
 
@@ -50,14 +51,27 @@ func _process(delta: float) -> void:
 
 	# Animate limb swinging when walking
 	if is_moving:
-		walk_anim_time += delta * 11.0
+		walk_anim_time += delta * 12.0
 		if left_arm and right_arm:
-			left_arm.rotation.x = sin(walk_anim_time) * 0.42
-			right_arm.rotation.x = -sin(walk_anim_time) * 0.42
+			left_arm.rotation.x = sin(walk_anim_time) * 0.45
+			right_arm.rotation.x = -sin(walk_anim_time) * 0.45
+		if left_leg and right_leg:
+			left_leg.rotation.x = -sin(walk_anim_time) * 0.48
+			right_leg.rotation.x = sin(walk_anim_time) * 0.48
+		if torso_mesh and head_mesh:
+			var bob: float = abs(sin(walk_anim_time)) * 0.04
+			torso_mesh.position.y = 0.95 + bob
+			head_mesh.position.y = 1.45 + bob
 	else:
 		if left_arm and right_arm:
-			left_arm.rotation.x = move_toward(left_arm.rotation.x, 0.0, 5.0 * delta)
-			right_arm.rotation.x = move_toward(right_arm.rotation.x, 0.0, 5.0 * delta)
+			left_arm.rotation.x = move_toward(left_arm.rotation.x, 0.0, 6.0 * delta)
+			right_arm.rotation.x = move_toward(right_arm.rotation.x, 0.0, 6.0 * delta)
+		if left_leg and right_leg:
+			left_leg.rotation.x = move_toward(left_leg.rotation.x, 0.0, 7.0 * delta)
+			right_leg.rotation.x = move_toward(right_leg.rotation.x, 0.0, 7.0 * delta)
+		if torso_mesh and head_mesh:
+			torso_mesh.position.y = move_toward(torso_mesh.position.y, 0.95, 0.4 * delta)
+			head_mesh.position.y = move_toward(head_mesh.position.y, 1.45, 0.4 * delta)
 
 
 func show_chat(msg: String) -> void:
@@ -91,9 +105,11 @@ func apply_appearance(skin_col: Color, shirt_col: Color, trouser_col: Color, hai
 		torso_mesh.set_surface_override_material(0, shirt_mat)
 		if left_arm: left_arm.set_surface_override_material(0, shirt_mat)
 		if right_arm: right_arm.set_surface_override_material(0, shirt_mat)
-	if legs_mesh:
-		var leg_mat = StandardMaterial3D.new()
-		leg_mat.albedo_color = trouser_col
-		leg_mat.roughness = 0.75
-		legs_mesh.set_surface_override_material(0, leg_mat)
+	var leg_mat = StandardMaterial3D.new()
+	leg_mat.albedo_color = trouser_col
+	leg_mat.roughness = 0.75
+	if left_leg:
+		left_leg.set_surface_override_material(0, leg_mat)
+	if right_leg:
+		right_leg.set_surface_override_material(0, leg_mat)
 

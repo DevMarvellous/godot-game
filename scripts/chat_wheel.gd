@@ -2,7 +2,6 @@ class_name ChatWheel
 extends Control
 
 const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
-const NetworkManager = preload("res://scripts/autoload/network_manager.gd")
 
 ## Quick Campus Slang & Chat Popup for Mobile and Web.
 ## 1-tap instant campus phrases + custom text input.

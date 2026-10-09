@@ -6,6 +6,7 @@ extends RefCounted
 
 static var character_affinity: Dictionary = {
 	"Emeka": 20,
+	"Segun": 35,
 	"Dr. Adebayo": 10,
 	"Mr. Adepoju Marvellous": 20,
 	"Mama Cashout": 25,

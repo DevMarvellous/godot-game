@@ -250,6 +250,32 @@ const DIALOGUE_TREES: Dictionary = {
 				"money_change": 0
 			}
 		]
+	},
+	"Segun": {
+		"greeting": "Roomie! You don wake up? NEPA just brought light, rush charge your phone before they take am again!",
+		"choices": [
+			{
+				"text": "Thanks Segun! Are you heading to the 8 AM lecture today?",
+				"response": "Yes o! You know Dr. Adebayo doesn't joke with 8:05 AM door lock. Let's move together!",
+				"cgpa_boost": 0.04,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Did you understand yesterday's algorithms assignment?",
+				"response": "I solved question 1 and 2, but number 3 was tough. We can revise it together on the study desk!",
+				"cgpa_boost": 0.06,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Roomie, abeg do you have iron or hot water?",
+				"response": "Hot plate dey under bed! Just boil your noodles quick before the hall porter comes on inspection.",
+				"cgpa_boost": 0.0,
+				"faith_boost": 5.0,
+				"money_change": 0
+			}
+		]
 	}
 }
 

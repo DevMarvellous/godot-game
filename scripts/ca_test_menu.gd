@@ -22,6 +22,8 @@ signal test_closed
 @onready var next_btn: Button = %NextBtn
 @onready var close_btn: Button = %CloseBtn
 @onready var expo_btn: Button = %ExpoBtn
+@onready var hint_btn: Button = %HintBtn if has_node("%HintBtn") else null
+@onready var hint_label: Label = %HintLabel if has_node("%HintLabel") else null
 
 var current_course: String = "CSC 101"
 var questions: Array = []
@@ -42,6 +44,8 @@ func _ready() -> void:
 		close_btn.pressed.connect(close_test)
 	if expo_btn:
 		expo_btn.pressed.connect(_on_expo_pressed)
+	if hint_btn:
+		hint_btn.pressed.connect(_on_hint_pressed)
 
 
 func start_test(player: CharacterBody3D, course_code: String = "CSC 101") -> void:
@@ -55,7 +59,9 @@ func start_test(player: CharacterBody3D, course_code: String = "CSC 101") -> voi
 	is_disqualified = false
 	if expo_btn:
 		expo_btn.disabled = false
-		expo_btn.text = "🤫 Sneak Out 'Expo' Microchip (+12 Marks, 35% Risk!)"
+		expo_btn.text = "🤫 Sneak Out 'Expo' (+12 Marks, 35% Risk!)"
+	if hint_label:
+		hint_label.visible = false
 	visible = true
 
 	if course_label:
@@ -67,6 +73,8 @@ func start_test(player: CharacterBody3D, course_code: String = "CSC 101") -> voi
 func _load_current_question() -> void:
 	if feedback_panel:
 		feedback_panel.visible = false
+	if hint_label:
+		hint_label.visible = false
 
 	if current_q_idx >= questions.size():
 		_finish_test()
@@ -117,6 +125,15 @@ func _on_option_selected(selected_idx: int) -> void:
 		else:
 			feedback_text.text = "✗ WRONG!\nCorrect answer was (%s).\n%s" % [_get_letter(correct_idx), String(q_data["explanation"])]
 			feedback_text.add_theme_color_override(&"font_color", Color(1.0, 0.4, 0.35))
+
+
+func _on_hint_pressed() -> void:
+	if hint_label:
+		var hint_str: String = QuizSystem.get_hint(current_course, current_q_idx)
+		hint_label.text = "💡 Book Hint: %s" % hint_str
+		hint_label.visible = true
+	if SoundManager:
+		SoundManager.play_click()
 
 
 func _on_expo_pressed() -> void:

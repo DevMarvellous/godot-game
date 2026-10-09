@@ -30,14 +30,15 @@ height = 0.28
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hair"]
 albedo_color = Color(0.08, 0.08, 0.08, 1)
 
-[sub_resource type="BoxMesh" id="BoxMesh_legs"]
-size = Vector3(0.48, 0.62, 0.26)
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_single_leg"]
+radius = 0.11
+height = 0.64
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trousers"]
 albedo_color = Color(0.15, 0.22, 0.32, 1)
 
-[sub_resource type="BoxMesh" id="BoxMesh_shoes"]
-size = Vector3(0.50, 0.14, 0.32)
+[sub_resource type="BoxMesh" id="BoxMesh_single_shoe"]
+size = Vector3(0.20, 0.14, 0.30)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shoes"]
 albedo_color = Color(0.92, 0.92, 0.92, 1)
@@ -83,14 +84,24 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0.22)
 mesh = SubResource("BoxMesh_visor")
 surface_material_override/0 = SubResource("StandardMaterial3D_visor")
 
-[node name="LegsMesh" type="MeshInstance3D" parent="Visuals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42, 0)
-mesh = SubResource("BoxMesh_legs")
+[node name="LeftLeg" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.42, 0)
+mesh = SubResource("CapsuleMesh_single_leg")
 surface_material_override/0 = SubResource("StandardMaterial3D_trousers")
 
-[node name="ShoesMesh" type="MeshInstance3D" parent="Visuals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0.02)
-mesh = SubResource("BoxMesh_shoes")
+[node name="LeftShoe" type="MeshInstance3D" parent="Visuals/LeftLeg"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.32, 0.05)
+mesh = SubResource("BoxMesh_single_shoe")
+surface_material_override/0 = SubResource("StandardMaterial3D_shoes")
+
+[node name="RightLeg" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.42, 0)
+mesh = SubResource("CapsuleMesh_single_leg")
+surface_material_override/0 = SubResource("StandardMaterial3D_trousers")
+
+[node name="RightShoe" type="MeshInstance3D" parent="Visuals/RightLeg"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.32, 0.05)
+mesh = SubResource("BoxMesh_single_shoe")
 surface_material_override/0 = SubResource("StandardMaterial3D_shoes")
 
 [node name="LeftArm" type="MeshInstance3D" parent="Visuals"]

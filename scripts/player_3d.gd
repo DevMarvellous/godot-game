@@ -1,8 +1,6 @@
 class_name Player3D
 extends CharacterBody3D
 
-const NetworkManager = preload("res://scripts/autoload/network_manager.gd")
-
 ## 3D Top-Down / Isometric Player Controller.
 ## Movement across X/Z ground plane with smooth rotation and 3D interactions.
 
@@ -18,8 +16,8 @@ var has_nav_target: bool = false
 @onready var torso_mesh: MeshInstance3D = $Visuals/TorsoMesh if has_node("Visuals/TorsoMesh") else null
 @onready var head_mesh: MeshInstance3D = $Visuals/HeadMesh if has_node("Visuals/HeadMesh") else null
 @onready var hair_mesh: MeshInstance3D = $Visuals/HairMesh if has_node("Visuals/HairMesh") else null
-@onready var legs_mesh: MeshInstance3D = $Visuals/LegsMesh if has_node("Visuals/LegsMesh") else null
-@onready var shoes_mesh: MeshInstance3D = $Visuals/ShoesMesh if has_node("Visuals/ShoesMesh") else null
+@onready var left_leg: MeshInstance3D = $Visuals/LeftLeg if has_node("Visuals/LeftLeg") else null
+@onready var right_leg: MeshInstance3D = $Visuals/RightLeg if has_node("Visuals/RightLeg") else null
 @onready var left_arm: MeshInstance3D = $Visuals/LeftArm if has_node("Visuals/LeftArm") else null
 @onready var right_arm: MeshInstance3D = $Visuals/RightArm if has_node("Visuals/RightArm") else null
 
@@ -128,26 +126,39 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
-	# Animate walking limbs and subtle torso bobbing
+	# Animate walking limbs (arms + legs swinging) and subtle torso bobbing
 	var horiz_speed: float = Vector2(velocity.x, velocity.z).length()
 	if horiz_speed > 0.3:
 		walk_anim_time += delta * 12.0
+		# Arm swing (opposing)
 		if left_arm and right_arm:
 			left_arm.rotation.x = sin(walk_anim_time) * 0.45
 			right_arm.rotation.x = -sin(walk_anim_time) * 0.45
+		# Leg stride (opposing to arms)
+		if left_leg and right_leg:
+			left_leg.rotation.x = -sin(walk_anim_time) * 0.48
+			right_leg.rotation.x = sin(walk_anim_time) * 0.48
+		# Torso bounce & subtle lateral sway
 		if torso_mesh and head_mesh and hair_mesh:
-			var bob: float = abs(sin(walk_anim_time)) * 0.035
+			var bob: float = abs(sin(walk_anim_time)) * 0.04
+			var sway: float = sin(walk_anim_time * 0.5) * 0.03
 			torso_mesh.position.y = 0.95 + bob
 			head_mesh.position.y = 1.45 + bob
 			hair_mesh.position.y = 1.58 + bob
+			torso_mesh.rotation.z = sway
 	else:
+		# Return smoothly to neutral standing posture
 		if left_arm and right_arm:
 			left_arm.rotation.x = move_toward(left_arm.rotation.x, 0.0, 6.0 * delta)
 			right_arm.rotation.x = move_toward(right_arm.rotation.x, 0.0, 6.0 * delta)
+		if left_leg and right_leg:
+			left_leg.rotation.x = move_toward(left_leg.rotation.x, 0.0, 7.0 * delta)
+			right_leg.rotation.x = move_toward(right_leg.rotation.x, 0.0, 7.0 * delta)
 		if torso_mesh and head_mesh and hair_mesh:
 			torso_mesh.position.y = move_toward(torso_mesh.position.y, 0.95, 0.4 * delta)
 			head_mesh.position.y = move_toward(head_mesh.position.y, 1.45, 0.4 * delta)
 			hair_mesh.position.y = move_toward(hair_mesh.position.y, 1.58, 0.4 * delta)
+			torso_mesh.rotation.z = move_toward(torso_mesh.rotation.z, 0.0, 4.0 * delta)
 
 	# Broadcast position and movement to online room peers
 	if NetworkManager and is_inside_tree() and NetworkManager.is_online():
@@ -252,9 +263,10 @@ func apply_appearance(skin_color: Color, shirt_color: Color, trouser_color: Colo
 			left_arm.set_surface_override_material(0, shirt_mat)
 		if right_arm:
 			right_arm.set_surface_override_material(0, shirt_mat)
-	if legs_mesh:
-		var leg_mat: StandardMaterial3D = StandardMaterial3D.new()
-		leg_mat.albedo_color = trouser_color
-		leg_mat.roughness = 0.75
-		legs_mesh.set_surface_override_material(0, leg_mat)
-
+	var leg_mat: StandardMaterial3D = StandardMaterial3D.new()
+	leg_mat.albedo_color = trouser_color
+	leg_mat.roughness = 0.75
+	if left_leg:
+		left_leg.set_surface_override_material(0, leg_mat)
+	if right_leg:
+		right_leg.set_surface_override_material(0, leg_mat)

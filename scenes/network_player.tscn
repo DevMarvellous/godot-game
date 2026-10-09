@@ -24,8 +24,18 @@ albedo_color = Color(0.32, 0.20, 0.14, 1)
 radius = 0.26
 height = 0.28
 
-[sub_resource type="BoxMesh" id="BoxMesh_legs"]
-size = Vector3(0.48, 0.62, 0.26)
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_single_leg"]
+radius = 0.11
+height = 0.64
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trousers"]
+albedo_color = Color(0.15, 0.22, 0.32, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_single_shoe"]
+size = Vector3(0.20, 0.14, 0.30)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shoes"]
+albedo_color = Color(0.92, 0.92, 0.92, 1)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_arm"]
 radius = 0.09
@@ -56,9 +66,25 @@ surface_material_override/0 = SubResource("StandardMaterial3D_skin")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.58, 0)
 mesh = SubResource("SphereMesh_hair")
 
-[node name="LegsMesh" type="MeshInstance3D" parent="Visuals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42, 0)
-mesh = SubResource("BoxMesh_legs")
+[node name="LeftLeg" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.42, 0)
+mesh = SubResource("CapsuleMesh_single_leg")
+surface_material_override/0 = SubResource("StandardMaterial3D_trousers")
+
+[node name="LeftShoe" type="MeshInstance3D" parent="Visuals/LeftLeg"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.32, 0.05)
+mesh = SubResource("BoxMesh_single_shoe")
+surface_material_override/0 = SubResource("StandardMaterial3D_shoes")
+
+[node name="RightLeg" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.42, 0)
+mesh = SubResource("CapsuleMesh_single_leg")
+surface_material_override/0 = SubResource("StandardMaterial3D_trousers")
+
+[node name="RightShoe" type="MeshInstance3D" parent="Visuals/RightLeg"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.32, 0.05)
+mesh = SubResource("BoxMesh_single_shoe")
+surface_material_override/0 = SubResource("StandardMaterial3D_shoes")
 
 [node name="LeftArm" type="MeshInstance3D" parent="Visuals"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.34, 0.90, 0)

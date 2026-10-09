@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" path="res://scenes/study_menu.tscn" id="5_study"]
 [ext_resource type="PackedScene" path="res://scenes/summary_menu.tscn" id="6_summary"]
 [ext_resource type="PackedScene" path="res://scenes/mobile_controls.tscn" id="7_mobile"]
+[ext_resource type="PackedScene" path="res://scenes/npc_3d.tscn" id="8_npc"]
+[ext_resource type="PackedScene" path="res://scenes/dialogue_menu.tscn" id="9_dialogue"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(14, 0.4, 14)
@@ -210,6 +212,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, -3.2)
 object_type = 5
 object_name = "Laptop (Freelance Design Gig)"
 
+[node name="NPCs" type="Node3D" parent="."]
+
+[node name="SegunRoommate" parent="NPCs" instance=ExtResource("8_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.2, 0.1, 1.2)
+character_name = "Segun"
+character_role = "Hostel Roommate (CSC 100L)"
+shirt_color = Color(0.9, 0.45, 0.15, 1)
+
 [node name="Player3D" parent="." instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 1.5)
 
@@ -220,6 +230,8 @@ layer = 1
 layer = 2
 
 [node name="StudyMenu" parent="MenusLayer" instance=ExtResource("5_study")]
+
+[node name="DialogueMenu" parent="MenusLayer" instance=ExtResource("9_dialogue")]
 
 [node name="SummaryMenu" parent="MenusLayer" instance=ExtResource("6_summary")]
 
