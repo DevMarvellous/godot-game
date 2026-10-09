@@ -224,6 +224,32 @@ const DIALOGUE_TREES: Dictionary = {
 				"money_change": 0
 			}
 		]
+	},
+	"Tobi": {
+		"greeting": "Fresher! How campus dey be? Final year project dey show me pepper, but we go conquer. You need any survival advice?",
+		"choices": [
+			{
+				"text": "Senior Tobi, how do you manage 8:00 AM classes without collapsing?",
+				"response": "Rule number one: Sleep by 10 PM in the hostel, and don't skip breakfast at Mama Cashout! Burnout is real.",
+				"cgpa_boost": 0.04,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Do you have any past questions for CSC and MTH 101?",
+				"response": "I get the full compiled booklet with marking schemes! Take this copy, revise all past years thoroughly.",
+				"cgpa_boost": 0.08,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Just enjoying the canteen jollof rice, bro.",
+				"response": "Chop well! You need all the energy you can get for this university life.",
+				"cgpa_boost": 0.0,
+				"faith_boost": 0.0,
+				"money_change": 0
+			}
+		]
 	}
 }
 
