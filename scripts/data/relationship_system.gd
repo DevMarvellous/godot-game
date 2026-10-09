@@ -72,3 +72,4 @@ static func get_perk_description(character_name: String) -> String:
 			return "Campus Barber: Fresh low cuts and styling."
 		_:
 			return "Campus resident."
+

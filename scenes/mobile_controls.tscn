@@ -158,21 +158,29 @@ offset_bottom = 286.0
 grow_horizontal = 0
 theme_override_constants/separation = 12
 
+[node name="ChatButton" type="Button" parent="TouchZone/ButtonsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(105, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_map_btn")
+text = "💬 CHAT"
+
 [node name="PhoneButton" type="Button" parent="TouchZone/ButtonsRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(165, 50)
+custom_minimum_size = Vector2(115, 50)
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBoxFlat_map_btn")
 text = "📱 PHONE"
 
 [node name="MapButton" type="Button" parent="TouchZone/ButtonsRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(175, 50)
+custom_minimum_size = Vector2(125, 50)
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBoxFlat_map_btn")
-text = "🚌 CAMPUS MAP"
+text = "🚌 MAP"
 
 [node name="TransitSheet" type="PanelContainer" parent="TouchZone"]
 unique_name_in_owner = true

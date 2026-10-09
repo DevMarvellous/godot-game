@@ -13,8 +13,10 @@ extends Node3D
 
 const PhoneScene = preload("res://scenes/phone_system.tscn")
 const SalonScene = preload("res://scenes/salon_menu.tscn")
+const ChatScene = preload("res://scenes/chat_wheel.tscn")
 var phone_menu: Control = null
 var salon_menu: Control = null
+var chat_menu: Control = null
 
 @onready var food_menu: Control = $MenusLayer/FoodMenu if has_node("MenusLayer/FoodMenu") else null
 @onready var study_menu: Control = $MenusLayer/StudyMenu if has_node("MenusLayer/StudyMenu") else null
@@ -35,6 +37,8 @@ func _ready() -> void:
 			mobile_controls.transit_requested.connect(_on_transit_requested)
 		if mobile_controls.has_signal("phone_requested"):
 			mobile_controls.phone_requested.connect(_on_phone_requested)
+		if mobile_controls.has_signal("chat_requested"):
+			mobile_controls.chat_requested.connect(_on_chat_requested)
 
 	if menus_layer:
 		if menus_layer.has_node("PhoneSystem"):
@@ -44,6 +48,12 @@ func _ready() -> void:
 			menus_layer.add_child(phone_menu)
 		if phone_menu and phone_menu.has_signal("phone_closed"):
 			phone_menu.phone_closed.connect(_on_menu_closed)
+
+		if not menus_layer.has_node("ChatWheel"):
+			chat_menu = ChatScene.instantiate()
+			menus_layer.add_child(chat_menu)
+			if chat_menu.has_signal("chat_closed"):
+				chat_menu.chat_closed.connect(_on_menu_closed)
 
 		if room_id == &"salon":
 			if menus_layer.has_node("SalonMenu"):
@@ -119,6 +129,13 @@ func _on_phone_requested() -> void:
 		player.set_physics_process(false)
 		player.velocity = Vector3.ZERO
 		phone_menu.open_phone(player)
+
+
+func _on_chat_requested() -> void:
+	if chat_menu and player:
+		player.set_physics_process(false)
+		player.velocity = Vector3.ZERO
+		chat_menu.open_chat()
 
 
 func _on_transit_requested(dest: StringName) -> void:

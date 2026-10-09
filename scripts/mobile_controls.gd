@@ -6,11 +6,13 @@ extends CanvasLayer
 
 signal transit_requested(destination_name: StringName)
 signal phone_requested
+signal chat_requested
 
 @onready var joystick: TouchJoystick = %VirtualJoystick
 @onready var interact_btn: Button = %InteractButton
 @onready var map_btn: Button = %MapButton
 @onready var phone_btn: Button = %PhoneButton
+@onready var chat_btn: Button = %ChatButton if has_node("%ChatButton") else null
 @onready var transit_sheet: PanelContainer = %TransitSheet
 
 var bound_player: Player3D = null
@@ -25,6 +27,8 @@ func _ready() -> void:
 		map_btn.pressed.connect(_toggle_transit_sheet)
 	if phone_btn:
 		phone_btn.pressed.connect(_on_phone_pressed)
+	if chat_btn:
+		chat_btn.pressed.connect(_on_chat_pressed)
 	if transit_sheet:
 		transit_sheet.visible = false
 
@@ -87,6 +91,12 @@ func _on_phone_pressed() -> void:
 	if SoundManager:
 		SoundManager.play_click()
 	phone_requested.emit()
+
+
+func _on_chat_pressed() -> void:
+	if SoundManager:
+		SoundManager.play_click()
+	chat_requested.emit()
 
 
 func _on_transit_dest_pressed(dest: StringName) -> void:

@@ -25,6 +25,8 @@ var has_nav_target: bool = false
 @onready var prompt_label: Label3D = $PromptLabel
 @onready var notif_label: Label3D = $NotifLabel
 @onready var notif_timer: Timer = $NotifTimer
+@onready var chat_bubble: Label3D = $ChatBubble if has_node("ChatBubble") else null
+@onready var chat_timer: Timer = $ChatTimer if has_node("ChatTimer") else null
 
 var current_interactable: Interactable3D = null
 var walk_anim_time: float = 0.0
@@ -37,6 +39,12 @@ func _ready() -> void:
 		notif_label.visible = false
 	if notif_timer:
 		notif_timer.timeout.connect(_on_notif_timeout)
+	if chat_bubble:
+		chat_bubble.visible = false
+	if chat_timer:
+		chat_timer.timeout.connect(_on_chat_timeout)
+	if NetworkManager:
+		NetworkManager.chat_received.connect(_on_chat_received)
 	_load_default_appearance()
 
 
@@ -132,6 +140,11 @@ func _physics_process(delta: float) -> void:
 			head_mesh.position.y = move_toward(head_mesh.position.y, 1.45, 0.4 * delta)
 			hair_mesh.position.y = move_toward(hair_mesh.position.y, 1.58, 0.4 * delta)
 
+	# Broadcast position and movement to online room peers
+	if NetworkManager and is_inside_tree() and NetworkManager.is_online():
+		var current_room: String = get_tree().current_scene.name if get_tree().current_scene else "room"
+		NetworkManager.broadcast_transform(current_room, global_position, visual_root.rotation.y, horiz_speed > 0.3)
+
 	# Interaction trigger
 	if Input.is_action_just_pressed("interact"):
 		trigger_interaction()
@@ -163,6 +176,24 @@ func display_notification(msg: String) -> void:
 func _on_notif_timeout() -> void:
 	if notif_label:
 		notif_label.visible = false
+
+
+func show_chat_bubble(msg: String) -> void:
+	if not chat_bubble or not is_inside_tree():
+		return
+	chat_bubble.text = "\"%s\"" % msg
+	chat_bubble.visible = true
+	if chat_timer and chat_timer.is_inside_tree():
+		chat_timer.start(4.5)
+
+
+func _on_chat_timeout() -> void:
+	if chat_bubble:
+		chat_bubble.visible = false
+
+
+func _on_chat_received(_sender_name: String, msg: String, _peer_id: int) -> void:
+	show_chat_bubble(msg)
 
 
 func _load_default_appearance() -> void:

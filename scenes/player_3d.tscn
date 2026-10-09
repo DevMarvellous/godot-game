@@ -128,3 +128,14 @@ outline_size = 12
 
 [node name="NotifTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="ChatBubble" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.4, 0)
+billboard = 1
+modulate = Color(0.3, 0.95, 0.6, 1)
+text = "\"Message\""
+font_size = 46
+outline_size = 10
+
+[node name="ChatTimer" type="Timer" parent="."]
+one_shot = true

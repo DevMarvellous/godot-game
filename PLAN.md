@@ -66,9 +66,16 @@ Players move between these rooms either through **doorways** or using the **🚌
   - Interactive styling menu in the Barbing Salon.
 - [x] **Milestone 11: In-Game Smartphone ("Campus Connect")**:
   - Digital Student ID, Timetable, CGPA Portal, WhatsApp Gist, OPay Wallet, Hustle Hub.
+- [x] **Milestone 11.5: Web & Mobile Online Multiplayer Foundation**:
+  - `WebSocketMultiplayerPeer` architecture (`NetworkManager`) compatible with HTML5 WebAssembly, Android, and PC.
+  - Room sync, interpolated puppet avatars (`NetworkPlayer`), and 3D speech bubbles.
+  - Quick Campus Slang & Chat Popup (`ChatWheel`) for instant 1-tap mobile communication.
 - [x] **Milestone 12: Sound & Audio Feedback (`SoundManager`)**:
   - 100% self-contained procedural audio: UI button clicks, coin/allowance chimes, Keke shuttle horn, exam bell, exhaustion alert tone.
 
 ### Phase 4: Polish & Deployment
-- [ ] **Milestone 13: Web Export (HTML5)**: Mobile browser optimized.
+- [x] **Milestone 13: Web Export Configuration (HTML5)**:
+  - Configured `export_presets.cfg` targeting `builds/web/index.html`.
+  - Non-threaded fallback enabled for zero-header compatibility on any web host (GitHub Pages, itch.io, Netlify, Vercel).
+  - GL Compatibility renderer with adaptive canvas resizing.
 - [ ] **Milestone 14: Google Play Store Android APK**.
