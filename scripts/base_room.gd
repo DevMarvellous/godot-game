@@ -111,8 +111,11 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 		food_menu.open_menu(p)
 	elif menu_type == &"study":
 		if ca_test_menu and room_id == &"lecture":
-			# In lecture hall, taking a desk opens the CA Test Paper!
+			# In LT1, taking a desk opens Dr. Adebayo's CSC 101 CA test
 			ca_test_menu.start_test(p, "CSC 101")
+		elif ca_test_menu and room_id == &"lecture2":
+			# In LT2, taking a desk tests CSC 104 (Mr. Marvellous) or MTH 101
+			ca_test_menu.start_test(p, "CSC 104")
 		elif study_menu:
 			study_menu.open_menu(p)
 	elif menu_type == &"salon" and salon_menu:

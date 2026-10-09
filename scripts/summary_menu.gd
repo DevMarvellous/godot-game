@@ -39,7 +39,11 @@ func show_day_summary(data: Dictionary) -> void:
 
 	if title_label:
 		if is_final:
-			title_label.text = "🎓 SEMESTER FINAL RESULTS"
+			const ProfileStore = preload("res://scripts/data/student_profile.gd")
+			ProfileStore.load_from_disk()
+			title_label.text = "🎓 %s - MATRIC: %s\nOFFICIAL SENATE DEGREE CLASSIFICATION" % [
+				ProfileStore.student_name.to_upper(), ProfileStore.matric_no
+			]
 		else:
 			title_label.text = "📋 DAY %d OF %d REPORT CARD" % [day, total_days]
 
@@ -86,7 +90,11 @@ func show_semester_results(result: Dictionary) -> void:
 	var _cgpa: float = float(result.get("cgpa", 3.50))
 
 	if title_label:
-		title_label.text = "🎓 FINAL DEGREE OUTCOME"
+		const ProfileStore = preload("res://scripts/data/student_profile.gd")
+		ProfileStore.load_from_disk()
+		title_label.text = "🎓 %s (%s)\nOFFICIAL SENATE DEGREE OUTCOME" % [
+			ProfileStore.student_name.to_upper(), ProfileStore.admitted_course_title
+		]
 
 	if grade_label:
 		grade_label.text = title

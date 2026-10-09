@@ -77,6 +77,30 @@ const QUESTIONS: Dictionary = {
 			"correct": 0,
 			"explanation": "Power rule: d/dx(3x²) = 6x, and d/dx(5x) = 5. So 6x + 5."
 		}
+	],
+	"CSC 104": [
+		{
+			"q": "What is the time complexity of searching in a balanced Binary Search Tree?",
+			"options": [
+				"O(1)",
+				"O(n²)",
+				"O(log n)",
+				"O(n!)"
+			],
+			"correct": 2,
+			"explanation": "In a balanced BST, each comparison halves the search space, giving logarithmic time O(log n)."
+		},
+		{
+			"q": "In clean software architecture, why do we use decoupled signals and event buses?",
+			"options": [
+				"To slow down game performance",
+				"To avoid hard dependencies and spaghetti code between nodes",
+				"To use more RAM memory",
+				"Because Dr. Adebayo commands it"
+			],
+			"correct": 1,
+			"explanation": "Decoupled signals allow nodes to interact without tight coupling, preventing cascading bugs."
+		}
 	]
 }
 
