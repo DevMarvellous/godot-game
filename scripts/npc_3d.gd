@@ -19,7 +19,10 @@ signal dialogue_requested(npc: NPC3D, player: CharacterBody3D)
 ]
 
 @onready var visual_root: Node3D = $Visuals
-@onready var body_mesh: MeshInstance3D = $Visuals/BodyMesh
+@onready var torso_mesh: MeshInstance3D = $Visuals/TorsoMesh if has_node("Visuals/TorsoMesh") else null
+@onready var head_mesh: MeshInstance3D = $Visuals/HeadMesh if has_node("Visuals/HeadMesh") else null
+@onready var left_arm: MeshInstance3D = $Visuals/LeftArm if has_node("Visuals/LeftArm") else null
+@onready var right_arm: MeshInstance3D = $Visuals/RightArm if has_node("Visuals/RightArm") else null
 @onready var name_label: Label3D = $NameLabel
 @onready var speech_label: Label3D = $SpeechLabel
 @onready var speech_timer: Timer = $SpeechTimer
@@ -29,6 +32,7 @@ var spawn_origin: Vector3 = Vector3.ZERO
 var target_destination: Vector3 = Vector3.ZERO
 var wait_timer: float = 0.0
 var is_moving: bool = false
+var walk_anim_time: float = 0.0
 var current_player: CharacterBody3D = null
 
 
@@ -45,12 +49,20 @@ func _ready() -> void:
 	if speech_timer:
 		speech_timer.timeout.connect(_on_speech_timeout)
 
-	# Shirt color
-	if body_mesh:
+	# Skin & Shirt styling
+	if head_mesh:
+		var skin_mat: StandardMaterial3D = StandardMaterial3D.new()
+		skin_mat.albedo_color = Color(0.32, 0.20, 0.14)
+		skin_mat.roughness = 0.7
+		head_mesh.set_surface_override_material(0, skin_mat)
+
+	if torso_mesh:
 		var mat: StandardMaterial3D = StandardMaterial3D.new()
 		mat.albedo_color = shirt_color
 		mat.roughness = 0.6
-		body_mesh.set_surface_override_material(0, mat)
+		torso_mesh.set_surface_override_material(0, mat)
+		if left_arm: left_arm.set_surface_override_material(0, mat)
+		if right_arm: right_arm.set_surface_override_material(0, mat)
 
 	# Interaction trigger setup
 	if interact_area:
@@ -90,10 +102,19 @@ func _physics_process(delta: float) -> void:
 			# Turn toward walking direction
 			var angle: float = atan2(-move_dir.x, -move_dir.z)
 			visual_root.rotation.y = lerp_angle(visual_root.rotation.y, angle, 8.0 * delta)
+
+			# Animate NPC arm swinging
+			walk_anim_time += delta * 10.0
+			if left_arm and right_arm:
+				left_arm.rotation.x = sin(walk_anim_time) * 0.4
+				right_arm.rotation.x = -sin(walk_anim_time) * 0.4
 	else:
 		wait_timer -= delta
 		velocity.x = move_toward(velocity.x, 0.0, 8.0 * delta)
 		velocity.z = move_toward(velocity.z, 0.0, 8.0 * delta)
+		if left_arm and right_arm:
+			left_arm.rotation.x = move_toward(left_arm.rotation.x, 0.0, 4.0 * delta)
+			right_arm.rotation.x = move_toward(right_arm.rotation.x, 0.0, 4.0 * delta)
 		if wait_timer <= 0.0:
 			_pick_new_waypoint()
 

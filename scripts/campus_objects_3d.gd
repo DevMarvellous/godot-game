@@ -6,7 +6,7 @@ extends Interactable3D
 
 signal menu_requested(menu_type: StringName, player: CharacterBody3D)
 
-enum ObjectType { BED, DESK, CAFETERIA, FELLOWSHIP, ATM }
+enum ObjectType { BED, DESK, CAFETERIA, FELLOWSHIP, ATM, HUSTLE_DESK, SALON_CHAIR }
 
 @export var object_type: ObjectType = ObjectType.BED
 
@@ -52,6 +52,12 @@ func update_object_display() -> void:
 		ObjectType.ATM:
 			prompt_message = "[E] Withdraw Allowance (+₦2,000)"
 			object_name = "Campus ATM"
+		ObjectType.HUSTLE_DESK:
+			prompt_message = "[E] Freelance Typing & Design Work"
+			object_name = "Hustle Workstation"
+		ObjectType.SALON_CHAIR:
+			prompt_message = "[E] Get Fresh Haircut (₦1,000)"
+			object_name = "Barber Styling Chair"
 
 	if label_3d:
 		label_3d.text = object_name
@@ -91,6 +97,27 @@ func interact(player: CharacterBody3D) -> void:
 			needs.modify_money(2000)
 			TimeSystem.advance_minutes(5)
 			_show_feedback(player, "Allowance received! +₦2,000")
+
+		ObjectType.HUSTLE_DESK:
+			if needs.energy >= 18.0:
+				needs.modify_energy(-18.0)
+				needs.modify_money(2500)
+				TimeSystem.advance_minutes(45)
+				_show_feedback(player, "Completed student typing hustle! +₦2,500, Energy -18%")
+			else:
+				_show_feedback(player, "Too exhausted to work! Rest on your bed first.")
+
+		ObjectType.SALON_CHAIR:
+			if needs.money >= 1000:
+				needs.modify_money(-1000)
+				TimeSystem.advance_minutes(20)
+				const Customizer = preload("res://scripts/data/character_customizer.gd")
+				var new_hair_color: Color = Customizer.HAIR_STYLES[randi() % Customizer.HAIR_STYLES.size()].color
+				if player.has_method("apply_appearance"):
+					player.apply_appearance(Color(0.32, 0.20, 0.14), Color(0.12, 0.55, 0.32), Color(0.15, 0.22, 0.32), new_hair_color)
+				_show_feedback(player, "Fresh haircut from Master Sunday! Looking sharp! -₦1,000")
+			else:
+				_show_feedback(player, "Insufficient funds! Master Sunday charges ₦1,000.")
 
 
 func _show_feedback(player: CharacterBody3D, msg: String) -> void:

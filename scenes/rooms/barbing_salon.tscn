@@ -138,8 +138,8 @@ outline_size = 6
 
 [node name="BarberSeat" parent="WorldObjects" instance=ExtResource("4_obj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5.0)
-object_type = 4
-object_name = "Barber Chair (Change Hairstyle & Look)"
+object_type = 6
+object_name = "Barber Chair (Get Fresh Haircut)"
 
 [node name="NPCs" type="Node3D" parent="."]
 

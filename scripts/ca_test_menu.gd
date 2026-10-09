@@ -143,4 +143,3 @@ func _get_letter(idx: int) -> String:
 		2: return "C"
 		3: return "D"
 		_: return "?"
-

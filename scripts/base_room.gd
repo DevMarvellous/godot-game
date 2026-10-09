@@ -11,6 +11,9 @@ extends Node3D
 @onready var mobile_controls: CanvasLayer = $MobileControls
 @onready var menus_layer: CanvasLayer = $MenusLayer
 
+const PhoneScene = preload("res://scenes/phone_system.tscn")
+var phone_menu: Control = null
+
 @onready var food_menu: Control = $MenusLayer/FoodMenu if has_node("MenusLayer/FoodMenu") else null
 @onready var study_menu: Control = $MenusLayer/StudyMenu if has_node("MenusLayer/StudyMenu") else null
 @onready var ca_test_menu: Control = $MenusLayer/CATestMenu if has_node("MenusLayer/CATestMenu") else null
@@ -28,6 +31,17 @@ func _ready() -> void:
 			mobile_controls.bind_player(player)
 		if mobile_controls.has_signal("transit_requested"):
 			mobile_controls.transit_requested.connect(_on_transit_requested)
+		if mobile_controls.has_signal("phone_requested"):
+			mobile_controls.phone_requested.connect(_on_phone_requested)
+
+	if menus_layer:
+		if menus_layer.has_node("PhoneSystem"):
+			phone_menu = menus_layer.get_node("PhoneSystem")
+		else:
+			phone_menu = PhoneScene.instantiate()
+			menus_layer.add_child(phone_menu)
+		if phone_menu and phone_menu.has_signal("phone_closed"):
+			phone_menu.phone_closed.connect(_on_menu_closed)
 
 	if food_menu:
 		food_menu.menu_closed.connect(_on_menu_closed)
@@ -85,6 +99,13 @@ func _on_npc_dialogue_requested(npc: NPC3D, p: CharacterBody3D) -> void:
 		player.velocity = Vector3.ZERO
 	if dialogue_menu:
 		dialogue_menu.open_dialogue(p, npc.character_name, npc.character_role)
+
+
+func _on_phone_requested() -> void:
+	if phone_menu and player:
+		player.set_physics_process(false)
+		player.velocity = Vector3.ZERO
+		phone_menu.open_phone(player)
 
 
 func _on_transit_requested(dest: StringName) -> void:

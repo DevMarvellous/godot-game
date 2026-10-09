@@ -7,24 +7,50 @@
 radius = 0.45
 height = 1.8
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_body"]
-radius = 0.4
-height = 1.2
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_torso"]
+radius = 0.28
+height = 0.65
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
-albedo_color = Color(0.18, 0.52, 0.92, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shirt"]
+albedo_color = Color(0.12, 0.55, 0.32, 1)
 roughness = 0.6
 
 [sub_resource type="SphereMesh" id="SphereMesh_head"]
-radius = 0.3
-height = 0.6
+radius = 0.24
+height = 0.48
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_head"]
-albedo_color = Color(0.96, 0.76, 0.6, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_skin"]
+albedo_color = Color(0.32, 0.20, 0.14, 1)
 roughness = 0.7
 
+[sub_resource type="SphereMesh" id="SphereMesh_hair"]
+radius = 0.26
+height = 0.28
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hair"]
+albedo_color = Color(0.08, 0.08, 0.08, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_legs"]
+size = Vector3(0.48, 0.62, 0.26)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trousers"]
+albedo_color = Color(0.15, 0.22, 0.32, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_shoes"]
+size = Vector3(0.50, 0.14, 0.32)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shoes"]
+albedo_color = Color(0.92, 0.92, 0.92, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_arm"]
+radius = 0.09
+height = 0.52
+
 [sub_resource type="BoxMesh" id="BoxMesh_visor"]
-size = Vector3(0.3, 0.1, 0.2)
+size = Vector3(0.22, 0.08, 0.12)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_visor"]
+albedo_color = Color(0.05, 0.05, 0.05, 1)
 
 [node name="Player3D" type="CharacterBody3D"]
 collision_layer = 1
@@ -37,19 +63,45 @@ shape = SubResource("CapsuleShape3D_p")
 
 [node name="Visuals" type="Node3D" parent="."]
 
-[node name="BodyMesh" type="MeshInstance3D" parent="Visuals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
-mesh = SubResource("CapsuleMesh_body")
-surface_material_override/0 = SubResource("StandardMaterial3D_body")
+[node name="TorsoMesh" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
+mesh = SubResource("CapsuleMesh_torso")
+surface_material_override/0 = SubResource("StandardMaterial3D_shirt")
 
 [node name="HeadMesh" type="MeshInstance3D" parent="Visuals"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0)
 mesh = SubResource("SphereMesh_head")
-surface_material_override/0 = SubResource("StandardMaterial3D_head")
+surface_material_override/0 = SubResource("StandardMaterial3D_skin")
+
+[node name="HairMesh" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.58, 0)
+mesh = SubResource("SphereMesh_hair")
+surface_material_override/0 = SubResource("StandardMaterial3D_hair")
 
 [node name="FaceIndicator" type="MeshInstance3D" parent="Visuals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0.25)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0.22)
 mesh = SubResource("BoxMesh_visor")
+surface_material_override/0 = SubResource("StandardMaterial3D_visor")
+
+[node name="LegsMesh" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42, 0)
+mesh = SubResource("BoxMesh_legs")
+surface_material_override/0 = SubResource("StandardMaterial3D_trousers")
+
+[node name="ShoesMesh" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0.02)
+mesh = SubResource("BoxMesh_shoes")
+surface_material_override/0 = SubResource("StandardMaterial3D_shoes")
+
+[node name="LeftArm" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.34, 0.90, 0)
+mesh = SubResource("CapsuleMesh_arm")
+surface_material_override/0 = SubResource("StandardMaterial3D_shirt")
+
+[node name="RightArm" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.34, 0.90, 0)
+mesh = SubResource("CapsuleMesh_arm")
+surface_material_override/0 = SubResource("StandardMaterial3D_shirt")
 
 [node name="NeedsManager" type="Node" parent="."]
 script = ExtResource("2_needs")

@@ -42,6 +42,15 @@ size = Vector3(1.8, 0.5, 0.15)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gold"]
 albedo_color = Color(0.9, 0.78, 0.25, 1)
 
+[sub_resource type="BoxMesh" id="BoxMesh_pew"]
+size = Vector3(5.5, 0.75, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pew"]
+albedo_color = Color(0.42, 0.26, 0.14, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pulpit"]
+size = Vector3(1.6, 1.1, 1.0)
+
 [node name="ChapelHall" type="Node3D"]
 script = ExtResource("1_room")
 room_name = "Campus Chapel / Fellowship Auditorium"
@@ -124,6 +133,41 @@ billboard = 1
 text = "CAMPUS CHRISTIAN FELLOWSHIP AUDITORIUM"
 font_size = 32
 outline_size = 6
+
+[node name="Pulpit" type="MeshInstance3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -6.5)
+mesh = SubResource("BoxMesh_pulpit")
+surface_material_override/0 = SubResource("StandardMaterial3D_pew")
+
+[node name="PewLeft1" type="MeshInstance3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 0.4, -2.0)
+mesh = SubResource("BoxMesh_pew")
+surface_material_override/0 = SubResource("StandardMaterial3D_pew")
+
+[node name="PewRight1" type="MeshInstance3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 0.4, -2.0)
+mesh = SubResource("BoxMesh_pew")
+surface_material_override/0 = SubResource("StandardMaterial3D_pew")
+
+[node name="PewLeft2" type="MeshInstance3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 0.4, 1.0)
+mesh = SubResource("BoxMesh_pew")
+surface_material_override/0 = SubResource("StandardMaterial3D_pew")
+
+[node name="PewRight2" type="MeshInstance3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 0.4, 1.0)
+mesh = SubResource("BoxMesh_pew")
+surface_material_override/0 = SubResource("StandardMaterial3D_pew")
+
+[node name="PewLeft3" type="MeshInstance3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 0.4, 4.0)
+mesh = SubResource("BoxMesh_pew")
+surface_material_override/0 = SubResource("StandardMaterial3D_pew")
+
+[node name="PewRight3" type="MeshInstance3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 0.4, 4.0)
+mesh = SubResource("BoxMesh_pew")
+surface_material_override/0 = SubResource("StandardMaterial3D_pew")
 
 [node name="WorldObjects" type="Node3D" parent="."]
 

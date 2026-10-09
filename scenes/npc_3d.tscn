@@ -7,16 +7,33 @@
 radius = 0.45
 height = 1.8
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_npc_body"]
-radius = 0.4
-height = 1.2
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_torso"]
+radius = 0.28
+height = 0.65
 
-[sub_resource type="SphereMesh" id="SphereMesh_npc_head"]
-radius = 0.3
-height = 0.6
+[sub_resource type="SphereMesh" id="SphereMesh_head"]
+radius = 0.24
+height = 0.48
 
-[sub_resource type="BoxMesh" id="BoxMesh_npc_visor"]
-size = Vector3(0.3, 0.1, 0.2)
+[sub_resource type="SphereMesh" id="SphereMesh_hair"]
+radius = 0.26
+height = 0.28
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hair"]
+albedo_color = Color(0.08, 0.08, 0.08, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_legs"]
+size = Vector3(0.48, 0.62, 0.26)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trousers"]
+albedo_color = Color(0.15, 0.18, 0.22, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_arm"]
+radius = 0.09
+height = 0.52
+
+[sub_resource type="BoxMesh" id="BoxMesh_visor"]
+size = Vector3(0.22, 0.08, 0.12)
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_trigger"]
 radius = 2.6
@@ -32,17 +49,35 @@ shape = SubResource("CapsuleShape3D_npc")
 
 [node name="Visuals" type="Node3D" parent="."]
 
-[node name="BodyMesh" type="MeshInstance3D" parent="Visuals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
-mesh = SubResource("CapsuleMesh_npc_body")
+[node name="TorsoMesh" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
+mesh = SubResource("CapsuleMesh_torso")
 
 [node name="HeadMesh" type="MeshInstance3D" parent="Visuals"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0)
-mesh = SubResource("SphereMesh_npc_head")
+mesh = SubResource("SphereMesh_head")
+
+[node name="HairMesh" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.58, 0)
+mesh = SubResource("SphereMesh_hair")
+surface_material_override/0 = SubResource("StandardMaterial3D_hair")
 
 [node name="FaceIndicator" type="MeshInstance3D" parent="Visuals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0.25)
-mesh = SubResource("BoxMesh_npc_visor")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0.22)
+mesh = SubResource("BoxMesh_visor")
+
+[node name="LegsMesh" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42, 0)
+mesh = SubResource("BoxMesh_legs")
+surface_material_override/0 = SubResource("StandardMaterial3D_trousers")
+
+[node name="LeftArm" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.34, 0.90, 0)
+mesh = SubResource("CapsuleMesh_arm")
+
+[node name="RightArm" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.34, 0.90, 0)
+mesh = SubResource("CapsuleMesh_arm")
 
 [node name="NameLabel" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0)

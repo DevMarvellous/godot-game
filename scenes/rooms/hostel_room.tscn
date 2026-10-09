@@ -205,6 +205,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, -4.8)
 object_type = 1
 object_name = "Room Reading Desk"
 
+[node name="FreelanceLaptop" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, -3.2)
+object_type = 5
+object_name = "Laptop (Freelance Design Gig)"
+
 [node name="Player3D" parent="." instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 1.5)
 

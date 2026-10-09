@@ -120,6 +120,58 @@ const DIALOGUE_TREES: Dictionary = {
 				"money_change": 1500
 			}
 		]
+	},
+	"Brother Chinedu": {
+		"greeting": "Sharp guy! Welcome to Chinedu Cyber & Print Hub. You need typing, project binding, or flyer design?",
+		"choices": [
+			{
+				"text": "Brother Chinedu, do you have any typing gig for me to earn cash?",
+				"response": "Sure! Type this 15-page SIWES report for a final year student. Here is ₦2,500 cash for quick delivery!",
+				"cgpa_boost": 0.02,
+				"faith_boost": 0.0,
+				"money_change": 2500
+			},
+			{
+				"text": "Please print 10 copies of our tutorial assignment handout.",
+				"response": "Done! That will be ₦500 for quality laser prints on bond paper.",
+				"cgpa_boost": 0.04,
+				"faith_boost": 0.0,
+				"money_change": -500
+			},
+			{
+				"text": "Just looking around the SUB business centre, bro.",
+				"response": "No wahala! Whenever your printer runs out of ink in the hostel, you know where to run to.",
+				"cgpa_boost": 0.0,
+				"faith_boost": 0.0,
+				"money_change": 0
+			}
+		]
+	},
+	"Master Sunday": {
+		"greeting": "Chairman! Welcome to Executive Cuts. Looking neat is good business on campus. What cut are you getting?",
+		"choices": [
+			{
+				"text": "Give me a fresh low-cut with sharp line-up (₦1,000).",
+				"response": "Sharp! You look like a First Class student ready for Senate defense now! Confidence boosted!",
+				"cgpa_boost": 0.05,
+				"faith_boost": 0.0,
+				"money_change": -1000
+			},
+			{
+				"text": "Just trimming and beard grooming, Master Sunday (₦600).",
+				"response": "Clean work, boss! Go and pepper them in the lecture hall today!",
+				"cgpa_boost": 0.02,
+				"faith_boost": 0.0,
+				"money_change": -600
+			},
+			{
+				"text": "Just checking your price list, Chief.",
+				"response": "Anytime, chairman. Pocket will be heavy soon, then come get that fresh cut!",
+				"cgpa_boost": 0.0,
+				"faith_boost": 0.0,
+				"money_change": 0
+			}
+		]
 	}
 }
 

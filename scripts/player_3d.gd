@@ -13,12 +13,21 @@ var nav_target_pos: Vector3 = Vector3.ZERO
 var has_nav_target: bool = false
 
 @onready var visual_root: Node3D = $Visuals
+@onready var torso_mesh: MeshInstance3D = $Visuals/TorsoMesh if has_node("Visuals/TorsoMesh") else null
+@onready var head_mesh: MeshInstance3D = $Visuals/HeadMesh if has_node("Visuals/HeadMesh") else null
+@onready var hair_mesh: MeshInstance3D = $Visuals/HairMesh if has_node("Visuals/HairMesh") else null
+@onready var legs_mesh: MeshInstance3D = $Visuals/LegsMesh if has_node("Visuals/LegsMesh") else null
+@onready var shoes_mesh: MeshInstance3D = $Visuals/ShoesMesh if has_node("Visuals/ShoesMesh") else null
+@onready var left_arm: MeshInstance3D = $Visuals/LeftArm if has_node("Visuals/LeftArm") else null
+@onready var right_arm: MeshInstance3D = $Visuals/RightArm if has_node("Visuals/RightArm") else null
+
 @onready var needs_manager: NeedsManager = $NeedsManager
 @onready var prompt_label: Label3D = $PromptLabel
 @onready var notif_label: Label3D = $NotifLabel
 @onready var notif_timer: Timer = $NotifTimer
 
 var current_interactable: Interactable3D = null
+var walk_anim_time: float = 0.0
 
 
 func _ready() -> void:
@@ -28,6 +37,7 @@ func _ready() -> void:
 		notif_label.visible = false
 	if notif_timer:
 		notif_timer.timeout.connect(_on_notif_timeout)
+	_load_default_appearance()
 
 
 var mobile_input_vector: Vector2 = Vector2.ZERO
@@ -101,6 +111,27 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
+	# Animate walking limbs and subtle torso bobbing
+	var horiz_speed: float = Vector2(velocity.x, velocity.z).length()
+	if horiz_speed > 0.3:
+		walk_anim_time += delta * 12.0
+		if left_arm and right_arm:
+			left_arm.rotation.x = sin(walk_anim_time) * 0.45
+			right_arm.rotation.x = -sin(walk_anim_time) * 0.45
+		if torso_mesh and head_mesh and hair_mesh:
+			var bob: float = abs(sin(walk_anim_time)) * 0.035
+			torso_mesh.position.y = 0.95 + bob
+			head_mesh.position.y = 1.45 + bob
+			hair_mesh.position.y = 1.58 + bob
+	else:
+		if left_arm and right_arm:
+			left_arm.rotation.x = move_toward(left_arm.rotation.x, 0.0, 6.0 * delta)
+			right_arm.rotation.x = move_toward(right_arm.rotation.x, 0.0, 6.0 * delta)
+		if torso_mesh and head_mesh and hair_mesh:
+			torso_mesh.position.y = move_toward(torso_mesh.position.y, 0.95, 0.4 * delta)
+			head_mesh.position.y = move_toward(head_mesh.position.y, 1.45, 0.4 * delta)
+			hair_mesh.position.y = move_toward(hair_mesh.position.y, 1.58, 0.4 * delta)
+
 	# Interaction trigger
 	if Input.is_action_just_pressed("interact"):
 		trigger_interaction()
@@ -131,4 +162,41 @@ func display_notification(msg: String) -> void:
 func _on_notif_timeout() -> void:
 	if notif_label:
 		notif_label.visible = false
+
+
+func _load_default_appearance() -> void:
+	const Customizer = preload("res://scripts/data/character_customizer.gd")
+	var profile: Dictionary = Customizer.get_default_profile()
+	var skin_color: Color = Customizer.SKIN_TONES[profile.skin_index].color
+	var shirt_color: Color = Customizer.SHIRT_STYLES[profile.shirt_index].color
+	var trouser_color: Color = Customizer.TROUSER_STYLES[profile.trouser_index].color
+	var hair_color: Color = Customizer.HAIR_STYLES[profile.hair_index].color
+	apply_appearance(skin_color, shirt_color, trouser_color, hair_color)
+
+
+func apply_appearance(skin_color: Color, shirt_color: Color, trouser_color: Color, hair_color: Color) -> void:
+	if head_mesh:
+		var skin_mat: StandardMaterial3D = StandardMaterial3D.new()
+		skin_mat.albedo_color = skin_color
+		skin_mat.roughness = 0.7
+		head_mesh.set_surface_override_material(0, skin_mat)
+	if hair_mesh:
+		var hair_mat: StandardMaterial3D = StandardMaterial3D.new()
+		hair_mat.albedo_color = hair_color
+		hair_mat.roughness = 0.85
+		hair_mesh.set_surface_override_material(0, hair_mat)
+	if torso_mesh:
+		var shirt_mat: StandardMaterial3D = StandardMaterial3D.new()
+		shirt_mat.albedo_color = shirt_color
+		shirt_mat.roughness = 0.6
+		torso_mesh.set_surface_override_material(0, shirt_mat)
+		if left_arm:
+			left_arm.set_surface_override_material(0, shirt_mat)
+		if right_arm:
+			right_arm.set_surface_override_material(0, shirt_mat)
+	if legs_mesh:
+		var leg_mat: StandardMaterial3D = StandardMaterial3D.new()
+		leg_mat.albedo_color = trouser_color
+		leg_mat.roughness = 0.75
+		legs_mesh.set_surface_override_material(0, leg_mat)
 

@@ -5,10 +5,12 @@ extends CanvasLayer
 ## Designed specifically for phone screens and mobile web browsers.
 
 signal transit_requested(destination_name: StringName)
+signal phone_requested
 
 @onready var joystick: TouchJoystick = %VirtualJoystick
 @onready var interact_btn: Button = %InteractButton
 @onready var map_btn: Button = %MapButton
+@onready var phone_btn: Button = %PhoneButton
 @onready var transit_sheet: PanelContainer = %TransitSheet
 
 var bound_player: Player3D = null
@@ -21,6 +23,8 @@ func _ready() -> void:
 		interact_btn.pressed.connect(_on_interact_pressed)
 	if map_btn:
 		map_btn.pressed.connect(_toggle_transit_sheet)
+	if phone_btn:
+		phone_btn.pressed.connect(_on_phone_pressed)
 	if transit_sheet:
 		transit_sheet.visible = false
 
@@ -73,6 +77,10 @@ func _on_interact_pressed() -> void:
 func _toggle_transit_sheet() -> void:
 	if transit_sheet:
 		transit_sheet.visible = not transit_sheet.visible
+
+
+func _on_phone_pressed() -> void:
+	phone_requested.emit()
 
 
 func _on_transit_dest_pressed(dest: StringName) -> void:

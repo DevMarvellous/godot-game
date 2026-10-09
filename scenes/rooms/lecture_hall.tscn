@@ -48,6 +48,23 @@ size = Vector3(2.5, 1.1, 1.2)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wood"]
 albedo_color = Color(0.45, 0.28, 0.15, 1)
 
+[sub_resource type="BoxMesh" id="BoxMesh_bench_row"]
+size = Vector3(12.0, 0.75, 1.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bench"]
+albedo_color = Color(0.35, 0.24, 0.16, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_projector"]
+size = Vector3(0.8, 0.35, 0.6)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
+albedo_color = Color(0.2, 0.22, 0.25, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_fan"]
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.08
+
 [node name="LectureHall" type="Node3D"]
 script = ExtResource("1_room")
 room_name = "Lecture Theatre (Faculty LT 1)"
@@ -123,6 +140,36 @@ surface_material_override/0 = SubResource("StandardMaterial3D_board")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -6.5)
 mesh = SubResource("BoxMesh_podium")
 surface_material_override/0 = SubResource("StandardMaterial3D_wood")
+
+[node name="BenchRow1" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, -3.2)
+mesh = SubResource("BoxMesh_bench_row")
+surface_material_override/0 = SubResource("StandardMaterial3D_bench")
+
+[node name="BenchRow2" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0.2)
+mesh = SubResource("BoxMesh_bench_row")
+surface_material_override/0 = SubResource("StandardMaterial3D_bench")
+
+[node name="BenchRow3" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 3.6)
+mesh = SubResource("BoxMesh_bench_row")
+surface_material_override/0 = SubResource("StandardMaterial3D_bench")
+
+[node name="CeilingProjector" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, -3.5)
+mesh = SubResource("BoxMesh_projector")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="CeilingFan1" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.0, 4.0, 0)
+mesh = SubResource("CylinderMesh_fan")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="CeilingFan2" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0, 4.0, 0)
+mesh = SubResource("CylinderMesh_fan")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
 
 [node name="HallSign" type="Label3D" parent="LectureFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0, -8.5)
