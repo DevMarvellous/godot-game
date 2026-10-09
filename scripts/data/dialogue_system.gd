@@ -225,6 +225,58 @@ const DIALOGUE_TREES: Dictionary = {
 			}
 		]
 	},
+	"Iya Basira": {
+		"greeting": "Bawo ni omo mi! Steaming hot Amala Lafun with fresh ewedu, gbegiri, and tender goat meat or ponmo! How many wraps?",
+		"choices": [
+			{
+				"text": "Iya Basira, give me 2 wraps of Amala with correct goat meat!",
+				"response": "O ti ya! Chop am while e hot, this local delicacy go give you heavy energy to tackle calculus!",
+				"cgpa_boost": 0.03,
+				"faith_boost": 0.0,
+				"money_change": -800
+			},
+			{
+				"text": "Ma, is the gbegiri and pepper soup fresh?",
+				"response": "Straight from fire this morning! Pure authentic taste, no shortcuts!",
+				"cgpa_boost": 0.01,
+				"faith_boost": 5.0,
+				"money_change": 0
+			},
+			{
+				"text": "Just enjoying the canteen aroma, ma.",
+				"response": "E ma wo o! Anytime hunger strikes, come straight to Iya Basira Amala corner!",
+				"cgpa_boost": 0.0,
+				"faith_boost": 0.0,
+				"money_change": 0
+			}
+		]
+	},
+	"Mallam Danladi": {
+		"greeting": "Sannu aboki! Special Indomie with double eggs and fried suya beef dey ready. Fast food for sharp brain!",
+		"choices": [
+			{
+				"text": "Mallam, prepare one carton Indomie with suya pepper!",
+				"response": "Sharp sharp! In 4 minutes flat, your meal is steaming hot! ₦650 only.",
+				"cgpa_boost": 0.02,
+				"faith_boost": 0.0,
+				"money_change": -650
+			},
+			{
+				"text": "Mallam, do you have cold malt or chilled Zobo drink?",
+				"response": "Chilled inside ice bucket! Refresh your throat before your afternoon lecture.",
+				"cgpa_boost": 0.0,
+				"faith_boost": 0.0,
+				"money_change": -250
+			},
+			{
+				"text": "Good day Mallam, just greeting.",
+				"response": "Nagode aboki! More grace for your exams!",
+				"cgpa_boost": 0.0,
+				"faith_boost": 5.0,
+				"money_change": 0
+			}
+		]
+	},
 	"Tobi": {
 		"greeting": "Fresher! How campus dey be? Final year project dey show me pepper, but we go conquer. You need any survival advice?",
 		"choices": [
@@ -273,6 +325,32 @@ const DIALOGUE_TREES: Dictionary = {
 				"response": "Hot plate dey under bed! Just boil your noodles quick before the hall porter comes on inspection.",
 				"cgpa_boost": 0.0,
 				"faith_boost": 5.0,
+				"money_change": 0
+			}
+		]
+	},
+	"Chisom": {
+		"greeting": "Roomie babe! Good morning! NEPA brought light o, I've plugged our rechargeable lamp and ironed our class clothes!",
+		"choices": [
+			{
+				"text": "Good morning Chisom! What time is our first lecture?",
+				"response": "8:00 AM sharp! Let's hurry so we can grab front seats before the backbenchers make noise.",
+				"cgpa_boost": 0.05,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Chisom, did you finish summarizing the lecture slides?",
+				"response": "Yes babe! I highlighted all the key definitions. Take my note to photocopy at Chinedu's hub!",
+				"cgpa_boost": 0.08,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Do you want to split a pack of pasta for breakfast?",
+				"response": "Aww sweet! I have eggs and pepper, let's cook quickly on my hot plate!",
+				"cgpa_boost": 0.0,
+				"faith_boost": 10.0,
 				"money_change": 0
 			}
 		]

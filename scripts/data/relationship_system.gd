@@ -7,9 +7,12 @@ extends RefCounted
 static var character_affinity: Dictionary = {
 	"Emeka": 20,
 	"Segun": 35,
+	"Chisom": 35,
 	"Dr. Adebayo": 10,
 	"Mr. Adepoju Marvellous": 20,
 	"Mama Cashout": 25,
+	"Iya Basira": 25,
+	"Mallam Danladi": 20,
 	"Tobi": 15,
 	"Prof. Okonjo": 10,
 	"Sister Blessing": 25,

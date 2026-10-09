@@ -56,7 +56,7 @@ albedo_color = Color(0.7, 0.72, 0.75, 1)
 
 [node name="BukaCourt" type="Node3D"]
 script = ExtResource("1_room")
-room_name = "Mama Cashout Campus Canteen & Eatery"
+room_name = "Mama Put (Campus Food Joint)"
 room_id = &"buka"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
@@ -148,7 +148,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_wood")
 [node name="BukaSign" type="Label3D" parent="BukaFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, -7.5)
 billboard = 1
-text = "MAMA CASHOUT CAMPUS CANTEEN & EATERY"
+text = "MAMA PUT JOINT (HOT AMALA, JOLLOF & SUYA)"
 font_size = 34
 outline_size = 6
 
@@ -166,6 +166,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -6.2)
 character_name = "Mama Cashout"
 character_role = "Campus Canteen Chief Caterer"
 shirt_color = Color(0.92, 0.45, 0.15, 1)
+
+[node name="IyaBasira" parent="NPCs" instance=ExtResource("8_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.1, -5.5)
+character_name = "Iya Basira"
+character_role = "Amala & Local Dishes Spot"
+shirt_color = Color(0.65, 0.25, 0.12, 1)
+
+[node name="MallamDanladi" parent="NPCs" instance=ExtResource("8_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.1, -5.5)
+character_name = "Mallam Danladi"
+character_role = "Indomie & Suya Grille"
+shirt_color = Color(0.18, 0.65, 0.35, 1)
 
 [node name="Tobi" parent="NPCs" instance=ExtResource("8_npc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.1, 1.2)

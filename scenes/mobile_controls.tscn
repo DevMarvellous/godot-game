@@ -242,7 +242,7 @@ text = "📖 Central Library (Keke ₦100)"
 [node name="BukaBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "🍲 Campus Food Canteen (Keke ₦100)"
+text = "🍲 Mama Put Joint (Keke ₦100)"
 
 [node name="ChapelBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true

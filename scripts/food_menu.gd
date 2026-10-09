@@ -14,31 +14,39 @@ signal menu_closed
 @export var menu_items: Array[Dictionary] = [
 	{
 		"name": "Jollof Rice & Fried Chicken",
-		"desc": "Smoky party jollof with spicy drumstick.",
+		"desc": "[Mama Cashout] Smoky party jollof with spicy drumstick.",
 		"cost": 1200,
 		"hunger": 65.0,
 		"energy": 15.0,
 		"time_minutes": 20
 	},
 	{
-		"name": "Indomie & 2 Fried Eggs",
-		"desc": "Classic student late-night survival meal.",
-		"cost": 650,
-		"hunger": 40.0,
-		"energy": 8.0,
+		"name": "Amala Lafun, Ewedu & Goat Meat",
+		"desc": "[Iya Basira] Steaming piping-hot black amala with tender goat meat.",
+		"cost": 1100,
+		"hunger": 80.0,
+		"energy": 12.0,
+		"time_minutes": 22
+	},
+	{
+		"name": "Indomie with Suya Beef & Eggs",
+		"desc": "[Mallam Danladi] Spicy stir-fried noodles with grilled suya slices.",
+		"cost": 850,
+		"hunger": 55.0,
+		"energy": 14.0,
 		"time_minutes": 15
 	},
 	{
 		"name": "Pounded Yam & Egusi Soup",
-		"desc": "Heavy local delicacy. Leaves you very full.",
+		"desc": "[Iya Basira] Heavy pounded yam with rich melon egusi & fish.",
 		"cost": 1500,
 		"hunger": 85.0,
 		"energy": 5.0,
 		"time_minutes": 25
 	},
 	{
-		"name": "Hot Meat Pie & Chilled Drink",
-		"desc": "Quick snack between 9am and 2pm lectures.",
+		"name": "Hot Meat Pie & Chilled Zobo",
+		"desc": "[Mama Cashout] Quick snack between 9am and 2pm lectures.",
 		"cost": 450,
 		"hunger": 25.0,
 		"energy": 5.0,
@@ -46,7 +54,7 @@ signal menu_closed
 	},
 	{
 		"name": "Pure Water & Cabin Biscuit",
-		"desc": "The legendary 'Sapa Special' emergency kit.",
+		"desc": "[Campus Kiosk] The legendary 'Sapa Special' emergency kit.",
 		"cost": 100,
 		"hunger": 10.0,
 		"energy": 2.0,

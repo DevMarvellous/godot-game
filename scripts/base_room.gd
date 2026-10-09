@@ -82,7 +82,36 @@ func _ready() -> void:
 		SemesterManager.day_ended.connect(_on_day_ended)
 		SemesterManager.semester_finished.connect(_on_semester_finished)
 
+	_configure_dynamic_hostel_room()
 	_connect_interactive_fixtures()
+
+
+func _configure_dynamic_hostel_room() -> void:
+	if room_id != &"hostel":
+		return
+
+	const ProfileStore = preload("res://scripts/data/student_profile.gd")
+	ProfileStore.load_from_disk()
+	var is_female: bool = (ProfileStore.gender.to_lower() == "female")
+
+	var room_title: Label3D = get_node_or_null("RoomDecor/RoomTitle3D") as Label3D
+	if room_title:
+		if is_female:
+			room_title.text = "MOREMI HALL (FEMALE HOSTEL - ROOM 204)"
+		else:
+			room_title.text = "HALL 2 (MALE HOSTEL - ROOM 112)"
+
+	var roommate_npc: NPC3D = get_node_or_null("NPCs/SegunRoommate") as NPC3D
+	if roommate_npc:
+		if is_female:
+			roommate_npc.character_name = "Chisom"
+			roommate_npc.character_role = "Hostel Roommate (CSC 100L)"
+			roommate_npc.shirt_color = Color(0.85, 0.35, 0.65, 1) # Rose pink
+		else:
+			roommate_npc.character_name = "Segun"
+			roommate_npc.character_role = "Hostel Roommate (CSC 100L)"
+			roommate_npc.shirt_color = Color(0.9, 0.45, 0.15, 1) # Orange
+		roommate_npc.apply_character_data()
 
 
 func _connect_interactive_fixtures() -> void:
