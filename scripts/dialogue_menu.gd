@@ -47,7 +47,7 @@ func open_dialogue(player: CharacterBody3D, npc_name: String, npc_role: String) 
 		var aff: int = Relationship.get_affinity(npc_name)
 		var tier: String = Relationship.get_tier_name(aff)
 		var perk: String = Relationship.get_perk_description(npc_name)
-		rel_label.text = "Affinity: %d/100 (%s)\n%s" % [aff, tier, perk]
+		rel_label.text = "Friendship: %d/100 (%s)\n%s" % [aff, tier, perk]
 
 	if response_panel:
 		response_panel.visible = false
@@ -110,7 +110,7 @@ func _on_choice_selected(choice: Dictionary) -> void:
 	var new_tier: String = Relationship.get_tier_name(new_aff)
 	var new_perk: String = Relationship.get_perk_description(current_npc)
 	if rel_label:
-		rel_label.text = "Affinity: %d/100 (%s)  [+8]\n%s" % [new_aff, new_tier, new_perk]
+		rel_label.text = "Friendship: %d/100 (%s)  [+8]\n%s" % [new_aff, new_tier, new_perk]
 
 	if SoundManager:
 		SoundManager.play_click()

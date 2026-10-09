@@ -27,13 +27,13 @@ static func modify_affinity(character_name: String, delta: int) -> int:
 
 static func get_tier_name(affinity: int) -> String:
 	if affinity >= 75:
-		return "Trusted Ally / Bestie"
+		return "Bestie / Ride or Die"
 	elif affinity >= 50:
-		return "Good Friend / Solid Ally"
+		return "Close Friend"
 	elif affinity >= 25:
-		return "Coursemate / Familiar Face"
+		return "Coursemate"
 	else:
-		return "Casual Acquaintance"
+		return "Just Met"
 
 
 static func get_perk_description(character_name: String) -> String:

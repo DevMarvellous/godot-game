@@ -1,3 +1,4 @@
+class_name NetworkManager
 extends Node
 
 ## Web & Mobile-Compatible Online Multiplayer Network Manager.

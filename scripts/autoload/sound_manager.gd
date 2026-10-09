@@ -1,3 +1,4 @@
+class_name SoundManager
 extends Node
 
 ## Procedural Sound & Audio FX Manager for Campus Life Simulator.
@@ -44,27 +45,27 @@ func _play(stream: AudioStreamWAV, volume_db: float = 0.0) -> void:
 
 
 static func play_click() -> void:
-	if instance:
+	if instance and instance.has_method("_play"):
 		instance._play(instance._click_stream, -6.0)
 
 
 static func play_coin() -> void:
-	if instance:
+	if instance and instance.has_method("_play"):
 		instance._play(instance._coin_stream, -3.0)
 
 
 static func play_transit_horn() -> void:
-	if instance:
+	if instance and instance.has_method("_play"):
 		instance._play(instance._horn_stream, -4.0)
 
 
 static func play_bell() -> void:
-	if instance:
+	if instance and instance.has_method("_play"):
 		instance._play(instance._bell_stream, -2.0)
 
 
 static func play_alert() -> void:
-	if instance:
+	if instance and instance.has_method("_play"):
 		instance._play(instance._alert_stream, -1.0)
 
 
