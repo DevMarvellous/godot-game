@@ -4,8 +4,6 @@ extends RefCounted
 ## Nigerian Campus Student & Lecturer Relationship & Affinity Tracker.
 ## Tracks affinity (0-100) and unlocks campus perks (attendance covers, grade boosts, discounts).
 
-signal relationship_changed(character_name: String, new_affinity: int, tier_name: String)
-
 static var character_affinity: Dictionary = {
 	"Emeka": 20,
 	"Dr. Adebayo": 10,

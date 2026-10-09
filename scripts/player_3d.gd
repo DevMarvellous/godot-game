@@ -27,12 +27,19 @@ var has_nav_target: bool = false
 @onready var notif_timer: Timer = $NotifTimer
 @onready var chat_bubble: Label3D = $ChatBubble if has_node("ChatBubble") else null
 @onready var chat_timer: Timer = $ChatTimer if has_node("ChatTimer") else null
+@onready var camera_node: Camera3D = $Camera3D if has_node("Camera3D") else null
 
 var current_interactable: Interactable3D = null
 var walk_anim_time: float = 0.0
 
+# Smooth Lagos Life style camera offset & interpolation
+var cam_target_offset: Vector3 = Vector3(0, 3.2, 4.6)
+
 
 func _ready() -> void:
+	if camera_node:
+		camera_node.top_level = true
+		camera_node.global_position = global_position + cam_target_offset
 	if prompt_label:
 		prompt_label.visible = false
 	if notif_label:
@@ -144,6 +151,11 @@ func _physics_process(delta: float) -> void:
 	if NetworkManager and is_inside_tree() and NetworkManager.is_online():
 		var current_room: String = get_tree().current_scene.name if get_tree().current_scene else "room"
 		NetworkManager.broadcast_transform(current_room, global_position, visual_root.rotation.y, horiz_speed > 0.3)
+
+	# Smooth Lagos Life camera follow (damped lerp)
+	if camera_node:
+		var desired_cam_pos: Vector3 = global_position + cam_target_offset
+		camera_node.global_position = camera_node.global_position.lerp(desired_cam_pos, 7.5 * delta)
 
 	# Interaction trigger
 	if Input.is_action_just_pressed("interact"):

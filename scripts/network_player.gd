@@ -96,3 +96,4 @@ func apply_appearance(skin_col: Color, shirt_col: Color, trouser_col: Color, hai
 		leg_mat.albedo_color = trouser_col
 		leg_mat.roughness = 0.75
 		legs_mesh.set_surface_override_material(0, leg_mat)
+

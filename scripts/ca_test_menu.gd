@@ -1,7 +1,7 @@
 class_name CATestMenu
 extends Control
 
-const QuizTestSystem = preload("res://scripts/data/quiz_test_system.gd")
+const QuizSystem = preload("res://scripts/data/quiz_test_system.gd")
 const ExamMalpractice = preload("res://scripts/data/exam_malpractice_system.gd")
 
 ## Interactive In-Class Continuous Assessment (CA) Test Paper.
@@ -46,7 +46,7 @@ func _ready() -> void:
 func start_test(player: CharacterBody3D, course_code: String = "CSC 101") -> void:
 	current_player = player
 	current_course = course_code
-	questions = QuizTestSystem.get_test_for_course(course_code)
+	questions = QuizSystem.get_test_for_course(course_code)
 	current_q_idx = 0
 	total_correct = 0
 	expo_used = false

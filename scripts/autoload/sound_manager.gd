@@ -4,6 +4,8 @@ extends Node
 ## Generates lightweight synthetic chimes, dings, and audio feedback in memory.
 ## 100% self-contained: No bulky external audio files required, zero latency on mobile.
 
+static var instance: Node = null
+
 var _click_stream: AudioStreamWAV = null
 var _coin_stream: AudioStreamWAV = null
 var _horn_stream: AudioStreamWAV = null
@@ -15,6 +17,7 @@ const POOL_SIZE: int = 5
 
 
 func _ready() -> void:
+	instance = self
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_generate_sound_streams()
 	for i in range(POOL_SIZE):
@@ -40,24 +43,29 @@ func _play(stream: AudioStreamWAV, volume_db: float = 0.0) -> void:
 	fallback.play()
 
 
-func play_click() -> void:
-	_play(_click_stream, -6.0)
+static func play_click() -> void:
+	if instance:
+		instance._play(instance._click_stream, -6.0)
 
 
-func play_coin() -> void:
-	_play(_coin_stream, -3.0)
+static func play_coin() -> void:
+	if instance:
+		instance._play(instance._coin_stream, -3.0)
 
 
-func play_transit_horn() -> void:
-	_play(_horn_stream, -4.0)
+static func play_transit_horn() -> void:
+	if instance:
+		instance._play(instance._horn_stream, -4.0)
 
 
-func play_bell() -> void:
-	_play(_bell_stream, -2.0)
+static func play_bell() -> void:
+	if instance:
+		instance._play(instance._bell_stream, -2.0)
 
 
-func play_alert() -> void:
-	_play(_alert_stream, -1.0)
+static func play_alert() -> void:
+	if instance:
+		instance._play(instance._alert_stream, -1.0)
 
 
 func _generate_sound_streams() -> void:
@@ -97,7 +105,7 @@ func _create_coin_chime() -> AudioStreamWAV:
 	var bytes: PackedByteArray = PackedByteArray()
 	bytes.resize(total_samples * 2)
 
-	var mid_sample: int = total_samples / 2
+	var mid_sample: int = int(float(total_samples) / 2.0)
 	for i in range(total_samples):
 		var t: float = float(i) / float(sample_rate)
 		var freq: float = 987.0 if i < mid_sample else 1318.0

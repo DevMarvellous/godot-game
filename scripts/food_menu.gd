@@ -1,6 +1,8 @@
 class_name FoodMenu
 extends Control
 
+const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
+
 ## Interactive Nigerian Cafeteria / Buka Food Menu.
 ## Fully editable: You can add, remove, or modify dishes below in the inspector or in code.
 

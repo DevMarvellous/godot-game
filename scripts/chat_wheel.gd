@@ -82,3 +82,4 @@ func _send(msg: String) -> void:
 		NetworkManager.broadcast_chat(msg)
 	message_sent.emit(msg)
 	close_chat()
+
