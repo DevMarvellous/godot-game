@@ -1,6 +1,8 @@
 class_name Player3D
 extends CharacterBody3D
 
+const NetworkManager = preload("res://scripts/autoload/network_manager.gd")
+
 ## 3D Top-Down / Isometric Player Controller.
 ## Movement across X/Z ground plane with smooth rotation and 3D interactions.
 

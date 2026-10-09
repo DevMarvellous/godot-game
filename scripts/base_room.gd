@@ -11,6 +11,7 @@ extends Node3D
 @onready var mobile_controls: CanvasLayer = $MobileControls
 @onready var menus_layer: CanvasLayer = $MenusLayer
 
+const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const PhoneScene = preload("res://scenes/phone_system.tscn")
 const SalonScene = preload("res://scenes/salon_menu.tscn")
 const ChatScene = preload("res://scenes/chat_wheel.tscn")

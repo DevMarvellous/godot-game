@@ -1,6 +1,8 @@
 class_name MobileControls
 extends CanvasLayer
 
+const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
+
 ## Mobile On-Screen Controls: Virtual Joystick + Action Button + Transit Map.
 ## Designed specifically for phone screens and mobile web browsers.
 

@@ -1,4 +1,3 @@
-class_name NetworkManager
 extends Node
 
 ## Web & Mobile-Compatible Online Multiplayer Network Manager.
@@ -44,13 +43,13 @@ func _ready() -> void:
 
 
 func _sync_with_profile() -> void:
-	const StudentProfile = preload("res://scripts/data/student_profile.gd")
-	StudentProfile.load_from_disk()
-	local_player_data["name"] = StudentProfile.student_name
-	local_player_data["skin_idx"] = StudentProfile.complexion_index
-	local_player_data["shirt_idx"] = StudentProfile.shirt_index
-	local_player_data["trouser_idx"] = StudentProfile.trouser_index
-	local_player_data["hair_idx"] = StudentProfile.hair_index
+	const ProfileStore = preload("res://scripts/data/student_profile.gd")
+	ProfileStore.load_from_disk()
+	local_player_data["name"] = ProfileStore.student_name
+	local_player_data["skin_idx"] = ProfileStore.complexion_index
+	local_player_data["shirt_idx"] = ProfileStore.shirt_index
+	local_player_data["trouser_idx"] = ProfileStore.trouser_index
+	local_player_data["hair_idx"] = ProfileStore.hair_index
 
 
 func is_online() -> bool:

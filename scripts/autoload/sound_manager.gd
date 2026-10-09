@@ -1,4 +1,3 @@
-class_name SoundManager
 extends Node
 
 ## Procedural Sound & Audio FX Manager for Campus Life Simulator.
