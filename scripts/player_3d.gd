@@ -183,6 +183,11 @@ func display_notification(msg: String) -> void:
 	notif_label.visible = true
 	if notif_timer and notif_timer.is_inside_tree():
 		notif_timer.start(2.5)
+	elif is_inside_tree() and get_tree():
+		get_tree().create_timer(2.5).timeout.connect(func():
+			if notif_label and is_inside_tree():
+				notif_label.visible = false
+		)
 
 
 func _on_notif_timeout() -> void:
@@ -210,13 +215,13 @@ func _on_chat_received(_sender_name: String, msg: String, _peer_id: int) -> void
 
 func _load_default_appearance() -> void:
 	const Customizer = preload("res://scripts/data/character_customizer.gd")
-	const StudentProfile = preload("res://scripts/data/student_profile.gd")
-	StudentProfile.load_from_disk()
+	const ProfileStore = preload("res://scripts/data/student_profile.gd")
+	ProfileStore.load_from_disk()
 
-	var skin_idx: int = StudentProfile.complexion_index
-	var shirt_idx: int = StudentProfile.shirt_index
-	var trouser_idx: int = StudentProfile.trouser_index
-	var hair_idx: int = StudentProfile.hair_index
+	var skin_idx: int = ProfileStore.complexion_index
+	var shirt_idx: int = ProfileStore.shirt_index
+	var trouser_idx: int = ProfileStore.trouser_index
+	var hair_idx: int = ProfileStore.hair_index
 
 	var skin_color: Color = Customizer.SKIN_TONES[skin_idx].color
 	var shirt_color: Color = Customizer.SHIRT_STYLES[shirt_idx].color

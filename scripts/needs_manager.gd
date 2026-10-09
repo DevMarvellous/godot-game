@@ -70,6 +70,8 @@ func _trigger_passout(reason: String) -> void:
 	emit_all_stats()
 	is_handling_passout = false
 
+	player_passed_out.emit(reason)
+
 	var player: Node = get_parent()
 	if player and player.is_inside_tree() and player.has_method("display_notification"):
 		player.display_notification(reason)
