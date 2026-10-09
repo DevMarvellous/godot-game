@@ -7,6 +7,7 @@ signal room_changing(from_room: StringName, to_room: StringName)
 signal room_loaded(room_name: StringName)
 
 const ROOM_PATHS: Dictionary = {
+	&"admission": "res://scenes/admission_screen.tscn",
 	&"courtyard": "res://scenes/main.tscn",
 	&"hostel": "res://scenes/rooms/hostel_room.tscn",
 	&"lecture": "res://scenes/rooms/lecture_hall.tscn",

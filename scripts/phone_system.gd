@@ -84,7 +84,16 @@ func _open_app(app_id: String) -> void:
 	match app_id:
 		"id_card":
 			app_title.text = "🪪 STUDENT ID CARD"
-			content_label.text = "NAME: Femi Adeyemi\nMATRIC: CSC/2026/042\nDEPT: Computer Science\nLEVEL: 100 Level (Fresher)\nSTATUS: Full Time Undergraduate\nLIBRARY CARD: ACTIVE"
+			const StudentProfile = preload("res://scripts/data/student_profile.gd")
+			StudentProfile.load_from_disk()
+			content_label.text = "NAME: %s\nEMAIL: %s\nMATRIC: %s\nPROGRAM: %s\nFACULTY: %s\nLEVEL: 100 Level (Fresher)\nADMISSION: %s\nSTATUS: Registered Undergraduate" % [
+				StudentProfile.student_name,
+				StudentProfile.student_email,
+				StudentProfile.matric_no,
+				StudentProfile.admitted_course_title,
+				StudentProfile.admitted_faculty,
+				StudentProfile.admission_remark
+			]
 			action_btn.visible = false
 
 		"timetable":

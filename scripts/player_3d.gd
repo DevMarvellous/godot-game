@@ -210,11 +210,18 @@ func _on_chat_received(_sender_name: String, msg: String, _peer_id: int) -> void
 
 func _load_default_appearance() -> void:
 	const Customizer = preload("res://scripts/data/character_customizer.gd")
-	var profile: Dictionary = Customizer.get_default_profile()
-	var skin_color: Color = Customizer.SKIN_TONES[profile.skin_index].color
-	var shirt_color: Color = Customizer.SHIRT_STYLES[profile.shirt_index].color
-	var trouser_color: Color = Customizer.TROUSER_STYLES[profile.trouser_index].color
-	var hair_color: Color = Customizer.HAIR_STYLES[profile.hair_index].color
+	const StudentProfile = preload("res://scripts/data/student_profile.gd")
+	StudentProfile.load_from_disk()
+
+	var skin_idx: int = StudentProfile.complexion_index
+	var shirt_idx: int = StudentProfile.shirt_index
+	var trouser_idx: int = StudentProfile.trouser_index
+	var hair_idx: int = StudentProfile.hair_index
+
+	var skin_color: Color = Customizer.SKIN_TONES[skin_idx].color
+	var shirt_color: Color = Customizer.SHIRT_STYLES[shirt_idx].color
+	var trouser_color: Color = Customizer.TROUSER_STYLES[trouser_idx].color
+	var hair_color: Color = Customizer.HAIR_STYLES[hair_idx].color
 	apply_appearance(skin_color, shirt_color, trouser_color, hair_color)
 
 

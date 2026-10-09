@@ -34,11 +34,22 @@ const DEFAULT_SERVER_URL: String = "ws://127.0.0.1:8910"
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_sync_with_profile()
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
+
+
+func _sync_with_profile() -> void:
+	const StudentProfile = preload("res://scripts/data/student_profile.gd")
+	StudentProfile.load_from_disk()
+	local_player_data["name"] = StudentProfile.student_name
+	local_player_data["skin_idx"] = StudentProfile.complexion_index
+	local_player_data["shirt_idx"] = StudentProfile.shirt_index
+	local_player_data["trouser_idx"] = StudentProfile.trouser_index
+	local_player_data["hair_idx"] = StudentProfile.hair_index
 
 
 func is_online() -> bool:
