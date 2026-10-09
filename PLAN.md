@@ -55,8 +55,9 @@ Players move between these rooms either through **doorways** or using the **🚌
 - [x] **Milestone 8: Semester Exam Week & Moral Dilemmas**:
   - Multiple-choice Continuous Assessment test papers with instant grading.
   - **Exam Malpractice & Academic Integrity System** (Honest Effort vs "Expo / Microchip" cheat sheets, invigilator scrutiny, Disciplinary Committee penalties).
-- [ ] **Milestone 9: Student Relationships & Friendship Meters**:
-  - Chatting with NPCs boosts friendship meters (Coursemate -> Study Partner -> Close Friend).
+- [x] **Milestone 9: Student Relationships & Friendship Meters**:
+  - Chatting with NPCs boosts friendship meters (Coursemate -> Study Partner -> Close Friend -> Trusted Ally).
+  - Unlocks unique perks (attendance backup, grading leniency, prayer bonuses, gig payouts).
 
 ### Phase 3: Visual Polish & Sound
 - [x] **Milestone 10: Character Customizer & Modular Humanoid Visuals**:

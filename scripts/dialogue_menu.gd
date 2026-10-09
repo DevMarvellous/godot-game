@@ -2,6 +2,7 @@ class_name DialogueMenu
 extends Control
 
 const DialogueSystem = preload("res://scripts/data/dialogue_system.gd")
+const Relationship = preload("res://scripts/data/relationship_system.gd")
 
 ## Interactive Branching Dialogue Modal for NPC conversations.
 ## Features realistic character responses, relationship feedback, and stats impacts.
@@ -10,6 +11,7 @@ signal dialogue_ended
 
 @onready var npc_name_label: Label = %NPCNameLabel
 @onready var npc_role_label: Label = %NPCRoleLabel
+@onready var rel_label: Label = %RelationshipLabel
 @onready var speech_text: Label = %SpeechText
 @onready var options_container: VBoxContainer = %OptionsContainer
 @onready var response_panel: PanelContainer = %ResponsePanel
@@ -18,6 +20,7 @@ signal dialogue_ended
 @onready var finish_btn: Button = %FinishBtn
 
 var current_player: CharacterBody3D = null
+var current_npc: String = ""
 var current_tree: Dictionary = {}
 
 
@@ -31,12 +34,19 @@ func _ready() -> void:
 
 func open_dialogue(player: CharacterBody3D, npc_name: String, npc_role: String) -> void:
 	current_player = player
+	current_npc = npc_name
 	visible = true
 
 	if npc_name_label:
 		npc_name_label.text = npc_name
 	if npc_role_label:
 		npc_role_label.text = "[ %s ]" % npc_role
+
+	if rel_label:
+		var aff: int = Relationship.get_affinity(npc_name)
+		var tier: String = Relationship.get_tier_name(aff)
+		var perk: String = Relationship.get_perk_description(npc_name)
+		rel_label.text = "Affinity: %d/100 (%s)\n%s" % [aff, tier, perk]
 
 	if response_panel:
 		response_panel.visible = false
@@ -89,8 +99,20 @@ func _on_choice_selected(choice: Dictionary) -> void:
 				needs.modify_faith(faith_gain)
 			if money_gain != 0:
 				needs.modify_money(money_gain)
+				if SoundManager:
+					SoundManager.play_coin()
 
 			TimeSystem.advance_minutes(10)
+
+	# Boost relationship affinity
+	var new_aff: int = Relationship.modify_affinity(current_npc, 8)
+	var new_tier: String = Relationship.get_tier_name(new_aff)
+	var new_perk: String = Relationship.get_perk_description(current_npc)
+	if rel_label:
+		rel_label.text = "Affinity: %d/100 (%s)  [+8]\n%s" % [new_aff, new_tier, new_perk]
+
+	if SoundManager:
+		SoundManager.play_click()
 
 
 func close_dialogue() -> void:

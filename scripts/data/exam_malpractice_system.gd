@@ -47,3 +47,4 @@ static func choose_honesty() -> Dictionary:
 		"faith_boost": 20.0,
 		"disciplinary_record": "Clear"
 	}
+

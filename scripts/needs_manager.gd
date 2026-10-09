@@ -50,25 +50,31 @@ func _on_minute_passed() -> void:
 
 
 func _on_lecture_missed(lecture_name: String) -> void:
+	if is_handling_passout:
+		return
 	modify_cgpa(-0.10)
 	var player: Node = get_parent()
-	if player and player.has_method("display_notification"):
+	if player and player.is_inside_tree() and player.has_method("display_notification"):
 		player.display_notification("MISSED %s! CGPA -0.10" % lecture_name)
 
 
 func _trigger_passout(reason: String) -> void:
+	if is_handling_passout:
+		return
 	is_handling_passout = true
-	player_passed_out.emit(reason)
-	var player: Node = get_parent()
-	if player and player.has_method("display_notification"):
-		player.display_notification(reason)
 
 	# Teleport / wake up at 08:00 AM in Hostel Bed with penalty
 	TimeSystem.sleep_until(8)
 	energy = 45.0
 	modify_hunger(-20.0)
-	is_handling_passout = false
 	emit_all_stats()
+	is_handling_passout = false
+
+	var player: Node = get_parent()
+	if player and player.is_inside_tree() and player.has_method("display_notification"):
+		player.display_notification(reason)
+
+	player_passed_out.emit(reason)
 
 
 func emit_all_stats() -> void:

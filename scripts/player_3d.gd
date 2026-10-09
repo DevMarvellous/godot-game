@@ -152,10 +152,11 @@ func clear_interaction_target(target: Interactable3D) -> void:
 
 
 func display_notification(msg: String) -> void:
-	if notif_label:
-		notif_label.text = msg
-		notif_label.visible = true
-	if notif_timer:
+	if not notif_label or not is_inside_tree():
+		return
+	notif_label.text = msg
+	notif_label.visible = true
+	if notif_timer and notif_timer.is_inside_tree():
 		notif_timer.start(2.5)
 
 

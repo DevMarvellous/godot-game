@@ -99,6 +99,13 @@ theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
 theme_override_font_sizes/font_size = 15
 text = "[ Course Rep ]"
 
+[node name="RelationshipLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/Header/TitleBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1.0, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 13
+text = "Affinity: 20/100 • Casual Acquaintance"
+
 [node name="CloseBtn" type="Button" parent="CenterContainer/ModalPanel/VBox/Header"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(40, 40)
