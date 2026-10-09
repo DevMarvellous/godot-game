@@ -13,6 +13,7 @@ static var character_affinity: Dictionary = {
 	"Mama Cashout": 25,
 	"Iya Basira": 25,
 	"Mallam Danladi": 20,
+	"Chef Pierre": 10,
 	"Tobi": 15,
 	"Prof. Okonjo": 10,
 	"Sister Blessing": 25,

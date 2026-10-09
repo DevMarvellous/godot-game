@@ -277,6 +277,32 @@ const DIALOGUE_TREES: Dictionary = {
 			}
 		]
 	},
+	"Chef Pierre": {
+		"greeting": "Bienvenue to The Senate Bistro & Grill! Air-conditioned dining, continental breakfast, gourmet burgers, and creamy iced coffee. Are you dining with us today?",
+		"choices": [
+			{
+				"text": "Chef, what is today's executive special?",
+				"response": "Prime cut grilled steak with potato wedges and fresh berry parfait (₦3,800). Complete luxury dining fit for a future CEO!",
+				"cgpa_boost": 0.04,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Can I get an iced vanilla latte to boost my study focus?",
+				"response": "Certainly! Our double-shot espresso iced latte gives +35% instant focus without sugar crash. ₦1,200 only.",
+				"cgpa_boost": 0.06,
+				"faith_boost": 0.0,
+				"money_change": -1200
+			},
+			{
+				"text": "Just checking the VIP ambience, chef. My pocket is on student budget today.",
+				"response": "Haha! Sapa visits everyone on campus! Work hard, pass your exams, and come celebrate your First Class here!",
+				"cgpa_boost": 0.02,
+				"faith_boost": 5.0,
+				"money_change": 0
+			}
+		]
+	},
 	"Tobi": {
 		"greeting": "Fresher! How campus dey be? Final year project dey show me pepper, but we go conquer. You need any survival advice?",
 		"choices": [
