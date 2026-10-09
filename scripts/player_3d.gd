@@ -149,7 +149,7 @@ func _physics_process(delta: float) -> void:
 
 	# Broadcast position and movement to online room peers
 	if NetworkManager and is_inside_tree() and NetworkManager.is_online():
-		var current_room: String = get_tree().current_scene.name if get_tree().current_scene else "room"
+		var current_room: String = String(get_tree().current_scene.name) if get_tree().current_scene else "room"
 		NetworkManager.broadcast_transform(current_room, global_position, visual_root.rotation.y, horiz_speed > 0.3)
 
 	# Smooth Lagos Life camera follow (damped lerp)

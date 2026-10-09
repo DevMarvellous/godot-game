@@ -1,7 +1,7 @@
 class_name DialogueMenu
 extends Control
 
-const DialogueSystem = preload("res://scripts/data/dialogue_system.gd")
+const NpcDialogueSystem = preload("res://scripts/data/dialogue_system.gd")
 const Relationship = preload("res://scripts/data/relationship_system.gd")
 
 ## Interactive Branching Dialogue Modal for NPC conversations.
@@ -51,7 +51,7 @@ func open_dialogue(player: CharacterBody3D, npc_name: String, npc_role: String) 
 	if response_panel:
 		response_panel.visible = false
 
-	current_tree = DialogueSystem.get_dialogue(npc_name)
+	current_tree = NpcDialogueSystem.get_dialogue(npc_name)
 	if speech_text:
 		speech_text.text = "\"%s\"" % String(current_tree.get("greeting", "Hello!"))
 

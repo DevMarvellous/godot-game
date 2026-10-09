@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://b3admissionscreen01"]
+[gd_scene format=3 uid="uid://bsebldddgpn1a"]
 
 [ext_resource type="Script" path="res://scripts/admission_screen.gd" id="1_admin"]
 
@@ -344,3 +344,4 @@ custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
 text = "Next: Character Customization ➡️"
+

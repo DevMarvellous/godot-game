@@ -178,3 +178,4 @@ static func load_from_disk() -> bool:
 	utme_screening_score = int(d.get("utme_screening_score", 100))
 	admission_remark = String(d.get("admission_remark", "Merit List Direct Admission"))
 	return true
+

@@ -1,6 +1,7 @@
 class_name CATestMenu
 extends Control
 
+const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const QuizSystem = preload("res://scripts/data/quiz_test_system.gd")
 const ExamMalpractice = preload("res://scripts/data/exam_malpractice_system.gd")
 

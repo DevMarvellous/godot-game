@@ -374,3 +374,4 @@ func _complete_onboarding_and_start_game() -> void:
 	var err: Error = get_tree().change_scene_to_file("res://scenes/rooms/hostel_room.tscn")
 	if err != OK:
 		push_error("Failed to load hostel room: %d" % err)
+
