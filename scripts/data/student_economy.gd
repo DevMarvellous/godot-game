@@ -44,5 +44,15 @@ const HUSTLE_ACTIVITIES: Array[Dictionary] = [
 		"payout": 5000,
 		"cgpa_boost": 0.0,
 		"location": "any"
+	},
+	{
+		"id": "coding_gig",
+		"name": "Web & Software Development Freelance",
+		"desc": "Build a departmental portal or Godot web mini-game mentored by Mr. Adepoju Marvellous.",
+		"time_minutes": 120,
+		"energy_cost": 30.0,
+		"payout": 8500,
+		"cgpa_boost": 0.08,
+		"location": "hostel"
 	}
 ]
