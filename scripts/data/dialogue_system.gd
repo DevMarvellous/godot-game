@@ -57,6 +57,32 @@ const DIALOGUE_TREES: Dictionary = {
 			}
 		]
 	},
+	"Mr. Adepoju Marvellous": {
+		"greeting": "Welcome to the Engineering Lab! Clean code, solid game architecture, and zero runtime crashes are what define an elite developer.",
+		"choices": [
+			{
+				"text": "Sir, how do we optimize Godot WebAssembly exports for mobile low-latency?",
+				"response": "Brilliant inquiry! Keep textures compressed, synthesize procedural audio in-memory, and use non-blocking web sockets. Here is a +0.15 CGPA bonus for engineering excellence!",
+				"cgpa_boost": 0.15,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Can you review my software engineering project design document?",
+				"response": "Modular architecture, clean OOP, and decoupled signal design. Excellent work! Keep pushing your boundaries.",
+				"cgpa_boost": 0.10,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Mr. Marvellous, I was feeling overwhelmed by all these university exams.",
+				"response": "Every master was once a beginner who refused to quit. Breathe, iterate step by step, and build with conviction!",
+				"cgpa_boost": 0.05,
+				"faith_boost": 15.0,
+				"money_change": 0
+			}
+		]
+	},
 	"Prof. Okonjo": {
 		"greeting": "Calculus requires mental discipline! If you don't master limits and integrals, engineering and computing will humble you.",
 		"choices": [

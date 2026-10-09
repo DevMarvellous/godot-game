@@ -23,6 +23,17 @@ const DEPARTMENTS: Dictionary = {
 				"exam_weight": 70 # Final Exam (out of 70)
 			},
 			{
+				"code": "CSC 104",
+				"title": "Algorithms & Software Engineering",
+				"units": 3,
+				"lecturer": "Mr. Adepoju Marvellous",
+				"schedule_time": "11:30 - 13:00",
+				"time_start": 11 * 60 + 30,
+				"time_end": 13 * 60,
+				"ca_weight": 30,
+				"exam_weight": 70
+			},
+			{
 				"code": "MTH 101",
 				"title": "Elementary Mathematics (Calculus)",
 				"units": 4,

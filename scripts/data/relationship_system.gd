@@ -7,6 +7,7 @@ extends RefCounted
 static var character_affinity: Dictionary = {
 	"Emeka": 20,
 	"Dr. Adebayo": 10,
+	"Mr. Adepoju Marvellous": 20,
 	"Prof. Okonjo": 10,
 	"Sister Blessing": 25,
 	"Brother Chinedu": 15,
@@ -50,6 +51,12 @@ static func get_perk_description(character_name: String) -> String:
 			elif aff >= 50:
 				return "✓ DILIGENT SCHOLAR: Explains complex lab algorithms after class."
 			return "Lecturer: Strict attendance enforcer."
+		"Mr. Adepoju Marvellous":
+			if aff >= 75:
+				return "★ CODE ARCHITECT MENTOR: Software Engineering Distinction (+0.25 CGPA boost & +₦2,000 gig stipend)!"
+			elif aff >= 50:
+				return "✓ LAB PROTÉGÉ: Early access to assignment hints and optimization techniques."
+			return "Software Engineering Lecturer: Mentors aspiring programmers."
 		"Sister Blessing":
 			if aff >= 75:
 				return "★ PRAYER PARTNER: Supernatural Peace (+25% Faith regeneration rate)."
