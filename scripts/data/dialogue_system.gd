@@ -276,6 +276,32 @@ const DIALOGUE_TREES: Dictionary = {
 				"money_change": 0
 			}
 		]
+	},
+	"Mrs. Janet": {
+		"greeting": "Shhh! Keep your voice down, this is a quiet study sanctuary. What textbook or past questions volume are you looking for?",
+		"choices": [
+			{
+				"text": "Ma, I need past questions and reference books for my department.",
+				"response": "Check Shelf B on the right side. Make sure you sign the borrowing card before leaving!",
+				"cgpa_boost": 0.08,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Can I leave my bag at the library security counter?",
+				"response": "Yes, drop it in locker 14. Keep your library ID card with you at all times.",
+				"cgpa_boost": 0.02,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Just finding a cool, quiet corner to read.",
+				"response": "Very well. Remember, no phone calls or snacks inside the reading hall!",
+				"cgpa_boost": 0.04,
+				"faith_boost": 0.0,
+				"money_change": 0
+			}
+		]
 	}
 }
 

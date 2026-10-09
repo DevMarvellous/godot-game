@@ -12,7 +12,6 @@ extends Control
 signal onboarding_completed(profile_data: Dictionary)
 
 const Customizer = preload("res://scripts/data/character_customizer.gd")
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const StudentProfile = preload("res://scripts/data/student_profile.gd")
 
 # Wizard Steps
