@@ -22,6 +22,7 @@ TimeSystem="*res://scripts/autoload/time_system.gd"
 Schedule="*res://scripts/autoload/schedule.gd"
 SemesterManager="*res://scripts/autoload/semester_manager.gd"
 RoomManager="*res://scripts/autoload/room_manager.gd"
+SoundManager="*res://scripts/autoload/sound_manager.gd"
 
 [input_devices]
 

@@ -135,10 +135,14 @@ func _on_app_action_pressed() -> void:
 		if needs.cgpa >= 2.50:
 			needs.modify_money(2500)
 			TimeSystem.advance_minutes(15)
+			if SoundManager:
+				SoundManager.play_coin()
 			content_label.text = "✓ SUCCESS! Parents credited your account with ₦2,500!\n'Read your books and make us proud!'"
 			action_btn.disabled = true
 			hustle_performed.emit(2500, "Received ₦2,500 allowance from home!")
 		else:
+			if SoundManager:
+				SoundManager.play_alert()
 			content_label.text = "✗ CALL REJECTED!\n'Your results are too low! Read your books first before asking for money!'"
 			action_btn.disabled = true
 
@@ -148,10 +152,14 @@ func _on_app_action_pressed() -> void:
 			needs.modify_energy(-20.0)
 			needs.modify_money(2500)
 			TimeSystem.advance_minutes(60)
+			if SoundManager:
+				SoundManager.play_coin()
 			content_label.text = "✓ GIG FINISHED! You typed 25 pages of past questions.\nEarned ₦2,500! Energy -20%"
 			action_btn.disabled = true
 			hustle_performed.emit(2500, "Typed assignments in SUB! Earned ₦2,500")
 		else:
+			if SoundManager:
+				SoundManager.play_alert()
 			content_label.text = "⚠ Too exhausted to work! Go to the hostel bed and sleep first."
 
 

@@ -44,8 +44,8 @@ func update_object_display() -> void:
 			prompt_message = "[E] Study & Lecture Options"
 			object_name = "Lecture & Study Desk"
 		ObjectType.CAFETERIA:
-			prompt_message = "[E] Open Buka Food Menu"
-			object_name = "Campus Buka / Cafe"
+			prompt_message = "[E] Open Campus Canteen Menu"
+			object_name = "Mama Cashout Campus Canteen"
 		ObjectType.FELLOWSHIP:
 			prompt_message = "[E] Fellowship Chapel"
 			object_name = "Chapel Altar"
@@ -108,16 +108,7 @@ func interact(player: CharacterBody3D) -> void:
 				_show_feedback(player, "Too exhausted to work! Rest on your bed first.")
 
 		ObjectType.SALON_CHAIR:
-			if needs.money >= 1000:
-				needs.modify_money(-1000)
-				TimeSystem.advance_minutes(20)
-				const Customizer = preload("res://scripts/data/character_customizer.gd")
-				var new_hair_color: Color = Customizer.HAIR_STYLES[randi() % Customizer.HAIR_STYLES.size()].color
-				if player.has_method("apply_appearance"):
-					player.apply_appearance(Color(0.32, 0.20, 0.14), Color(0.12, 0.55, 0.32), Color(0.15, 0.22, 0.32), new_hair_color)
-				_show_feedback(player, "Fresh haircut from Master Sunday! Looking sharp! -₦1,000")
-			else:
-				_show_feedback(player, "Insufficient funds! Master Sunday charges ₦1,000.")
+			menu_requested.emit(&"salon", player)
 
 
 func _show_feedback(player: CharacterBody3D, msg: String) -> void:

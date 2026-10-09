@@ -70,20 +70,28 @@ func _on_joystick_moved(vec: Vector2) -> void:
 
 
 func _on_interact_pressed() -> void:
+	if SoundManager:
+		SoundManager.play_click()
 	if bound_player:
 		bound_player.trigger_interaction()
 
 
 func _toggle_transit_sheet() -> void:
+	if SoundManager:
+		SoundManager.play_click()
 	if transit_sheet:
 		transit_sheet.visible = not transit_sheet.visible
 
 
 func _on_phone_pressed() -> void:
+	if SoundManager:
+		SoundManager.play_click()
 	phone_requested.emit()
 
 
 func _on_transit_dest_pressed(dest: StringName) -> void:
+	if SoundManager:
+		SoundManager.play_click()
 	if transit_sheet:
 		transit_sheet.visible = false
 	if dest != &"close":

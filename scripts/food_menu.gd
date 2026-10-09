@@ -170,6 +170,9 @@ func _on_buy_pressed(item: Dictionary) -> void:
 		if current_player.has_method("display_notification"):
 			current_player.display_notification("Bought %s! Paid ₦%s" % [String(item["name"]), _format_number(cost)])
 
+		if SoundManager:
+			SoundManager.play_coin()
+
 		# Refresh wallet & available dishes
 		_populate_items()
 		meal_purchased.emit(String(item["name"]), cost, float(item["hunger"]), float(item["energy"]))

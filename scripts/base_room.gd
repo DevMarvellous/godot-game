@@ -12,7 +12,9 @@ extends Node3D
 @onready var menus_layer: CanvasLayer = $MenusLayer
 
 const PhoneScene = preload("res://scenes/phone_system.tscn")
+const SalonScene = preload("res://scenes/salon_menu.tscn")
 var phone_menu: Control = null
+var salon_menu: Control = null
 
 @onready var food_menu: Control = $MenusLayer/FoodMenu if has_node("MenusLayer/FoodMenu") else null
 @onready var study_menu: Control = $MenusLayer/StudyMenu if has_node("MenusLayer/StudyMenu") else null
@@ -42,6 +44,15 @@ func _ready() -> void:
 			menus_layer.add_child(phone_menu)
 		if phone_menu and phone_menu.has_signal("phone_closed"):
 			phone_menu.phone_closed.connect(_on_menu_closed)
+
+		if room_id == &"salon":
+			if menus_layer.has_node("SalonMenu"):
+				salon_menu = menus_layer.get_node("SalonMenu")
+			else:
+				salon_menu = SalonScene.instantiate()
+				menus_layer.add_child(salon_menu)
+			if salon_menu and salon_menu.has_signal("salon_closed"):
+				salon_menu.salon_closed.connect(_on_menu_closed)
 
 	if food_menu:
 		food_menu.menu_closed.connect(_on_menu_closed)
@@ -91,6 +102,8 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 			ca_test_menu.start_test(p, "CSC 101")
 		elif study_menu:
 			study_menu.open_menu(p)
+	elif menu_type == &"salon" and salon_menu:
+		salon_menu.open_salon(p)
 
 
 func _on_npc_dialogue_requested(npc: NPC3D, p: CharacterBody3D) -> void:
@@ -150,6 +163,8 @@ func _go_to_scene(scene_path: String) -> void:
 					player.display_notification("No Keke money! Trekked on foot (-10 Energy, 20m)")
 			else:
 				TimeSystem.advance_minutes(3) # Fast keke ride
+				if SoundManager:
+					SoundManager.play_transit_horn()
 				if player.has_method("display_notification"):
 					player.display_notification("Took Campus Keke Shuttle! Paid ₦100")
 	else:

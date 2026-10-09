@@ -54,7 +54,7 @@ albedo_color = Color(0.7, 0.72, 0.75, 1)
 
 [node name="BukaCourt" type="Node3D"]
 script = ExtResource("1_room")
-room_name = "Mama Put Buka / Food Court"
+room_name = "Mama Cashout Campus Canteen & Eatery"
 room_id = &"buka"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
@@ -146,7 +146,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_wood")
 [node name="BukaSign" type="Label3D" parent="BukaFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, -7.5)
 billboard = 1
-text = "MAMA CASHOUT BUKA & CANTEEN"
+text = "MAMA CASHOUT CAMPUS CANTEEN & EATERY"
 font_size = 34
 outline_size = 6
 
@@ -155,7 +155,7 @@ outline_size = 6
 [node name="Cafeteria" parent="WorldObjects" instance=ExtResource("4_obj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.0)
 object_type = 2
-object_name = "Mama Put Food Counter"
+object_name = "Campus Canteen Food Counter"
 
 [node name="Player3D" parent="." instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 2.5)

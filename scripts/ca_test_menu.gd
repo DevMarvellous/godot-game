@@ -2,6 +2,7 @@ class_name CATestMenu
 extends Control
 
 const QuizTestSystem = preload("res://scripts/data/quiz_test_system.gd")
+const ExamMalpractice = preload("res://scripts/data/exam_malpractice_system.gd")
 
 ## Interactive In-Class Continuous Assessment (CA) Test Paper.
 ## Simulates real Nigerian university impromptu tests with Dr. Adebayo and lecturers.
@@ -19,12 +20,17 @@ signal test_closed
 @onready var feedback_text: Label = %FeedbackText
 @onready var next_btn: Button = %NextBtn
 @onready var close_btn: Button = %CloseBtn
+@onready var expo_btn: Button = %ExpoBtn
 
 var current_course: String = "CSC 101"
 var questions: Array = []
 var current_q_idx: int = 0
 var total_correct: int = 0
 var current_player: CharacterBody3D = null
+
+var expo_used: bool = false
+var expo_bonus_marks: float = 0.0
+var is_disqualified: bool = false
 
 
 func _ready() -> void:
@@ -33,6 +39,8 @@ func _ready() -> void:
 		next_btn.pressed.connect(_on_next_pressed)
 	if close_btn:
 		close_btn.pressed.connect(close_test)
+	if expo_btn:
+		expo_btn.pressed.connect(_on_expo_pressed)
 
 
 func start_test(player: CharacterBody3D, course_code: String = "CSC 101") -> void:
@@ -41,6 +49,12 @@ func start_test(player: CharacterBody3D, course_code: String = "CSC 101") -> voi
 	questions = QuizTestSystem.get_test_for_course(course_code)
 	current_q_idx = 0
 	total_correct = 0
+	expo_used = false
+	expo_bonus_marks = 0.0
+	is_disqualified = false
+	if expo_btn:
+		expo_btn.disabled = false
+		expo_btn.text = "🤫 Sneak Out 'Expo' Microchip (+12 Marks, 35% Risk!)"
 	visible = true
 
 	if course_label:
@@ -104,7 +118,51 @@ func _on_option_selected(selected_idx: int) -> void:
 			feedback_text.add_theme_color_override(&"font_color", Color(1.0, 0.4, 0.35))
 
 
+func _on_expo_pressed() -> void:
+	if expo_used or is_disqualified:
+		return
+	expo_used = true
+	if expo_btn:
+		expo_btn.disabled = true
+
+	var cgpa: float = 3.50
+	var needs: NeedsManager = current_player.get_node_or_null("NeedsManager") as NeedsManager if current_player else null
+	if needs:
+		cgpa = needs.cgpa
+
+	var res: Dictionary = ExamMalpractice.attempt_expo(cgpa)
+	if int(res["result"]) == ExamMalpractice.DilemmaResult.CAUGHT_BY_INVIGILATOR:
+		is_disqualified = true
+		if SoundManager:
+			SoundManager.play_alert()
+		if needs:
+			needs.modify_cgpa(float(res["cgpa_penalty"]))
+			needs.modify_faith(float(res["faith_penalty"]))
+		if feedback_panel and feedback_text:
+			feedback_panel.visible = true
+			feedback_text.text = "%s\n\n%s" % [String(res["title"]), String(res["message"])]
+			feedback_text.add_theme_color_override(&"font_color", Color(1.0, 0.25, 0.25))
+		if next_btn:
+			next_btn.text = "Face Disciplinary Panel (Exit) ➔"
+		for child: Node in options_container.get_children():
+			if child is Button:
+				child.disabled = true
+	else:
+		expo_bonus_marks = float(res["bonus_marks"])
+		if SoundManager:
+			SoundManager.play_coin()
+		if needs:
+			needs.modify_faith(float(res["faith_penalty"]))
+		if feedback_panel and feedback_text:
+			feedback_panel.visible = true
+			feedback_text.text = "%s\n\n%s" % [String(res["title"]), String(res["message"])]
+			feedback_text.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.3))
+
+
 func _on_next_pressed() -> void:
+	if is_disqualified:
+		close_test()
+		return
 	current_q_idx += 1
 	_load_current_question()
 
@@ -112,7 +170,7 @@ func _on_next_pressed() -> void:
 func _finish_test() -> void:
 	var total_q: int = questions.size()
 	var percentage: float = float(total_correct) / float(max(total_q, 1))
-	var marks_earned: float = percentage * 30.0 # CA is out of 30 marks
+	var marks_earned: float = minf(percentage * 30.0 + expo_bonus_marks, 30.0) # Out of 30 marks
 
 	# Apply to student CGPA and energy
 	if current_player:
@@ -124,6 +182,9 @@ func _finish_test() -> void:
 
 		if current_player.has_method("display_notification"):
 			current_player.display_notification("Test Finished! Score: %d/%d (%.1f/30 Marks)" % [total_correct, total_q, marks_earned])
+
+	if SoundManager:
+		SoundManager.play_bell()
 
 	TimeSystem.advance_minutes(45)
 	test_submitted.emit(current_course, total_correct, total_q, marks_earned)

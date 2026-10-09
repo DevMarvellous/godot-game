@@ -1,0 +1,150 @@
+[gd_scene format=3 uid="uid://c8salonmenu01"]
+
+[ext_resource type="Script" path="res://scripts/salon_menu.gd" id="1_salon"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.08, 0.1, 0.14, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.75, 0.55, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 24.0
+content_margin_top = 20.0
+content_margin_right = 24.0
+content_margin_bottom = 20.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font_size = 20
+font_color = Color(0.3, 0.95, 0.65, 1)
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_sub"]
+font_size = 14
+font_color = Color(0.9, 0.95, 1, 0.9)
+
+[node name="SalonMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_salon")
+
+[node name="DarkBackdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ModalPanel" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(620, 680)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/ModalPanel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HeaderHBox" type="HBoxContainer" parent="CenterContainer/ModalPanel/VBox"]
+layout_mode = 2
+
+[node name="TitleVBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/VBox/HeaderHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/HeaderHBox/TitleVBox"]
+layout_mode = 2
+text = "💈 MASTER SUNDAY EXECUTIVE SALON"
+label_settings = SubResource("LabelSettings_title")
+
+[node name="WalletLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/HeaderHBox/TitleVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Your Wallet: ₦5,000  •  Haircut Fee: ₦1,000"
+label_settings = SubResource("LabelSettings_sub")
+
+[node name="CloseBtn" type="Button" parent="CenterContainer/ModalPanel/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_vertical = 0
+text = "✕"
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/ModalPanel/VBox"]
+layout_mode = 2
+
+[node name="OptionsVBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="HairLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/OptionsVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "1. CHOOSE HAIRSTYLE / CUT:"
+
+[node name="HairOptions" type="OptionButton" parent="CenterContainer/ModalPanel/VBox/OptionsVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+
+[node name="SkinLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/OptionsVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "2. CHOOSE SKIN COMPLEXION:"
+
+[node name="SkinOptions" type="OptionButton" parent="CenterContainer/ModalPanel/VBox/OptionsVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+
+[node name="ShirtLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/OptionsVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "3. CHOOSE SHIRT / POLO ATTIRE:"
+
+[node name="ShirtOptions" type="OptionButton" parent="CenterContainer/ModalPanel/VBox/OptionsVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+
+[node name="TrouserLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/OptionsVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "4. CHOOSE TROUSERS / SLACKS:"
+
+[node name="TrouserOptions" type="OptionButton" parent="CenterContainer/ModalPanel/VBox/OptionsVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+
+[node name="ConfirmBtn" type="Button" parent="CenterContainer/ModalPanel/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "CONFIRM NEW LOOK (₦1,000)"
+
