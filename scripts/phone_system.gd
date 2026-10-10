@@ -106,13 +106,15 @@ func _open_app(app_id: String) -> void:
 			app_title.text = "🪪 STUDENT ID CARD"
 			const StudentProfile = preload("res://scripts/data/student_profile.gd")
 			StudentProfile.load_from_disk()
-			content_label.text = "NAME: %s\nEMAIL: %s\nMATRIC: %s\nPROGRAM: %s\nFACULTY: %s\nLEVEL: 100 Level (Fresher)\nADMISSION: %s\nSTATUS: Registered Undergraduate" % [
+			content_label.text = "NAME: %s\nEMAIL: %s\nMATRIC: %s\nPROGRAM: %s\nFACULTY: %s\nLEVEL: 100 Level (Fresher)\nSPONSOR: %s %s\nPHONE: %s\nSTATUS: Registered Undergraduate" % [
 				StudentProfile.student_name,
 				StudentProfile.student_email,
 				StudentProfile.matric_no,
 				StudentProfile.admitted_course_title,
 				StudentProfile.admitted_faculty,
-				StudentProfile.admission_remark
+				StudentProfile.spawn_badge,
+				StudentProfile.spawn_title,
+				StudentProfile.spawn_phone_model
 			]
 			action_btn.visible = false
 

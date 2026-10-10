@@ -344,23 +344,38 @@ func _show_admission_letter(placement: Dictionary, score_pct: int) -> void:
 		var remark: String = String(placement.get("remark", ""))
 		var student_n: String = StudentProfile.student_name
 		var matric: String = StudentProfile.matric_no
+		var spawn_t: String = StudentProfile.spawn_title
+		var spawn_badge: String = StudentProfile.spawn_badge
+		var spawn_phone: String = StudentProfile.spawn_phone_model
+		var spawn_tag: String = StudentProfile.spawn_tagline
+		var formatted_allowance: String = str(StudentProfile.spawn_allowance)
+		var idx: int = formatted_allowance.length() - 3
+		while idx > 0:
+			formatted_allowance = formatted_allowance.insert(idx, ",")
+			idx -= 3
 
 		var letter_content: String = """[center][b]FEDERAL UNIVERSITY OF CAMPUS LIFE[/b]
 [b]OFFICE OF THE REGISTRAR & ACADEMIC BOARD[/b][/center]
 ---------------------------------------------------------------
 [b]CANDIDATE:[/b] %s
-[b]MATRICULATION NUMBER:[/b] %s
-[b]POST-UTME SCREENING SCORE:[/b] %d%%
+[b]MATRIC NUMBER:[/b] %s
+[b]SCREENING SCORE:[/b] %d%%
 
-[b]OFFICIAL ADMISSION STATUS:[/b]
+[b]ADMISSION STATUS:[/b]
 %s
 
 [b]ADMITTED PROGRAM:[/b]
 🎓 %s
 🏛️ %s
 
-[i]"You are hereby offered provisional admission for the 2026 Academic Session. Report to the Student Hostel immediately for room allocation and clearance."[/i]
-""" % [student_n, matric, score_pct, remark, admitted_title, admitted_fac]
+[b]MATRICULATION BACKGROUND & SPONSOR TIER:[/b]
+%s [b]%s[/b]
+💰 Initial Pocket Money: ₦%s
+📱 Phone Device: %s
+💡 [i]%s[/i]
+
+[i]"Report to the Student Hostel immediately for room allocation and clearance."[/i]
+""" % [student_n, matric, score_pct, remark, admitted_title, admitted_fac, spawn_badge, spawn_t, formatted_allowance, spawn_phone, spawn_tag]
 
 		letter_text_label.text = letter_content
 

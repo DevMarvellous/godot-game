@@ -28,6 +28,10 @@ var is_handling_passout: bool = false
 
 
 func _ready() -> void:
+	const ProfileStore = preload("res://scripts/data/student_profile.gd")
+	if ProfileStore.load_from_disk() and ProfileStore.spawn_allowance > 0:
+		money = ProfileStore.spawn_allowance
+
 	TimeSystem.minute_passed.connect(_on_minute_passed)
 	Schedule.lecture_missed.connect(_on_lecture_missed)
 	emit_all_stats()

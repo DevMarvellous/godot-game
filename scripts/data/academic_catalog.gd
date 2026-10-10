@@ -54,6 +54,28 @@ const DEPARTMENTS: Dictionary = {
 				"time_end": 13 * 60,
 				"ca_weight": 30,
 				"exam_weight": 70
+			},
+			{
+				"code": "UNI 101",
+				"title": "Campus Survival & Street Smarts",
+				"units": 2,
+				"lecturer": "Comrade Aluta & Hall Warden",
+				"schedule_time": "16:30 - 18:00",
+				"time_start": 16 * 60 + 30,
+				"time_end": 18 * 60,
+				"ca_weight": 30,
+				"exam_weight": 70
+			},
+			{
+				"code": "GST 102",
+				"title": "Nigerian Peoples & Culture",
+				"units": 2,
+				"lecturer": "Prof. Babatunde",
+				"schedule_time": "14:00 - 15:30",
+				"time_start": 14 * 60,
+				"time_end": 15 * 60 + 30,
+				"ca_weight": 30,
+				"exam_weight": 70
 			}
 		]
 	},
@@ -94,6 +116,28 @@ const DEPARTMENTS: Dictionary = {
 				"time_end": 13 * 60,
 				"ca_weight": 30,
 				"exam_weight": 70
+			},
+			{
+				"code": "UNI 101",
+				"title": "Campus Survival & Street Smarts",
+				"units": 2,
+				"lecturer": "Comrade Aluta & Hall Warden",
+				"schedule_time": "16:30 - 18:00",
+				"time_start": 16 * 60 + 30,
+				"time_end": 18 * 60,
+				"ca_weight": 30,
+				"exam_weight": 70
+			},
+			{
+				"code": "GST 102",
+				"title": "Nigerian Peoples & Culture",
+				"units": 2,
+				"lecturer": "Prof. Babatunde",
+				"schedule_time": "14:00 - 15:30",
+				"time_start": 14 * 60,
+				"time_end": 15 * 60 + 30,
+				"ca_weight": 30,
+				"exam_weight": 70
 			}
 		]
 	},
@@ -132,6 +176,28 @@ const DEPARTMENTS: Dictionary = {
 				"schedule_time": "11:30 - 13:00",
 				"time_start": 11 * 60 + 30,
 				"time_end": 13 * 60,
+				"ca_weight": 30,
+				"exam_weight": 70
+			},
+			{
+				"code": "UNI 101",
+				"title": "Campus Survival & Street Smarts",
+				"units": 2,
+				"lecturer": "Comrade Aluta & Hall Warden",
+				"schedule_time": "16:30 - 18:00",
+				"time_start": 16 * 60 + 30,
+				"time_end": 18 * 60,
+				"ca_weight": 30,
+				"exam_weight": 70
+			},
+			{
+				"code": "GST 102",
+				"title": "Nigerian Peoples & Culture",
+				"units": 2,
+				"lecturer": "Prof. Babatunde",
+				"schedule_time": "14:00 - 15:30",
+				"time_start": 14 * 60,
+				"time_end": 15 * 60 + 30,
 				"ca_weight": 30,
 				"exam_weight": 70
 			}

@@ -25,20 +25,15 @@ RoomManager="*res://scripts/autoload/room_manager.gd"
 SoundManager="*res://scripts/autoload/sound_manager.gd"
 NetworkManager="*res://scripts/autoload/network_manager.gd"
 
-[input_devices]
-
-pointing/emulate_touch_from_mouse=true
-pointing/emulate_mouse_from_touch=true
-
 [display]
 
 window/size/viewport_width=720
 window/size/viewport_height=1280
 window/size/window_width_override=540
 window/size/window_height_override=960
-window/handheld/orientation=1
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+window/handheld/orientation=1
 
 [input]
 
@@ -77,6 +72,10 @@ sprint={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194325,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 ]
 }
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
 
 [layer_names]
 

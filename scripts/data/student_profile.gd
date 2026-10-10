@@ -22,6 +22,13 @@ static var matric_no: String = "CSC/2026/042"
 static var utme_screening_score: int = 100 # percentage score from admission aptitude test
 static var admission_remark: String = "Merit List Direct Admission"
 
+# Lagos Life style asymmetric Matriculation Spawns
+static var spawn_title: String = "Average Hustler (Indomie Sponsor)"
+static var spawn_allowance: int = 30000
+static var spawn_phone_model: String = "Tecno Spark 10"
+static var spawn_tagline: String = "Standard fresher budget. Balance Mama Put meals with lecture CA tests."
+static var spawn_badge: String = "🎒"
+
 const SAVE_PATH: String = "user://student_profile.json"
 
 static func apply_admission(
@@ -58,7 +65,33 @@ static func apply_admission(
 	var random_matric_id: int = randi_range(101, 899)
 	matric_no = "%s/2026/%03d" % [admitted_department, random_matric_id]
 
+	# Roll asymmetric Matriculation Spawn Background (Lagos Life mechanic)
+	var roll: int = randi_range(1, 100)
+	if roll <= 10:
+		spawn_title = "The Chief's Child / Scholarship Kid"
+		spawn_allowance = 250000
+		spawn_phone_model = "iPhone 15 Pro Max"
+		spawn_tagline = "Heavy pockets & VIP Bistro dining! High family expectations: maintain 4.5+ CGPA or monthly allowance stops."
+		spawn_badge = "👑"
+	elif roll <= 70:
+		spawn_title = "Average Hustler (Indomie Sponsor)"
+		spawn_allowance = 30000
+		spawn_phone_model = "Tecno Spark 10"
+		spawn_tagline = "Standard fresher budget. Must balance Mama Put dining, hostel cooking, and handout purchases."
+		spawn_badge = "🎒"
+	else:
+		spawn_title = "Sapa Fighter (Self-Sponsored Fresher)"
+		spawn_allowance = 4000
+		spawn_phone_model = "Cracked Android (Itel)"
+		spawn_tagline = "Broke fresher! Must hustle campus odd jobs (POS attendant, assignments, styling) to survive the semester."
+		spawn_badge = "🔥"
+
 	save_to_disk()
+	placement["spawn_title"] = spawn_title
+	placement["spawn_allowance"] = spawn_allowance
+	placement["spawn_phone_model"] = spawn_phone_model
+	placement["spawn_tagline"] = spawn_tagline
+	placement["spawn_badge"] = spawn_badge
 	return placement
 
 
@@ -137,7 +170,12 @@ static func get_profile_data() -> Dictionary:
 		"admitted_faculty": admitted_faculty,
 		"matric_no": matric_no,
 		"utme_screening_score": utme_screening_score,
-		"admission_remark": admission_remark
+		"admission_remark": admission_remark,
+		"spawn_title": spawn_title,
+		"spawn_allowance": spawn_allowance,
+		"spawn_phone_model": spawn_phone_model,
+		"spawn_tagline": spawn_tagline,
+		"spawn_badge": spawn_badge
 	}
 
 
@@ -177,5 +215,10 @@ static func load_from_disk() -> bool:
 	matric_no = String(d.get("matric_no", "CSC/2026/042"))
 	utme_screening_score = int(d.get("utme_screening_score", 100))
 	admission_remark = String(d.get("admission_remark", "Merit List Direct Admission"))
+	spawn_title = String(d.get("spawn_title", "Average Hustler (Indomie Sponsor)"))
+	spawn_allowance = int(d.get("spawn_allowance", 30000))
+	spawn_phone_model = String(d.get("spawn_phone_model", "Tecno Spark 10"))
+	spawn_tagline = String(d.get("spawn_tagline", "Standard fresher budget. Balance Mama Put meals with lecture CA tests."))
+	spawn_badge = String(d.get("spawn_badge", "🎒"))
 	return true
 

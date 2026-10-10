@@ -32,8 +32,8 @@ var has_nav_target: bool = false
 var current_interactable: Interactable3D = null
 var walk_anim_time: float = 0.0
 
-# Smooth Lagos Life style camera offset & interpolation
-var cam_target_offset: Vector3 = Vector3(0, 3.2, 4.6)
+# Smooth Lagos Life style camera offset & interpolation (Elevated 3/4 Isometric)
+var cam_target_offset: Vector3 = Vector3(0, 5.0, 4.8)
 
 
 func _ready() -> void:

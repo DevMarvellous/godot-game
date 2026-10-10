@@ -3,43 +3,48 @@
 [ext_resource type="Script" path="res://scripts/hud.gd" id="1_hud"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.1, 0.12, 0.16, 0.88)
+bg_color = Color(0.08, 0.1, 0.14, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.35, 0.5, 0.6)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
-content_margin_left = 14.0
-content_margin_top = 10.0
-content_margin_right = 14.0
-content_margin_bottom = 10.0
+content_margin_left = 12.0
+content_margin_top = 6.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_time"]
-font_size = 28
+font_size = 17
 font_color = Color(1, 1, 1, 1)
-outline_size = 5
+outline_size = 3
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_schedule"]
-font_size = 22
+font_size = 15
 font_color = Color(1, 0.88, 0.35, 1)
-outline_size = 4
+outline_size = 3
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_money"]
-font_size = 28
+font_size = 17
 font_color = Color(0.3, 0.95, 0.5, 1)
-outline_size = 4
+outline_size = 3
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_cgpa"]
-font_size = 24
+font_size = 15
 font_color = Color(0.4, 0.85, 1.0, 1)
-outline_size = 4
+outline_size = 3
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_stat"]
-font_size = 20
-font_color = Color(0.9, 0.92, 0.96, 1)
+font_size = 14
+font_color = Color(0.85, 0.9, 0.95, 1)
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_hud")
@@ -47,26 +52,34 @@ script = ExtResource("1_hud")
 [node name="TopPanel" type="PanelContainer" parent="."]
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = 220.0
+offset_left = 12.0
+offset_top = 10.0
+offset_right = -12.0
+offset_bottom = 86.0
 grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TopPanel"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 4
 
 [node name="Row1" type="HBoxContainer" parent="TopPanel/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 10
 
 [node name="TimeLabel" type="Label" parent="TopPanel/VBoxContainer/Row1"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
 text = "07:00  •  Day 1 (Mon)"
 label_settings = SubResource("LabelSettings_time")
+
+[node name="ScheduleBanner" type="Label" parent="TopPanel/VBoxContainer/Row1"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Next: GST 101 at 09:00"
+label_settings = SubResource("LabelSettings_schedule")
+horizontal_alignment = 1
 
 [node name="MoneyLabel" type="Label" parent="TopPanel/VBoxContainer/Row1"]
 unique_name_in_owner = true
@@ -74,69 +87,77 @@ layout_mode = 2
 text = "Wallet: ₦5,000"
 label_settings = SubResource("LabelSettings_money")
 
-[node name="ScheduleBanner" type="Label" parent="TopPanel/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Next: GST 101 Lecture at 09:00"
-label_settings = SubResource("LabelSettings_schedule")
-
-[node name="HSeparator" type="HSeparator" parent="TopPanel/VBoxContainer"]
-layout_mode = 2
-
-[node name="CGPALabel" type="Label" parent="TopPanel/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Academic CGPA: 3.50 / 5.0"
-label_settings = SubResource("LabelSettings_cgpa")
-
-[node name="StatsGrid" type="HBoxContainer" parent="TopPanel/VBoxContainer"]
+[node name="Row2" type="HBoxContainer" parent="TopPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="EnergyContainer" type="VBoxContainer" parent="TopPanel/VBoxContainer/StatsGrid"]
+[node name="CGPALabel" type="Label" parent="TopPanel/VBoxContainer/Row2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CGPA: 3.50 / 5.0"
+label_settings = SubResource("LabelSettings_cgpa")
+
+[node name="VSeparator" type="VSeparator" parent="TopPanel/VBoxContainer/Row2"]
+layout_mode = 2
+
+[node name="StatsGrid" type="HBoxContainer" parent="TopPanel/VBoxContainer/Row2"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 12
 
-[node name="Label" type="Label" parent="TopPanel/VBoxContainer/StatsGrid/EnergyContainer"]
+[node name="EnergyContainer" type="HBoxContainer" parent="TopPanel/VBoxContainer/Row2/StatsGrid"]
 layout_mode = 2
-text = "⚡ Energy"
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="TopPanel/VBoxContainer/Row2/StatsGrid/EnergyContainer"]
+layout_mode = 2
+text = "⚡"
 label_settings = SubResource("LabelSettings_stat")
 
-[node name="EnergyBar" type="ProgressBar" parent="TopPanel/VBoxContainer/StatsGrid/EnergyContainer"]
+[node name="EnergyBar" type="ProgressBar" parent="TopPanel/VBoxContainer/Row2/StatsGrid/EnergyContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 18)
+custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
 value = 100.0
 show_percentage = false
 
-[node name="HungerContainer" type="VBoxContainer" parent="TopPanel/VBoxContainer/StatsGrid"]
+[node name="HungerContainer" type="HBoxContainer" parent="TopPanel/VBoxContainer/Row2/StatsGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 4
 
-[node name="Label" type="Label" parent="TopPanel/VBoxContainer/StatsGrid/HungerContainer"]
+[node name="Label" type="Label" parent="TopPanel/VBoxContainer/Row2/StatsGrid/HungerContainer"]
 layout_mode = 2
-text = "🍲 Fullness"
+text = "🍲"
 label_settings = SubResource("LabelSettings_stat")
 
-[node name="HungerBar" type="ProgressBar" parent="TopPanel/VBoxContainer/StatsGrid/HungerContainer"]
+[node name="HungerBar" type="ProgressBar" parent="TopPanel/VBoxContainer/Row2/StatsGrid/HungerContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 18)
+custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
 value = 100.0
 show_percentage = false
 
-[node name="FaithContainer" type="VBoxContainer" parent="TopPanel/VBoxContainer/StatsGrid"]
+[node name="FaithContainer" type="HBoxContainer" parent="TopPanel/VBoxContainer/Row2/StatsGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 4
 
-[node name="Label" type="Label" parent="TopPanel/VBoxContainer/StatsGrid/FaithContainer"]
+[node name="Label" type="Label" parent="TopPanel/VBoxContainer/Row2/StatsGrid/FaithContainer"]
 layout_mode = 2
-text = "🙏 Faith"
+text = "🙏"
 label_settings = SubResource("LabelSettings_stat")
 
-[node name="FaithBar" type="ProgressBar" parent="TopPanel/VBoxContainer/StatsGrid/FaithContainer"]
+[node name="FaithBar" type="ProgressBar" parent="TopPanel/VBoxContainer/Row2/StatsGrid/FaithContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 18)
+custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
 value = 70.0
 show_percentage = false
