@@ -35,33 +35,57 @@ This document tracks all human-action items for you (domain, branding, web hosti
 
 ## 🛠️ Section B: Game Architecture & Outside-The-Box Polish
 
-### 1. Dynamic Roommates & Gender Consideration
-- [ ] **Female & Male Hostel Differentiation**:
-  - Male student -> Male hostel room (e.g., *Hall 2 / Jaja Hall*), male roommates (*Segun, Femi, Chidi, Ibrahim*).
-  - Female student -> Female hostel room (e.g., *Moremi / Queen Idia Hall*), female roommates (*Zainab, Chisom, Blessing, Hadiza*).
+- [x] **Female & Male Hostel Differentiation**:
+  - Dynamically switches title between *Moremi Hall* (Female) and *Hall 2* (Male).
+  - Dynamically swaps roommate NPC between *Chisom* (female) and *Segun* (male).
 - [ ] **Roommate Personality Archetypes**:
   - *The Bookworm*: Always studying, shares past questions.
   - *The Chef*: Always boiling Indomie, offers free food when sapa strikes.
   - *The Pastor/Prayer Warrior*: Wakes everyone up for morning devotion (+Faith, -Sleep).
   - *The Hustler*: Selling crypto, perfumes, and hostel snacks.
 
-### 2. Multi-Vendor Cafeteria (Not Just One Food Woman)
-- [ ] Add 3 distinct cafeteria food vendors in Buka Court:
-  - **Mama Cashout**: Jollof rice, fried fish, beans, plantain.
-  - **Iya Basira**: Amala, ewedu, gbegiri, goat meat.
-  - **Mallam Danladi / Suya Joint**: Indomie & eggs, suya, fresh bread, cold malt.
+### 2. Multi-Vendor Cafeteria (Mama Put & Senate Bistro)
+- [x] **Mama Put (Affordable Campus Joint)**:
+  - *Mama Cashout*: Jollof rice, fried fish, plantain.
+  - *Iya Basira*: Amala lafun, ewedu, gbegiri, goat meat.
+  - *Mallam Danladi*: Indomie, suya beef, cold malt & zobo.
+- [x] **The Senate Bistro & VIP Lounge (High-End Dining)**:
+  - *Chef Pierre*: Gourmet iced latte focus boosters, continental steaks.
 
-### 3. Dedicated Multiplayer & Online Sync
-- [ ] **Dedicated WebSockets Server Architecture**:
-  - Lightweight Node.js or Python WebSocket relay, or headless Godot server script.
-  - Room-based channels (`hostel`, `lecture`, `buka`, `library`) so players only receive traffic for the room they are in.
-  - Player nametags with Matric Number and custom appearance styling.
-- [ ] **Live Campus Chat**:
-  - Floating 3D speech bubbles over avatars.
-  - Chat history drawer on the phone app.
+### 3. Sports & Recreation
+- [x] **Dean's Cup Football Stadium**:
+  - Full pitch with goalposts, boundary fences, interactive physics soccer ball.
+  - *Coach Balogun* athletic training & tournament dialogue.
 
-### 4. Gameplay Mechanics & Feel
-- [ ] **Stamina & Sprinting**: Hold shift / double tap virtual joystick to jog.
+### 4. Interactive Phone & Group Chat
+- [x] **CampuSApp Messaging**:
+  - Official 100L Departmental Group Chat with pinned course rep deadlines and live banter.
+
+### 5. Gameplay Mechanics & Feel
+- [x] **Stamina & Sprinting**: Shift key / double push moves player 1.55x faster with dynamic stride gait.
 - [ ] **Hostel Inspection Random Event**: Hall warden checks for banned hot plates / boiling rings.
 - [ ] **Rain / Heatwave Weather System**: Random weather changes campus ambient lighting.
+
+---
+
+## 💰 Section C: Game Monetization & Ad Placement Architecture
+
+### 1. Rewarded Video Ads (Highest eCPM & Player-Friendly)
+- **Concept**: Players *choose* to watch a short 15-30s ad in exchange for high-value in-game perks.
+- **Triggers**:
+  - 📺 **Sapa Bailout**: Watch an ad on the phone app for instant ₦1,500 + 25% Energy recharge.
+  - ⚡ **Exam Panic Study Pass**: Watch an ad when entering an exam with low stamina to get a +10 Continuous Assessment bonus mark.
+  - 🚌 **Free Keke Shuttle Pass**: Watch 1 ad for 5 free instant campus trips without paying ₦100 fare.
+
+### 2. In-Game Native Campus Billboards
+- **Concept**: Realistic 3D billboard meshes placed around the football stadium and campus courtyard.
+- **Placement**:
+  - Football stadium perimeter fences.
+  - Campus ATM booth walls.
+  - Can display real sponsor banners (e.g. telecom networks, fintech apps, campus food brands) without interrupting gameplay.
+
+### 3. Web Monetization Providers (HTML5)
+- **Google AdSense for Games / H5 Games Ads**: Directly integrates with Godot HTML5 canvas.
+- **GameDistribution / CrazyGames SDK**: Built-in rewarded ad API that can trigger Javascript calls from Godot (`JavaScriptBridge.eval()`).
+
 

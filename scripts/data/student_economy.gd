@@ -54,5 +54,15 @@ const HUSTLE_ACTIVITIES: Array[Dictionary] = [
 		"payout": 8500,
 		"cgpa_boost": 0.08,
 		"location": "hostel"
+	},
+	{
+		"id": "sponsored_airtime",
+		"name": "Brand Ambassador & Sponsored Campus Ad",
+		"desc": "Watch a quick sponsored campus brand clip / billboard partner ad to receive ₦1,500 emergency airtime & +20 Energy!",
+		"time_minutes": 5,
+		"energy_cost": -20.0, # Energy boost
+		"payout": 1500,
+		"cgpa_boost": 0.0,
+		"location": "any"
 	}
 ]

@@ -131,10 +131,16 @@ func _open_app(app_id: String) -> void:
 			action_btn.text = "Request Urgent 2k from Home"
 
 		"hustle":
-			app_title.text = "💼 STUDENT HUSTLE HUB"
-			content_label.text = "AVAILABLE CAMPUS GIGS:\n1. SUB Business Centre Typing (+₦2,500)\n2. Fellowship Flyer Design (+₦4,500)\n3. Hostel Provision Sales (+₦1,800)\n4. Web & Software Gig with Mr. Marvellous (+₦8,500)\n\nEarn money between lectures to survive sapa!"
+			app_title.text = "💼 STUDENT HUSTLE & BRAND ADS"
+			content_label.text = """AVAILABLE GIGS & REWARD ADS:
+1. SUB Typing & Proofreading (+₦2,500)
+2. Graphic Design & Campaign Posters (+₦4,500)
+3. Freelance Coding with Mr. Marvellous (+₦8,500)
+4. 📺 WATCH SPONSORED REWARD AD (+₦1,500 Cash & +25% Energy Recharge!)
+
+Need instant cash without draining energy? Watch a campus partner promo!"""
 			action_btn.visible = true
-			action_btn.text = "Work Assignment Typing (+₦2,500)"
+			action_btn.text = "📺 Watch Sponsored Promo (+₦1,500 & +25 Energy)"
 
 		"online":
 			app_title.text = "🌐 CAMPUS MULTIPLAYER LOBBY"
@@ -195,20 +201,21 @@ func _on_app_action_pressed() -> void:
 			action_btn.disabled = true
 
 	elif current_app_id == "hustle":
-		# Perform typing hustle
-		if needs.energy >= 20.0:
-			needs.modify_energy(-20.0)
-			needs.modify_money(2500)
-			TimeSystem.advance_minutes(60)
-			if SoundManager:
-				SoundManager.play_coin()
-			content_label.text = "✓ GIG FINISHED! You typed 25 pages of past questions.\nEarned ₦2,500! Energy -20%"
-			action_btn.disabled = true
-			hustle_performed.emit(2500, "Typed assignments in SUB! Earned ₦2,500")
-		else:
-			if SoundManager:
-				SoundManager.play_alert()
-			content_label.text = "⚠ Too exhausted to work! Go to the hostel bed and sleep first."
+		# Watch sponsored reward ad / campus brand clip
+		needs.modify_money(1500)
+		needs.modify_energy(25.0)
+		TimeSystem.advance_minutes(5)
+		if SoundManager:
+			SoundManager.play_coin()
+		content_label.text = """📺 SPONSORED AD REWARD CLAIMED!
+--------------------------------------------------
+Thank you for viewing our Campus Partner Brand Promo!
+✓ +₦1,500 credited to your OPay / Campus Wallet!
+✓ +25% Energy recharged (Drink promo can)!
+
+Your wallet and stamina are replenished for next lecture!"""
+		action_btn.disabled = true
+		hustle_performed.emit(1500, "Watched Sponsored Campus Brand Ad! +₦1,500, +25 Energy")
 
 	elif current_app_id == "online":
 		if NetworkManager:
