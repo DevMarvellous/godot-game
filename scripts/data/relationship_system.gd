@@ -18,6 +18,8 @@ static var character_affinity: Dictionary = {
 	"Prof. Okonjo": 10,
 	"Sister Blessing": 25,
 	"Brother Chinedu": 15,
+	"Comrade Aluta": 25,
+	"Mama Nkechi": 20,
 	"Master Sunday": 10,
 	"Mrs. Janet": 15,
 	"Coach Balogun": 20

@@ -173,6 +173,58 @@ const DIALOGUE_TREES: Dictionary = {
 			}
 		]
 	},
+	"Comrade Aluta": {
+		"greeting": "Greatest Nigerian Students! Aluta Continua, Victoria Acerta! As SUG President, the welfare of the union is paramount! Are you ready for campus congress?",
+		"choices": [
+			{
+				"text": "Comrade President! The hostel electricity and water pump need urgent union intervention!",
+				"response": "Solidarity forever! I am taking an official memo straight to the Vice-Chancellor's desk this afternoon! +15% Campus Influence!",
+				"cgpa_boost": 0.02,
+				"faith_boost": 10.0,
+				"money_change": 0
+			},
+			{
+				"text": "Comrade, how do I join the Student Union Parliament as a 100L representative?",
+				"response": "Pick up the parliamentarian nomination form at the union secretariat! Leadership requires bold courage!",
+				"cgpa_boost": 0.04,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Just greeting the President with maximum respect!",
+				"response": "A luta continua! Keep your head high and defend student rights!",
+				"cgpa_boost": 0.01,
+				"faith_boost": 5.0,
+				"money_change": 0
+			}
+		]
+	},
+	"Mama Nkechi": {
+		"greeting": "Welcome my child! Direct POS cash withdrawal, recharge cards for all networks, and cool provisions! How much cash do you need?",
+		"choices": [
+			{
+				"text": "Ma, I need to withdraw ₦5,000 cash for hostel dues and handouts.",
+				"response": "Swipe your card on the terminal! ₦100 POS charges, sharp sharp money inside your pocket!",
+				"cgpa_boost": 0.0,
+				"faith_boost": 0.0,
+				"money_change": -100
+			},
+			{
+				"text": "Do you sell MTN and Airtel emergency recharge cards?",
+				"response": "Available! ₦1,000 VTU loaded instantly so you never run out of study data!",
+				"cgpa_boost": 0.02,
+				"faith_boost": 0.0,
+				"money_change": -1000
+			},
+			{
+				"text": "Good day ma, just passing through the SUB atrium.",
+				"response": "God bless your day my child, read your books well!",
+				"cgpa_boost": 0.0,
+				"faith_boost": 5.0,
+				"money_change": 0
+			}
+		]
+	},
 	"Master Sunday": {
 		"greeting": "Chairman! Welcome to Executive Cuts. Looking neat is good business on campus. What cut are you getting?",
 		"choices": [

@@ -22,6 +22,8 @@ signal hustle_performed(payout: int, message: String)
 @onready var back_btn: Button = %BackBtn
 @onready var content_label: Label = %ContentLabel
 @onready var action_btn: Button = %AppActionBtn
+@onready var phone_clock_label: Label = %PhoneClockLabel if has_node("%PhoneClockLabel") else null
+@onready var phone_network_label: Label = %PhoneNetworkLabel if has_node("%PhoneNetworkLabel") else null
 
 var current_player: CharacterBody3D = null
 var current_app_id: String = ""
@@ -53,8 +55,24 @@ func _wire_app_btn(btn: Button, app_id: String) -> void:
 
 func open_phone(p: CharacterBody3D) -> void:
 	current_player = p
+	_update_phone_status_bar()
 	visible = true
 	_show_home_screen()
+
+
+func _update_phone_status_bar() -> void:
+	if phone_clock_label:
+		var time_str: String = TimeSystem.get_time_string() if TimeSystem else "08:30 AM"
+		var day_str: String = TimeSystem.get_weekday_name() if TimeSystem else "Mon"
+		phone_clock_label.text = "%s • %s" % [time_str, day_str]
+
+	if phone_network_label:
+		var battery_pct: int = 100
+		if current_player:
+			var needs: NeedsManager = current_player.get_node_or_null("NeedsManager") as NeedsManager
+			if needs:
+				battery_pct = int(clampf(needs.energy, 5.0, 100.0))
+		phone_network_label.text = "📶 MTN 4G  🔋 %d%%" % battery_pct
 
 
 func close_phone() -> void:
