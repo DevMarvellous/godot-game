@@ -38,6 +38,7 @@ func _ready() -> void:
 	_wire_transit_btn(%HostelBtn, &"hostel")
 	_wire_transit_btn(%BukaBtn, &"buka")
 	_wire_transit_btn(%BistroBtn, &"bistro")
+	_wire_transit_btn(%StadiumBtn, &"stadium")
 	_wire_transit_btn(%ClassBtn, &"class")
 	_wire_transit_btn(%Class2Btn, &"class2")
 	_wire_transit_btn(%LibraryBtn, &"library")

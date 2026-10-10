@@ -406,6 +406,32 @@ const DIALOGUE_TREES: Dictionary = {
 				"money_change": 0
 			}
 		]
+	},
+	"Coach Balogun": {
+		"greeting": "Oya double up! Fitness is key for academic resilience! The Inter-Faculty Dean's Cup is starting soon. Are you ready to train or take penalty kicks?",
+		"choices": [
+			{
+				"text": "Coach! Let me join the faculty 5-a-side football training drills!",
+				"response": "Good stamina! Sweating out exam stress clears your brain. +35% Energy, +0.03 Athletic Reputation!",
+				"cgpa_boost": 0.03,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Coach, who is the defending champion of the Vice-Chancellor's Cup?",
+				"response": "Faculty of Engineering! But Computing and Social Sciences are bringing fire this season. Practice your shots!",
+				"cgpa_boost": 0.01,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Can I rent a jersey and boots from the sports pavilion?",
+				"response": "Sure thing. ₦300 maintenance fee, return them clean after match practice.",
+				"cgpa_boost": 0.0,
+				"faith_boost": 0.0,
+				"money_change": -300
+			}
+		]
 	}
 }
 

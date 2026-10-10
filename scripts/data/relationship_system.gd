@@ -19,7 +19,8 @@ static var character_affinity: Dictionary = {
 	"Sister Blessing": 25,
 	"Brother Chinedu": 15,
 	"Master Sunday": 10,
-	"Mrs. Janet": 15
+	"Mrs. Janet": 15,
+	"Coach Balogun": 20
 }
 
 static func get_affinity(character_name: String) -> int:

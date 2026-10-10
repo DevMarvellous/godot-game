@@ -102,10 +102,14 @@ func _physics_process(delta: float) -> void:
 		if input_dir != Vector2.ZERO:
 			has_nav_target = false
 
+	# Check sprint action (Shift or fast push)
+	var is_sprinting: bool = Input.is_action_pressed("sprint")
+	var current_move_speed: float = move_speed * (1.55 if is_sprinting else 1.0)
+
 	var target_vel: Vector3 = Vector3.ZERO
 	if input_dir != Vector2.ZERO:
 		input_dir = input_dir.normalized()
-		target_vel = Vector3(input_dir.x, 0.0, input_dir.y) * move_speed
+		target_vel = Vector3(input_dir.x, 0.0, input_dir.y) * current_move_speed
 		var target_angle: float = atan2(-input_dir.x, -input_dir.y)
 		visual_root.rotation.y = lerp_angle(visual_root.rotation.y, target_angle, rotation_speed * delta)
 	elif has_nav_target:
@@ -115,7 +119,7 @@ func _physics_process(delta: float) -> void:
 		var dist: float = to_target.length()
 		if dist > 0.4:
 			var move_dir: Vector3 = to_target.normalized()
-			target_vel = move_dir * move_speed
+			target_vel = move_dir * current_move_speed
 			var target_angle: float = atan2(-move_dir.x, -move_dir.z)
 			visual_root.rotation.y = lerp_angle(visual_root.rotation.y, target_angle, rotation_speed * delta)
 		else:
@@ -129,15 +133,19 @@ func _physics_process(delta: float) -> void:
 	# Animate walking limbs (arms + legs swinging) and subtle torso bobbing
 	var horiz_speed: float = Vector2(velocity.x, velocity.z).length()
 	if horiz_speed > 0.3:
-		walk_anim_time += delta * 12.0
+		var speed_factor: float = clampf(horiz_speed / move_speed, 0.8, 1.6)
+		walk_anim_time += delta * 12.0 * speed_factor
+		var arm_amp: float = 0.45 * speed_factor
+		var leg_amp: float = 0.48 * speed_factor
+
 		# Arm swing (opposing)
 		if left_arm and right_arm:
-			left_arm.rotation.x = sin(walk_anim_time) * 0.45
-			right_arm.rotation.x = -sin(walk_anim_time) * 0.45
+			left_arm.rotation.x = sin(walk_anim_time) * arm_amp
+			right_arm.rotation.x = -sin(walk_anim_time) * arm_amp
 		# Leg stride (opposing to arms)
 		if left_leg and right_leg:
-			left_leg.rotation.x = -sin(walk_anim_time) * 0.48
-			right_leg.rotation.x = sin(walk_anim_time) * 0.48
+			left_leg.rotation.x = -sin(walk_anim_time) * leg_amp
+			right_leg.rotation.x = sin(walk_anim_time) * leg_amp
 		# Torso bounce & subtle lateral sway
 		if torso_mesh and head_mesh and hair_mesh:
 			var bob: float = abs(sin(walk_anim_time)) * 0.04

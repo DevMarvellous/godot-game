@@ -114,9 +114,10 @@ func _open_app(app_id: String) -> void:
 			action_btn.visible = false
 
 		"chat":
-			app_title.text = "💬 CAMPUS WHATSAPP GIST"
-			content_label.text = "DEPARTMENTAL GROUP CHAT:\n• Emeka (Course Rep): 'Assignment due 8am tomorrow!'\n• Tobi (400L): 'Anyone selling past questions?'\n• Sister Blessing: 'Fellowship choir practice at 5pm.'\n• Dr. Adebayo: 'Read chapter 4 before next lecture.'"
-			action_btn.visible = false
+			app_title.text = "💬 CAMPUS WHATSAPP & GIST HUB"
+			_render_whatsapp_gist()
+			action_btn.visible = true
+			action_btn.text = "Send Message to Department Group 💬"
 
 		"bank":
 			app_title.text = "🏦 OPAY / CAMPUS WALLET"
@@ -161,7 +162,23 @@ func _on_app_action_pressed() -> void:
 	if not needs:
 		return
 
-	if current_app_id == "bank":
+	if current_app_id == "chat":
+		# Send a relatable message to the group chat
+		var replies: Array[String] = [
+			"You: 'Who has the soft copy of Dr. Adebayo's slides?'\n• Emeka (Course Rep): 'Check WhatsApp doc link pinned at top!'",
+			"You: 'Is there lecture by 2pm today?'\n• Segun: 'Man, lecturer just arrived at LT2. Rush now!'",
+			"You: 'Please who has extra meal ticket at Mama Put?'\n• Mama Cashout: 'Come chop my pikin, discount dey for you!'",
+			"You: 'Who is playing in the Dean's Cup match this evening?'\n• Coach Balogun: 'Inter-Faculty clash kicks off by 4:30 PM! Be there!'"
+		]
+		var chosen_reply: String = replies[randi() % replies.size()]
+		if SoundManager:
+			SoundManager.play_click()
+		content_label.text = "%s\n\n💬 LIVE REPLY:\n%s" % [content_label.text, chosen_reply]
+		action_btn.disabled = true
+		if current_player and current_player.has_method("show_chat_bubble"):
+			current_player.show_chat_bubble("Sent message on WhatsApp!")
+
+	elif current_app_id == "bank":
 		# Urgent 2k call home
 		if needs.cgpa >= 2.50:
 			needs.modify_money(2500)
@@ -208,6 +225,25 @@ func _on_app_action_pressed() -> void:
 		if SoundManager:
 			SoundManager.play_bell()
 			content_label.text = "🔔 Audio Bell tested successfully!\nAll game systems running with zero lag."
+
+
+func _render_whatsapp_gist() -> void:
+	const StudentProfile = preload("res://scripts/data/student_profile.gd")
+	StudentProfile.load_from_disk()
+	var dept_name: String = StudentProfile.admitted_department
+	var student_n: String = StudentProfile.student_name
+
+	content_label.text = """🟢 %s 100L OFFICIAL CLASS GROUP (Active)
+--------------------------------------------------
+📌 Pinned by Course Rep Emeka: 'Submission deadline for Assignment 1 is Thursday 8:00 AM!'
+
+• Emeka (Course Rep): 'Please check your portal, CA marks are being uploaded!'
+• Chisom: 'Who is currently in the Central Library? Help me hold a reading seat!'
+• Segun: 'Light just came on in Hall 2! Come charge your laptops and phones!'
+• Coach Balogun: 'Inter-Faculty football training this evening at the stadium pitch!'
+• Tobi (400L): 'I still have past questions booklet copies at SUB.'
+• Sister Blessing: 'Youth fellowship starts 5:00 PM at the Chapel. Come and be blessed.'
+""" % [dept_name]
 
 
 func _get_class_text(cgpa: float) -> String:
