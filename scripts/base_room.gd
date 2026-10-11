@@ -20,6 +20,7 @@ var phone_menu: Control = null
 var salon_menu: Control = null
 var chat_menu: Control = null
 var remote_player_nodes: Dictionary = {}
+var active_ceiling_fans: Array[Node3D] = []
 
 @onready var food_menu: Control = $MenusLayer/FoodMenu if has_node("MenusLayer/FoodMenu") else null
 @onready var study_menu: Control = $MenusLayer/StudyMenu if has_node("MenusLayer/StudyMenu") else null
@@ -89,12 +90,20 @@ func _ready() -> void:
 
 	_configure_dynamic_hostel_room()
 	_connect_interactive_fixtures()
-	active_ceiling_fan = get_node_or_null("RoomDecor/CeilingFan") as Node3D
+	_gather_ceiling_fans(self)
+
+
+func _gather_ceiling_fans(node: Node) -> void:
+	if node != self and node is Node3D and "fan" in node.name.to_lower():
+		active_ceiling_fans.append(node as Node3D)
+	for child in node.get_children():
+		_gather_ceiling_fans(child)
 
 
 func _process(delta: float) -> void:
-	if active_ceiling_fan:
-		active_ceiling_fan.rotate_y(delta * 8.5)
+	for fan in active_ceiling_fans:
+		if is_instance_valid(fan):
+			fan.rotate_y(delta * 8.5)
 
 
 func _configure_dynamic_hostel_room() -> void:

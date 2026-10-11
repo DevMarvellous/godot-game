@@ -60,6 +60,14 @@ size = Vector3(0.8, 0.6, 0.4)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_screen"]
 albedo_color = Color(0.12, 0.15, 0.22, 1)
 
+[sub_resource type="CylinderMesh" id="CylinderMesh_fan"]
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.08
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
+albedo_color = Color(0.25, 0.28, 0.3, 1)
+
 [node name="StudentUnionBuilding" type="Node3D"]
 script = ExtResource("1_room")
 room_name = "Student Union Building (SUB Complex)"
@@ -164,6 +172,11 @@ billboard = 1
 text = "CAMPUS MINI MART & PROVISIONS"
 font_size = 24
 outline_size = 5
+
+[node name="CeilingFan" type="MeshInstance3D" parent="SUBFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6, 0)
+mesh = SubResource("CylinderMesh_fan")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
 
 [node name="WorldObjects" type="Node3D" parent="."]
 

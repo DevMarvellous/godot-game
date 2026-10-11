@@ -27,14 +27,39 @@ signal hustle_performed(payout: int, message: String)
 @onready var home_widgets: VBoxContainer = %HomeScreenWidgets if has_node("%HomeScreenWidgets") else null
 @onready var big_clock_label: Label = %BigClockLabel if has_node("%BigClockLabel") else null
 @onready var big_date_label: Label = %BigDateLabel if has_node("%BigDateLabel") else null
+@onready var phone_frame: PanelContainer = $CenterContainer/PhoneFrame if has_node("CenterContainer/PhoneFrame") else null
 @onready var home_bar_btn: Button = %HomeBarBtn if has_node("%HomeBarBtn") else null
 
+const WALLPAPERS: Array[Dictionary] = [
+	{
+		"name": "Deep Midnight AMOLED",
+		"bg": Color(0.06, 0.08, 0.12, 0.98),
+		"border": Color(0.24, 0.30, 0.40, 1.0)
+	},
+	{
+		"name": "Lagos Sunset Gold",
+		"bg": Color(0.18, 0.08, 0.12, 0.98),
+		"border": Color(0.85, 0.45, 0.20, 1.0)
+	},
+	{
+		"name": "Emerald Quad Green",
+		"bg": Color(0.04, 0.13, 0.08, 0.98),
+		"border": Color(0.20, 0.70, 0.45, 1.0)
+	},
+	{
+		"name": "Cyber Aluta Purple",
+		"bg": Color(0.12, 0.06, 0.20, 0.98),
+		"border": Color(0.65, 0.35, 0.90, 1.0)
+	}
+]
+var current_wallpaper_idx: int = 0
 var current_player: CharacterBody3D = null
 var current_app_id: String = ""
 
 
 func _ready() -> void:
 	visible = false
+	apply_wallpaper(0)
 	if close_btn:
 		close_btn.pressed.connect(close_phone)
 	if back_btn:
@@ -49,6 +74,18 @@ func _ready() -> void:
 			else:
 				close_phone()
 		)
+
+
+func apply_wallpaper(idx: int) -> void:
+	current_wallpaper_idx = idx % WALLPAPERS.size()
+	var wp: Dictionary = WALLPAPERS[current_wallpaper_idx]
+	if phone_frame:
+		var style: StyleBoxFlat = phone_frame.get_theme_stylebox("panel")
+		if style:
+			var new_style: StyleBoxFlat = style.duplicate() as StyleBoxFlat
+			new_style.bg_color = wp.bg
+			new_style.border_color = wp.border
+			phone_frame.add_theme_style_override("panel", new_style)
 
 	_wire_app_btn(%IDCardAppBtn, "id_card")
 	_wire_app_btn(%TimetableAppBtn, "timetable")
@@ -223,11 +260,18 @@ Need instant cash without draining energy? Watch a campus partner promo!"""
 			action_btn.text = "Post Campus Tweet 🐦 (+10 Clout)"
 
 		"settings":
-			app_title.text = "⚙️ GAME SETTINGS"
-			var current_audio: String = "ACTIVE (Procedural In-Memory)"
-			content_label.text = "SOUND FX: %s\nGRAPHICS: Mobile Performance (GL Compatibility)\nINPUT: Touchscreen / Mouse Raycast\nVERSION: 1.0.0 (Web & Mobile)" % current_audio
+			app_title.text = "⚙️ PHONE & GAME SETTINGS"
+			var active_wp: String = WALLPAPERS[current_wallpaper_idx]["name"]
+			var next_wp: String = WALLPAPERS[(current_wallpaper_idx + 1) % WALLPAPERS.size()]["name"]
+			content_label.text = """🎨 ACTIVE WALLPAPER: %s
+📶 DATA SAVER: Active (Instant Zero-Data ServiceWorker Cache)
+🔊 CAMPUS AUDIO: Procedural In-Memory Synthesizer
+📱 RESOLUTION: Adaptive Mobile Aspect Ratio (GL Compatibility)
+💾 LOCAL CLOUD SAVES: IndexedDB Browser Storage ($0 Serverless)
+
+Tap the button below to switch your phone wallpaper!""" % active_wp
 			action_btn.visible = true
-			action_btn.text = "Test Sound Bell / Alert"
+			action_btn.text = "Switch Wallpaper 🎨 (%s)" % next_wp
 
 
 func _on_app_action_pressed() -> void:
@@ -315,9 +359,19 @@ Your wallet and stamina are replenished for next lecture!"""
 			current_player.show_chat_bubble("Posted on Campus Gist! 🐦")
 
 	elif current_app_id == "settings":
+		apply_wallpaper(current_wallpaper_idx + 1)
 		if SoundManager:
-			SoundManager.play_bell()
-			content_label.text = "🔔 Audio Bell tested successfully!\nAll game systems running with zero lag."
+			SoundManager.play_click()
+		var active_wp: String = WALLPAPERS[current_wallpaper_idx]["name"]
+		var next_wp: String = WALLPAPERS[(current_wallpaper_idx + 1) % WALLPAPERS.size()]["name"]
+		content_label.text = """🎨 ACTIVE WALLPAPER: %s
+📶 DATA SAVER: Active (Instant Zero-Data ServiceWorker Cache)
+🔊 CAMPUS AUDIO: Procedural In-Memory Synthesizer
+📱 RESOLUTION: Adaptive Mobile Aspect Ratio (GL Compatibility)
+💾 LOCAL CLOUD SAVES: IndexedDB Browser Storage ($0 Serverless)
+
+Tap the button below to switch your phone wallpaper!""" % active_wp
+		action_btn.text = "Switch Wallpaper 🎨 (%s)" % next_wp
 
 
 func _render_whatsapp_gist() -> void:

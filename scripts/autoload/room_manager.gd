@@ -11,9 +11,17 @@ const ROOM_PATHS: Dictionary = {
 	&"courtyard": "res://scenes/main.tscn",
 	&"hostel": "res://scenes/rooms/hostel_room.tscn",
 	&"lecture": "res://scenes/rooms/lecture_hall.tscn",
+	&"class": "res://scenes/rooms/lecture_hall.tscn",
+	&"class2": "res://scenes/rooms/lecture_theatre_2.tscn",
+	&"library": "res://scenes/rooms/library_hall.tscn",
 	&"mama_put": "res://scenes/rooms/mama_put.tscn",
 	&"buka": "res://scenes/rooms/mama_put.tscn",
-	&"chapel": "res://scenes/rooms/chapel_hall.tscn"
+	&"bistro": "res://scenes/rooms/senate_bistro.tscn",
+	&"stadium": "res://scenes/rooms/football_stadium.tscn",
+	&"chapel": "res://scenes/rooms/chapel_hall.tscn",
+	&"sub": "res://scenes/rooms/sub_building.tscn",
+	&"garden": "res://scenes/rooms/campus_garden.tscn",
+	&"salon": "res://scenes/rooms/barbing_salon.tscn"
 }
 
 var current_room: StringName = &"courtyard"
