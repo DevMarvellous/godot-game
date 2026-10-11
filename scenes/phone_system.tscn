@@ -1,55 +1,86 @@
-[gd_scene format=3 uid="uid://c8phonesys001"]
+[gd_scene load_steps=10 format=3 uid="uid://c8phonesys001"]
 
 [ext_resource type="Script" path="res://scripts/phone_system.gd" id="1_phone"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_phone"]
-bg_color = Color(0.06, 0.08, 0.12, 0.98)
+bg_color = Color(0.08, 0.11, 0.17, 0.98)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color(0.2, 0.65, 0.95, 1)
-corner_radius_top_left = 22
-corner_radius_top_right = 22
-corner_radius_bottom_right = 22
-corner_radius_bottom_left = 22
-content_margin_left = 22.0
-content_margin_top = 22.0
-content_margin_right = 22.0
-content_margin_bottom = 22.0
+border_color = Color(0.24, 0.30, 0.40, 1)
+corner_radius_top_left = 34
+corner_radius_top_right = 34
+corner_radius_bottom_right = 34
+corner_radius_bottom_left = 34
+content_margin_left = 18.0
+content_margin_top = 14.0
+content_margin_right = 18.0
+content_margin_bottom = 14.0
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_island"]
+bg_color = Color(0.02, 0.02, 0.04, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="LabelSettings" id="LabelSettings_bigclock"]
+font_size = 46
+font_color = Color(1, 1, 1, 1)
+outline_size = 4
+outline_color = Color(0, 0, 0, 0.8)
+
+[sub_resource type="LabelSettings" id="LabelSettings_date"]
+font_size = 14
+font_color = Color(0.75, 0.85, 0.95, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_appbtn"]
+bg_color = Color(0.14, 0.18, 0.26, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.45, 0.65, 0.7)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+content_margin_left = 6.0
+content_margin_top = 10.0
+content_margin_right = 6.0
+content_margin_bottom = 10.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_apptitle"]
-font_size = 22
+font_size = 18
 font_color = Color(1, 0.88, 0.35, 1)
 outline_size = 3
 outline_color = Color(0, 0, 0, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_appbtn"]
-bg_color = Color(0.12, 0.16, 0.24, 0.95)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.35, 0.55, 0.85, 0.8)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-content_margin_left = 12.0
-content_margin_top = 16.0
-content_margin_right = 12.0
-content_margin_bottom = 16.0
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_content"]
-bg_color = Color(0.1, 0.13, 0.18, 0.95)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-content_margin_left = 18.0
-content_margin_top = 18.0
-content_margin_right = 18.0
-content_margin_bottom = 18.0
+bg_color = Color(0.10, 0.13, 0.20, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.35, 0.50, 0.8)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+content_margin_left = 14.0
+content_margin_top = 14.0
+content_margin_right = 14.0
+content_margin_bottom = 14.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_homebar"]
+bg_color = Color(0.85, 0.90, 0.98, 0.7)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 
 [node name="PhoneSystem" type="Control"]
 layout_mode = 3
@@ -78,13 +109,22 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PhoneFrame" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(660, 840)
+custom_minimum_size = Vector2(360, 650)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_phone")
 
 [node name="VBox" type="VBoxContainer" parent="CenterContainer/PhoneFrame"]
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 10
+
+[node name="DynamicIslandContainer" type="HBoxContainer" parent="CenterContainer/PhoneFrame/VBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="DynamicIsland" type="Panel" parent="CenterContainer/PhoneFrame/VBox/DynamicIslandContainer"]
+custom_minimum_size = Vector2(90, 20)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_island")
 
 [node name="PhoneStatusBar" type="HBoxContainer" parent="CenterContainer/PhoneFrame/VBox"]
 layout_mode = 2
@@ -93,16 +133,16 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.85, 0.9, 0.95, 1)
-theme_override_font_sizes/font_size = 14
-text = "08:30 AM • Mon"
+theme_override_colors/font_color = Color(0.9, 0.94, 0.98, 1)
+theme_override_font_sizes/font_size = 13
+text = "08:30"
 
 [node name="PhoneNetworkLabel" type="Label" parent="CenterContainer/PhoneFrame/VBox/PhoneStatusBar"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.3, 0.9, 0.45, 1)
-theme_override_font_sizes/font_size = 13
-text = "📶 MTN 4G  🔋 94%"
+theme_override_colors/font_color = Color(0.35, 0.95, 0.55, 1)
+theme_override_font_sizes/font_size = 12
+text = "📶 5G MTN  🔋 94%"
 
 [node name="Header" type="HBoxContainer" parent="CenterContainer/PhoneFrame/VBox"]
 layout_mode = 2
@@ -110,8 +150,9 @@ layout_mode = 2
 [node name="BackBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/Header"]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(80, 44)
+custom_minimum_size = Vector2(65, 36)
 layout_mode = 2
+theme_override_font_sizes/font_size = 13
 text = "◀ Back"
 
 [node name="AppTitleLabel" type="Label" parent="CenterContainer/PhoneFrame/VBox/Header"]
@@ -124,92 +165,125 @@ horizontal_alignment = 1
 
 [node name="ClosePhoneBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/Header"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(44, 44)
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 text = "✕"
 
 [node name="HSeparator" type="HSeparator" parent="CenterContainer/PhoneFrame/VBox"]
+layout_mode = 2
+
+[node name="HomeScreenWidgets" type="VBoxContainer" parent="CenterContainer/PhoneFrame/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="BigClockLabel" type="Label" parent="CenterContainer/PhoneFrame/VBox/HomeScreenWidgets"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "08:30"
+label_settings = SubResource("LabelSettings_bigclock")
+horizontal_alignment = 1
+
+[node name="BigDateLabel" type="Label" parent="CenterContainer/PhoneFrame/VBox/HomeScreenWidgets"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Monday, Day 1 • 28°C Campus"
+label_settings = SubResource("LabelSettings_date")
+horizontal_alignment = 1
+
+[node name="WidgetSpacer" type="Control" parent="CenterContainer/PhoneFrame/VBox/HomeScreenWidgets"]
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
 [node name="AppGrid" type="GridContainer" parent="CenterContainer/PhoneFrame/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/h_separation = 14
-theme_override_constants/v_separation = 14
-columns = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 12
+columns = 4
 
 [node name="IDCardAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(68, 76)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "🪪 Student ID"
+text = "🪪
+ID Card"
 
 [node name="TimetableAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(68, 76)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "📅 Timetable"
+text = "📅
+Classes"
 
 [node name="ResultsAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(68, 76)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "📊 CGPA Portal"
+text = "📊
+CGPA"
 
 [node name="ChatAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(68, 76)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "💬 WhatsApp"
+text = "🟢
+WhatsApp"
 
 [node name="BankAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(68, 76)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "🏦 OPay Wallet"
+text = "🏦
+OPay"
 
 [node name="HustleAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(68, 76)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "💼 Student Hustle"
+text = "💼
+Hustle"
 
-[node name="OnlineAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
+[node name="GistAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(68, 76)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "🌐 Campus Online"
+text = "🐦
+Gist"
 
 [node name="SettingsAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(68, 76)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "⚙️ Settings"
+text = "⚙️
+Settings"
 
 [node name="AppContent" type="PanelContainer" parent="CenterContainer/PhoneFrame/VBox"]
 unique_name_in_owner = true
@@ -220,19 +294,35 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_content")
 
 [node name="VBoxContent" type="VBoxContainer" parent="CenterContainer/PhoneFrame/VBox/AppContent"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 12
 
-[node name="ContentLabel" type="Label" parent="CenterContainer/PhoneFrame/VBox/AppContent/VBoxContent"]
-unique_name_in_owner = true
+[node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer/PhoneFrame/VBox/AppContent/VBoxContent"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 18
+
+[node name="ContentLabel" type="Label" parent="CenterContainer/PhoneFrame/VBox/AppContent/VBoxContent/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 14
 autowrap_mode = 2
 
 [node name="AppActionBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppContent/VBoxContent"]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(0, 54)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
-theme_override_font_sizes/font_size = 17
+theme_override_font_sizes/font_size = 15
 text = "Action Button"
+
+[node name="BottomHomeBarContainer" type="HBoxContainer" parent="CenterContainer/PhoneFrame/VBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="HomeBarBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/BottomHomeBarContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 8)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_homebar")
+text = ""

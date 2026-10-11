@@ -89,6 +89,12 @@ func _ready() -> void:
 
 	_configure_dynamic_hostel_room()
 	_connect_interactive_fixtures()
+	active_ceiling_fan = get_node_or_null("RoomDecor/CeilingFan") as Node3D
+
+
+func _process(delta: float) -> void:
+	if active_ceiling_fan:
+		active_ceiling_fan.rotate_y(delta * 8.5)
 
 
 func _configure_dynamic_hostel_room() -> void:

@@ -24,6 +24,10 @@ signal hustle_performed(payout: int, message: String)
 @onready var action_btn: Button = %AppActionBtn
 @onready var phone_clock_label: Label = %PhoneClockLabel if has_node("%PhoneClockLabel") else null
 @onready var phone_network_label: Label = %PhoneNetworkLabel if has_node("%PhoneNetworkLabel") else null
+@onready var home_widgets: VBoxContainer = %HomeScreenWidgets if has_node("%HomeScreenWidgets") else null
+@onready var big_clock_label: Label = %BigClockLabel if has_node("%BigClockLabel") else null
+@onready var big_date_label: Label = %BigDateLabel if has_node("%BigDateLabel") else null
+@onready var home_bar_btn: Button = %HomeBarBtn if has_node("%HomeBarBtn") else null
 
 var current_player: CharacterBody3D = null
 var current_app_id: String = ""
@@ -37,6 +41,14 @@ func _ready() -> void:
 		back_btn.pressed.connect(_show_home_screen)
 	if action_btn:
 		action_btn.pressed.connect(_on_app_action_pressed)
+	if home_bar_btn:
+		home_bar_btn.pressed.connect(func():
+			if SoundManager: SoundManager.play_click()
+			if app_content and app_content.visible:
+				_show_home_screen()
+			else:
+				close_phone()
+		)
 
 	_wire_app_btn(%IDCardAppBtn, "id_card")
 	_wire_app_btn(%TimetableAppBtn, "timetable")
@@ -44,7 +56,10 @@ func _ready() -> void:
 	_wire_app_btn(%ChatAppBtn, "chat")
 	_wire_app_btn(%BankAppBtn, "bank")
 	_wire_app_btn(%HustleAppBtn, "hustle")
-	_wire_app_btn(%OnlineAppBtn, "online")
+	if has_node("%GistAppBtn"):
+		_wire_app_btn(%GistAppBtn, "gist")
+	if has_node("%OnlineAppBtn"):
+		_wire_app_btn(%OnlineAppBtn, "online")
 	_wire_app_btn(%SettingsAppBtn, "settings")
 
 
@@ -82,6 +97,8 @@ func close_phone() -> void:
 
 
 func _show_home_screen() -> void:
+	if home_widgets:
+		home_widgets.visible = true
 	if app_grid:
 		app_grid.visible = true
 	if app_content:
@@ -91,9 +108,18 @@ func _show_home_screen() -> void:
 	if app_title:
 		app_title.text = "📱 CAMPUS CONNECT"
 
+	if big_clock_label:
+		big_clock_label.text = TimeSystem.get_time_string() if TimeSystem else "08:30"
+	if big_date_label:
+		var day_name: String = TimeSystem.get_weekday_name() if TimeSystem else "Monday"
+		var day_num: int = TimeSystem.current_day if TimeSystem else 1
+		big_date_label.text = "%s, Day %d • 28°C Campus" % [day_name, day_num]
+
 
 func _open_app(app_id: String) -> void:
 	current_app_id = app_id
+	if home_widgets:
+		home_widgets.visible = false
 	if app_grid:
 		app_grid.visible = false
 	if app_content:
@@ -173,6 +199,29 @@ Need instant cash without draining energy? Watch a campus partner promo!"""
 			action_btn.visible = true
 			action_btn.text = "Disconnect from Server" if is_conn else "Connect to Online Campus"
 
+		"gist":
+			app_title.text = "🐦 NAIJA CAMPUS GIST"
+			content_label.text = """🔥 TRENDING ON CAMPUS:
+#ExamTimetable  #MamaPutJollof  #Hall2NoLight  #SUGElections
+
+• @UnilagAproko (Verified):
+'Why is Hall Warden raiding rooms for boiling rings by 6:00 AM abeg? 😭 Somebody\\'s Indomie got seized!'
+
+• @SapaSurvivoor:
+'Whoever invented 2-for-1 Indomie and boiled egg at SUB, God will bless your entire lineage! 🙏'
+
+• @SUG_Aluta (President Comrade):
+'Official notice: No 100L student should pay unauthorized departmental dues without official stamped receipt!'
+
+• @TechBro_100L:
+'First Class is good, but make sure you learn GDScript and coding before final year! 🚀'
+
+• @MamaCashoutOfficial:
+'Fresh goat meat, steaming amala, and hot firewood jollof rice ready at Mama Put joint right now! 🍲'
+"""
+			action_btn.visible = true
+			action_btn.text = "Post Campus Tweet 🐦 (+10 Clout)"
+
 		"settings":
 			app_title.text = "⚙️ GAME SETTINGS"
 			var current_audio: String = "ACTIVE (Procedural In-Memory)"
@@ -247,6 +296,23 @@ Your wallet and stamina are replenished for next lecture!"""
 				NetworkManager.connect_to_campus()
 				content_label.text = "Connecting to WebSocket campus server at ws://127.0.0.1:8910...\nIf server is active, other players will appear in your room."
 				action_btn.text = "Disconnect from Server"
+
+	elif current_app_id == "gist":
+		const StudentProfile = preload("res://scripts/data/student_profile.gd")
+		var my_handle: String = "@%s" % StudentProfile.student_name.to_lower().replace(" ", "")
+		var tweets: Array[String] = [
+			"%s: 'Just finished 8 AM lecture! May our CGPA not fall into temptation this semester 🙏'",
+			"%s: 'Who is heading to Mama Put right now? I am ordering hot jollof rice and fried fish! 🍲'",
+			"%s: 'Omo, the library AC is so cold today! Need a hoodie! 📖'",
+			"%s: 'Dean\\'s Cup match this evening! Who is coming to support the faculty team? ⚽'"
+		]
+		var my_tweet: String = tweets[randi() % tweets.size()] % my_handle
+		if SoundManager:
+			SoundManager.play_bell()
+		content_label.text = "✨ YOUR TWEET IS LIVE!\n• %s\n\n%s" % [my_tweet, content_label.text]
+		action_btn.disabled = true
+		if current_player and current_player.has_method("show_chat_bubble"):
+			current_player.show_chat_bubble("Posted on Campus Gist! 🐦")
 
 	elif current_app_id == "settings":
 		if SoundManager:
