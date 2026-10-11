@@ -57,6 +57,11 @@ func _ready() -> void:
 			menus_layer.add_child(chat_menu)
 			if chat_menu.has_signal("chat_closed"):
 				chat_menu.chat_closed.connect(_on_menu_closed)
+			if chat_menu.has_signal("message_sent"):
+				chat_menu.message_sent.connect(func(msg: String):
+					if player:
+						player.show_chat_bubble(msg)
+				)
 
 		if room_id == &"salon":
 			if menus_layer.has_node("SalonMenu"):
@@ -198,8 +203,8 @@ func _on_transit_requested(dest: StringName) -> void:
 			_go_to_scene("res://scenes/rooms/lecture_theatre_2.tscn")
 		&"library":
 			_go_to_scene("res://scenes/rooms/library_hall.tscn")
-		&"buka":
-			_go_to_scene("res://scenes/rooms/buka_court.tscn")
+		&"mama_put", &"buka":
+			_go_to_scene("res://scenes/rooms/mama_put.tscn")
 		&"bistro":
 			_go_to_scene("res://scenes/rooms/senate_bistro.tscn")
 		&"stadium":

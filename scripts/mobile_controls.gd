@@ -36,7 +36,10 @@ func _ready() -> void:
 
 	# Wire transit quick-travel buttons
 	_wire_transit_btn(%HostelBtn, &"hostel")
-	_wire_transit_btn(%BukaBtn, &"buka")
+	if has_node("%MamaPutBtn"):
+		_wire_transit_btn(%MamaPutBtn, &"mama_put")
+	elif has_node("%BukaBtn"):
+		_wire_transit_btn(%BukaBtn, &"mama_put")
 	_wire_transit_btn(%BistroBtn, &"bistro")
 	_wire_transit_btn(%StadiumBtn, &"stadium")
 	_wire_transit_btn(%ClassBtn, &"class")

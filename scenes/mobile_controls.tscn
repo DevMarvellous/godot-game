@@ -239,7 +239,7 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "📖 Central Library (Keke ₦100)"
 
-[node name="BukaBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
+[node name="MamaPutBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "🍲 Mama Put Joint (Keke ₦100)"

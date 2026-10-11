@@ -57,10 +57,10 @@ height = 0.6
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
 albedo_color = Color(0.7, 0.72, 0.75, 1)
 
-[node name="BukaCourt" type="Node3D"]
+[node name="MamaPut" type="Node3D"]
 script = ExtResource("1_room")
 room_name = "Mama Put (Campus Food Joint)"
-room_id = &"buka"
+room_id = &"mama_put"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 0)
@@ -121,34 +121,34 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 1.9, 0)
 mesh = SubResource("BoxMesh_wall_v")
 surface_material_override/0 = SubResource("StandardMaterial3D_wall")
 
-[node name="BukaFixtures" type="Node3D" parent="."]
+[node name="MamaPutFixtures" type="Node3D" parent="."]
 
-[node name="FoodServingCounter" type="MeshInstance3D" parent="BukaFixtures"]
+[node name="FoodServingCounter" type="MeshInstance3D" parent="MamaPutFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -5.5)
 mesh = SubResource("BoxMesh_counter")
 surface_material_override/0 = SubResource("StandardMaterial3D_orange")
 
-[node name="BigPot1" type="MeshInstance3D" parent="BukaFixtures"]
+[node name="BigPot1" type="MeshInstance3D" parent="MamaPutFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 1.35, -5.5)
 mesh = SubResource("CylinderMesh_pot")
 surface_material_override/0 = SubResource("StandardMaterial3D_metal")
 
-[node name="BigPot2" type="MeshInstance3D" parent="BukaFixtures"]
+[node name="BigPot2" type="MeshInstance3D" parent="MamaPutFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 1.35, -5.5)
 mesh = SubResource("CylinderMesh_pot")
 surface_material_override/0 = SubResource("StandardMaterial3D_metal")
 
-[node name="DiningTable1" type="MeshInstance3D" parent="BukaFixtures"]
+[node name="DiningTable1" type="MeshInstance3D" parent="MamaPutFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.4, 0)
 mesh = SubResource("BoxMesh_table")
 surface_material_override/0 = SubResource("StandardMaterial3D_wood")
 
-[node name="DiningTable2" type="MeshInstance3D" parent="BukaFixtures"]
+[node name="DiningTable2" type="MeshInstance3D" parent="MamaPutFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.4, 0)
 mesh = SubResource("BoxMesh_table")
 surface_material_override/0 = SubResource("StandardMaterial3D_wood")
 
-[node name="BukaSign" type="Label3D" parent="BukaFixtures"]
+[node name="MamaPutSign" type="Label3D" parent="MamaPutFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, -7.5)
 billboard = 1
 text = "MAMA PUT JOINT (HOT AMALA, JOLLOF & SUYA)"

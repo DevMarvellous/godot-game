@@ -11,7 +11,8 @@ const ROOM_PATHS: Dictionary = {
 	&"courtyard": "res://scenes/main.tscn",
 	&"hostel": "res://scenes/rooms/hostel_room.tscn",
 	&"lecture": "res://scenes/rooms/lecture_hall.tscn",
-	&"buka": "res://scenes/rooms/buka_court.tscn",
+	&"mama_put": "res://scenes/rooms/mama_put.tscn",
+	&"buka": "res://scenes/rooms/mama_put.tscn",
 	&"chapel": "res://scenes/rooms/chapel_hall.tscn"
 }
 

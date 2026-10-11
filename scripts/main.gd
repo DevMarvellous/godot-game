@@ -71,9 +71,9 @@ func _on_transit_requested(dest: StringName) -> void:
 		&"class":
 			TimeSystem.advance_minutes(5)
 			get_tree().change_scene_to_file("res://scenes/rooms/lecture_hall.tscn")
-		&"buka":
+		&"mama_put", &"buka":
 			TimeSystem.advance_minutes(5)
-			get_tree().change_scene_to_file("res://scenes/rooms/buka_court.tscn")
+			get_tree().change_scene_to_file("res://scenes/rooms/mama_put.tscn")
 		&"chapel":
 			TimeSystem.advance_minutes(5)
 			get_tree().change_scene_to_file("res://scenes/rooms/chapel_hall.tscn")
