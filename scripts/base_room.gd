@@ -16,9 +16,11 @@ const PhoneScene = preload("res://scenes/phone_system.tscn")
 const SalonScene = preload("res://scenes/salon_menu.tscn")
 const ChatScene = preload("res://scenes/chat_wheel.tscn")
 const NetworkPlayerScene = preload("res://scenes/network_player.tscn")
+const WardrobeScene = preload("res://scenes/wardrobe_menu.tscn")
 var phone_menu: Control = null
 var salon_menu: Control = null
 var chat_menu: Control = null
+var wardrobe_menu: Control = null
 var remote_player_nodes: Dictionary = {}
 var active_ceiling_fans: Array[Node3D] = []
 
@@ -83,6 +85,12 @@ func _ready() -> void:
 		dialogue_menu.dialogue_ended.connect(_on_menu_closed)
 	if summary_menu:
 		summary_menu.summary_closed.connect(_on_summary_closed)
+
+	if not wardrobe_menu and menus_layer:
+		wardrobe_menu = WardrobeScene.instantiate() as Control
+		menus_layer.add_child(wardrobe_menu)
+		if wardrobe_menu.has_signal("wardrobe_closed"):
+			wardrobe_menu.wardrobe_closed.connect(_on_menu_closed)
 
 	if SemesterManager:
 		SemesterManager.day_ended.connect(_on_day_ended)
@@ -184,6 +192,8 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 			study_menu.open_menu(p)
 	elif menu_type == &"salon" and salon_menu:
 		salon_menu.open_salon(p)
+	elif (menu_type == &"wardrobe" or menu_type == &"mall") and wardrobe_menu:
+		wardrobe_menu.open_wardrobe(p)
 
 
 func _on_npc_dialogue_requested(npc: NPC3D, p: CharacterBody3D) -> void:
@@ -220,8 +230,8 @@ func _on_transit_requested(dest: StringName) -> void:
 			_go_to_scene("res://scenes/rooms/library_hall.tscn")
 		&"mama_put", &"buka":
 			_go_to_scene("res://scenes/rooms/mama_put.tscn")
-		&"bistro":
-			_go_to_scene("res://scenes/rooms/senate_bistro.tscn")
+		&"mall", &"bistro":
+			_go_to_scene("res://scenes/rooms/campus_mall.tscn")
 		&"stadium":
 			_go_to_scene("res://scenes/rooms/football_stadium.tscn")
 		&"chapel":

@@ -1,0 +1,149 @@
+[gd_scene load_steps=5 format=3 uid="uid://c8wardrobe001"]
+
+[ext_resource type="Script" path="res://scripts/wardrobe_menu.gd" id="1_wardrobe"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.10, 0.13, 0.18, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.35, 0.45, 0.65, 0.8)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+content_margin_left = 20.0
+content_margin_top = 18.0
+content_margin_right = 20.0
+content_margin_bottom = 18.0
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_desc"]
+bg_color = Color(0.15, 0.19, 0.26, 0.95)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_equip"]
+bg_color = Color(0.12, 0.58, 0.35, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="WardrobeMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wardrobe")
+
+[node name="DarkBackdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WardrobeFrame" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(400, 520)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/WardrobeFrame"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="CenterContainer/WardrobeFrame/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.35, 1)
+theme_override_font_sizes/font_size = 20
+text = "🪞 HOSTEL WARDROBE & MIRROR"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="CenterContainer/WardrobeFrame/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 13
+text = "Try on your owned hairstyles, senator wears & outfits."
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/WardrobeFrame/VBox"]
+layout_mode = 2
+
+[node name="SkinLabel" type="Label" parent="CenterContainer/WardrobeFrame/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Melanin Complexion:"
+
+[node name="SkinOptions" type="OptionButton" parent="CenterContainer/WardrobeFrame/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+
+[node name="HairLabel" type="Label" parent="CenterContainer/WardrobeFrame/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Hairstyle & Haircut:"
+
+[node name="HairOptions" type="OptionButton" parent="CenterContainer/WardrobeFrame/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+
+[node name="OutfitLabel" type="Label" parent="CenterContainer/WardrobeFrame/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Campus Outfit & Native Wear:"
+
+[node name="OutfitOptions" type="OptionButton" parent="CenterContainer/WardrobeFrame/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+
+[node name="DescPanel" type="PanelContainer" parent="CenterContainer/WardrobeFrame/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_desc")
+
+[node name="ItemDescLabel" type="Label" parent="CenterContainer/WardrobeFrame/VBox/DescPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 13
+text = "Select items above to preview."
+autowrap_mode = 2
+
+[node name="EquipBtn" type="Button" parent="CenterContainer/WardrobeFrame/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_equip")
+text = "Equip This Look ✨"
+
+[node name="CloseBtn" type="Button" parent="CenterContainer/WardrobeFrame/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "✕ Close"

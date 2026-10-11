@@ -91,6 +91,12 @@ albedo_color = Color(0.95, 0.72, 0.12, 1)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
 albedo_color = Color(0.2, 0.22, 0.25, 1)
 
+[sub_resource type="BoxMesh" id="BoxMesh_wardrobe"]
+size = Vector3(1.4, 2.2, 0.7)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wardrobe"]
+albedo_color = Color(0.38, 0.24, 0.15, 1)
+
 [node name="HostelRoom" type="Node3D"]
 script = ExtResource("1_room")
 room_name = "Hostel Room (Moremi / Hall 2)"
@@ -208,6 +214,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
 mesh = SubResource("CylinderMesh_fan")
 surface_material_override/0 = SubResource("StandardMaterial3D_metal")
 
+[node name="WardrobeDecor" type="MeshInstance3D" parent="RoomDecor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 1.1, -5.3)
+mesh = SubResource("BoxMesh_wardrobe")
+surface_material_override/0 = SubResource("StandardMaterial3D_wardrobe")
+
 [node name="RoomTitle3D" type="Label3D" parent="RoomDecor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, -6.6)
 billboard = 1
@@ -221,6 +232,11 @@ outline_size = 8
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, -4.8)
 object_type = 0
 object_name = "My Bed (Sleep)"
+
+[node name="Wardrobe" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0, -4.6)
+object_type = 7
+object_name = "Hostel Wardrobe (Change Clothes & Hair)"
 
 [node name="StudyDesk" parent="WorldObjects" instance=ExtResource("4_obj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, -4.8)

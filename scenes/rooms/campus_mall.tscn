@@ -48,10 +48,18 @@ size = Vector3(2.4, 0.85, 1.4)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glass"]
 albedo_color = Color(0.2, 0.25, 0.35, 1)
 
-[node name="SenateBistro" type="Node3D"]
+[sub_resource type="CylinderMesh" id="CylinderMesh_fan"]
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.08
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
+albedo_color = Color(0.25, 0.28, 0.30, 1)
+
+[node name="CampusMall" type="Node3D"]
 script = ExtResource("1_room")
-room_name = "The Senate Bistro & Executive Lounge"
-room_id = &"bistro"
+room_name = "Campus Mall & Student Boutique"
+room_id = &"mall"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6, 0)
@@ -97,44 +105,55 @@ shape = SubResource("BoxShape3D_wall_v")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 2.0, 0)
 shape = SubResource("BoxShape3D_wall_v")
 
-[node name="BistroFixtures" type="Node3D" parent="."]
+[node name="MallFixtures" type="Node3D" parent="."]
 
-[node name="CounterMesh" type="MeshInstance3D" parent="BistroFixtures"]
+[node name="CounterMesh" type="MeshInstance3D" parent="MallFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -4.5)
 mesh = SubResource("BoxMesh_counter")
 surface_material_override/0 = SubResource("StandardMaterial3D_marble")
 
-[node name="Table1" type="MeshInstance3D" parent="BistroFixtures"]
+[node name="DisplayTable1" type="MeshInstance3D" parent="MallFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.42, 1.2)
 mesh = SubResource("BoxMesh_table")
 surface_material_override/0 = SubResource("StandardMaterial3D_glass")
 
-[node name="Table2" type="MeshInstance3D" parent="BistroFixtures"]
+[node name="DisplayTable2" type="MeshInstance3D" parent="MallFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.42, 1.2)
 mesh = SubResource("BoxMesh_table")
 surface_material_override/0 = SubResource("StandardMaterial3D_glass")
 
-[node name="SignLabel" type="Label3D" parent="BistroFixtures"]
+[node name="CeilingFan" type="MeshInstance3D" parent="MallFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.4, 0)
+mesh = SubResource("CylinderMesh_fan")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="SignLabel" type="Label3D" parent="MallFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, -7.5)
 billboard = 1
-text = "THE SENATE BISTRO (VIP DINING & ESPRESSO)"
+text = "CAMPUS SHOPPING MALL & BOUTIQUE (CLOTHES, SHOES & PROVISIONS)"
 font_size = 32
 outline_size = 6
 
 [node name="WorldObjects" type="Node3D" parent="."]
 
-[node name="BistroCounter" parent="WorldObjects" instance=ExtResource("4_obj")]
+[node name="MallCounter" parent="WorldObjects" instance=ExtResource("4_obj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.0)
 object_type = 2
-object_name = "Bistro VIP Order Counter"
+object_name = "Campus Mall Cashier & Fitting Stand"
 
 [node name="NPCs" type="Node3D" parent="."]
 
-[node name="ChefPierre" parent="NPCs" instance=ExtResource("8_npc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -5.8)
-character_name = "Chef Pierre"
-character_role = "Executive Chef & Barista"
-shirt_color = Color(0.95, 0.95, 0.95, 1)
+[node name="MadamKikelomo" parent="NPCs" instance=ExtResource("8_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0.1, -5.5)
+character_name = "Madam Kikelomo"
+character_role = "Campus Boutique & Mall Proprietress"
+shirt_color = Color(0.92, 0.48, 0.12, 1)
+
+[node name="BroSegunSales" parent="NPCs" instance=ExtResource("8_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0.1, -5.5)
+character_name = "Bro Segun"
+character_role = "Electronics & Gadget Merchant"
+shirt_color = Color(0.2, 0.5, 0.8, 1)
 
 [node name="Player3D" parent="." instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 2.5)

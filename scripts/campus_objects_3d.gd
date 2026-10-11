@@ -6,7 +6,7 @@ extends Interactable3D
 
 signal menu_requested(menu_type: StringName, player: CharacterBody3D)
 
-enum ObjectType { BED, DESK, CAFETERIA, FELLOWSHIP, ATM, HUSTLE_DESK, SALON_CHAIR }
+enum ObjectType { BED, DESK, CAFETERIA, FELLOWSHIP, ATM, HUSTLE_DESK, SALON_CHAIR, WARDROBE }
 
 @export var object_type: ObjectType = ObjectType.BED
 
@@ -58,6 +58,9 @@ func update_object_display() -> void:
 		ObjectType.SALON_CHAIR:
 			prompt_message = "[E] Get Fresh Haircut (₦1,000)"
 			object_name = "Barber Styling Chair"
+		ObjectType.WARDROBE:
+			prompt_message = "[E] Open Wardrobe (Change Clothes & Hair)"
+			object_name = "Hostel Wardrobe & Mirror"
 
 	if label_3d:
 		label_3d.text = object_name
@@ -109,6 +112,8 @@ func interact(player: CharacterBody3D) -> void:
 
 		ObjectType.SALON_CHAIR:
 			menu_requested.emit(&"salon", player)
+		ObjectType.WARDROBE:
+			menu_requested.emit(&"wardrobe", player)
 
 
 func _show_feedback(player: CharacterBody3D, msg: String) -> void:

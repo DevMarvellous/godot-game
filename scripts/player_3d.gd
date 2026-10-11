@@ -21,6 +21,16 @@ var has_nav_target: bool = false
 @onready var left_arm: MeshInstance3D = $Visuals/LeftArm if has_node("Visuals/LeftArm") else null
 @onready var right_arm: MeshInstance3D = $Visuals/RightArm if has_node("Visuals/RightArm") else null
 
+@onready var hair_low_cut: MeshInstance3D = $Visuals/HairMesh if has_node("Visuals/HairMesh") else null
+@onready var hair_afro: MeshInstance3D = $Visuals/HairAfro if has_node("Visuals/HairAfro") else null
+@onready var hair_braids: MeshInstance3D = $Visuals/HairBraids if has_node("Visuals/HairBraids") else null
+@onready var hair_cap: MeshInstance3D = $Visuals/HairCap if has_node("Visuals/HairCap") else null
+@onready var hair_headwrap: MeshInstance3D = $Visuals/HairHeadwrap if has_node("Visuals/HairHeadwrap") else null
+@onready var senator_tunic: MeshInstance3D = $Visuals/SenatorTunic if has_node("Visuals/SenatorTunic") else null
+@onready var corporate_tie: MeshInstance3D = $Visuals/CorporateTie if has_node("Visuals/CorporateTie") else null
+@onready var hoodie_cowl: MeshInstance3D = $Visuals/HoodieCowl if has_node("Visuals/HoodieCowl") else null
+@onready var gown_flare: MeshInstance3D = $Visuals/GownFlare if has_node("Visuals/GownFlare") else null
+
 @onready var needs_manager: NeedsManager = $NeedsManager
 @onready var prompt_label: Label3D = $PromptLabel
 @onready var notif_label: Label3D = $NotifLabel
@@ -235,42 +245,108 @@ func _on_chat_received(_sender_name: String, msg: String, _peer_id: int) -> void
 
 
 func _load_default_appearance() -> void:
-	const Customizer = preload("res://scripts/data/character_customizer.gd")
+	const Wardrobe = preload("res://scripts/data/wardrobe_data.gd")
 	const ProfileStore = preload("res://scripts/data/student_profile.gd")
 	ProfileStore.load_from_disk()
 
-	var skin_idx: int = ProfileStore.complexion_index
-	var shirt_idx: int = ProfileStore.shirt_index
+	var skin_idx: int = clampi(ProfileStore.complexion_index, 0, Wardrobe.COMPLEXIONS.size() - 1)
+	var hair_idx: int = clampi(ProfileStore.hair_index, 0, Wardrobe.HAIRSTYLES.size() - 1)
+	var shirt_idx: int = clampi(ProfileStore.shirt_index, 0, Wardrobe.OUTFITS.size() - 1)
 	var trouser_idx: int = ProfileStore.trouser_index
-	var hair_idx: int = ProfileStore.hair_index
 
-	var skin_color: Color = Customizer.SKIN_TONES[skin_idx].color
-	var shirt_color: Color = Customizer.SHIRT_STYLES[shirt_idx].color
-	var trouser_color: Color = Customizer.TROUSER_STYLES[trouser_idx].color
-	var hair_color: Color = Customizer.HAIR_STYLES[hair_idx].color
-	apply_appearance(skin_color, shirt_color, trouser_color, hair_color)
+	var hair_item: Dictionary = Wardrobe.HAIRSTYLES[hair_idx]
+	var outfit_item: Dictionary = Wardrobe.OUTFITS[shirt_idx]
+
+	var skin_color: Color = Wardrobe.COMPLEXIONS[skin_idx].color
+	var shirt_color: Color = outfit_item.get("top_color", Color(0.12, 0.55, 0.32))
+	var trouser_color: Color = outfit_item.get("bottom_color", Color(0.15, 0.22, 0.32))
+	var hair_color: Color = hair_item.get("default_color", Color(0.08, 0.08, 0.08))
+
+	apply_appearance(
+		skin_color,
+		shirt_color,
+		trouser_color,
+		hair_color,
+		hair_item.get("mesh_type", "low_cut"),
+		outfit_item.get("mesh_type", "casual")
+	)
 
 
-func apply_appearance(skin_color: Color, shirt_color: Color, trouser_color: Color, hair_color: Color) -> void:
+func apply_appearance(
+	skin_color: Color,
+	shirt_color: Color,
+	trouser_color: Color,
+	hair_color: Color,
+	hair_type: String = "low_cut",
+	outfit_type: String = "casual"
+) -> void:
+	# 1. Skin tone
 	if head_mesh:
 		var skin_mat: StandardMaterial3D = StandardMaterial3D.new()
 		skin_mat.albedo_color = skin_color
 		skin_mat.roughness = 0.7
 		head_mesh.set_surface_override_material(0, skin_mat)
-	if hair_mesh:
+
+	# 2. Distinct 3D Hair Meshes (Afro, Braids, Cap, Gele/Headwrap, Low Cut)
+	var all_hairs: Array[MeshInstance3D] = [hair_low_cut, hair_afro, hair_braids, hair_cap, hair_headwrap]
+	for h in all_hairs:
+		if is_instance_valid(h):
+			h.visible = false
+
+	var active_hair: MeshInstance3D = hair_low_cut
+	match hair_type:
+		"afro":
+			active_hair = hair_afro if hair_afro else hair_low_cut
+		"braids":
+			active_hair = hair_braids if hair_braids else hair_low_cut
+		"cap":
+			active_hair = hair_cap if hair_cap else hair_low_cut
+		"headwrap":
+			active_hair = hair_headwrap if hair_headwrap else hair_low_cut
+		_:
+			active_hair = hair_low_cut
+
+	if is_instance_valid(active_hair):
+		active_hair.visible = true
 		var hair_mat: StandardMaterial3D = StandardMaterial3D.new()
 		hair_mat.albedo_color = hair_color
 		hair_mat.roughness = 0.85
-		hair_mesh.set_surface_override_material(0, hair_mat)
+		active_hair.set_surface_override_material(0, hair_mat)
+
+	# 3. Distinct 3D Outfit Meshes (Senator Tunic, Tie, Hoodie, Gown, Casual)
+	var all_outfit_details: Array[MeshInstance3D] = [senator_tunic, corporate_tie, hoodie_cowl, gown_flare]
+	for o in all_outfit_details:
+		if is_instance_valid(o):
+			o.visible = false
+
+	var shirt_mat: StandardMaterial3D = StandardMaterial3D.new()
+	shirt_mat.albedo_color = shirt_color
+	shirt_mat.roughness = 0.6
 	if torso_mesh:
-		var shirt_mat: StandardMaterial3D = StandardMaterial3D.new()
-		shirt_mat.albedo_color = shirt_color
-		shirt_mat.roughness = 0.6
 		torso_mesh.set_surface_override_material(0, shirt_mat)
-		if left_arm:
-			left_arm.set_surface_override_material(0, shirt_mat)
-		if right_arm:
-			right_arm.set_surface_override_material(0, shirt_mat)
+	if left_arm:
+		left_arm.set_surface_override_material(0, shirt_mat)
+	if right_arm:
+		right_arm.set_surface_override_material(0, shirt_mat)
+
+	match outfit_type:
+		"senator":
+			if senator_tunic:
+				senator_tunic.visible = true
+				senator_tunic.set_surface_override_material(0, shirt_mat)
+		"corporate":
+			if corporate_tie:
+				corporate_tie.visible = true
+		"hoodie":
+			if hoodie_cowl:
+				hoodie_cowl.visible = true
+				hoodie_cowl.set_surface_override_material(0, shirt_mat)
+		"gown":
+			if gown_flare:
+				gown_flare.visible = true
+				gown_flare.set_surface_override_material(0, shirt_mat)
+
+	# 4. Trousers / Leggings
 	var leg_mat: StandardMaterial3D = StandardMaterial3D.new()
 	leg_mat.albedo_color = trouser_color
 	leg_mat.roughness = 0.75

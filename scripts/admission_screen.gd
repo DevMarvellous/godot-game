@@ -124,13 +124,46 @@ var active_quiz_questions: Array = []
 # Navigation
 @onready var next_button: Button = %NextButton
 
+const PlayerScene = preload("res://scenes/player_3d.tscn")
+const Wardrobe = preload("res://scripts/data/wardrobe_data.gd")
+var preview_player_instance: Player3D = null
+
 
 func _ready() -> void:
 	if next_button:
 		next_button.pressed.connect(_on_next_pressed)
 
+	_setup_preview_player()
 	_setup_options()
 	_update_view()
+
+
+func _setup_preview_player() -> void:
+	if not has_node("%PreviewViewport"):
+		return
+	var vp: SubViewport = %PreviewViewport
+	preview_player_instance = PlayerScene.instantiate() as Player3D
+	preview_player_instance.set_physics_process(false)
+	preview_player_instance.set_process_unhandled_input(false)
+	vp.add_child(preview_player_instance)
+
+	var pcam = preview_player_instance.get_node_or_null("Camera3D")
+	if pcam:
+		pcam.queue_free()
+	var pcol = preview_player_instance.get_node_or_null("CollisionShape3D")
+	if pcol:
+		pcol.queue_free()
+	var pnotif = preview_player_instance.get_node_or_null("NotifLabel")
+	if pnotif:
+		pnotif.queue_free()
+	var pprompt = preview_player_instance.get_node_or_null("PromptLabel")
+	if pprompt:
+		pprompt.queue_free()
+
+
+func _process(delta: float) -> void:
+	if preview_player_instance and preview_player_instance.visual_root:
+		preview_player_instance.visual_root.rotate_y(delta * 0.8)
 
 
 func _setup_options() -> void:
@@ -195,14 +228,27 @@ func _setup_options() -> void:
 
 
 func _refresh_avatar_preview() -> void:
+	var hair_item: Dictionary = Wardrobe.HAIRSTYLES[clampi(selected_hair, 0, Wardrobe.HAIRSTYLES.size() - 1)]
+	var outfit_item: Dictionary = Wardrobe.OUTFITS[clampi(selected_shirt, 0, Wardrobe.OUTFITS.size() - 1)]
+	var skin_item: Dictionary = Wardrobe.COMPLEXIONS[clampi(selected_complexion, 0, Wardrobe.COMPLEXIONS.size() - 1)]
+
 	if avatar_preview_label:
-		var tone_name: String = Customizer.SKIN_TONES[selected_complexion]["name"]
-		var hair_name: String = Customizer.HAIR_STYLES[selected_hair]["name"]
-		var shirt_name: String = Customizer.SHIRT_STYLES[selected_shirt]["name"]
-		var trouser_name: String = Customizer.TROUSER_STYLES[selected_trouser]["name"]
-		avatar_preview_label.text = "👤 PREVIEW: %s | %s Tone\n💈 Hair: %s | 👕 %s | 👖 %s" % [
-			selected_gender, tone_name, hair_name, shirt_name, trouser_name
+		avatar_preview_label.text = "👤 PREVIEW: %s | %s Tone\n💈 %s | 👕 %s" % [
+			selected_gender, skin_item["name"], hair_item["name"], outfit_item["name"]
 		]
+
+	if preview_player_instance and preview_player_instance.has_method("apply_appearance"):
+		var top_col: Color = outfit_item.get("top_color", Color(0.12, 0.55, 0.32))
+		var btm_col: Color = outfit_item.get("bottom_color", Color(0.15, 0.22, 0.32))
+		var hair_col: Color = hair_item.get("default_color", Color(0.08, 0.08, 0.08))
+		preview_player_instance.apply_appearance(
+			skin_item["color"],
+			top_col,
+			btm_col,
+			hair_col,
+			hair_item.get("mesh_type", "low_cut"),
+			outfit_item.get("mesh_type", "casual")
+		)
 
 
 func _on_dept_selected(idx: int) -> void:

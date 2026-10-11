@@ -53,6 +53,40 @@ size = Vector3(0.22, 0.08, 0.12)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_visor"]
 albedo_color = Color(0.05, 0.05, 0.05, 1)
 
+[sub_resource type="SphereMesh" id="SphereMesh_afro"]
+radius = 0.33
+height = 0.38
+
+[sub_resource type="BoxMesh" id="BoxMesh_braids"]
+size = Vector3(0.48, 0.44, 0.36)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_cap"]
+top_radius = 0.25
+bottom_radius = 0.26
+height = 0.16
+
+[sub_resource type="BoxMesh" id="BoxMesh_visor_bill"]
+size = Vector3(0.24, 0.04, 0.18)
+
+[sub_resource type="TorusMesh" id="TorusMesh_headwrap"]
+inner_radius = 0.22
+outer_radius = 0.32
+
+[sub_resource type="BoxMesh" id="BoxMesh_tunic"]
+size = Vector3(0.58, 0.44, 0.38)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tie"]
+size = Vector3(0.08, 0.42, 0.04)
+
+[sub_resource type="TorusMesh" id="TorusMesh_hoodie_cowl"]
+inner_radius = 0.22
+outer_radius = 0.34
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_gown"]
+top_radius = 0.28
+bottom_radius = 0.46
+height = 0.52
+
 [node name="Player3D" type="CharacterBody3D"]
 collision_layer = 1
 collision_mask = 6
@@ -78,6 +112,59 @@ surface_material_override/0 = SubResource("StandardMaterial3D_skin")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.58, 0)
 mesh = SubResource("SphereMesh_hair")
 surface_material_override/0 = SubResource("StandardMaterial3D_hair")
+
+[node name="HairAfro" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62, 0)
+visible = false
+mesh = SubResource("SphereMesh_afro")
+surface_material_override/0 = SubResource("StandardMaterial3D_hair")
+
+[node name="HairBraids" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.54, -0.05)
+visible = false
+mesh = SubResource("BoxMesh_braids")
+surface_material_override/0 = SubResource("StandardMaterial3D_hair")
+
+[node name="HairCap" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.60, 0)
+visible = false
+mesh = SubResource("CylinderMesh_cap")
+surface_material_override/0 = SubResource("StandardMaterial3D_hair")
+
+[node name="HairCapVisor" type="MeshInstance3D" parent="Visuals/HairCap"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0.18)
+mesh = SubResource("BoxMesh_visor_bill")
+surface_material_override/0 = SubResource("StandardMaterial3D_hair")
+
+[node name="HairHeadwrap" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 0.95, 0.31, 0, -0.31, 0.95, 0, 1.58, 0)
+visible = false
+mesh = SubResource("TorusMesh_headwrap")
+surface_material_override/0 = SubResource("StandardMaterial3D_hair")
+
+[node name="SenatorTunic" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.68, 0)
+visible = false
+mesh = SubResource("BoxMesh_tunic")
+surface_material_override/0 = SubResource("StandardMaterial3D_shirt")
+
+[node name="CorporateTie" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.98, 0.24)
+visible = false
+mesh = SubResource("BoxMesh_tie")
+surface_material_override/0 = SubResource("StandardMaterial3D_visor")
+
+[node name="HoodieCowl" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.26, 0)
+visible = false
+mesh = SubResource("TorusMesh_hoodie_cowl")
+surface_material_override/0 = SubResource("StandardMaterial3D_shirt")
+
+[node name="GownFlare" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.62, 0)
+visible = false
+mesh = SubResource("CylinderMesh_gown")
+surface_material_override/0 = SubResource("StandardMaterial3D_shirt")
 
 [node name="FaceIndicator" type="MeshInstance3D" parent="Visuals"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0.22)
