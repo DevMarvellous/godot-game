@@ -114,3 +114,4 @@ static func get_outfit_by_id(outfit_id: String) -> Dictionary:
 		if o["id"] == outfit_id:
 			return o
 	return OUTFITS[0]
+

@@ -125,3 +125,4 @@ func _on_equip_pressed() -> void:
 		current_player.display_notification("Equipped new campus outfit! Looking sharp ✨")
 
 	close_wardrobe()
+

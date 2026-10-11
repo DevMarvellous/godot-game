@@ -49,3 +49,4 @@ static func load_local_profile() -> Dictionary:
 
 static func is_save_present() -> bool:
 	return FileAccess.file_exists(SAVE_PATH)
+

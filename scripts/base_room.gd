@@ -112,6 +112,7 @@ func _process(delta: float) -> void:
 	for fan in active_ceiling_fans:
 		if is_instance_valid(fan):
 			fan.rotate_y(delta * 8.5)
+	_process_network_puppets()
 
 
 func _configure_dynamic_hostel_room() -> void:
@@ -308,7 +309,7 @@ func _on_player_passed_out(_reason: String) -> void:
 	get_tree().change_scene_to_file("res://scenes/rooms/hostel_room.tscn")
 
 
-func _process(_delta: float) -> void:
+func _process_network_puppets() -> void:
 	if not NetworkManager or not NetworkManager.is_online():
 		return
 
@@ -345,4 +346,3 @@ func _process(_delta: float) -> void:
 			var puppet_to_remove: Node = remote_player_nodes[peer_id]
 			puppet_to_remove.queue_free()
 			remote_player_nodes.erase(peer_id)
-
