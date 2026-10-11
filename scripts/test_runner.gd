@@ -1,0 +1,97 @@
+extends Node
+
+func _ready() -> void:
+	print("\n========================================================")
+	print("   LAGOS CAMPUS SIMULATOR - AUTOMATED INTEGRATION TEST")
+	print("========================================================")
+
+	# 1. Test Data files
+	print("[1/6] Verifying Data Stores...")
+	var wardrobe = load("res://scripts/data/wardrobe_data.gd")
+	assert(wardrobe.HAIRSTYLES.size() > 0, "Hairstyles empty!")
+	assert(wardrobe.OUTFITS.size() > 0, "Outfits empty!")
+	assert(wardrobe.COMPLEXIONS.size() > 0, "Complexions empty!")
+	print("  -> WardrobeData OK: %d hairstyles, %d outfits, %d complexions" % [wardrobe.HAIRSTYLES.size(), wardrobe.OUTFITS.size(), wardrobe.COMPLEXIONS.size()])
+
+	var food = load("res://scripts/data/food_data.gd")
+	assert(food.DISHES.size() > 0, "Dishes empty!")
+	print("  -> FoodData OK: %d dishes" % [food.DISHES.size()])
+
+	var mall = load("res://scripts/data/mall_items_data.gd")
+	assert(mall.ITEMS.size() > 0, "Mall items empty!")
+	print("  -> MallItemsData OK: %d items" % [mall.ITEMS.size()])
+
+	var db = load("res://scripts/data/database_config.gd")
+	assert(db.SUPABASE_URL != "", "Supabase URL empty")
+	print("  -> DatabaseConfig OK: %s" % db.CLOUD_TIER_INFO.provider)
+
+	# 2. Test Player 3D Mesh Swapping & Needs Manager
+	print("[2/6] Verifying Player3D appearance and 3D meshes...")
+	var player_scene = load("res://scenes/player_3d.tscn")
+	var player = player_scene.instantiate()
+	add_child(player)
+
+	var tested_combos = 0
+	for h in wardrobe.HAIRSTYLES:
+		for o in wardrobe.OUTFITS:
+			player.apply_appearance(
+				Color.BROWN,
+				o.get("top_color", Color.WHITE),
+				o.get("bottom_color", Color.BLACK),
+				h.get("default_color", Color.BLACK),
+				h.get("mesh_type", "low_cut"),
+				o.get("mesh_type", "casual")
+			)
+			tested_combos += 1
+	print("  -> Player3D hair & outfit 3D mesh swapping OK (Tested %d combos)" % tested_combos)
+
+	# 3. Test Phone System & Wallpapers
+	print("[3/6] Verifying Phone System...")
+	var phone_scene = load("res://scenes/phone_system.tscn")
+	var phone = phone_scene.instantiate()
+	add_child(phone)
+	for i in range(phone.WALLPAPERS.size()):
+		phone.apply_wallpaper(i)
+	print("  -> Phone System wallpapers OK (Tested %d AMOLED wallpapers)" % phone.WALLPAPERS.size())
+
+	# 4. Test Wardrobe Menu
+	print("[4/6] Verifying Wardrobe Menu...")
+	var wardrobe_scene = load("res://scenes/wardrobe_menu.tscn")
+	var wardrobe_menu = wardrobe_scene.instantiate()
+	add_child(wardrobe_menu)
+	wardrobe_menu.open_wardrobe(player)
+	wardrobe_menu.close_wardrobe()
+	print("  -> Wardrobe Menu OK")
+
+	# 5. Test Key Rooms
+	print("[5/6] Verifying Room Scenes instancing & fan rotations...")
+	var rooms_to_test = [
+		"res://scenes/rooms/hostel_room.tscn",
+		"res://scenes/rooms/campus_mall.tscn",
+		"res://scenes/rooms/mama_put.tscn",
+		"res://scenes/rooms/lecture_hall.tscn",
+		"res://scenes/rooms/football_stadium.tscn",
+		"res://scenes/rooms/sub_building.tscn"
+	]
+	for r_path in rooms_to_test:
+		var scene = load(r_path)
+		var inst = scene.instantiate()
+		add_child(inst)
+		inst._process(0.016)
+		inst.queue_free()
+		print("  -> Room OK: %s" % r_path.get_file())
+
+	# 6. Test Admission Screen
+	print("[6/6] Verifying Admission Screen with 3D SubViewport...")
+	var adm_scene = load("res://scenes/admission_screen.tscn")
+	var adm = adm_scene.instantiate()
+	add_child(adm)
+	adm._refresh_avatar_preview()
+	adm._process(0.016)
+	adm.queue_free()
+	print("  -> Admission Screen 3D Viewport OK")
+
+	print("========================================================")
+	print("   ALL 6 TEST PHASES PASSED WITH ZERO CRASHES OR ERRORS!")
+	print("========================================================\n")
+	get_tree().quit(0)

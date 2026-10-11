@@ -42,32 +42,38 @@ func _ready() -> void:
 	wait_timer = randf_range(1.0, 3.0)
 
 	# Visual setup
-	if name_label:
-		name_label.text = "%s\n[%s]" % [character_name, character_role]
+	apply_character_data()
+
 	if speech_label:
 		speech_label.visible = false
 	if speech_timer:
 		speech_timer.timeout.connect(_on_speech_timeout)
 
-	# Skin & Shirt styling
+	# Skin styling
 	if head_mesh:
 		var skin_mat: StandardMaterial3D = StandardMaterial3D.new()
 		skin_mat.albedo_color = Color(0.32, 0.20, 0.14)
 		skin_mat.roughness = 0.7
 		head_mesh.set_surface_override_material(0, skin_mat)
 
+	# Interaction trigger setup
+	if interact_area:
+		interact_area.body_entered.connect(_on_body_entered)
+		interact_area.body_exited.connect(_on_body_exited)
+
+
+func apply_character_data() -> void:
+	if name_label:
+		name_label.text = "%s\n[%s]" % [character_name, character_role]
 	if torso_mesh:
 		var mat: StandardMaterial3D = StandardMaterial3D.new()
 		mat.albedo_color = shirt_color
 		mat.roughness = 0.6
 		torso_mesh.set_surface_override_material(0, mat)
-		if left_arm: left_arm.set_surface_override_material(0, mat)
-		if right_arm: right_arm.set_surface_override_material(0, mat)
-
-	# Interaction trigger setup
-	if interact_area:
-		interact_area.body_entered.connect(_on_body_entered)
-		interact_area.body_exited.connect(_on_body_exited)
+		if left_arm:
+			left_arm.set_surface_override_material(0, mat)
+		if right_arm:
+			right_arm.set_surface_override_material(0, mat)
 
 
 func _physics_process(delta: float) -> void:
