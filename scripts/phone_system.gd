@@ -59,7 +59,6 @@ var current_app_id: String = ""
 
 func _ready() -> void:
 	visible = false
-	apply_wallpaper(0)
 	if close_btn:
 		close_btn.pressed.connect(close_phone)
 	if back_btn:
@@ -75,18 +74,6 @@ func _ready() -> void:
 				close_phone()
 		)
 
-
-func apply_wallpaper(idx: int) -> void:
-	current_wallpaper_idx = idx % WALLPAPERS.size()
-	var wp: Dictionary = WALLPAPERS[current_wallpaper_idx]
-	if phone_frame:
-		var style: StyleBoxFlat = phone_frame.get_theme_stylebox("panel")
-		if style:
-			var new_style: StyleBoxFlat = style.duplicate() as StyleBoxFlat
-			new_style.bg_color = wp.bg
-			new_style.border_color = wp.border
-			phone_frame.add_theme_style_override("panel", new_style)
-
 	_wire_app_btn(%IDCardAppBtn, "id_card")
 	_wire_app_btn(%TimetableAppBtn, "timetable")
 	_wire_app_btn(%ResultsAppBtn, "results")
@@ -98,6 +85,20 @@ func apply_wallpaper(idx: int) -> void:
 	if has_node("%OnlineAppBtn"):
 		_wire_app_btn(%OnlineAppBtn, "online")
 	_wire_app_btn(%SettingsAppBtn, "settings")
+
+	apply_wallpaper(0)
+
+
+func apply_wallpaper(idx: int) -> void:
+	current_wallpaper_idx = idx % WALLPAPERS.size()
+	var wp: Dictionary = WALLPAPERS[current_wallpaper_idx]
+	if phone_frame:
+		var style: StyleBox = phone_frame.get_theme_stylebox("panel")
+		if style is StyleBoxFlat:
+			var new_style: StyleBoxFlat = style.duplicate() as StyleBoxFlat
+			new_style.bg_color = wp.bg
+			new_style.border_color = wp.border
+			phone_frame.add_theme_stylebox_override("panel", new_style)
 
 
 func _wire_app_btn(btn: Button, app_id: String) -> void:
@@ -378,7 +379,6 @@ func _render_whatsapp_gist() -> void:
 	const StudentProfile = preload("res://scripts/data/student_profile.gd")
 	StudentProfile.load_from_disk()
 	var dept_name: String = StudentProfile.admitted_department
-	var student_n: String = StudentProfile.student_name
 
 	content_label.text = """🟢 %s 100L OFFICIAL CLASS GROUP (Active)
 --------------------------------------------------
