@@ -1,0 +1,249 @@
+[gd_scene format=3 uid="uid://rm_gate001"]
+
+[ext_resource type="Script" path="res://scripts/base_room.gd" id="1_room"]
+[ext_resource type="PackedScene" uid="uid://b3player3d01" path="res://scenes/player_3d.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://c8hud001" path="res://scenes/hud.tscn" id="3_hud"]
+[ext_resource type="PackedScene" uid="uid://b3object3d01" path="res://scenes/campus_object_3d.tscn" id="4_obj"]
+[ext_resource type="PackedScene" path="res://scenes/npc_3d.tscn" id="5_npc"]
+[ext_resource type="PackedScene" path="res://scenes/summary_menu.tscn" id="6_summary"]
+[ext_resource type="PackedScene" path="res://scenes/mobile_controls.tscn" id="7_mobile"]
+[ext_resource type="PackedScene" path="res://scenes/dialogue_menu.tscn" id="8_dialogue"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(26, 0.4, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_road"]
+size = Vector3(26, 0.4, 22)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_asphalt"]
+albedo_color = Color(0.18, 0.2, 0.22, 1)
+roughness = 0.9
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_h"]
+size = Vector3(26, 4.0, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_h"]
+size = Vector3(26, 4.0, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_perimeter"]
+albedo_color = Color(0.85, 0.88, 0.85, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_cutaway"]
+size = Vector3(26, 0.4, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_v"]
+size = Vector3(0.5, 4.0, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall_v"]
+size = Vector3(0.5, 4.0, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gate_pillar"]
+size = Vector3(1.2, 5.0, 1.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pillar"]
+albedo_color = Color(0.12, 0.45, 0.25, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gate_beam"]
+size = Vector3(12.0, 1.0, 1.0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_keke_body"]
+size = Vector3(1.6, 1.5, 2.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_keke_yellow"]
+albedo_color = Color(0.98, 0.82, 0.12, 1)
+roughness = 0.4
+
+[sub_resource type="BoxMesh" id="BoxMesh_keke_windshield"]
+size = Vector3(1.4, 0.7, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_windshield"]
+albedo_color = Color(0.15, 0.25, 0.35, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_shuttle_bus"]
+size = Vector3(2.2, 2.0, 4.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bus_white"]
+albedo_color = Color(0.95, 0.96, 0.98, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_boli_table"]
+size = Vector3(1.6, 0.85, 1.0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wood"]
+albedo_color = Color(0.42, 0.28, 0.18, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_umbrella"]
+top_radius = 1.4
+bottom_radius = 0.1
+height = 0.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_umbrella_red"]
+albedo_color = Color(0.85, 0.2, 0.15, 1)
+
+[node name="CampusGate" type="Node3D"]
+script = ExtResource("1_room")
+room_name = "Main Campus Gate & Shuttle Park"
+room_id = &"gate"
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866, -0.354, 0.354, 0, 0.707, 0.707, -0.5, -0.612, 0.612, 0, 10, 0)
+light_color = Color(1, 0.98, 0.92, 1)
+light_energy = 1.2
+
+[node name="Floor" type="StaticBody3D" parent="."]
+collision_layer = 4
+collision_mask = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+shape = SubResource("BoxShape3D_floor")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+mesh = SubResource("BoxMesh_road")
+surface_material_override/0 = SubResource("StandardMaterial3D_asphalt")
+
+[node name="Walls" type="StaticBody3D" parent="."]
+collision_layer = 4
+collision_mask = 1
+
+[node name="NorthWall" type="CollisionShape3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, -11)
+shape = SubResource("BoxShape3D_wall_h")
+
+[node name="NorthMesh" type="MeshInstance3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, -11)
+mesh = SubResource("BoxMesh_wall_h")
+surface_material_override/0 = SubResource("StandardMaterial3D_perimeter")
+
+[node name="SouthWall" type="CollisionShape3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, 11)
+shape = SubResource("BoxShape3D_wall_h")
+
+[node name="SouthMesh" type="MeshInstance3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 11)
+mesh = SubResource("BoxMesh_wall_cutaway")
+surface_material_override/0 = SubResource("StandardMaterial3D_perimeter")
+
+[node name="WestWall" type="CollisionShape3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 2.0, 0)
+shape = SubResource("BoxShape3D_wall_v")
+
+[node name="WestMesh" type="MeshInstance3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 2.0, 0)
+mesh = SubResource("BoxMesh_wall_v")
+surface_material_override/0 = SubResource("StandardMaterial3D_perimeter")
+
+[node name="EastWall" type="CollisionShape3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 2.0, 0)
+shape = SubResource("BoxShape3D_wall_v")
+
+[node name="EastMesh" type="MeshInstance3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 2.0, 0)
+mesh = SubResource("BoxMesh_wall_v")
+surface_material_override/0 = SubResource("StandardMaterial3D_perimeter")
+
+[node name="GateFixtures" type="Node3D" parent="."]
+
+[node name="LeftPillar" type="MeshInstance3D" parent="GateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 2.5, -9.0)
+mesh = SubResource("BoxMesh_gate_pillar")
+surface_material_override/0 = SubResource("StandardMaterial3D_pillar")
+
+[node name="RightPillar" type="MeshInstance3D" parent="GateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 2.5, -9.0)
+mesh = SubResource("BoxMesh_gate_pillar")
+surface_material_override/0 = SubResource("StandardMaterial3D_pillar")
+
+[node name="GateArchBeam" type="MeshInstance3D" parent="GateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, -9.0)
+mesh = SubResource("BoxMesh_gate_beam")
+surface_material_override/0 = SubResource("StandardMaterial3D_pillar")
+
+[node name="GateTitleSign" type="Label3D" parent="GateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, -8.4)
+billboard = 1
+text = "🏛️ UNIVERSITY OF CAMPUS LIFE (MAIN GATE)"
+font_size = 32
+outline_size = 8
+modulate = Color(1, 0.95, 0.4, 1)
+
+[node name="KekeNapep1" type="MeshInstance3D" parent="GateFixtures"]
+transform = Transform3D(0.965, 0, 0.258, 0, 1, 0, -0.258, 0, 0.965, 7.5, 0.75, -2.5)
+mesh = SubResource("BoxMesh_keke_body")
+surface_material_override/0 = SubResource("StandardMaterial3D_keke_yellow")
+
+[node name="KekeGlass" type="MeshInstance3D" parent="GateFixtures/KekeNapep1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, -1.15)
+mesh = SubResource("BoxMesh_keke_windshield")
+surface_material_override/0 = SubResource("StandardMaterial3D_windshield")
+
+[node name="KekeNapep2" type="MeshInstance3D" parent="GateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0.75, 3.5)
+mesh = SubResource("BoxMesh_keke_body")
+surface_material_override/0 = SubResource("StandardMaterial3D_keke_yellow")
+
+[node name="CampusShuttleBus" type="MeshInstance3D" parent="GateFixtures"]
+transform = Transform3D(0.866, 0, -0.5, 0, 1, 0, 0.5, 0, 0.866, -8.0, 1.0, 1.5)
+mesh = SubResource("BoxMesh_shuttle_bus")
+surface_material_override/0 = SubResource("StandardMaterial3D_bus_white")
+
+[node name="ShuttleSign" type="Label3D" parent="GateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.0, 2.5, 1.5)
+billboard = 1
+text = "🚌 CAMPUS SHUTTLE (₦100)"
+font_size = 24
+outline_size = 6
+
+[node name="BoliTable" type="MeshInstance3D" parent="GateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.0, 0.42, -5.5)
+mesh = SubResource("BoxMesh_boli_table")
+surface_material_override/0 = SubResource("StandardMaterial3D_wood")
+
+[node name="BoliUmbrella" type="MeshInstance3D" parent="GateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.0, 2.0, -5.5)
+mesh = SubResource("CylinderMesh_umbrella")
+surface_material_override/0 = SubResource("StandardMaterial3D_umbrella_red")
+
+[node name="BoliSign" type="Label3D" parent="GateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.0, 2.6, -5.5)
+billboard = 1
+text = "🍌 MAMA BOLI & GROUNDNUTS (₦200)"
+font_size = 20
+outline_size = 5
+modulate = Color(1, 0.8, 0.2, 1)
+
+[node name="WorldObjects" type="Node3D" parent="."]
+
+[node name="CampusShuttleStop" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, -2.5)
+object_type = 4
+object_name = "Keke & Shuttle Bus Station (Board for ₦100)"
+
+[node name="NPCs" type="Node3D" parent="."]
+
+[node name="DriverRasheed" parent="NPCs" instance=ExtResource("5_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.1, -1.5)
+character_name = "Driver Rasheed"
+character_role = "Campus Keke Pilot"
+shirt_color = Color(0.95, 0.75, 0.1, 1)
+
+[node name="OfficerBalogun" parent="NPCs" instance=ExtResource("5_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -7.5)
+character_name = "Officer Balogun"
+character_role = "Chief Campus Security"
+shirt_color = Color(0.12, 0.2, 0.45, 1)
+
+[node name="Player3D" parent="." instance=ExtResource("2_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 3.0)
+
+[node name="HUD" parent="." instance=ExtResource("3_hud")]
+layer = 1
+
+[node name="MenusLayer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="DialogueMenu" parent="MenusLayer" instance=ExtResource("8_dialogue")]
+
+[node name="SummaryMenu" parent="MenusLayer" instance=ExtResource("6_summary")]
+
+[node name="MobileControls" parent="." instance=ExtResource("7_mobile")]

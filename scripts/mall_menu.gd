@@ -305,3 +305,4 @@ func _format_number(n: int) -> String:
 		s = s.insert(idx, ",")
 		idx -= 3
 	return s
+

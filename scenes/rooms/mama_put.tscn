@@ -220,9 +220,24 @@ surface_material_override/0 = SubResource("StandardMaterial3D_metal")
 [node name="MamaPutSign" type="Label3D" parent="MamaPutFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, -7.5)
 billboard = 1
-text = "MAMA PUT JOINT (HOT AMALA, JOLLOF & SUYA)"
+text = "MAMA CASHOUT JOINT (HOT AMALA, JOLLOF & DODO)"
 font_size = 34
 outline_size = 6
+
+[node name="ChalkboardMenu" type="Label3D" parent="MamaPutFixtures"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -8.7, 2.0, 0)
+text = "🔥 TODAY'S CANTEEN SPECIALS 🔥\n• Firewood Jollof + Beef: ₦800\n• Amala + Ewedu + Goat Meat: ₦1,000\n• Fried Rice + Dodo: ₦900\n• Eba + Egusi Soup: ₦700\n• Chilled Zobo: ₦250\n\"NO CREDIT TODAY, COME TOMORROW!\""
+font_size = 20
+outline_size = 5
+modulate = Color(1, 0.95, 0.7, 1)
+
+[node name="HandwashSign" type="Label3D" parent="MamaPutFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.0, 1.8, 7.2)
+billboard = 1
+text = "🚰 Hand-Washing Stand\n(Wash hands before Amala!)"
+font_size = 18
+outline_size = 4
+modulate = Color(0.6, 0.9, 1, 1)
 
 [node name="WorldObjects" type="Node3D" parent="."]
 

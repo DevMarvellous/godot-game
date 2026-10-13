@@ -81,7 +81,8 @@ func _ready() -> void:
 		"res://scenes/rooms/mama_put.tscn",
 		"res://scenes/rooms/lecture_hall.tscn",
 		"res://scenes/rooms/football_stadium.tscn",
-		"res://scenes/rooms/sub_building.tscn"
+		"res://scenes/rooms/sub_building.tscn",
+		"res://scenes/rooms/campus_gate.tscn"
 	]
 	for r_path in rooms_to_test:
 		var scene = load(r_path)

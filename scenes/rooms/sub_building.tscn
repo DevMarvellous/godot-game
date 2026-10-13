@@ -70,7 +70,7 @@ albedo_color = Color(0.25, 0.28, 0.3, 1)
 
 [node name="StudentUnionBuilding" type="Node3D"]
 script = ExtResource("1_room")
-room_name = "Student Union Building (SUB Complex)"
+room_name = "Campus Market & Business Centre"
 room_id = &"sub"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
@@ -147,8 +147,8 @@ surface_material_override/0 = SubResource("StandardMaterial3D_pos")
 [node name="SUBSign" type="Label3D" parent="SUBFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, -9.5)
 billboard = 1
-text = "STUDENT UNION BUILDING (SUB ATMS & BUSINESS CENTRE)"
-font_size = 36
+text = "CAMPUS MARKET & BUSINESS CENTRE (PRINTING, POS & PROVISIONS)"
+font_size = 32
 outline_size = 8
 
 [node name="CyberPC1" type="MeshInstance3D" parent="SUBFixtures"]
@@ -188,7 +188,7 @@ object_name = "Campus POS / ATM Stand"
 [node name="TypingWorkstation" parent="WorldObjects" instance=ExtResource("4_obj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0, -5.2)
 object_type = 5
-object_name = "SUB Typing & Printing Gig"
+object_name = "Business Centre Typing & Printing Gig"
 
 [node name="NPCs" type="Node3D" parent="."]
 

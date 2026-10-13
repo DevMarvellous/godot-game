@@ -21,8 +21,10 @@ const ROOM_PATHS: Dictionary = {
 	&"stadium": "res://scenes/rooms/football_stadium.tscn",
 	&"chapel": "res://scenes/rooms/chapel_hall.tscn",
 	&"sub": "res://scenes/rooms/sub_building.tscn",
+	&"market": "res://scenes/rooms/sub_building.tscn",
 	&"garden": "res://scenes/rooms/campus_garden.tscn",
-	&"salon": "res://scenes/rooms/barbing_salon.tscn"
+	&"salon": "res://scenes/rooms/barbing_salon.tscn",
+	&"gate": "res://scenes/rooms/campus_gate.tscn"
 }
 
 var current_room: StringName = &"courtyard"
