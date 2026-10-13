@@ -49,6 +49,8 @@ func _ready() -> void:
 	_wire_transit_btn(%SUBBtn, &"sub")
 	_wire_transit_btn(%GardenBtn, &"garden")
 	_wire_transit_btn(%SalonBtn, &"salon")
+	if has_node("%GateBtn"):
+		_wire_transit_btn(%GateBtn, &"gate")
 	_wire_transit_btn(%ATMBtn, &"atm")
 	_wire_transit_btn(%CloseMapBtn, &"close")
 

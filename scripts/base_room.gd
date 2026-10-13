@@ -210,6 +210,9 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 		mall_menu.open_mall(p)
 	elif (menu_type == &"wardrobe" or menu_type == &"mall") and wardrobe_menu:
 		wardrobe_menu.open_wardrobe(p)
+	elif menu_type == &"shuttle":
+		if mobile_controls and mobile_controls.has_method("_toggle_transit_sheet"):
+			mobile_controls._toggle_transit_sheet()
 
 
 func _on_npc_dialogue_requested(npc: NPC3D, p: CharacterBody3D) -> void:
@@ -261,6 +264,8 @@ func _on_transit_requested(dest: StringName) -> void:
 			_go_to_scene("res://scenes/rooms/campus_garden.tscn")
 		&"salon":
 			_go_to_scene("res://scenes/rooms/barbing_salon.tscn")
+		&"gate":
+			_go_to_scene("res://scenes/rooms/campus_gate.tscn")
 		&"atm":
 			_go_to_scene("res://scenes/main.tscn")
 

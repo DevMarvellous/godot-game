@@ -484,12 +484,67 @@ const DIALOGUE_TREES: Dictionary = {
 				"money_change": -300
 			}
 		]
+	},
+	"Driver Rasheed": {
+		"greeting": "Oya enter with your ₦100 change! Where you dey go? Hostel? Faculty Hall? Central Library? Keke dey move now now!",
+		"choices": [
+			{
+				"text": "Driver, please drop me at Faculty Hall for my 8:00 AM class!",
+				"response": "Enter passenger side sharp! Express ride, no traffic delay. Go get that First Class!",
+				"cgpa_boost": 0.04,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Where does this shuttle route cover on campus?",
+				"response": "Everywhere bros! Hostel, Faculty LT1 & LT2, Library, Mama Put Joint, Madam Kikelomo Boutique, Stadium, Chapel, and Market!",
+				"cgpa_boost": 0.02,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Driver, do you have change for ₦1,000 note?",
+				"response": "Ah bros! Why you dey bring ₦1,000 note for ₦100 Keke? Enter with change next time o!",
+				"cgpa_boost": 0.0,
+				"faith_boost": 0.0,
+				"money_change": 0
+			}
+		]
+	},
+	"Officer Balogun": {
+		"greeting": "Halt! Show your Student ID card! No loitering, no reckless driving on campus perimeter!",
+		"choices": [
+			{
+				"text": "Good day Officer Balogun, sir! Here is my 100L ID card and clearance slip.",
+				"response": "Sharp student! That is how a responsible undergraduate behaves. Pass through and face your studies!",
+				"cgpa_boost": 0.03,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Officer, what time is hostel gate curfew tonight?",
+				"response": "10:00 PM sharp! Anybody caught roaming near the gate past 10 will face the Senate Security disciplinary committee!",
+				"cgpa_boost": 0.01,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Is the campus security tight 24/7?",
+				"response": "Maximum vigilance! We keep student lives and hostel properties safe so you can read in peace.",
+				"cgpa_boost": 0.0,
+				"faith_boost": 5.0,
+				"money_change": 0
+			}
+		]
 	}
 }
 
 static func get_dialogue(npc_name: String) -> Dictionary:
 	if DIALOGUE_TREES.has(npc_name):
 		return DIALOGUE_TREES[npc_name]
+	for key: String in DIALOGUE_TREES.keys():
+		if npc_name.begins_with(key) or key.begins_with(npc_name):
+			return DIALOGUE_TREES[key]
 	return {
 		"greeting": "Hello! Campus is busy today.",
 		"choices": [
