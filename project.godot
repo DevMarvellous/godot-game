@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Campus Life Simulator"
+config/name="My Campus Life"
 run/main_scene="res://scenes/admission_screen.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 run/max_fps=60
@@ -24,6 +24,7 @@ SemesterManager="*res://scripts/autoload/semester_manager.gd"
 RoomManager="*res://scripts/autoload/room_manager.gd"
 SoundManager="*res://scripts/autoload/sound_manager.gd"
 NetworkManager="*res://scripts/autoload/network_manager.gd"
+CampusEvents="*res://scripts/autoload/campus_events.gd"
 
 [display]
 

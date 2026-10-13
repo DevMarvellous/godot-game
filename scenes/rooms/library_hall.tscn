@@ -143,6 +143,22 @@ text = "UNIVERSITY CENTRAL LIBRARY (SILENCE)"
 font_size = 38
 outline_size = 8
 
+[node name="SilenceSign" type="Label3D" parent="LibraryFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -9.0)
+billboard = 1
+text = "🤫 STRICT SILENCE! NO PHONE CALLS OR GIST!"
+font_size = 22
+outline_size = 5
+modulate = Color(1, 0.35, 0.3, 1)
+
+[node name="ELibrarySign" type="Label3D" parent="LibraryFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 2.8, 1.0)
+billboard = 1
+text = "💻 E-LIBRARY & RESEARCH WING\n(Free Wi-Fi & Charging Sockets)"
+font_size = 20
+outline_size = 5
+modulate = Color(0.4, 0.85, 1, 1)
+
 [node name="WorldObjects" type="Node3D" parent="."]
 
 [node name="StudyDesk" parent="WorldObjects" instance=ExtResource("4_obj")]
@@ -155,8 +171,14 @@ object_name = "Quiet Study Carrel"
 [node name="MrsJanet" parent="NPCs" instance=ExtResource("8_npc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.1, -1.0)
 character_name = "Mrs. Janet"
-character_role = "University Librarian"
+character_role = "Chief University Librarian"
 shirt_color = Color(0.2, 0.5, 0.7, 1)
+
+[node name="TobiScholar" parent="NPCs" instance=ExtResource("8_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.1, -2.5)
+character_name = "Tobi (400L)"
+character_role = "First Class CSC Scholar"
+shirt_color = Color(0.85, 0.2, 0.2, 1)
 
 [node name="Player3D" parent="." instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 3.5)
