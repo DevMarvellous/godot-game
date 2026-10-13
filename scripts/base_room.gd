@@ -17,10 +17,12 @@ const SalonScene = preload("res://scenes/salon_menu.tscn")
 const ChatScene = preload("res://scenes/chat_wheel.tscn")
 const NetworkPlayerScene = preload("res://scenes/network_player.tscn")
 const WardrobeScene = preload("res://scenes/wardrobe_menu.tscn")
+const MallScene = preload("res://scenes/mall_menu.tscn")
 var phone_menu: Control = null
 var salon_menu: Control = null
 var chat_menu: Control = null
 var wardrobe_menu: Control = null
+var mall_menu: Control = null
 var remote_player_nodes: Dictionary = {}
 var active_ceiling_fans: Array[Node3D] = []
 
@@ -75,6 +77,15 @@ func _ready() -> void:
 			if salon_menu and salon_menu.has_signal("salon_closed"):
 				salon_menu.salon_closed.connect(_on_menu_closed)
 
+		if room_id == &"mall":
+			if menus_layer.has_node("MallMenu"):
+				mall_menu = menus_layer.get_node("MallMenu")
+			else:
+				mall_menu = MallScene.instantiate()
+				menus_layer.add_child(mall_menu)
+			if mall_menu and mall_menu.has_signal("mall_closed"):
+				mall_menu.mall_closed.connect(_on_menu_closed)
+
 	if food_menu:
 		food_menu.menu_closed.connect(_on_menu_closed)
 	if study_menu:
@@ -93,8 +104,10 @@ func _ready() -> void:
 			wardrobe_menu.wardrobe_closed.connect(_on_menu_closed)
 
 	if SemesterManager:
-		SemesterManager.day_ended.connect(_on_day_ended)
-		SemesterManager.semester_finished.connect(_on_semester_finished)
+		if not SemesterManager.day_ended.is_connected(_on_day_ended):
+			SemesterManager.day_ended.connect(_on_day_ended)
+		if not SemesterManager.semester_finished.is_connected(_on_semester_finished):
+			SemesterManager.semester_finished.connect(_on_semester_finished)
 
 	_configure_dynamic_hostel_room()
 	_connect_interactive_fixtures()
@@ -193,6 +206,8 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 			study_menu.open_menu(p)
 	elif menu_type == &"salon" and salon_menu:
 		salon_menu.open_salon(p)
+	elif menu_type == &"mall" and mall_menu:
+		mall_menu.open_mall(p)
 	elif (menu_type == &"wardrobe" or menu_type == &"mall") and wardrobe_menu:
 		wardrobe_menu.open_wardrobe(p)
 
@@ -201,6 +216,9 @@ func _on_npc_dialogue_requested(npc: NPC3D, p: CharacterBody3D) -> void:
 	if player:
 		player.set_physics_process(false)
 		player.velocity = Vector3.ZERO
+	if npc and npc.character_name == "Madam Kikelomo" and mall_menu:
+		mall_menu.open_mall(p)
+		return
 	if dialogue_menu:
 		dialogue_menu.open_dialogue(p, npc.character_name, npc.character_role)
 

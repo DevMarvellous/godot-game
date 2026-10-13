@@ -138,8 +138,8 @@ outline_size = 6
 
 [node name="MallCounter" parent="WorldObjects" instance=ExtResource("4_obj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.0)
-object_type = 2
-object_name = "Campus Mall Cashier & Fitting Stand"
+object_type = 8
+object_name = "Madam Kikelomo Boutique Counter"
 
 [node name="NPCs" type="Node3D" parent="."]
 

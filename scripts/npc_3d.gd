@@ -42,11 +42,13 @@ func _ready() -> void:
 	wait_timer = randf_range(1.0, 3.0)
 
 	# Visual setup
+	if name_label:
+		name_label.text = "%s\n[%s]" % [character_name, character_role]
 	apply_character_data()
 
 	if speech_label:
 		speech_label.visible = false
-	if speech_timer:
+	if speech_timer and not speech_timer.timeout.is_connected(_on_speech_timeout):
 		speech_timer.timeout.connect(_on_speech_timeout)
 
 	# Skin styling
@@ -58,8 +60,10 @@ func _ready() -> void:
 
 	# Interaction trigger setup
 	if interact_area:
-		interact_area.body_entered.connect(_on_body_entered)
-		interact_area.body_exited.connect(_on_body_exited)
+		if not interact_area.body_entered.is_connected(_on_body_entered):
+			interact_area.body_entered.connect(_on_body_entered)
+		if not interact_area.body_exited.is_connected(_on_body_exited):
+			interact_area.body_exited.connect(_on_body_exited)
 
 
 func apply_character_data() -> void:

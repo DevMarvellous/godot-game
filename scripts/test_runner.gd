@@ -54,14 +54,24 @@ func _ready() -> void:
 		phone.apply_wallpaper(i)
 	print("  -> Phone System wallpapers OK (Tested %d AMOLED wallpapers)" % phone.WALLPAPERS.size())
 
-	# 4. Test Wardrobe Menu
-	print("[4/6] Verifying Wardrobe Menu...")
+	# 4. Test Wardrobe & Mall Menus
+	print("[4/6] Verifying Wardrobe & Mall Menus...")
 	var wardrobe_scene = load("res://scenes/wardrobe_menu.tscn")
 	var wardrobe_menu = wardrobe_scene.instantiate()
 	add_child(wardrobe_menu)
 	wardrobe_menu.open_wardrobe(player)
 	wardrobe_menu.close_wardrobe()
 	print("  -> Wardrobe Menu OK")
+
+	var mall_scene = load("res://scenes/mall_menu.tscn")
+	var mall_menu = mall_scene.instantiate()
+	add_child(mall_menu)
+	mall_menu.open_mall(player)
+	mall_menu._on_category_changed(0)
+	mall_menu._on_category_changed(1)
+	mall_menu._on_category_changed(2)
+	mall_menu.close_mall()
+	print("  -> Mall Menu OK")
 
 	# 5. Test Key Rooms
 	print("[5/6] Verifying Room Scenes instancing & fan rotations...")
