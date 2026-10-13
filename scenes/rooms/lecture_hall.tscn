@@ -139,6 +139,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -8.7)
 mesh = SubResource("BoxMesh_board")
 surface_material_override/0 = SubResource("StandardMaterial3D_board")
 
+[node name="BlackboardNotes" type="Label3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -8.6)
+text = "100L CONTINUOUS ASSESSMENT (CA)\n• Topic: Data Structures & Binary Trees\n• Formula: f(x) = 3x² + 4x - 5, f'(x) = 6x + 4\n⚠️ LATE SUBMISSIONS ATTRACT -5 MARKS!\nAttendance = 10% of final grade."
+font_size = 20
+outline_size = 4
+modulate = Color(1, 1, 0.85, 1)
+
+[node name="CampaignPoster" type="Label3D" parent="LectureFixtures"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -9.7, 2.4, 0)
+text = "🗳️ VOTE COMRADE TUNDE\nFOR SUG PRESIDENT 2026!\n\"NO SAPA! FREE WI-FI & CONSTANT LIGHT!\"\n★ ALUTA CONTINUA! ★"
+font_size = 18
+outline_size = 4
+modulate = Color(1, 0.85, 0.2, 1)
+
 [node name="LecturerPodium" type="MeshInstance3D" parent="LectureFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -6.5)
 mesh = SubResource("BoxMesh_podium")

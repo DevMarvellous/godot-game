@@ -130,9 +130,24 @@ surface_material_override/0 = SubResource("StandardMaterial3D_metal")
 [node name="SignLabel" type="Label3D" parent="MallFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, -7.5)
 billboard = 1
-text = "CAMPUS SHOPPING MALL & BOUTIQUE (CLOTHES, SHOES & PROVISIONS)"
+text = "MADAM KIKELOMO BOUTIQUE & CAMPUS MALL"
 font_size = 32
 outline_size = 6
+
+[node name="BoutiquePromo" type="Label3D" parent="MallFixtures"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -8.7, 2.2, 0)
+text = "✨ NEW ARRIVALS THIS WEEK! ✨\n• Original Senator Native Wear\n• Tech Bro Oversized Hoodies\n• Clean White Sneakers & Slides\n• 20,000mAh Power Banks & Casio fx-991\n\"QUALITY CLOTHES FOR MERIT STUDENTS!\""
+font_size = 20
+outline_size = 5
+modulate = Color(1, 0.9, 0.4, 1)
+
+[node name="FittingRoomSign" type="Label3D" parent="MallFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 2.4, -7.0)
+billboard = 1
+text = "🚪 Fitting Room & Mirror\n(Try on before you buy!)"
+font_size = 20
+outline_size = 4
+modulate = Color(0.4, 0.95, 0.7, 1)
 
 [node name="WorldObjects" type="Node3D" parent="."]
 
