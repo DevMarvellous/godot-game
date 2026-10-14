@@ -137,6 +137,13 @@ text = "EXECUTIVE BARBERSHOP & BRAIDING SALON"
 font_size = 34
 outline_size = 6
 
+[node name="StyleCatalogue" type="Label3D" parent="."]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -7.7, 2.0, 0)
+text = "💈 MASTER SUNDAY CUTS & STYLES 💈\n• Clean Low Fade: ₦1,000\n• Waves & Edge Lineup: ₦1,000\n• Afro Taper Fade: ₦1,000\n• Dreadlocks Maintenance: ₦2,000\n• Ghana Weaving & Braids: ₦1,500\n\"LOOK FRESH FOR YOUR CRUSHES & CLASS!\""
+font_size = 18
+outline_size = 4
+modulate = Color(1, 0.88, 0.4, 1)
+
 [node name="WorldObjects" type="Node3D" parent="."]
 
 [node name="BarberSeat" parent="WorldObjects" instance=ExtResource("4_obj")]

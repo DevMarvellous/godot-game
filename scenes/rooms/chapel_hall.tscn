@@ -137,6 +137,21 @@ text = "CAMPUS CHRISTIAN FELLOWSHIP AUDITORIUM"
 font_size = 32
 outline_size = 6
 
+[node name="ThemeBanner" type="Label3D" parent="ChapelFixtures"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -8.7, 2.4, 0)
+text = "✝️ JOINT CAMPUS CHRISTIAN FELLOWSHIP ✝️\n• Theme: 'Wisdom & Distinction in Academics'\n• Midweek Prayer: Wednesdays 5:00 PM\n• Sunday Praise & Worship: Sundays 8:00 AM\n\"I can do all things through Christ who strengthens me!\""
+font_size = 18
+outline_size = 4
+modulate = Color(1, 0.9, 0.45, 1)
+
+[node name="PrayerSign" type="Label3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -8.6)
+billboard = 1
+text = "🙏 Personal Prayer & Altar of Grace (Open 24/7)"
+font_size = 20
+outline_size = 4
+modulate = Color(0.85, 0.95, 1, 1)
+
 [node name="Pulpit" type="MeshInstance3D" parent="ChapelFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -6.5)
 mesh = SubResource("BoxMesh_pulpit")

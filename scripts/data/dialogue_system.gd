@@ -536,6 +536,58 @@ const DIALOGUE_TREES: Dictionary = {
 				"money_change": 0
 			}
 		]
+	},
+	"Baba Gani": {
+		"greeting": "Ah, young scholar! Welcome to the Senate Building. Tuck in your shirt properly before you step into the VC's hallway. What clearance are you processing today?",
+		"choices": [
+			{
+				"text": "Good afternoon Baba, I came to confirm my matriculation oath status.",
+				"response": "Good student! Submit your file to Dr. Mrs. Adeyemi at Window 2. Character and learning, remember that!",
+				"cgpa_boost": 0.04,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Baba, how many years have you been working here in the Senate Building?",
+				"response": "Over 25 years! I have seen thousands of freshers graduate as governors, professors, and tech founders. Stay focused!",
+				"cgpa_boost": 0.0,
+				"faith_boost": 10.0,
+				"money_change": 0
+			},
+			{
+				"text": "Can I quickly drop my bag here while I run to the bursary?",
+				"response": "Security rules forbid unattended luggage, my child. Hold your documents tight at all times!",
+				"cgpa_boost": 0.01,
+				"faith_boost": 0.0,
+				"money_change": 0
+			}
+		]
+	},
+	"Dr. Mrs. Adeyemi": {
+		"greeting": "Good day. Academic Affairs registry is open. Have you verified your course registration and continuous assessment credits?",
+		"choices": [
+			{
+				"text": "Yes ma, my course advisor stamped my 100L clearance file.",
+				"response": "Excellent diligence! Your records are now officially accredited in the Senate database. Keep up this academic standard!",
+				"cgpa_boost": 0.10,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Ma, what is the procedure for transcript request and statement of results?",
+				"response": "Pay the registry clearance fee, attach your verified matriculation slip, and we process it smoothly.",
+				"cgpa_boost": 0.03,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Ma, I was having issues with a missing CA test score.",
+				"response": "Report directly to your course lecturer with your test script duplicate immediately before the Senate board meets!",
+				"cgpa_boost": 0.05,
+				"faith_boost": 0.0,
+				"money_change": 0
+			}
+		]
 	}
 }
 

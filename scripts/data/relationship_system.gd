@@ -22,11 +22,20 @@ static var character_affinity: Dictionary = {
 	"Mama Nkechi": 20,
 	"Master Sunday": 10,
 	"Mrs. Janet": 15,
-	"Coach Balogun": 20
+	"Coach Balogun": 20,
+	"Baba Gani": 25,
+	"Dr. Mrs. Adeyemi": 15,
+	"Driver Rasheed": 20,
+	"Officer Balogun": 15
 }
 
 static func get_affinity(character_name: String) -> int:
-	return character_affinity.get(character_name, 0)
+	if character_affinity.has(character_name):
+		return character_affinity[character_name]
+	for key: String in character_affinity.keys():
+		if character_name.begins_with(key) or key.begins_with(character_name):
+			return character_affinity[key]
+	return 0
 
 
 static func modify_affinity(character_name: String, delta: int) -> int:
@@ -98,6 +107,30 @@ static func get_perk_description(character_name: String) -> String:
 			elif aff >= 50:
 				return "✓ CHAIRPERSON: Free beard grooming with every haircut."
 			return "Campus Barber: Fresh low cuts and styling."
+		"Baba Gani":
+			if aff >= 75:
+				return "★ SENATE INSIDER: VIP entry pass to the VC foyer & fast-track document stamps!"
+			elif aff >= 50:
+				return "✓ SENATE ELDER: Priority clearance guidance for matriculation and graduation files."
+			return "Senate Porter: Watches over the executive building."
+		"Dr. Mrs. Adeyemi":
+			if aff >= 75:
+				return "★ ACADEMIC DEAN PATRON: Error-free transcript clearance (+0.15 CGPA review bonus)!"
+			elif aff >= 50:
+				return "✓ REGISTRY EXPEDITOR: Resolves missing CA continuous assessment scores quickly."
+			return "Deputy Registrar: Verifies official university credentials."
+		"Driver Rasheed":
+			if aff >= 75:
+				return "★ CHAIRMAN OF THE PARK: Unlimited free Keke shuttle rides across campus!"
+			elif aff >= 50:
+				return "✓ REGULAR COMMUTER: Free Keke ride when you have less than ₦100 in wallet."
+			return "Campus Keke Pilot: Drives students across campus hubs."
+		"Officer Balogun":
+			if aff >= 75:
+				return "★ CHIEF SECURITY ALLY: Total immunity from curfew and gate checkpoint delays!"
+			elif aff >= 50:
+				return "✓ LAW-ABIDING SCHOLAR: Security waves you through without search during rush hours."
+			return "Chief Campus Security: Guards university gates and perimeter."
 		_:
 			return "Campus resident."
 

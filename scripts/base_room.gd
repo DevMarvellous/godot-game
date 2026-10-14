@@ -266,6 +266,8 @@ func _on_transit_requested(dest: StringName) -> void:
 			_go_to_scene("res://scenes/rooms/barbing_salon.tscn")
 		&"gate":
 			_go_to_scene("res://scenes/rooms/campus_gate.tscn")
+		&"senate":
+			_go_to_scene("res://scenes/rooms/senate_building.tscn")
 		&"atm":
 			_go_to_scene("res://scenes/main.tscn")
 

@@ -129,6 +129,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -9.7)
 mesh = SubResource("BoxMesh_board")
 surface_material_override/0 = SubResource("StandardMaterial3D_board")
 
+[node name="CalculusNotes" type="Label3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -9.6)
+text = "📐 MTH 101 CALCULUS & GST 101 EXAM REVISION 📐\n• lim_{x→0} (sin x / x) = 1  |  ∫ e^(2x) dx = (1/2)e^(2x) + C\n• Dr. Marvellous SWE tip: \"Clean modular architecture wins!\"\n⚠️ EXAM COMMENCES 8:00 AM SHARP! NO PHONES IN HALL!"
+font_size = 20
+outline_size = 4
+modulate = Color(1, 1, 0.85, 1)
+
 [node name="Podium" type="MeshInstance3D" parent="LectureFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -7.0)
 mesh = SubResource("BoxMesh_podium")

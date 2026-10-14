@@ -262,7 +262,17 @@ text = "⛪ Fellowship Chapel (Keke ₦100)"
 [node name="SUBBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "🏢 Student Union SUB (Keke ₦100)"
+text = "🏪 Campus Market & Business Centre (Keke ₦100)"
+
+[node name="GateBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "🏛️ Main Campus Gate & Keke Park (Keke ₦100)"
+
+[node name="SenateBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "🏛️ University Senate Building (Keke ₦100)"
 
 [node name="GardenBtn" type="Button" parent="TouchZone/TransitSheet/VBox"]
 unique_name_in_owner = true

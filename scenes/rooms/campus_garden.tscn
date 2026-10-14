@@ -152,6 +152,14 @@ text = "CAMPUS BOTANICAL GARDENS & PRAYER WALK"
 font_size = 38
 outline_size = 8
 
+[node name="GardenRulesSign" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, -11.4)
+billboard = 1
+text = "🌿 BOTANICAL PEACE SANCTUARY 🌿\n• Quiet reading, reflection & prayer walk\n• No littering or flower plucking\n\"A peaceful mind achieves First Class results!\""
+font_size = 18
+outline_size = 4
+modulate = Color(0.85, 1, 0.7, 1)
+
 [node name="WorldObjects" type="Node3D" parent="."]
 
 [node name="ParkBench" parent="WorldObjects" instance=ExtResource("4_obj")]

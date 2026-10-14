@@ -24,7 +24,8 @@ const ROOM_PATHS: Dictionary = {
 	&"market": "res://scenes/rooms/sub_building.tscn",
 	&"garden": "res://scenes/rooms/campus_garden.tscn",
 	&"salon": "res://scenes/rooms/barbing_salon.tscn",
-	&"gate": "res://scenes/rooms/campus_gate.tscn"
+	&"gate": "res://scenes/rooms/campus_gate.tscn",
+	&"senate": "res://scenes/rooms/senate_building.tscn"
 }
 
 var current_room: StringName = &"courtyard"
