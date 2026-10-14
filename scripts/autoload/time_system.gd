@@ -67,6 +67,10 @@ func get_minute() -> int:
 	return minute_of_day % 60
 
 
+func get_total_minutes() -> int:
+	return (day - 1) * MINUTES_PER_DAY + minute_of_day
+
+
 func get_hour_float() -> float:
 	return float(minute_of_day) / 60.0
 

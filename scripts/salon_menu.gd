@@ -109,7 +109,9 @@ func _on_confirm_pressed() -> void:
 	if SoundManager:
 		SoundManager.play_coin()
 
-	if current_player.has_method("display_notification"):
+	if current_player.has_method("play_dressing_animation"):
+		current_player.play_dressing_animation()
+	elif current_player.has_method("display_notification"):
 		current_player.display_notification("Looking fresh! Paid Master Sunday ₦1,000.")
 
 	close_menu()

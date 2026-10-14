@@ -118,11 +118,13 @@ func _on_equip_pressed() -> void:
 	ProfileStore.shirt_index = selected_outfit_idx
 	ProfileStore.save_to_disk()
 
-	if SoundManager:
-		SoundManager.play_bell()
-
-	if current_player and current_player.has_method("display_notification"):
-		current_player.display_notification("Equipped new campus outfit! Looking sharp ✨")
+	if current_player and current_player.has_method("play_dressing_animation"):
+		current_player.play_dressing_animation()
+	else:
+		if SoundManager:
+			SoundManager.play_bell()
+		if current_player and current_player.has_method("display_notification"):
+			current_player.display_notification("Equipped new campus outfit! Looking sharp ✨")
 
 	close_wardrobe()
 

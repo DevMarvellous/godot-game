@@ -218,6 +218,8 @@ func _buy_or_equip_outfit(outfit_idx: int, price: int) -> void:
 		)
 
 	SoundManager.play_coin()
+	if current_player.has_method("play_dressing_animation"):
+		current_player.play_dressing_animation()
 	_notify_player("Bought & equipped %s! Madam Kikelomo says: Looking sharp!" % outfit_item["name"])
 	_populate_items()
 
@@ -254,6 +256,8 @@ func _buy_or_equip_hair(hair_idx: int, price: int) -> void:
 		)
 
 	SoundManager.play_coin()
+	if current_player.has_method("play_dressing_animation"):
+		current_player.play_dressing_animation()
 	_notify_player("Styled %s! You're ready for campus!" % hair_item["name"])
 	_populate_items()
 

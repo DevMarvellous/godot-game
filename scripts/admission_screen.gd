@@ -13,62 +13,135 @@ signal onboarding_completed(profile_data: Dictionary)
 
 const Customizer = preload("res://scripts/data/character_customizer.gd")
 const StudentProfile = preload("res://scripts/data/student_profile.gd")
+const AcademicCatalog = preload("res://scripts/data/academic_catalog.gd")
+
+const FACULTY_ORDER: Array[String] = [
+	"CMP_FAC", "ENG_FAC", "LAW_FAC", "SMS_FAC", "NAS_FAC", "MED_FAC", "HUM_FAC"
+]
 
 # Wizard Steps
 enum Step { BIODATA, AVATAR, DEPARTMENT, SCREENING, ADMISSION_LETTER }
 var current_step: Step = Step.BIODATA
 
-# Screening Questions Bank per Faculty
+# Screening Questions Bank per Faculty (Eng, Computing, Law, Social Sciences, Natural Sciences, Medicine, Humanities)
 const SCREENING_QUESTIONS: Dictionary = {
-	"CSC": [
+	"CMP_FAC": [
 		{
-			"q": "What is the binary representation of the decimal number 5?",
-			"options": ["101", "110", "011", "111"],
+			"q": "What is the primary role of the Central Processing Unit (CPU)?",
+			"options": ["Execute program instructions and arithmetic operations", "Store power during NEPA outage", "Clean dust from motherboard circuits", "Transmit FM radio frequencies"],
 			"correct": 0
 		},
 		{
-			"q": "Which of these is NOT an operating system?",
-			"options": ["Linux", "Windows", "Google Chrome", "macOS"],
-			"correct": 2
-		},
-		{
-			"q": "What does CPU stand for in computer hardware?",
-			"options": ["Central Processing Unit", "Control Program Utility", "Core Power Unit", "Common Peripheral Unit"],
-			"correct": 0
-		}
-	],
-	"MAC": [
-		{
-			"q": "Who coined the phrase 'The medium is the message'?",
-			"options": ["Marshall McLuhan", "Harold Lasswell", "Wole Soyinka", "Chinua Achebe"],
+			"q": "Which programming language is predominantly known for data science and machine learning?",
+			"options": ["Python", "HTML", "JPEG", "MP3"],
 			"correct": 0
 		},
 		{
-			"q": "Which form of journalism relies heavily on sensationalism and scandals?",
-			"options": ["Investigative Journalism", "Yellow Journalism", "Civic Journalism", "Financial Journalism"],
-			"correct": 1
-		},
-		{
-			"q": "Which organ in Nigeria regulates broadcast radio and television stations?",
-			"options": ["NBC", "NCC", "NUJ", "NAN"],
+			"q": "What does RAM stand for in personal computing?",
+			"options": ["Random Access Memory", "Rapid Audio Module", "Read Always Machine", "Remote Algorithm Matrix"],
 			"correct": 0
 		}
 	],
-	"ECN": [
+	"ENG_FAC": [
 		{
-			"q": "What is considered the basic economic problem facing every society?",
-			"options": ["Inflation", "Scarcity of resources", "High taxes", "Lack of banks"],
-			"correct": 1
+			"q": "Which electromechanical machine transforms kinetic motion into electrical power?",
+			"options": ["Electric Generator / Dynamo", "Thermometer", "Plastic ruler", "Resistance capacitor"],
+			"correct": 0
 		},
 		{
-			"q": "When supply exceeds demand in a competitive market, prices tend to:",
-			"options": ["Rise", "Fall", "Stay exactly the same", "Double"],
-			"correct": 1
+			"q": "If a campus workshop motor uses 1,000 Watts for 2 hours, what energy is consumed?",
+			"options": ["2 Kilowatt-hours (kWh)", "0.5 kWh", "20 kWh", "500 Watts"],
+			"correct": 0
 		},
 		{
-			"q": "Which apex institution issues legal tender banknotes in Nigeria?",
-			"options": ["EFCC", "Ministry of Finance", "Central Bank of Nigeria (CBN)", "NDIC"],
-			"correct": 2
+			"q": "Which material is used in civil engineering to reinforce concrete structural columns?",
+			"options": ["High-yield Steel Rebar", "Pure Aluminium foil", "Rubber tubing", "Pressed cardboard"],
+			"correct": 0
+		}
+	],
+	"LAW_FAC": [
+		{
+			"q": "What is the supreme law of Nigeria to which all other statutes must conform?",
+			"options": ["The 1999 Constitution of Nigeria", "Hostel Hall Rulebook", "Lagos Traffic Code", "Company Bylaws"],
+			"correct": 0
+		},
+		{
+			"q": "Under Nigerian criminal jurisprudence, an accused person is presumed:",
+			"options": ["Innocent until proven guilty", "Guilty until fine is paid", "Detained without bail indefinitely", "Discharged on hearsay"],
+			"correct": 0
+		},
+		{
+			"q": "Which organ of government is constitutionally vested with legislative power?",
+			"options": ["The National Assembly (Senate & House of Reps)", "Nigerian Bar Association", "Federal Road Safety Corps", "Academic Staff Union"],
+			"correct": 0
+		}
+	],
+	"SMS_FAC": [
+		{
+			"q": "When consumer demand for goods surges while supply is scarce, what occurs to market price?",
+			"options": ["Equilibrium price tends to rise", "Price plummets to zero", "Supply doubles instantaneously", "Prices remain frozen perpetually"],
+			"correct": 0
+		},
+		{
+			"q": "Which apex institution holds sole constitutional authority to issue Nigerian Naira notes?",
+			"options": ["Central Bank of Nigeria (CBN)", "Ministry of Interior", "EFCC", "Lagos Chamber of Commerce"],
+			"correct": 0
+		},
+		{
+			"q": "What financial accounting term describes net revenue remaining after deducting all business expenses?",
+			"options": ["Net Profit", "Gross Deficit", "Bank Overdraft", "Accrued Amortization"],
+			"correct": 0
+		}
+	],
+	"NAS_FAC": [
+		{
+			"q": "Which natural gravitational force accelerates falling objects toward the center of the Earth?",
+			"options": ["Gravity", "Centrifugal repulsion", "Electrostatic friction", "Surface buoyancy"],
+			"correct": 0
+		},
+		{
+			"q": "What is the standard chemical formula for pure drinking water?",
+			"options": ["H2O", "CO2", "NaCl", "CH4"],
+			"correct": 0
+		},
+		{
+			"q": "Which vital gas do green plants release as a byproduct of photosynthesis?",
+			"options": ["Oxygen (O2)", "Carbon Monoxide", "Helium", "Chlorine"],
+			"correct": 0
+		}
+	],
+	"MED_FAC": [
+		{
+			"q": "Which muscular organ pumps oxygenated blood throughout the human body?",
+			"options": ["The Heart", "The Gallbladder", "The Pancreas", "The Spleen"],
+			"correct": 0
+		},
+		{
+			"q": "Which insect vector transmits the Plasmodium parasite responsible for campus malaria?",
+			"options": ["Female Anopheles mosquito", "Housefly", "Soldier termite", "Honeybee"],
+			"correct": 0
+		},
+		{
+			"q": "What is the primary function of white blood cells (leukocytes) in human immunology?",
+			"options": ["Defend the body against infection & pathogens", "Distribute dietary glucose", "Absorb inhaled nitrogen", "Digest calcium in bone marrow"],
+			"correct": 0
+		}
+	],
+	"HUM_FAC": [
+		{
+			"q": "Who authored the classic Nigerian literary masterpiece 'Things Fall Apart'?",
+			"options": ["Prof. Chinua Achebe", "Wole Soyinka", "Chimamanda Ngozi Adichie", "Ola Rotimi"],
+			"correct": 0
+		},
+		{
+			"q": "In Christian Religious Studies (CRS), where was Jesus Christ born according to the New Testament?",
+			"options": ["Bethlehem of Judea", "Jerusalem Temple", "Nazareth of Galilee", "Rome"],
+			"correct": 0
+		},
+		{
+			"q": "Which historic Nigerian civilization is world-celebrated for its terracotta sculptures?",
+			"options": ["The Nok Culture", "The Oyo Cavalry", "The Sokoto Caliphate", "The Borgu Kingdom"],
+			"correct": 0
 		}
 	]
 }
@@ -79,7 +152,9 @@ var selected_complexion: int = 1
 var selected_hair: int = 0
 var selected_shirt: int = 0
 var selected_trouser: int = 0
+var selected_faculty_id: String = "CMP_FAC"
 var selected_department: String = "CSC"
+var current_faculty_dept_codes: Array = []
 
 # Screening state
 var quiz_q_idx: int = 0
@@ -110,6 +185,7 @@ var active_quiz_questions: Array = []
 @onready var avatar_preview_label: Label = %AvatarPreviewLabel
 
 # Step 3 inputs
+@onready var faculty_options: OptionButton = %FacultyOptions
 @onready var dept_options: OptionButton = %DeptOptions
 @onready var dept_desc_label: Label = %DeptDescLabel
 
@@ -216,14 +292,18 @@ func _setup_options() -> void:
 			_refresh_avatar_preview()
 		)
 
+	if faculty_options:
+		faculty_options.clear()
+		for fac_id in FACULTY_ORDER:
+			var fac_data: Dictionary = AcademicCatalog.FACULTIES[fac_id]
+			var dept_count: int = fac_data["departments"].size()
+			faculty_options.add_item("%s (%d Courses)" % [fac_data["name"], dept_count])
+		faculty_options.item_selected.connect(_on_faculty_selected)
+
 	if dept_options:
-		dept_options.clear()
-		dept_options.add_item("Computer Science (Science & Computing)")
-		dept_options.add_item("Mass Communication (Social Sciences)")
-		dept_options.add_item("Economics (Social & Management Sciences)")
 		dept_options.item_selected.connect(_on_dept_selected)
 
-	_on_dept_selected(0)
+	_on_faculty_selected(0)
 	_refresh_avatar_preview()
 
 
@@ -251,20 +331,40 @@ func _refresh_avatar_preview() -> void:
 		)
 
 
+func _on_faculty_selected(idx: int) -> void:
+	if idx < 0 or idx >= FACULTY_ORDER.size():
+		return
+	selected_faculty_id = FACULTY_ORDER[idx]
+	var fac_data: Dictionary = AcademicCatalog.FACULTIES[selected_faculty_id]
+	current_faculty_dept_codes = fac_data["departments"].duplicate()
+
+	if dept_options:
+		dept_options.clear()
+		for code in current_faculty_dept_codes:
+			var dept_info: Dictionary = AcademicCatalog.get_department(code)
+			dept_options.add_item("%s (%s)" % [dept_info["name"], code])
+		dept_options.select(0)
+
+	_on_dept_selected(0)
+
+
 func _on_dept_selected(idx: int) -> void:
-	match idx:
-		0:
-			selected_department = "CSC"
-			if dept_desc_label:
-				dept_desc_label.text = "💻 Faculty of Science & Computing\nHigh cut-off merit requirement. Courses include Intro to Computing, Discrete Maths, and Data Structures."
-		1:
-			selected_department = "MAC"
-			if dept_desc_label:
-				dept_desc_label.text = "🎙️ Faculty of Social Sciences\nJournalism, Broadcasting, Media ethics, and Public Relations."
-		2:
-			selected_department = "ECN"
-			if dept_desc_label:
-				dept_desc_label.text = "📊 Faculty of Social & Management Sciences\nMicroeconomics, Macroeconomics, Monetary Banking, and Finance."
+	if idx < 0 or idx >= current_faculty_dept_codes.size():
+		return
+	selected_department = current_faculty_dept_codes[idx]
+	var dept_info: Dictionary = AcademicCatalog.get_department(selected_department)
+	var redirect_code: String = String(dept_info.get("redirect_dept", "CSC"))
+	var redirect_info: Dictionary = AcademicCatalog.get_department(redirect_code)
+	var cut_off: int = int(dept_info.get("cut_off_score", 2))
+
+	if dept_desc_label:
+		dept_desc_label.text = "🏛️ %s\n📘 Degree: %s\n🎯 Merit Cut-off: %d / 3 Screening Score\n💡 Focus: %s\n🔄 University Board Fallback: If score is below cut-off, posted to %s." % [
+			dept_info.get("faculty", "Academic Faculty"),
+			dept_info.get("name", "Degree Program"),
+			cut_off,
+			dept_info.get("description", ""),
+			redirect_info.get("name", "Allied Field")
+		]
 
 
 func _update_view() -> void:
@@ -311,10 +411,15 @@ func _on_next_pressed() -> void:
 			current_step = Step.DEPARTMENT
 			_update_view()
 		Step.DEPARTMENT:
-			# Start screening quiz
+			# Start screening quiz tailored to candidate's chosen faculty discipline
 			quiz_q_idx = 0
 			quiz_score = 0
-			active_quiz_questions = SCREENING_QUESTIONS.get(selected_department, SCREENING_QUESTIONS["CSC"])
+			if SCREENING_QUESTIONS.has(selected_faculty_id):
+				active_quiz_questions = SCREENING_QUESTIONS[selected_faculty_id]
+			elif SCREENING_QUESTIONS.has(selected_department):
+				active_quiz_questions = SCREENING_QUESTIONS[selected_department]
+			else:
+				active_quiz_questions = SCREENING_QUESTIONS["CMP_FAC"]
 			current_step = Step.SCREENING
 			_update_view()
 			_load_screening_question()

@@ -25,6 +25,18 @@ func _ready() -> void:
 	assert(db.SUPABASE_URL != "", "Supabase URL empty")
 	print("  -> DatabaseConfig OK: %s" % db.CLOUD_TIER_INFO.provider)
 
+	var catalog = load("res://scripts/data/academic_catalog.gd")
+	assert(catalog.FACULTIES.size() == 7, "Faculties must be 7!")
+	assert(catalog.DEPARTMENTS.size() == 34, "Departments must be 34!")
+	print("  -> AcademicCatalog OK: 7 faculties, 34 departments across all disciplines")
+
+	var profile = load("res://scripts/data/student_profile.gd")
+	var merit_placement = profile.apply_admission("Emeka", "emeka@campus.edu.ng", "Male", 1, 0, 0, 0, "MEE", 100)
+	assert(merit_placement["dept"] == "MEE", "100% score should earn first choice MEE!")
+	var transfer_placement = profile.apply_admission("Emeka", "emeka@campus.edu.ng", "Male", 1, 0, 0, 0, "MEE", 0)
+	assert(transfer_placement["dept"] == "MTH", "0% score in MEE should transfer to allied MTH!")
+	print("  -> StudentProfile Admission Placement & Reassignment Posting OK")
+
 	# 2. Test Player 3D Mesh Swapping & Needs Manager
 	print("[2/6] Verifying Player3D appearance and 3D meshes...")
 	var player_scene = load("res://scenes/player_3d.tscn")
@@ -43,7 +55,8 @@ func _ready() -> void:
 				o.get("mesh_type", "casual")
 			)
 			tested_combos += 1
-	print("  -> Player3D hair & outfit 3D mesh swapping OK (Tested %d combos)" % tested_combos)
+	player.play_dressing_animation()
+	print("  -> Player3D hair & outfit 3D mesh swapping + dressing spin animation OK (Tested %d combos)" % tested_combos)
 
 	# 3. Test Phone System & Wallpapers
 	print("[3/6] Verifying Phone System...")

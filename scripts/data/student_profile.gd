@@ -95,64 +95,38 @@ static func apply_admission(
 	return placement
 
 
-static func _calculate_placement(first_dept: String, score: int) -> Dictionary:
-	# Cut-off is 66% (2 out of 3 screening questions)
-	var passed_merit: bool = score >= 66
+const AcademicCatalog = preload("res://scripts/data/academic_catalog.gd")
 
-	match first_dept:
-		"CSC": # Computer Science (High Cut-off)
-			if passed_merit:
-				return {
-					"dept": "CSC",
-					"title": "Computer Science (B.Sc)",
-					"faculty": "Science & Computing",
-					"remark": "🎉 Merit List! Qualified for First Choice Computer Science!"
-				}
-			else:
-				# Reassigned to Library Information Science or Computer Education
-				return {
-					"dept": "LIS",
-					"title": "Library & Information Science (B.Sc)",
-					"faculty": "Education & Information Tech",
-					"remark": "⚠️ Transferred! Cut-off missed for CSC. Reassigned to Library & Information Science."
-				}
-		"MAC": # Mass Communication
-			if passed_merit:
-				return {
-					"dept": "MAC",
-					"title": "Mass Communication (B.Sc)",
-					"faculty": "Social Sciences",
-					"remark": "🎉 Merit List! Admitted to Mass Communication!"
-				}
-			else:
-				return {
-					"dept": "LIN",
-					"title": "Linguistics & African Languages (B.A)",
-					"faculty": "Faculty of Arts",
-					"remark": "⚠️ Transferred! Cut-off missed for Mass Comm. Reassigned to Linguistics & Languages."
-				}
-		"ECN": # Economics
-			if passed_merit:
-				return {
-					"dept": "ECN",
-					"title": "Economics (B.Sc)",
-					"faculty": "Social & Management Sciences",
-					"remark": "🎉 Merit List! Admitted to Economics!"
-				}
-			else:
-				return {
-					"dept": "PUB",
-					"title": "Public Administration (B.Sc)",
-					"faculty": "Management Sciences",
-					"remark": "⚠️ Transferred! Cut-off missed for Economics. Reassigned to Public Administration."
-				}
-		_:
-			return {
-				"dept": first_dept,
-				"title": "General Studies (B.Sc)",
-				"faculty": "Basic Sciences",
-				"remark": "Admitted via Supplementary List."
-			}
+static func _calculate_placement(first_dept: String, score_pct: int) -> Dictionary:
+	var dept_data: Dictionary = AcademicCatalog.get_department(first_dept)
+	var dept_name: String = String(dept_data.get("name", "General Studies"))
+	var dept_fac: String = String(dept_data.get("faculty", "Academic Faculty"))
+	var required_cut_off: int = int(dept_data.get("cut_off_score", 2))
+	
+	# Determine if student passed merit cut-off (assuming 3 questions total)
+	# cut_off 3 -> 100%, cut_off 2 -> 66%, cut_off 1 -> 33%
+	var required_pct: int = int((float(required_cut_off) / 3.0) * 100.0)
+	var passed_merit: bool = score_pct >= (required_pct - 5)
+
+	if passed_merit:
+		return {
+			"dept": first_dept,
+			"title": "%s (First Choice)" % dept_name,
+			"faculty": dept_fac,
+			"remark": "🎉 Merit List Direct Admission! Qualified for first choice %s!" % dept_name
+		}
+	else:
+		# University Admissions Board reassignment to allied fallback program
+		var redirect_code: String = String(dept_data.get("redirect_dept", "CSC"))
+		var redirect_data: Dictionary = AcademicCatalog.get_department(redirect_code)
+		var redirect_name: String = String(redirect_data.get("name", "Allied Studies"))
+		var redirect_fac: String = String(redirect_data.get("faculty", "Academic Faculty"))
+		return {
+			"dept": redirect_code,
+			"title": "%s (Allied Transfer)" % redirect_name,
+			"faculty": redirect_fac,
+			"remark": "⚠️ University Senate Posting: Merit cut-off missed for %s (%d%% required). Transferred & posted to allied degree: %s." % [dept_name, required_pct, redirect_name]
+		}
 
 
 static func get_profile_data() -> Dictionary:

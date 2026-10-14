@@ -354,3 +354,40 @@ func apply_appearance(
 		left_leg.set_surface_override_material(0, leg_mat)
 	if right_leg:
 		right_leg.set_surface_override_material(0, leg_mat)
+
+
+## Plays a stylish 360-degree spin dressing animation with bounce & sparkle
+func play_dressing_animation(midpoint_callback: Callable = Callable()) -> void:
+	if not visual_root or not is_inside_tree():
+		if midpoint_callback.is_valid():
+			midpoint_callback.call()
+		return
+
+	var start_rot: float = visual_root.rotation.y
+	var full_spin_rot: float = start_rot + TAU
+
+	# First half spin (0 to 180 degrees) with subtle wind-up crouch
+	var half_tween: Tween = create_tween().set_parallel(true)
+	half_tween.tween_property(visual_root, "rotation:y", start_rot + PI, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	half_tween.tween_property(visual_root, "scale", Vector3(0.92, 1.08, 0.92), 0.22)
+	await half_tween.finished
+
+	# Swap clothes at the midpoint!
+	if midpoint_callback.is_valid():
+		midpoint_callback.call()
+
+	# Midpoint celebratory sparkle & chime
+	if SoundManager:
+		SoundManager.play_bell()
+
+	# Second half spin (180 to 360 degrees) with celebratory bounce
+	var second_tween: Tween = create_tween().set_parallel(true)
+	second_tween.tween_property(visual_root, "rotation:y", full_spin_rot, 0.28).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	second_tween.tween_property(visual_root, "scale", Vector3(1.15, 1.15, 1.15), 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	await second_tween.finished
+
+	# Settle smoothly back to regular scale & normalize rotation
+	var settle_tween: Tween = create_tween()
+	settle_tween.tween_property(visual_root, "scale", Vector3.ONE, 0.12)
+	visual_root.rotation.y = fmod(visual_root.rotation.y, TAU)
+
