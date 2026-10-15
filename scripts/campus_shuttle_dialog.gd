@@ -150,3 +150,4 @@ func _on_destination_selected(dest: Dictionary) -> void:
 	visible = false
 	current_player = null
 	destination_chosen.emit(target_scene)
+

@@ -81,3 +81,4 @@ static func get_gig_by_id(gig_id: String) -> Dictionary:
 		if g["id"] == gig_id:
 			return g
 	return {}
+

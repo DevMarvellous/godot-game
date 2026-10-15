@@ -185,15 +185,7 @@ func interact(player: CharacterBody3D) -> void:
 				_show_feedback(player, "Rested at dining table! Overheard: 'Study hard, semester exams start soon!'")
 
 		ObjectType.LIBRARY_CARREL:
-			if needs.energy >= 15.0:
-				needs.modify_energy(-15.0)
-				needs.modify_cgpa(0.12)
-				TimeSystem.advance_minutes(45)
-				if player.has_method("play_study_animation"):
-					player.play_study_animation()
-				_show_feedback(player, "Studied past questions in complete silence! CGPA +0.12, Energy -15%")
-			else:
-				_show_feedback(player, "Too exhausted to concentrate! Rest on your hostel bed first.")
+			menu_requested.emit(&"library_study", player)
 
 		ObjectType.CHAPEL_WORSHIP:
 			needs.modify_faith(35.0)

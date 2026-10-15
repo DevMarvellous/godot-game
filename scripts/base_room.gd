@@ -21,6 +21,7 @@ const MallScene = preload("res://scenes/mall_menu.tscn")
 const SnookerScene = preload("res://scenes/snooker_mini_game.tscn")
 const GigsScene = preload("res://scenes/campus_gigs_menu.tscn")
 const ShuttleDialogScene = preload("res://scenes/campus_shuttle_dialog.tscn")
+const LibraryStudyScene = preload("res://scenes/library_study_dialog.tscn")
 var phone_menu: Control = null
 var salon_menu: Control = null
 var chat_menu: Control = null
@@ -29,6 +30,7 @@ var mall_menu: Control = null
 var snooker_menu: Control = null
 var gigs_menu: Control = null
 var shuttle_dialog: Control = null
+var library_study_dialog: Control = null
 var remote_player_nodes: Dictionary = {}
 var active_ceiling_fans: Array[Node3D] = []
 
@@ -314,6 +316,14 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 			shuttle_dialog.open_shuttle(p)
 		elif mobile_controls and mobile_controls.has_method("_toggle_transit_sheet"):
 			mobile_controls._toggle_transit_sheet()
+	elif menu_type == &"library_study":
+		if not library_study_dialog and menus_layer:
+			library_study_dialog = LibraryStudyScene.instantiate()
+			menus_layer.add_child(library_study_dialog)
+			if library_study_dialog.has_signal("dialog_closed"):
+				library_study_dialog.dialog_closed.connect(_on_menu_closed)
+		if library_study_dialog:
+			library_study_dialog.open_library_study(p)
 
 
 func _on_npc_dialogue_requested(npc: NPC3D, p: CharacterBody3D) -> void:

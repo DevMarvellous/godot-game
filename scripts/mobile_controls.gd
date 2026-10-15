@@ -79,6 +79,27 @@ func _process(_delta: float) -> void:
 		interact_btn.text = "INTERACT"
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo:
+		match event.keycode:
+			KEY_P:
+				_on_phone_pressed()
+				get_viewport().set_input_as_handled()
+			KEY_C:
+				_on_chat_pressed()
+				get_viewport().set_input_as_handled()
+			KEY_M:
+				_toggle_transit_sheet()
+				get_viewport().set_input_as_handled()
+			KEY_E:
+				_on_interact_pressed()
+				get_viewport().set_input_as_handled()
+			KEY_ESCAPE:
+				if transit_sheet and transit_sheet.visible:
+					transit_sheet.visible = false
+					get_viewport().set_input_as_handled()
+
+
 func _on_joystick_moved(vec: Vector2) -> void:
 	if bound_player:
 		bound_player.set_mobile_movement(vec)

@@ -303,6 +303,32 @@ const DIALOGUE_TREES: Dictionary = {
 			}
 		]
 	},
+	"Iya Boli": {
+		"greeting": "Omo mi! Welcome to the garden! Sweet roasted plantain straight from charcoal grill, hot fried yam with pepper fish sauce, and crunchy groundnuts! Wetin you dey buy?",
+		"choices": [
+			{
+				"text": "Iya Boli, give me 2 fingers of sweet Boli with groundnuts (₦500)!",
+				"response": "Here you go my dear! Very soft and sweet! Eat am under the acacia shade, your energy go return sharp!",
+				"cgpa_boost": 0.02,
+				"faith_boost": 5.0,
+				"money_change": -500
+			},
+			{
+				"text": "Ma, please add extra pepper sauce on my fried yam!",
+				"response": "Haha! A student who knows good food! Extra spicy pepper sauce added with hot fried fish! Enjoy your study break!",
+				"cgpa_boost": 0.03,
+				"faith_boost": 5.0,
+				"money_change": -650
+			},
+			{
+				"text": "Good day ma, the charcoal smoke smells so nice!",
+				"response": "Thank you my child! God bless your academics, First Class is your portion!",
+				"cgpa_boost": 0.01,
+				"faith_boost": 10.0,
+				"money_change": 0
+			}
+		]
+	},
 	"Mallam Danladi": {
 		"greeting": "Sannu aboki! Special Indomie with double eggs and fried suya beef dey ready. Fast food for sharp brain!",
 		"choices": [

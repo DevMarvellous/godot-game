@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://snooker001"]
+[gd_scene format=3 uid="uid://snooker001"]
 
 [ext_resource type="Script" path="res://scripts/snooker_mini_game.gd" id="1_snooker"]
 
@@ -147,3 +147,4 @@ text = "Exit to Lounge"
 [connection signal="pressed" from="BottomControls/VBox/StrikeBtn" to="." method="strike"]
 [connection signal="pressed" from="BottomControls/VBox/ActionsRow/ResetBtn" to="." method="reset_table"]
 [connection signal="pressed" from="BottomControls/VBox/ActionsRow/ExitBtn" to="." method="close_game"]
+

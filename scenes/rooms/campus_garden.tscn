@@ -167,7 +167,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 object_type = 14
 object_name = "Park Relaxation Bench (+Energy, +Mood)"
 
+[node name="IyaBoliStand" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, -2.5)
+object_type = 10
+object_name = "Iya Boli Roasted Plantain & Sauce"
+
 [node name="NPCs" type="Node3D" parent="."]
+
+[node name="IyaBoliVendor" parent="NPCs" instance=ExtResource("5_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.1, -3.6)
+character_name = "Iya Boli"
+character_role = "Campus Garden Roasted Plantain Vendor"
+shirt_color = Color(0.7, 0.2, 0.5, 1)
 
 [node name="StudentChilling" parent="NPCs" instance=ExtResource("5_npc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.1, 0)

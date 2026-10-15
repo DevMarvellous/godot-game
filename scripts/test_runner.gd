@@ -138,6 +138,16 @@ func _ready() -> void:
 	assert(roommate_script != null, "RoommateAI script must exist!")
 	print("  -> RoommateAI living routine & state schedule OK")
 
+	var lib_study_scene = load("res://scenes/library_study_dialog.tscn")
+	var lib_study = lib_study_scene.instantiate()
+	add_child(lib_study)
+	lib_study.open_library_study(player)
+	assert(lib_study.STUDY_MODES.size() == 3, "Library must have 3 revision modes!")
+	lib_study._on_mode_selected(lib_study.STUDY_MODES[0])
+	lib_study.close_dialog()
+	lib_study.queue_free()
+	print("  -> Library Study Archives & Past Questions OK")
+
 	# 5. Test Key Rooms
 	print("[5/6] Verifying Room Scenes instancing & fan rotations...")
 	var rooms_to_test = [

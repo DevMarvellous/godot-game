@@ -342,3 +342,4 @@ func _draw() -> void:
 		if not b.is_cue:
 			draw_circle(b.pos, BALL_RADIUS * 0.45, Color.WHITE)
 			draw_circle(b.pos, BALL_RADIUS * 0.22, b.color)
+

@@ -59,6 +59,22 @@ signal menu_closed
 		"hunger": 10.0,
 		"energy": 2.0,
 		"time_minutes": 5
+	},
+	{
+		"name": "Roasted Boli & Groundnuts",
+		"desc": "[Iya Boli] Charcoal roasted sweet plantain with crunchy groundnuts.",
+		"cost": 500,
+		"hunger": 40.0,
+		"energy": 20.0,
+		"time_minutes": 15
+	},
+	{
+		"name": "Fried Yam (Dundun) & Pepper Sauce",
+		"desc": "[Iya Boli] Crispy golden yam slices with spicy peppered sauce.",
+		"cost": 650,
+		"hunger": 45.0,
+		"energy": 22.0,
+		"time_minutes": 15
 	}
 ]
 

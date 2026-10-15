@@ -59,6 +59,24 @@ const DISHES: Array[Dictionary] = [
 		"energy_boost": 10.0,
 		"icon": "💧",
 		"description": "Chilled sachet water for your hostel room jerrycan."
+	},
+	{
+		"id": "boli_groundnut",
+		"name": "Roasted Boli & Crunchy Groundnuts",
+		"price": 500,
+		"hunger_restore": 40.0,
+		"energy_boost": 20.0,
+		"icon": "🍌",
+		"description": "Charcoal roasted sweet plantain with roasted groundnuts. Authentic campus afternoon snack!"
+	},
+	{
+		"id": "fried_yam_sauce",
+		"name": "Fried Yam (Dundun) & Pepper Sauce",
+		"price": 650,
+		"hunger_restore": 45.0,
+		"energy_boost": 22.0,
+		"icon": "🍠",
+		"description": "Crispy golden yam slices dipped in spicy peppered tomato sauce."
 	}
 ]
 
