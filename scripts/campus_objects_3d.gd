@@ -153,18 +153,7 @@ func interact(player: CharacterBody3D) -> void:
 			_show_feedback(player, "Allowance received! +₦2,000")
 
 		ObjectType.HUSTLE_DESK:
-			const ProfileStore = preload("res://scripts/data/student_profile.gd")
-			ProfileStore.load_from_disk()
-			if needs.energy >= 18.0:
-				needs.modify_energy(-18.0)
-				var payout: int = 2500
-				if ProfileStore.owned_upgrades.has("mac_desk"):
-					payout = 3500
-				needs.modify_money(payout)
-				TimeSystem.advance_minutes(45)
-				_show_feedback(player, "Completed student typing & design hustle! +₦%s, Energy -18%%" % payout)
-			else:
-				_show_feedback(player, "Too exhausted to work! Rest on your bed first.")
+			menu_requested.emit(&"gigs", player)
 
 		ObjectType.SALON_CHAIR:
 			menu_requested.emit(&"salon", player)
@@ -256,14 +245,7 @@ func interact(player: CharacterBody3D) -> void:
 				_show_feedback(player, "Senate Registry: Student %s (%s) verified. CGPA: %.2f / 5.00." % [ProfileStore.student_name, ProfileStore.matric_no, needs.cgpa])
 
 		ObjectType.SUB_ARCADE:
-			if needs.modify_money(-200):
-				needs.modify_energy(15.0)
-				TimeSystem.advance_minutes(20)
-				if player.has_method("play_celebrate_animation"):
-					player.play_celebrate_animation("🎱 SNOOKER HIGH SCORE!")
-				_show_feedback(player, "Potted the 8-ball in corner pocket! Campus arcade high score! Fun +30!")
-			else:
-				_show_feedback(player, "Need ₦200 to insert token into the arcade machine!")
+			menu_requested.emit(&"snooker", player)
 
 
 func _show_feedback(player: CharacterBody3D, msg: String) -> void:

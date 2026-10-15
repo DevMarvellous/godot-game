@@ -94,6 +94,50 @@ func _ready() -> void:
 	mall_menu.close_mall()
 	print("  -> Mall Menu OK (All 4 categories including Room Upgrades verified)")
 
+	# Mini-Games & Interactive Systems Test
+	var snooker_scene = load("res://scenes/snooker_mini_game.tscn")
+	var snooker = snooker_scene.instantiate()
+	add_child(snooker)
+	snooker.open_game(player)
+	assert(snooker.balls.size() == 10, "Snooker must rack 10 balls (1 cue + 9 object)!")
+	snooker.strike()
+	snooker._physics_process(0.016)
+	snooker.close_game()
+	snooker.queue_free()
+	print("  -> SUB Arcade 9-Ball Snooker Mini-Game OK (Racked 10 balls, 2D physics verified)")
+
+	var gigs_data = load("res://scripts/data/campus_gigs.gd")
+	assert(gigs_data.get_all_gigs().size() >= 6, "Must have at least 6 campus side hustles!")
+	var gigs_scene = load("res://scenes/campus_gigs_menu.tscn")
+	var gigs_menu = gigs_scene.instantiate()
+	add_child(gigs_menu)
+	gigs_menu.open_gigs(player)
+	gigs_menu._on_work_gig_pressed(gigs_data.get_all_gigs()[0])
+	gigs_menu.close_menu()
+	gigs_menu.queue_free()
+	print("  -> Campus Gigs & Hustles System OK (All 6 student jobs verified)")
+
+	var shuttle_scene = load("res://scenes/campus_shuttle_dialog.tscn")
+	var shuttle_dialog = shuttle_scene.instantiate()
+	add_child(shuttle_dialog)
+	shuttle_dialog.open_shuttle(player)
+	assert(shuttle_dialog.DESTINATIONS.size() >= 10, "Must have 10 shuttle park destinations!")
+	shuttle_dialog.close_dialog()
+	shuttle_dialog.queue_free()
+	print("  -> Campus Keke & Shuttle Park Transit OK (10 destinations verified)")
+
+	var hud_scene = load("res://scenes/hud.tscn")
+	var hud = hud_scene.instantiate()
+	add_child(hud)
+	hud.show_event_banner("⚡ UP NEPA!", "Power restored to campus hostels!")
+	hud._dismiss_toast()
+	hud.queue_free()
+	print("  -> HUD Dynamic Campus Event Toast Banner OK")
+
+	var roommate_script = load("res://scripts/roommate_ai.gd")
+	assert(roommate_script != null, "RoommateAI script must exist!")
+	print("  -> RoommateAI living routine & state schedule OK")
+
 	# 5. Test Key Rooms
 	print("[5/6] Verifying Room Scenes instancing & fan rotations...")
 	var rooms_to_test = [

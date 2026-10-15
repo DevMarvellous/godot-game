@@ -218,14 +218,18 @@ func _open_app(app_id: String) -> void:
 			action_btn.text = "Request Urgent 2k from Home"
 
 		"hustle":
-			app_title.text = "💼 STUDENT HUSTLE & BRAND ADS"
-			content_label.text = """AVAILABLE GIGS & REWARD ADS:
-1. SUB Typing & Proofreading (+₦2,500)
-2. Graphic Design & Campaign Posters (+₦4,500)
-3. Freelance Coding with Mr. Marvellous (+₦8,500)
-4. 📺 WATCH SPONSORED REWARD AD (+₦1,500 Cash & +25% Energy Recharge!)
+			app_title.text = "💼 STUDENT HUSTLE & GIGS"
+			const CampusGigsData = preload("res://scripts/data/campus_gigs.gd")
+			var gig_list: String = ""
+			var gigs = CampusGigsData.get_all_gigs()
+			for i in range(gigs.size()):
+				var g = gigs[i]
+				gig_list += "%s %s (+₦%s, ⚡-%d%%)\n" % [g.get("icon", "•"), g.get("title", ""), _format_number(int(g.get("payout", 1000))), int(g.get("energy_cost", 20))]
+			content_label.text = """AVAILABLE GIGS ACROSS CAMPUS:
+%s
+• 📺 WATCH SPONSORED PROMO (+₦1,500 Cash & +25%% Energy Recharge!)
 
-Need instant cash without draining energy? Watch a campus partner promo!"""
+Need instant cash without draining energy? Watch a campus partner promo!""" % gig_list
 			action_btn.visible = true
 			action_btn.text = "📺 Watch Sponsored Promo (+₦1,500 & +25 Energy)"
 

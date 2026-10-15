@@ -52,6 +52,24 @@ const EVENTS: Array[Dictionary] = [
 		"title": "💧 WATER SHORTAGE IN HOSTEL!",
 		"desc": "The central overhead water tank is dry! You must fetch water from the ground borehole using your yellow 25L jerrycan.",
 		"effect": "water"
+	},
+	{
+		"id": &"rainstorm_surge",
+		"title": "🌧️ HEAVY DOWNPOUR OVER CAMPUS!",
+		"desc": "A heavy tropical rainstorm breaks out over campus gate! Keke shuttle queues grow longer. Cool breezes sweep through the hostels.",
+		"effect": "rain"
+	},
+	{
+		"id": &"deans_cup_win",
+		"title": "🏆 DEAN'S CUP FOOTBALL TRIUMPH!",
+		"desc": "Wild celebration at the stadium! Your faculty just scored a 90th-minute header to advance to the finals! Campus morale boosted!",
+		"effect": "cheer"
+	},
+	{
+		"id": &"warden_inspection",
+		"title": "📋 SURPRISE HOSTEL ROOM INSPECTION!",
+		"desc": "Hall warden checked your bunk bed and reading desk! Good hygiene and tidy room confirmed. Commendation given!",
+		"effect": "warden"
 	}
 ]
 
@@ -136,6 +154,30 @@ func _apply_event_effect(ev: Dictionary) -> void:
 				if needs:
 					needs.modify_energy(-12.0)
 			sound_to_play = "alert"
+
+		"rain":
+			var player = _get_active_player()
+			if player:
+				var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
+				if needs:
+					needs.modify_energy(10.0) # Cool weather relaxes student
+			sound_to_play = "bell"
+
+		"cheer":
+			var player = _get_active_player()
+			if player:
+				var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
+				if needs:
+					needs.modify_faith(25.0)
+			sound_to_play = "bell"
+
+		"warden":
+			var player = _get_active_player()
+			if player:
+				var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
+				if needs:
+					needs.modify_faith(20.0)
+			sound_to_play = "coin"
 
 	var sm = get_node_or_null("/root/SoundManager")
 	if sm:

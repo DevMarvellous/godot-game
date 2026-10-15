@@ -12,9 +12,123 @@ extends CanvasLayer
 @onready var schedule_banner: Label = %ScheduleBanner
 
 
+var toast_panel: PanelContainer = null
+var toast_title: Label = null
+var toast_desc: Label = null
+var toast_tween: Tween = null
+
+
 func _ready() -> void:
 	TimeSystem.minute_passed.connect(_update_time_display)
 	_update_time_display()
+	_create_event_toast_ui()
+
+	if CampusEvents:
+		if not CampusEvents.event_triggered.is_connected(_on_campus_event_triggered):
+			CampusEvents.event_triggered.connect(_on_campus_event_triggered)
+
+
+func _create_event_toast_ui() -> void:
+	toast_panel = PanelContainer.new()
+	toast_panel.name = "EventToastPanel"
+	toast_panel.custom_minimum_size = Vector2(360, 64)
+	toast_panel.anchors_preset = Control.PRESET_CENTER_TOP
+	toast_panel.anchor_left = 0.5
+	toast_panel.anchor_right = 0.5
+	toast_panel.offset_left = -260.0
+	toast_panel.offset_right = 260.0
+	toast_panel.offset_top = -120.0 # Hidden above screen initially
+	toast_panel.offset_bottom = -30.0
+	toast_panel.modulate.a = 0.0
+
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.06, 0.09, 0.14, 0.96)
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.border_color = Color(1.0, 0.78, 0.28, 0.9) # Gold campus accent
+	style.corner_radius_top_left = 12
+	style.corner_radius_top_right = 12
+	style.corner_radius_bottom_right = 12
+	style.corner_radius_bottom_left = 12
+	style.content_margin_left = 16.0
+	style.content_margin_right = 16.0
+	style.content_margin_top = 8.0
+	style.content_margin_bottom = 8.0
+	toast_panel.add_theme_stylebox_override(&"panel", style)
+
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override(&"separation", 2)
+
+	toast_title = Label.new()
+	toast_title.name = "ToastTitle"
+	toast_title.text = "⚡ CAMPUS NEWS"
+	toast_title.add_theme_font_size_override(&"font_size", 15)
+	toast_title.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.35))
+	toast_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+	toast_desc = Label.new()
+	toast_desc.name = "ToastDesc"
+	toast_desc.text = "Campus life update..."
+	toast_desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	toast_desc.add_theme_font_size_override(&"font_size", 13)
+	toast_desc.add_theme_color_override(&"font_color", Color(0.92, 0.94, 0.98))
+	toast_desc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+	vbox.add_child(toast_title)
+	vbox.add_child(toast_desc)
+	toast_panel.add_child(vbox)
+
+	toast_panel.gui_input.connect(func(event: InputEvent):
+		if event is InputEventMouseButton and event.pressed:
+			_dismiss_toast()
+	)
+
+	add_child(toast_panel)
+
+
+func _on_campus_event_triggered(_event_id: StringName, title: String, description: String) -> void:
+	show_event_banner(title, description)
+
+
+## Shows an animated banner at the top of the screen
+func show_event_banner(title: String, description: String) -> void:
+	if not toast_panel or not toast_title or not toast_desc:
+		return
+
+	toast_title.text = title
+	toast_desc.text = description
+
+	if toast_tween and toast_tween.is_valid():
+		toast_tween.kill()
+
+	toast_panel.offset_top = -120.0
+	toast_panel.offset_bottom = -30.0
+	toast_panel.modulate.a = 0.0
+
+	toast_tween = create_tween()
+	toast_tween.set_parallel(true)
+	toast_tween.tween_property(toast_panel, "offset_top", 92.0, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	toast_tween.tween_property(toast_panel, "offset_bottom", 175.0, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	toast_tween.tween_property(toast_panel, "modulate:a", 1.0, 0.35)
+
+	# Auto dismiss after 4.5 seconds
+	toast_tween.chain().tween_interval(4.5)
+	toast_tween.chain().tween_callback(_dismiss_toast)
+
+
+func _dismiss_toast() -> void:
+	if not toast_panel:
+		return
+	if toast_tween and toast_tween.is_valid():
+		toast_tween.kill()
+
+	toast_tween = create_tween()
+	toast_tween.set_parallel(true)
+	toast_tween.tween_property(toast_panel, "offset_top", -120.0, 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	toast_tween.tween_property(toast_panel, "offset_bottom", -30.0, 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	toast_tween.tween_property(toast_panel, "modulate:a", 0.0, 0.3)
 
 
 func _update_time_display() -> void:
@@ -58,3 +172,4 @@ func _format_number(n: int) -> String:
 		s = s.insert(idx, ",")
 		idx -= 3
 	return s
+

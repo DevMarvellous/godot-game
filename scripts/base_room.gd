@@ -18,11 +18,17 @@ const ChatScene = preload("res://scenes/chat_wheel.tscn")
 const NetworkPlayerScene = preload("res://scenes/network_player.tscn")
 const WardrobeScene = preload("res://scenes/wardrobe_menu.tscn")
 const MallScene = preload("res://scenes/mall_menu.tscn")
+const SnookerScene = preload("res://scenes/snooker_mini_game.tscn")
+const GigsScene = preload("res://scenes/campus_gigs_menu.tscn")
+const ShuttleDialogScene = preload("res://scenes/campus_shuttle_dialog.tscn")
 var phone_menu: Control = null
 var salon_menu: Control = null
 var chat_menu: Control = null
 var wardrobe_menu: Control = null
 var mall_menu: Control = null
+var snooker_menu: Control = null
+var gigs_menu: Control = null
+var shuttle_dialog: Control = null
 var remote_player_nodes: Dictionary = {}
 var active_ceiling_fans: Array[Node3D] = []
 
@@ -277,8 +283,36 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 		mall_menu.open_mall(p)
 	elif (menu_type == &"wardrobe" or menu_type == &"mall") and wardrobe_menu:
 		wardrobe_menu.open_wardrobe(p)
+	elif menu_type == &"snooker":
+		if not snooker_menu and menus_layer:
+			snooker_menu = SnookerScene.instantiate()
+			menus_layer.add_child(snooker_menu)
+			if snooker_menu.has_signal("game_closed"):
+				snooker_menu.game_closed.connect(func(_winnings): _on_menu_closed())
+		if snooker_menu:
+			snooker_menu.open_game(p)
+	elif menu_type == &"gigs":
+		if not gigs_menu and menus_layer:
+			gigs_menu = GigsScene.instantiate()
+			menus_layer.add_child(gigs_menu)
+			if gigs_menu.has_signal("menu_closed"):
+				gigs_menu.menu_closed.connect(_on_menu_closed)
+		if gigs_menu:
+			gigs_menu.open_gigs(p)
 	elif menu_type == &"shuttle":
-		if mobile_controls and mobile_controls.has_method("_toggle_transit_sheet"):
+		if not shuttle_dialog and menus_layer:
+			shuttle_dialog = ShuttleDialogScene.instantiate()
+			menus_layer.add_child(shuttle_dialog)
+			if shuttle_dialog.has_signal("dialog_closed"):
+				shuttle_dialog.dialog_closed.connect(_on_menu_closed)
+			if shuttle_dialog.has_signal("destination_chosen"):
+				shuttle_dialog.destination_chosen.connect(func(target_scene: String):
+					_on_menu_closed()
+					_go_to_scene(target_scene)
+				)
+		if shuttle_dialog:
+			shuttle_dialog.open_shuttle(p)
+		elif mobile_controls and mobile_controls.has_method("_toggle_transit_sheet"):
 			mobile_controls._toggle_transit_sheet()
 
 
