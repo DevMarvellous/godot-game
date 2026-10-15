@@ -183,23 +183,20 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 	elif menu_type == &"study":
 		if ca_test_menu and (room_id == &"lecture" or room_id == &"lecture2"):
 			const ProfileStore = preload("res://scripts/data/student_profile.gd")
+			const AcademicCatalog = preload("res://scripts/data/academic_catalog.gd")
 			var dept: String = ProfileStore.admitted_department
+			var dept_info: Dictionary = AcademicCatalog.get_department(dept)
+			var dept_courses: Array = dept_info.get("courses", [])
 			var course_to_test: String = "GST 101"
 
 			if room_id == &"lecture":
-				if dept == "CSC":
-					course_to_test = "CSC 101"
-				elif dept == "MAC":
-					course_to_test = "MAC 101"
-				elif dept == "ECN":
-					course_to_test = "ECN 101"
+				if dept_courses.size() > 0:
+					course_to_test = String(dept_courses[0].get("code", "GST 101"))
 			elif room_id == &"lecture2":
-				if dept == "CSC":
-					course_to_test = "CSC 104"
-				elif dept == "MAC":
-					course_to_test = "MAC 103"
-				elif dept == "ECN":
-					course_to_test = "ACC 101"
+				if dept_courses.size() > 1:
+					course_to_test = String(dept_courses[1].get("code", "GST 102"))
+				elif dept_courses.size() > 0:
+					course_to_test = String(dept_courses[0].get("code", "GST 102"))
 
 			ca_test_menu.start_test(p, course_to_test)
 		elif study_menu:

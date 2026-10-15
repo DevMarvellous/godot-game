@@ -173,8 +173,8 @@ const DIALOGUE_TREES: Dictionary = {
 			}
 		]
 	},
-	"Comrade Aluta": {
-		"greeting": "Greatest Nigerian Students! Aluta Continua, Victoria Acerta! As SUG President, the welfare of the union is paramount! Are you ready for campus congress?",
+	"Comrade Ojo": {
+		"greeting": "Hello, fellow student! As Student Union President, student welfare is our top priority! Are you ready for campus congress?",
 		"choices": [
 			{
 				"text": "Comrade President! The hostel electricity and water pump need urgent union intervention!",

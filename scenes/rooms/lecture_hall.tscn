@@ -148,7 +148,7 @@ modulate = Color(1, 1, 0.85, 1)
 
 [node name="CampaignPoster" type="Label3D" parent="LectureFixtures"]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -9.7, 2.4, 0)
-text = "🗳️ VOTE COMRADE TUNDE\nFOR SUG PRESIDENT 2026!\n\"NO SAPA! FREE WI-FI & CONSTANT LIGHT!\"\n★ ALUTA CONTINUA! ★"
+text = "🗳️ VOTE COMRADE TUNDE\nFOR STUDENT UNION PRESIDENT 2026!\n\"BETTER HOSTEL LIGHT & AFFORDABLE MEALS!\"\n★ STUDENTS FIRST! ★"
 font_size = 18
 outline_size = 4
 modulate = Color(1, 0.85, 0.2, 1)

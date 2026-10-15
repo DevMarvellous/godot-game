@@ -198,10 +198,10 @@ character_name = "Brother Chinedu"
 character_role = "Business Centre Guru"
 shirt_color = Color(0.2, 0.5, 0.8, 1)
 
-[node name="ComradeAluta" parent="NPCs" instance=ExtResource("5_npc")]
+[node name="ComradeOjo" parent="NPCs" instance=ExtResource("5_npc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.1, -6.5)
-character_name = "Comrade Aluta"
-character_role = "SUG President & Activist"
+character_name = "Comrade Ojo"
+character_role = "Student Union President"
 shirt_color = Color(0.85, 0.15, 0.15, 1)
 
 [node name="MamaNkechi" parent="NPCs" instance=ExtResource("5_npc")]
