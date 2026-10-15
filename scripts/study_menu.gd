@@ -9,25 +9,44 @@ signal menu_closed
 
 @export var study_options: Array[Dictionary] = [
 	{
-		"name": "Quick Notes Revision",
-		"desc": "Glance over course slides and handouts.",
-		"time_minutes": 30,
-		"energy_cost": 8.0,
-		"cgpa_gain": 0.05
-	},
-	{
-		"name": "Past Questions Practice",
-		"desc": "Solve 5 years of exam past questions with course mates.",
+		"name": "🥇 Front Row Scholar Seat",
+		"desc": "Sit directly under lecturer's podium. Jot golden exam notes (+0.25 CGPA).",
 		"time_minutes": 60,
-		"energy_cost": 16.0,
-		"cgpa_gain": 0.12
+		"energy_cost": 18.0,
+		"cgpa_gain": 0.25,
+		"cash_reward": 0
 	},
 	{
-		"name": "Overnight Reading Marathon",
-		"desc": "Intense library focus session. Requires serious stamina.",
+		"name": "🎒 Middle Row Regular Fresher",
+		"desc": "Balanced attendance. Share Gala & Zobo with seatmates (+0.15 CGPA).",
+		"time_minutes": 60,
+		"energy_cost": 12.0,
+		"cgpa_gain": 0.15,
+		"cash_reward": 0
+	},
+	{
+		"name": "🕶️ Backbench Cartel & Hustle",
+		"desc": "Stealth zone. Code freelance assignments under desk (+₦3,500 Cash, +0.05 CGPA)!",
+		"time_minutes": 60,
+		"energy_cost": 5.0,
+		"cgpa_gain": 0.05,
+		"cash_reward": 3500
+	},
+	{
+		"name": "📖 Buy Course Handout from Rep",
+		"desc": "Official ₦3,500 course handout. Unlocks CA test clearance.",
+		"time_minutes": 15,
+		"energy_cost": 2.0,
+		"cgpa_gain": 0.10,
+		"cash_reward": -3500
+	},
+	{
+		"name": "🌙 Library TDB (Till Day Break)",
+		"desc": "Midnight exam cramming session with coffee. Massive CGPA surge (+0.30 CGPA).",
 		"time_minutes": 120,
 		"energy_cost": 28.0,
-		"cgpa_gain": 0.22
+		"cgpa_gain": 0.30,
+		"cash_reward": 0
 	}
 ]
 
@@ -187,16 +206,29 @@ func _on_study_selected(opt: Dictionary) -> void:
 	if not needs:
 		return
 
+	var cash_reward: int = int(opt.get("cash_reward", 0))
+	if cash_reward < 0 and needs.money < abs(cash_reward):
+		if current_player.has_method("display_notification"):
+			current_player.display_notification("Sapa! Need ₦%d to purchase this handout!" % abs(cash_reward))
+		return
+
 	var energy_cost: float = float(opt["energy_cost"])
 	var cgpa_gain: float = float(opt["cgpa_gain"])
 	var minutes: int = int(opt["time_minutes"])
 
 	needs.modify_energy(-energy_cost)
 	needs.modify_cgpa(cgpa_gain)
+	if cash_reward != 0:
+		needs.modify_money(cash_reward)
+		if SoundManager:
+			SoundManager.play_coin()
 	TimeSystem.advance_minutes(minutes)
 
 	if current_player.has_method("display_notification"):
-		current_player.display_notification("Completed %s! CGPA +%.2f" % [String(opt["name"]), cgpa_gain])
+		if cash_reward > 0:
+			current_player.display_notification("%s: Earned ₦%d & +%.2f CGPA!" % [String(opt["name"]), cash_reward, cgpa_gain])
+		else:
+			current_player.display_notification("%s! CGPA +%.2f" % [String(opt["name"]), cgpa_gain])
 
 	_refresh_display()
 	study_completed.emit(String(opt["name"]), cgpa_gain, energy_cost)

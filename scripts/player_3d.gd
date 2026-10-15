@@ -66,12 +66,14 @@ func _ready() -> void:
 
 
 var mobile_input_vector: Vector2 = Vector2.ZERO
+var nav_beacon_instance: Node3D = null
 
 
 func set_mobile_movement(vec: Vector2) -> void:
 	mobile_input_vector = vec
 	if vec != Vector2.ZERO:
 		has_nav_target = false # Joystick movement overrides tap-to-move
+		_hide_nav_beacon()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -87,6 +89,54 @@ func _unhandled_input(event: InputEvent) -> void:
 			if result.has("position"):
 				nav_target_pos = Vector3(result.position.x, global_position.y, result.position.z)
 				has_nav_target = true
+				_show_nav_beacon(result.position)
+
+
+func _create_nav_beacon() -> void:
+	nav_beacon_instance = Node3D.new()
+	nav_beacon_instance.name = "NavBeacon"
+
+	var mesh_inst: MeshInstance3D = MeshInstance3D.new()
+	var cylinder: CylinderMesh = CylinderMesh.new()
+	cylinder.top_radius = 0.38
+	cylinder.bottom_radius = 0.38
+	cylinder.height = 0.02
+	mesh_inst.mesh = cylinder
+
+	var mat: StandardMaterial3D = StandardMaterial3D.new()
+	mat.albedo_color = Color(0.18, 0.95, 0.52, 0.8)
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.emission_enabled = true
+	mat.emission = Color(0.15, 0.85, 0.45)
+	mat.emission_energy_multiplier = 1.3
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mesh_inst.set_surface_override_material(0, mat)
+
+	nav_beacon_instance.add_child(mesh_inst)
+	nav_beacon_instance.top_level = true
+	nav_beacon_instance.visible = false
+	add_child(nav_beacon_instance)
+
+
+func _show_nav_beacon(pos: Vector3) -> void:
+	if not nav_beacon_instance:
+		_create_nav_beacon()
+	if nav_beacon_instance:
+		nav_beacon_instance.global_position = Vector3(pos.x, pos.y + 0.03, pos.z)
+		nav_beacon_instance.visible = true
+		nav_beacon_instance.scale = Vector3(0.35, 1.0, 0.35)
+		var tw: Tween = create_tween()
+		tw.tween_property(nav_beacon_instance, "scale", Vector3(1.15, 1.0, 1.15), 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+func _hide_nav_beacon() -> void:
+	if nav_beacon_instance and nav_beacon_instance.visible:
+		var tw: Tween = create_tween()
+		tw.tween_property(nav_beacon_instance, "scale", Vector3(0.01, 1.0, 0.01), 0.15)
+		tw.finished.connect(func():
+			if nav_beacon_instance:
+				nav_beacon_instance.visible = false
+		)
 
 
 func trigger_interaction() -> void:
@@ -106,11 +156,13 @@ func _physics_process(delta: float) -> void:
 	if mobile_input_vector != Vector2.ZERO:
 		input_dir = mobile_input_vector
 		has_nav_target = false
+		_hide_nav_beacon()
 	else:
 		input_dir.x = Input.get_axis("move_left", "move_right")
 		input_dir.y = Input.get_axis("move_up", "move_down")
 		if input_dir != Vector2.ZERO:
 			has_nav_target = false
+			_hide_nav_beacon()
 
 	# Check sprint action (Shift or fast push)
 	var is_sprinting: bool = Input.is_action_pressed("sprint")
@@ -134,6 +186,7 @@ func _physics_process(delta: float) -> void:
 			visual_root.rotation.y = lerp_angle(visual_root.rotation.y, target_angle, rotation_speed * delta)
 		else:
 			has_nav_target = false
+			_hide_nav_beacon()
 
 	velocity.x = move_toward(velocity.x, target_vel.x, acceleration * delta)
 	velocity.z = move_toward(velocity.z, target_vel.z, acceleration * delta)
