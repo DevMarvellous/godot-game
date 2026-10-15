@@ -444,3 +444,99 @@ func play_dressing_animation(midpoint_callback: Callable = Callable()) -> void:
 	settle_tween.tween_property(visual_root, "scale", Vector3.ONE, 0.12)
 	visual_root.rotation.y = fmod(visual_root.rotation.y, TAU)
 
+
+## Spawns a floating stat particle above player's head (Sims / Lagos Life style)
+func spawn_floating_stat(text_val: String, color_val: Color = Color.WHITE) -> void:
+	if not is_inside_tree():
+		return
+	var label = Label3D.new()
+	label.text = text_val
+	label.font_size = 28
+	label.outline_size = 6
+	label.modulate = color_val
+	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.position = Vector3(0, 2.3, 0)
+	add_child(label)
+
+	var tw: Tween = create_tween().set_parallel(true)
+	tw.tween_property(label, "position:y", 3.2, 1.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(label, "modulate:a", 0.0, 1.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.chain().tween_callback(label.queue_free)
+
+
+## Plays an eating animation with head-bobbing and food chew
+func play_eating_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	spawn_floating_stat("🍲 Delicious! +Energy", Color(0.25, 0.95, 0.45, 1.0))
+	if SoundManager:
+		SoundManager.play_click()
+
+	var chew_tween: Tween = create_tween()
+	for i in range(3):
+		chew_tween.tween_property(head_mesh, "rotation:x", 0.22, 0.12)
+		chew_tween.tween_property(head_mesh, "rotation:x", -0.05, 0.12)
+	chew_tween.tween_property(head_mesh, "rotation:x", 0.0, 0.1)
+
+
+## Plays a celebratory jump and victory fist-pump
+func play_celebrate_animation(bonus_text: String = "🎉 WINNER!") -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	spawn_floating_stat(bonus_text, Color(1.0, 0.85, 0.2, 1.0))
+	if SoundManager:
+		SoundManager.play_coin()
+
+	var jump_tween: Tween = create_tween().set_parallel(true)
+	jump_tween.tween_property(visual_root, "position:y", 0.65, 0.24).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	jump_tween.tween_property(visual_root, "scale", Vector3(1.15, 1.2, 1.15), 0.24)
+	if left_arm and right_arm:
+		jump_tween.tween_property(left_arm, "rotation:x", -PI * 0.8, 0.24)
+		jump_tween.tween_property(right_arm, "rotation:x", -PI * 0.8, 0.24)
+
+	jump_tween.chain().tween_property(visual_root, "position:y", 0.0, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	jump_tween.parallel().tween_property(visual_root, "scale", Vector3.ONE, 0.2)
+	if left_arm and right_arm:
+		jump_tween.parallel().tween_property(left_arm, "rotation:x", 0.0, 0.2)
+		jump_tween.parallel().tween_property(right_arm, "rotation:x", 0.0, 0.2)
+
+
+## Plays a focused study posture with jotting
+func play_study_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	spawn_floating_stat("📚 +0.12 CGPA!", Color(0.35, 0.85, 1.0, 1.0))
+	if SoundManager:
+		SoundManager.play_click()
+
+	var study_tween: Tween = create_tween()
+	study_tween.tween_property(torso_mesh, "rotation:x", 0.2, 0.2)
+	if right_arm:
+		for i in range(4):
+			study_tween.tween_property(right_arm, "rotation:x", -0.35, 0.1)
+			study_tween.tween_property(right_arm, "rotation:x", -0.15, 0.1)
+	study_tween.tween_property(torso_mesh, "rotation:x", 0.0, 0.2)
+	if right_arm:
+		study_tween.parallel().tween_property(right_arm, "rotation:x", 0.0, 0.2)
+
+
+## Plays a respectful prayer posture
+func play_pray_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	spawn_floating_stat("✨ Peace of Mind!", Color(0.9, 0.7, 1.0, 1.0))
+	if SoundManager:
+		SoundManager.play_bell()
+
+	var pray_tween: Tween = create_tween().set_parallel(true)
+	pray_tween.tween_property(head_mesh, "rotation:x", 0.35, 0.3)
+	if left_arm and right_arm:
+		pray_tween.tween_property(left_arm, "rotation:z", -0.3, 0.3)
+		pray_tween.tween_property(right_arm, "rotation:z", 0.3, 0.3)
+
+	pray_tween.chain().tween_interval(0.6)
+	pray_tween.chain().tween_property(head_mesh, "rotation:x", 0.0, 0.25)
+	if left_arm and right_arm:
+		pray_tween.parallel().tween_property(left_arm, "rotation:z", 0.0, 0.25)
+		pray_tween.parallel().tween_property(right_arm, "rotation:z", 0.0, 0.25)
+

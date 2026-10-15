@@ -47,7 +47,7 @@ const WALLPAPERS: Array[Dictionary] = [
 		"border": Color(0.20, 0.70, 0.45, 1.0)
 	},
 	{
-		"name": "Cyber Aluta Purple",
+		"name": "Royal Campus Purple",
 		"bg": Color(0.12, 0.06, 0.20, 0.98),
 		"border": Color(0.65, 0.35, 0.90, 1.0)
 	}
@@ -184,7 +184,10 @@ func _open_app(app_id: String) -> void:
 
 		"timetable":
 			app_title.text = "📅 LECTURE TIMETABLE"
-			content_label.text = "MONDAY - FRIDAY:\n• 09:00 - 11:00: GST 101 Lecture (LT1)\n• 11:30 - 13:00: CSC 101 Lecture & Lab\n• 14:00 - 16:00: MTH 101 Calculus (LT2)\n• 17:00 - 19:00: Fellowship (Chapel)\n• 22:00: Hostel Curfew"
+			var lecs: Array = Schedule.get_lectures() if Schedule else []
+			var l1: String = lecs[0]["name"] if lecs.size() > 0 else "GST 101 Lecture"
+			var l2: String = lecs[1]["name"] if lecs.size() > 1 else "Departmental Practical"
+			content_label.text = "MONDAY - FRIDAY:\n• 09:00 - 11:00: %s (LT1)\n• 14:00 - 16:00: %s (LT2)\n• 17:00 - 19:00: Fellowship Service (Chapel)\n• 22:00: Hostel Curfew" % [l1, l2]
 			action_btn.visible = false
 
 		"results":
@@ -248,7 +251,7 @@ Need instant cash without draining energy? Watch a campus partner promo!"""
 • @SapaSurvivoor:
 'Whoever invented 2-for-1 Indomie and boiled egg at SUB, God will bless your entire lineage! 🙏'
 
-• @SUG_Aluta (President Comrade):
+• @SUG_President (President Comrade Ojo):
 'Official notice: No 100L student should pay unauthorized departmental dues without official stamped receipt!'
 
 • @TechBro_100L:

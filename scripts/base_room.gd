@@ -189,6 +189,33 @@ func _configure_dynamic_hostel_room() -> void:
 				lamp_light.light_energy = 2.4
 				lamp_light.omni_range = 5.5
 
+		if ProfileStore.owned_upgrades.has("hostel_fan") and not decor.has_node("StandingFanPole"):
+			var fan_pole = MeshInstance3D.new()
+			fan_pole.name = "StandingFanPole"
+			var pole_mesh = CylinderMesh.new()
+			pole_mesh.top_radius = 0.05
+			pole_mesh.bottom_radius = 0.25
+			pole_mesh.height = 1.4
+			fan_pole.mesh = pole_mesh
+			var fan_mat = StandardMaterial3D.new()
+			fan_mat.albedo_color = Color(0.18, 0.45, 0.85, 1) # Blue QASA standing fan
+			fan_pole.material_override = fan_mat
+			fan_pole.position = Vector3(-5.2, 0.7, -3.2)
+			decor.add_child(fan_pole)
+
+			var fan_head = MeshInstance3D.new()
+			fan_head.name = "StandingFanHead"
+			var head_mesh = CylinderMesh.new()
+			head_mesh.top_radius = 0.45
+			head_mesh.bottom_radius = 0.45
+			head_mesh.height = 0.06
+			fan_head.mesh = head_mesh
+			fan_head.material_override = fan_mat
+			fan_head.position = Vector3(0, 0.7, 0)
+			fan_head.rotation.x = PI * 0.5
+			fan_pole.add_child(fan_head)
+			active_ceiling_fans.append(fan_head)
+
 		if ProfileStore.owned_upgrades.has("mac_desk"):
 			var laptop_mesh = decor.get_node_or_null("Laptop") as MeshInstance3D
 			if laptop_mesh:

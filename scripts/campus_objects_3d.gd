@@ -180,6 +180,8 @@ func interact(player: CharacterBody3D) -> void:
 				needs.modify_hunger(35.0)
 				needs.modify_energy(20.0)
 				TimeSystem.advance_minutes(25)
+				if player.has_method("play_eating_animation"):
+					player.play_eating_animation()
 				const GISTS: Array[String] = [
 					"Overheard at table: 'The past questions in the library carrel have the exact questions from last semester!'",
 					"Coursemate banter: 'Mama Cashout jollof rice is the only reason I survived 8 AM calculus!'",
@@ -198,6 +200,8 @@ func interact(player: CharacterBody3D) -> void:
 				needs.modify_energy(-15.0)
 				needs.modify_cgpa(0.12)
 				TimeSystem.advance_minutes(45)
+				if player.has_method("play_study_animation"):
+					player.play_study_animation()
 				_show_feedback(player, "Studied past questions in complete silence! CGPA +0.12, Energy -15%")
 			else:
 				_show_feedback(player, "Too exhausted to concentrate! Rest on your hostel bed first.")
@@ -206,13 +210,25 @@ func interact(player: CharacterBody3D) -> void:
 			needs.modify_faith(35.0)
 			needs.modify_energy(15.0)
 			TimeSystem.advance_minutes(20)
+			if player.has_method("play_pray_animation"):
+				player.play_pray_animation()
 			_show_feedback(player, "Deep worship and prayer! Peace of Mind granted. Faith +35, Energy +15!")
 
 		ObjectType.STADIUM_SPORTS:
 			TimeSystem.advance_minutes(25)
+			# Physically kick the 3D football towards the goal net!
+			var ball: RigidBody3D = get_tree().current_scene.get_node_or_null("StadiumFixtures/InteractiveFootball") as RigidBody3D
+			if ball:
+				ball.global_position = Vector3(0, 0.4, -4.0)
+				ball.linear_velocity = Vector3.ZERO
+				ball.angular_velocity = Vector3.ZERO
+				ball.apply_central_impulse(Vector3(randf_range(-3.5, 3.5), 7.2, -18.0))
+
 			if randi() % 100 < 70:
 				needs.modify_money(1000)
 				needs.modify_energy(15.0)
+				if player.has_method("play_celebrate_animation"):
+					player.play_celebrate_animation("⚽ GOAL! +₦1,000")
 				_show_feedback(player, "GOAL! Curled into top corner! Coach awards you ₦1,000 & Athletic Fame!")
 			else:
 				needs.modify_energy(10.0)
@@ -222,6 +238,8 @@ func interact(player: CharacterBody3D) -> void:
 			needs.modify_energy(25.0)
 			needs.modify_faith(20.0)
 			TimeSystem.advance_minutes(20)
+			if player.has_method("play_pray_animation"):
+				player.play_pray_animation()
 			_show_feedback(player, "Relaxed under the cool park shade with gentle breeze. Stress 0%!")
 
 		ObjectType.SENATE_REGISTRY:
@@ -231,6 +249,8 @@ func interact(player: CharacterBody3D) -> void:
 				ProfileStore.merit_scholarship_claimed = true
 				ProfileStore.save_to_disk()
 				needs.modify_money(25000)
+				if player.has_method("play_celebrate_animation"):
+					player.play_celebrate_animation("👑 FIRST CLASS SCHOLARSHIP! +₦25,000")
 				_show_feedback(player, "🎉 FIRST CLASS MERIT! University Senate awards you ₦25,000 Scholarship Allowance!")
 			else:
 				_show_feedback(player, "Senate Registry: Student %s (%s) verified. CGPA: %.2f / 5.00." % [ProfileStore.student_name, ProfileStore.matric_no, needs.cgpa])
@@ -239,6 +259,8 @@ func interact(player: CharacterBody3D) -> void:
 			if needs.modify_money(-200):
 				needs.modify_energy(15.0)
 				TimeSystem.advance_minutes(20)
+				if player.has_method("play_celebrate_animation"):
+					player.play_celebrate_animation("🎱 SNOOKER HIGH SCORE!")
 				_show_feedback(player, "Potted the 8-ball in corner pocket! Campus arcade high score! Fun +30!")
 			else:
 				_show_feedback(player, "Need ₦200 to insert token into the arcade machine!")

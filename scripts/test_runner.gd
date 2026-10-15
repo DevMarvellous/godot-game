@@ -76,6 +76,13 @@ func _ready() -> void:
 	wardrobe_menu.close_wardrobe()
 	print("  -> Wardrobe Menu OK")
 
+	player.play_eating_animation()
+	player.play_celebrate_animation("🎉 GOAL!")
+	player.play_study_animation()
+	player.play_pray_animation()
+	player.spawn_floating_stat("+100 XP", Color.YELLOW)
+	print("  -> Player3D life-sim animations & floating stats OK")
+
 	var mall_scene = load("res://scenes/mall_menu.tscn")
 	var mall_menu = mall_scene.instantiate()
 	add_child(mall_menu)
@@ -83,8 +90,9 @@ func _ready() -> void:
 	mall_menu._on_category_changed(0)
 	mall_menu._on_category_changed(1)
 	mall_menu._on_category_changed(2)
+	mall_menu._on_category_changed(3)
 	mall_menu.close_mall()
-	print("  -> Mall Menu OK")
+	print("  -> Mall Menu OK (All 4 categories including Room Upgrades verified)")
 
 	# 5. Test Key Rooms
 	print("[5/6] Verifying Room Scenes instancing & fan rotations...")

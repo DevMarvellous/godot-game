@@ -23,12 +23,31 @@ func _ready() -> void:
 	TimeSystem.minute_passed.connect(_on_minute_passed)
 
 
+func get_lectures() -> Array:
+	const ProfileStore = preload("res://scripts/data/student_profile.gd")
+	const AcademicCatalog = preload("res://scripts/data/academic_catalog.gd")
+	ProfileStore.load_from_disk()
+	var dept_info: Dictionary = AcademicCatalog.get_department(ProfileStore.admitted_department)
+	var dept_courses: Array = dept_info.get("courses", [])
+	var name1: String = "GST 101 Lecture"
+	var name2: String = "Departmental Practical"
+	if dept_courses.size() > 0:
+		name1 = "%s: %s" % [dept_courses[0].get("code", "GST 101"), dept_courses[0].get("title", "Lecture")]
+	if dept_courses.size() > 1:
+		name2 = "%s: %s" % [dept_courses[1].get("code", "GST 102"), dept_courses[1].get("title", "Practical")]
+	return [
+		{"name": name1, "start": 9 * 60, "end": 11 * 60},
+		{"name": name2, "start": 14 * 60, "end": 16 * 60},
+	]
+
+
 func _on_minute_passed() -> void:
 	if TimeSystem.is_weekend():
 		return
 	var m: int = TimeSystem.minute_of_day
-	for i: int in LECTURES.size():
-		var lec: Dictionary = LECTURES[i]
+	var lecs: Array = get_lectures()
+	for i: int in lecs.size():
+		var lec: Dictionary = lecs[i]
 		if m == int(lec["start"]):
 			lecture_started.emit(String(lec["name"]))
 		elif m == int(lec["end"]) and not _attended.has(_key(i)):
@@ -40,15 +59,19 @@ func get_current_lecture_index() -> int:
 	if TimeSystem.is_weekend():
 		return -1
 	var m: int = TimeSystem.minute_of_day
-	for i: int in LECTURES.size():
-		var lec: Dictionary = LECTURES[i]
+	var lecs: Array = get_lectures()
+	for i: int in lecs.size():
+		var lec: Dictionary = lecs[i]
 		if m >= int(lec["start"]) and m < int(lec["end"]):
 			return i
 	return -1
 
 
 func get_lecture(index: int) -> Dictionary:
-	return LECTURES[index]
+	var lecs: Array = get_lectures()
+	if index >= 0 and index < lecs.size():
+		return lecs[index]
+	return {"name": "Class Lecture", "start": 9 * 60, "end": 11 * 60}
 
 
 func is_attended(index: int) -> bool:
@@ -57,7 +80,9 @@ func is_attended(index: int) -> bool:
 
 func mark_attended(index: int) -> void:
 	_attended[_key(index)] = true
-	lecture_attended.emit(String(LECTURES[index]["name"]))
+	var lecs: Array = get_lectures()
+	if index >= 0 and index < lecs.size():
+		lecture_attended.emit(String(lecs[index]["name"]))
 
 
 func is_fellowship_time() -> bool:
@@ -69,8 +94,9 @@ func is_fellowship_time() -> bool:
 func get_next_event_text() -> String:
 	var m: int = TimeSystem.minute_of_day
 	if not TimeSystem.is_weekend():
-		for i: int in LECTURES.size():
-			var lec: Dictionary = LECTURES[i]
+		var lecs: Array = get_lectures()
+		for i: int in lecs.size():
+			var lec: Dictionary = lecs[i]
 			var start: int = int(lec["start"])
 			var end: int = int(lec["end"])
 			if m >= start and m < end:
