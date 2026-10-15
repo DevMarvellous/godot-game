@@ -22,6 +22,7 @@ const SnookerScene = preload("res://scenes/snooker_mini_game.tscn")
 const GigsScene = preload("res://scenes/campus_gigs_menu.tscn")
 const ShuttleDialogScene = preload("res://scenes/campus_shuttle_dialog.tscn")
 const LibraryStudyScene = preload("res://scenes/library_study_dialog.tscn")
+const CourseworkScene = preload("res://scenes/coursework_menu.tscn")
 var phone_menu: Control = null
 var salon_menu: Control = null
 var chat_menu: Control = null
@@ -31,6 +32,7 @@ var snooker_menu: Control = null
 var gigs_menu: Control = null
 var shuttle_dialog: Control = null
 var library_study_dialog: Control = null
+var coursework_menu: Control = null
 var remote_player_nodes: Dictionary = {}
 var active_ceiling_fans: Array[Node3D] = []
 
@@ -324,6 +326,14 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 				library_study_dialog.dialog_closed.connect(_on_menu_closed)
 		if library_study_dialog:
 			library_study_dialog.open_library_study(p)
+	elif menu_type == &"coursework":
+		if not coursework_menu and menus_layer:
+			coursework_menu = CourseworkScene.instantiate()
+			menus_layer.add_child(coursework_menu)
+			if coursework_menu.has_signal("menu_closed"):
+				coursework_menu.menu_closed.connect(_on_menu_closed)
+		if coursework_menu:
+			coursework_menu.open_coursework(p)
 
 
 func _on_npc_dialogue_requested(npc: NPC3D, p: CharacterBody3D) -> void:

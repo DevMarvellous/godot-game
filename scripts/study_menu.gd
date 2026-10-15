@@ -33,6 +33,15 @@ signal menu_closed
 		"cash_reward": 3500
 	},
 	{
+		"name": "📝 Work on Semester Term Project",
+		"desc": "Advance department coursework, research & report binding (+35% Project, +0.20 CGPA).",
+		"time_minutes": 45,
+		"energy_cost": 15.0,
+		"cgpa_gain": 0.20,
+		"cash_reward": 0,
+		"action": "project"
+	},
+	{
 		"name": "📖 Buy Course Handout from Rep",
 		"desc": "Official ₦3,500 course handout. Unlocks CA test clearance.",
 		"time_minutes": 15,
@@ -223,6 +232,17 @@ func _on_study_selected(opt: Dictionary) -> void:
 		if SoundManager:
 			SoundManager.play_coin()
 	TimeSystem.advance_minutes(minutes)
+
+	if opt.get("action") == "project":
+		const Coursework = preload("res://scripts/data/student_coursework.gd")
+		var cw_res: Dictionary = Coursework.work_on_milestone(35.0)
+		if cw_res.get("just_finished", false):
+			if current_player.has_method("play_celebrate_animation"):
+				current_player.play_celebrate_animation("🎓 PROJECT SUBMITTED! +30 MARKS!")
+		elif current_player.has_method("play_study_animation"):
+			current_player.play_study_animation()
+	elif current_player.has_method("play_study_animation"):
+		current_player.play_study_animation()
 
 	if current_player.has_method("display_notification"):
 		if cash_reward > 0:
