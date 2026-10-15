@@ -33,6 +33,11 @@ static var spawn_badge: String = "🎒"
 static var owned_upgrades: Array[String] = []
 static var merit_scholarship_claimed: bool = false
 
+# Endless Sandbox Progression & Degree Status
+static var current_level: int = 100 # 100, 200, 300, 400, 500 (Postgrad/Alumnus)
+static var current_semester: int = 1 # 1 or 2
+static var degree_awarded: String = "" # e.g. "B.Sc Computer Science (First Class Honours)"
+
 const SAVE_PATH: String = "user://student_profile.json"
 
 static func apply_admission(
@@ -155,7 +160,10 @@ static func get_profile_data() -> Dictionary:
 		"spawn_tagline": spawn_tagline,
 		"spawn_badge": spawn_badge,
 		"owned_upgrades": owned_upgrades,
-		"merit_scholarship_claimed": merit_scholarship_claimed
+		"merit_scholarship_claimed": merit_scholarship_claimed,
+		"current_level": current_level,
+		"current_semester": current_semester,
+		"degree_awarded": degree_awarded
 	}
 
 
@@ -207,5 +215,9 @@ static func load_from_disk() -> bool:
 		for up in raw_upgrades:
 			owned_upgrades.append(String(up))
 	merit_scholarship_claimed = bool(d.get("merit_scholarship_claimed", false))
+
+	current_level = int(d.get("current_level", 100))
+	current_semester = int(d.get("current_semester", 1))
+	degree_awarded = String(d.get("degree_awarded", ""))
 	return true
 

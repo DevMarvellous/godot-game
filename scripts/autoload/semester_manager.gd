@@ -101,16 +101,60 @@ func _evaluate_semester_outcome(summary: Dictionary) -> void:
 		title = "THIRD CLASS COMPLETION"
 		description = "You scraped through by the whiskers. Time to buckle down!"
 
+	const ProfileStore = preload("res://scripts/data/student_profile.gd")
+	ProfileStore.load_from_disk()
+	var sem_name: String = "Semester %d" % ProfileStore.current_semester
+	var lvl_name: String = "%d Level" % ProfileStore.current_level
+	if ProfileStore.current_level >= 500:
+		lvl_name = "Postgraduate / Alumnus"
+
 	var result: Dictionary = {
 		"status": status,
-		"title": title,
+		"title": "%s - %s %s" % [title, lvl_name, sem_name],
 		"description": description,
 		"cgpa": cgpa,
 		"faith": faith,
-		"money": money
+		"money": money,
+		"level": ProfileStore.current_level,
+		"semester": ProfileStore.current_semester
 	}
 
 	semester_finished.emit(result)
+
+
+## Advances the endless academic progression (Sem 1 -> Sem 2 -> Promotion -> Convocation -> Postgrad Sandbox)
+func advance_academic_period() -> Dictionary:
+	const ProfileStore = preload("res://scripts/data/student_profile.gd")
+	ProfileStore.load_from_disk()
+
+	var notice: String = ""
+
+	if ProfileStore.current_semester == 1:
+		ProfileStore.current_semester = 2
+		notice = "Advanced to Semester 2! Prepare for final continuous assessments and examinations!"
+	else:
+		ProfileStore.current_semester = 1
+		if ProfileStore.current_level < 400:
+			ProfileStore.current_level += 100
+			notice = "🎉 PROMOTED! You are now a %d Level student!" % ProfileStore.current_level
+		elif ProfileStore.current_level == 400:
+			ProfileStore.current_level = 500 # Postgraduate / Master's / Campus Alumnus Sandbox
+			var needs: NeedsManager = _get_player_needs()
+			var final_cgpa: float = needs.cgpa if needs else 3.50
+			var grade_title: String = get_grade_classification(final_cgpa)
+			ProfileStore.degree_awarded = "%s (%s)" % [ProfileStore.admitted_course_title, grade_title]
+			notice = "🎓 CONVOCATION CONQUERED! Awarded %s! Unlocked Endless Postgraduate & Business Career Sandbox!" % ProfileStore.degree_awarded
+		else:
+			notice = "Continuing advanced campus research & student business ventures as an honored alumnus!"
+
+	ProfileStore.save_to_disk()
+	TimeSystem.day = 1 # Reset days for the new semester
+	return {
+		"level": ProfileStore.current_level,
+		"semester": ProfileStore.current_semester,
+		"notice": notice,
+		"degree": ProfileStore.degree_awarded
+	}
 
 
 func get_grade_classification(cgpa: float) -> String:

@@ -103,13 +103,17 @@ func show_semester_results(result: Dictionary) -> void:
 		comment_label.text = desc
 
 	if action_button:
-		action_button.text = "Restart Semester"
+		action_button.text = "Advance to Next Academic Period ➔"
 
 
 func _on_action_pressed() -> void:
 	if is_final:
-		# Restart current scene cleanly
-		get_tree().reload_current_scene()
+		var adv_res: Dictionary = SemesterManager.advance_academic_period()
+		var player: Node = get_tree().current_scene.get_node_or_null("Player3D") if get_tree().current_scene else null
+		if player and player.has_method("play_celebrate_animation"):
+			player.play_celebrate_animation(adv_res.get("notice", "Next Academic Level!"))
+		visible = false
+		summary_closed.emit()
 	else:
 		visible = false
 		summary_closed.emit()
