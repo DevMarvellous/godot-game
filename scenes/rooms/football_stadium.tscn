@@ -154,7 +154,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_ball")
 
 [node name="FootballTrainingPoint" parent="WorldObjects" instance=ExtResource("4_obj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.0)
-object_type = 5
+object_type = 13
 object_name = "Match Training & Penalty Shootout"
 
 [node name="NPCs" type="Node3D" parent="."]

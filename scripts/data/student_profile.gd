@@ -29,6 +29,10 @@ static var spawn_phone_model: String = "Tecno Spark 10"
 static var spawn_tagline: String = "Standard fresher budget. Balance Mama Put meals with lecture CA tests."
 static var spawn_badge: String = "🎒"
 
+# Persistent Hostel Room Upgrades & Achievements
+static var owned_upgrades: Array[String] = []
+static var merit_scholarship_claimed: bool = false
+
 const SAVE_PATH: String = "user://student_profile.json"
 
 static func apply_admission(
@@ -149,7 +153,9 @@ static func get_profile_data() -> Dictionary:
 		"spawn_allowance": spawn_allowance,
 		"spawn_phone_model": spawn_phone_model,
 		"spawn_tagline": spawn_tagline,
-		"spawn_badge": spawn_badge
+		"spawn_badge": spawn_badge,
+		"owned_upgrades": owned_upgrades,
+		"merit_scholarship_claimed": merit_scholarship_claimed
 	}
 
 
@@ -194,5 +200,12 @@ static func load_from_disk() -> bool:
 	spawn_phone_model = String(d.get("spawn_phone_model", "Tecno Spark 10"))
 	spawn_tagline = String(d.get("spawn_tagline", "Standard fresher budget. Balance Mama Put meals with lecture CA tests."))
 	spawn_badge = String(d.get("spawn_badge", "🎒"))
+
+	owned_upgrades.clear()
+	var raw_upgrades = d.get("owned_upgrades", [])
+	if raw_upgrades is Array:
+		for up in raw_upgrades:
+			owned_upgrades.append(String(up))
+	merit_scholarship_claimed = bool(d.get("merit_scholarship_claimed", false))
 	return true
 

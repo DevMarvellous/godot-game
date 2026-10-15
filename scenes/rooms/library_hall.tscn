@@ -166,6 +166,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
 object_type = 1
 object_name = "Quiet Study Carrel"
 
+[node name="PastQuestionsCarrel" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, -2.5)
+object_type = 11
+object_name = "E-Library Past Questions Carrel"
+
 [node name="NPCs" type="Node3D" parent="."]
 
 [node name="MrsJanet" parent="NPCs" instance=ExtResource("8_npc")]

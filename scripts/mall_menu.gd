@@ -41,6 +41,7 @@ func _ready() -> void:
 		category_tab.add_item("👗 Outfits & Native Wear")
 		category_tab.add_item("💈 Hairstyles & Caps")
 		category_tab.add_item("📦 Gadgets & Provisions")
+		category_tab.add_item("🛋️ Room Upgrades & Furniture")
 		category_tab.item_selected.connect(_on_category_changed)
 
 	_refresh_banter()
@@ -119,10 +120,23 @@ func _populate_items() -> void:
 		2:
 			# Gadgets & Provisions
 			for item in MallData.ITEMS:
+				if item.get("category", "") == "upgrade":
+					continue
 				var price: int = int(item.get("price", 0))
-				var item_id: String = String(item.get("id", ""))
 				_create_item_card(item["name"], price, item.get("description", ""), item.get("icon", "📦"), false, func():
 					_buy_gadget(item)
+				)
+
+		3:
+			# Room Upgrades & Furniture
+			for item in MallData.ITEMS:
+				if item.get("category", "") != "upgrade":
+					continue
+				var price: int = int(item.get("price", 0))
+				var item_id: String = String(item.get("id", ""))
+				var is_installed: bool = ProfileStore.owned_upgrades.has(item_id)
+				_create_item_card(item["name"], price, item.get("description", ""), item.get("icon", "🛋️"), is_installed, func():
+					_buy_room_upgrade(item)
 				)
 
 
@@ -290,6 +304,34 @@ func _buy_gadget(item: Dictionary) -> void:
 
 	SoundManager.play_coin()
 	_notify_player("Purchased %s! %s" % [item["name"], item.get("description", "")])
+
+
+func _buy_room_upgrade(item: Dictionary) -> void:
+	if not current_player:
+		return
+	var needs: NeedsManager = current_player.get_node_or_null("NeedsManager") as NeedsManager
+	if not needs:
+		return
+
+	var item_id: String = String(item.get("id", ""))
+	if ProfileStore.owned_upgrades.has(item_id):
+		_notify_player("Already installed in your hostel room!")
+		return
+
+	var price: int = int(item.get("price", 0))
+	if needs.money < price:
+		_show_sapa_notice(price - needs.money)
+		return
+
+	needs.modify_money(-price)
+	_update_wallet_display()
+
+	ProfileStore.owned_upgrades.append(item_id)
+	ProfileStore.save_to_disk()
+
+	SoundManager.play_coin()
+	_notify_player("Purchased %s! Delivered straight to your hostel room!" % item["name"])
+	_populate_items()
 
 
 func _show_sapa_notice(needed_amount: int) -> void:

@@ -246,6 +246,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.0)
 object_type = 2
 object_name = "Campus Canteen Food Counter"
 
+[node name="DiningSpot1" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, 0)
+object_type = 10
+object_name = "Dining Spot (Eat & Gist)"
+
+[node name="DiningSpot2" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 0)
+object_type = 10
+object_name = "Dining Spot (Eat & Gist)"
+
 [node name="NPCs" type="Node3D" parent="."]
 
 [node name="MamaCashout" parent="NPCs" instance=ExtResource("8_npc")]

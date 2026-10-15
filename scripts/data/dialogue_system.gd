@@ -192,7 +192,7 @@ const DIALOGUE_TREES: Dictionary = {
 			},
 			{
 				"text": "Just greeting the President with maximum respect!",
-				"response": "A luta continua! Keep your head high and defend student rights!",
+				"response": "Thank you! Keep your head high, stay focused on your studies, and support your coursemates!",
 				"cgpa_boost": 0.01,
 				"faith_boost": 5.0,
 				"money_change": 0

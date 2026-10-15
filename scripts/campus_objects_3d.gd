@@ -6,7 +6,25 @@ extends Interactable3D
 
 signal menu_requested(menu_type: StringName, player: CharacterBody3D)
 
-enum ObjectType { BED, DESK, CAFETERIA, FELLOWSHIP, ATM, HUSTLE_DESK, SALON_CHAIR, WARDROBE, MALL_BOUTIQUE, SHUTTLE_STOP }
+enum ObjectType {
+	BED,
+	DESK,
+	CAFETERIA,
+	FELLOWSHIP,
+	ATM,
+	HUSTLE_DESK,
+	SALON_CHAIR,
+	WARDROBE,
+	MALL_BOUTIQUE,
+	SHUTTLE_STOP,
+	DINING_TABLE,
+	LIBRARY_CARREL,
+	CHAPEL_WORSHIP,
+	STADIUM_SPORTS,
+	GARDEN_GAZEBO,
+	SENATE_REGISTRY,
+	SUB_ARCADE
+}
 
 @export var object_type: ObjectType = ObjectType.BED
 
@@ -28,7 +46,7 @@ func _on_minute_passed() -> void:
 			prompt_message = "[E] CLASS NOW: %s" % String(lec["name"])
 		else:
 			prompt_message = "[E] Study & Lecture Options"
-	elif object_type == ObjectType.FELLOWSHIP:
+	elif object_type == ObjectType.FELLOWSHIP or object_type == ObjectType.CHAPEL_WORSHIP:
 		if Schedule.is_fellowship_time():
 			prompt_message = "[E] Join Fellowship (+40 Faith, 30m)"
 		else:
@@ -67,6 +85,27 @@ func update_object_display() -> void:
 		ObjectType.SHUTTLE_STOP:
 			prompt_message = "[E] Board Campus Keke / Shuttle (₦100)"
 			object_name = "Campus Keke & Shuttle Park"
+		ObjectType.DINING_TABLE:
+			prompt_message = "[E] Sit & Eat Canteen Meal / Eavesdrop on Gist"
+			object_name = "Canteen Dining Spot"
+		ObjectType.LIBRARY_CARREL:
+			prompt_message = "[E] Quiet Past Questions & Deep Study (+0.12 CGPA)"
+			object_name = "Library Study Carrel"
+		ObjectType.CHAPEL_WORSHIP:
+			prompt_message = "[E] Praise, Piano & Prayer (+35 Faith, Peace of Mind)"
+			object_name = "Chapel Prayer Bench"
+		ObjectType.STADIUM_SPORTS:
+			prompt_message = "[E] Football Penalty Shootout & Drills"
+			object_name = "Penalty Shootout Spot"
+		ObjectType.GARDEN_GAZEBO:
+			prompt_message = "[E] Relax Under Acacia Shade (+25 Energy, +20 Faith)"
+			object_name = "Love Garden Relaxation Bench"
+		ObjectType.SENATE_REGISTRY:
+			prompt_message = "[E] Senate Academic Clearance & Scholarship Audit"
+			object_name = "Senate Academic Affairs Desk"
+		ObjectType.SUB_ARCADE:
+			prompt_message = "[E] Play Campus Snooker & Arcade Games (₦200)"
+			object_name = "Student Union Arcade & Games Table"
 
 	if label_3d:
 		label_3d.text = object_name
@@ -80,10 +119,16 @@ func interact(player: CharacterBody3D) -> void:
 
 	match object_type:
 		ObjectType.BED:
+			const ProfileStore = preload("res://scripts/data/student_profile.gd")
+			ProfileStore.load_from_disk()
 			TimeSystem.sleep_until(7)
 			needs.energy = needs.max_energy
 			needs.stat_changed.emit(&"energy", needs.energy, needs.max_energy)
-			_show_feedback(player, "Slept well until 07:00! Full Energy restored.")
+			if ProfileStore.owned_upgrades.has("hostel_fan"):
+				needs.modify_faith(15.0)
+				_show_feedback(player, "Slept with your rechargeable fan on! Deep, cool sleep. Energy 100%, Faith +15!")
+			else:
+				_show_feedback(player, "Slept until 07:00! Full Energy restored.")
 
 		ObjectType.DESK:
 			menu_requested.emit(&"study", player)
@@ -108,11 +153,16 @@ func interact(player: CharacterBody3D) -> void:
 			_show_feedback(player, "Allowance received! +₦2,000")
 
 		ObjectType.HUSTLE_DESK:
+			const ProfileStore = preload("res://scripts/data/student_profile.gd")
+			ProfileStore.load_from_disk()
 			if needs.energy >= 18.0:
 				needs.modify_energy(-18.0)
-				needs.modify_money(2500)
+				var payout: int = 2500
+				if ProfileStore.owned_upgrades.has("mac_desk"):
+					payout = 3500
+				needs.modify_money(payout)
 				TimeSystem.advance_minutes(45)
-				_show_feedback(player, "Completed student typing hustle! +₦2,500, Energy -18%")
+				_show_feedback(player, "Completed student typing & design hustle! +₦%s, Energy -18%%" % payout)
 			else:
 				_show_feedback(player, "Too exhausted to work! Rest on your bed first.")
 
@@ -124,6 +174,74 @@ func interact(player: CharacterBody3D) -> void:
 			menu_requested.emit(&"mall", player)
 		ObjectType.SHUTTLE_STOP:
 			menu_requested.emit(&"shuttle", player)
+
+		ObjectType.DINING_TABLE:
+			if needs.modify_money(-300):
+				needs.modify_hunger(35.0)
+				needs.modify_energy(20.0)
+				TimeSystem.advance_minutes(25)
+				const GISTS: Array[String] = [
+					"Overheard at table: 'The past questions in the library carrel have the exact questions from last semester!'",
+					"Coursemate banter: 'Mama Cashout jollof rice is the only reason I survived 8 AM calculus!'",
+					"Campus gist: 'The Student Union President Comrade Ojo is submitting an electricity petition today!'",
+					"Exam whisper: 'The lecturer announced the test will cover chapters 1 to 4 this week!'"
+				]
+				var gist_msg: String = GISTS[randi() % GISTS.size()]
+				_show_feedback(player, "Ate canteen meal & zobo (-₦300)! %s" % gist_msg)
+			else:
+				needs.modify_energy(10.0)
+				TimeSystem.advance_minutes(15)
+				_show_feedback(player, "Rested at dining table! Overheard: 'Study hard, semester exams start soon!'")
+
+		ObjectType.LIBRARY_CARREL:
+			if needs.energy >= 15.0:
+				needs.modify_energy(-15.0)
+				needs.modify_cgpa(0.12)
+				TimeSystem.advance_minutes(45)
+				_show_feedback(player, "Studied past questions in complete silence! CGPA +0.12, Energy -15%")
+			else:
+				_show_feedback(player, "Too exhausted to concentrate! Rest on your hostel bed first.")
+
+		ObjectType.CHAPEL_WORSHIP:
+			needs.modify_faith(35.0)
+			needs.modify_energy(15.0)
+			TimeSystem.advance_minutes(20)
+			_show_feedback(player, "Deep worship and prayer! Peace of Mind granted. Faith +35, Energy +15!")
+
+		ObjectType.STADIUM_SPORTS:
+			TimeSystem.advance_minutes(25)
+			if randi() % 100 < 70:
+				needs.modify_money(1000)
+				needs.modify_energy(15.0)
+				_show_feedback(player, "GOAL! Curled into top corner! Coach awards you ₦1,000 & Athletic Fame!")
+			else:
+				needs.modify_energy(10.0)
+				_show_feedback(player, "Good penalty strike! Sweated out all the exam fatigue. Energy +10!")
+
+		ObjectType.GARDEN_GAZEBO:
+			needs.modify_energy(25.0)
+			needs.modify_faith(20.0)
+			TimeSystem.advance_minutes(20)
+			_show_feedback(player, "Relaxed under the cool park shade with gentle breeze. Stress 0%!")
+
+		ObjectType.SENATE_REGISTRY:
+			const ProfileStore = preload("res://scripts/data/student_profile.gd")
+			ProfileStore.load_from_disk()
+			if needs.cgpa >= 4.50 and not ProfileStore.merit_scholarship_claimed:
+				ProfileStore.merit_scholarship_claimed = true
+				ProfileStore.save_to_disk()
+				needs.modify_money(25000)
+				_show_feedback(player, "🎉 FIRST CLASS MERIT! University Senate awards you ₦25,000 Scholarship Allowance!")
+			else:
+				_show_feedback(player, "Senate Registry: Student %s (%s) verified. CGPA: %.2f / 5.00." % [ProfileStore.student_name, ProfileStore.matric_no, needs.cgpa])
+
+		ObjectType.SUB_ARCADE:
+			if needs.modify_money(-200):
+				needs.modify_energy(15.0)
+				TimeSystem.advance_minutes(20)
+				_show_feedback(player, "Potted the 8-ball in corner pocket! Campus arcade high score! Fun +30!")
+			else:
+				_show_feedback(player, "Need ₦200 to insert token into the arcade machine!")
 
 
 func _show_feedback(player: CharacterBody3D, msg: String) -> void:

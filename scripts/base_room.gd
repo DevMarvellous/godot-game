@@ -155,6 +155,49 @@ func _configure_dynamic_hostel_room() -> void:
 			roommate_npc.shirt_color = Color(0.9, 0.45, 0.15, 1) # Orange
 		roommate_npc.apply_character_data()
 
+	# Dynamic Room Upgrades Visual Spawning
+	var decor: Node3D = get_node_or_null("RoomDecor") as Node3D
+	if decor:
+		if ProfileStore.owned_upgrades.has("mini_fridge") and not decor.has_node("MiniFridgeMesh"):
+			var fridge = MeshInstance3D.new()
+			fridge.name = "MiniFridgeMesh"
+			var box = BoxMesh.new()
+			box.size = Vector3(0.65, 0.85, 0.6)
+			fridge.mesh = box
+			var mat = StandardMaterial3D.new()
+			mat.albedo_color = Color(0.88, 0.90, 0.92, 1)
+			mat.metallic = 0.3
+			fridge.material_override = mat
+			fridge.position = Vector3(-3.2, 0.42, -5.0)
+			decor.add_child(fridge)
+
+		if ProfileStore.owned_upgrades.has("sound_speaker") and not decor.has_node("SoundSpeakerMesh"):
+			var speaker = MeshInstance3D.new()
+			speaker.name = "SoundSpeakerMesh"
+			var s_box = BoxMesh.new()
+			s_box.size = Vector3(0.35, 0.18, 0.18)
+			speaker.mesh = s_box
+			var s_mat = StandardMaterial3D.new()
+			s_mat.albedo_color = Color(0.12, 0.12, 0.15, 1)
+			speaker.material_override = s_mat
+			speaker.position = Vector3(5.1, 0.88, -4.8)
+			decor.add_child(speaker)
+
+		if ProfileStore.owned_upgrades.has("study_lamp"):
+			var lamp_light = decor.get_node_or_null("DeskLampLight") as OmniLight3D
+			if lamp_light:
+				lamp_light.light_energy = 2.4
+				lamp_light.omni_range = 5.5
+
+		if ProfileStore.owned_upgrades.has("mac_desk"):
+			var laptop_mesh = decor.get_node_or_null("Laptop") as MeshInstance3D
+			if laptop_mesh:
+				var lap_mat = StandardMaterial3D.new()
+				lap_mat.albedo_color = Color(0.85, 0.88, 0.92, 1)
+				lap_mat.metallic = 0.8
+				lap_mat.roughness = 0.2
+				laptop_mesh.material_override = lap_mat
+
 
 func _connect_interactive_fixtures() -> void:
 	# Scan for any interactive fixtures in the room and connect them

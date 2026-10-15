@@ -194,6 +194,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
 object_type = 3
 object_name = "Chapel Fellowship Altar"
 
+[node name="PrayerPewSpot" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 0, -2.0)
+object_type = 12
+object_name = "Prayer & Peace of Mind Pew"
+
 [node name="NPCs" type="Node3D" parent="."]
 
 [node name="SisterBlessing" parent="NPCs" instance=ExtResource("5_npc")]

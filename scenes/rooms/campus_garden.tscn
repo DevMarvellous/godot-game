@@ -164,7 +164,7 @@ modulate = Color(0.85, 1, 0.7, 1)
 
 [node name="ParkBench" parent="WorldObjects" instance=ExtResource("4_obj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
-object_type = 3
+object_type = 14
 object_name = "Park Relaxation Bench (+Energy, +Mood)"
 
 [node name="NPCs" type="Node3D" parent="."]

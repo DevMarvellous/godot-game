@@ -61,6 +61,46 @@ const ITEMS: Array[Dictionary] = [
 		"category": "fashion",
 		"icon": "👟",
 		"description": "Fresh white kicks that match both denim jeans and sweatpants."
+	},
+	{
+		"id": "hostel_fan",
+		"name": "QASA 18-Inch Rechargeable Standing Fan",
+		"price": 8500,
+		"category": "upgrade",
+		"icon": "🌀",
+		"description": "Cools your hostel room during heat waves. Restores +25% extra energy while sleeping!"
+	},
+	{
+		"id": "mini_fridge",
+		"name": "Hostel Mini-Fridge & Cold Beverage Chiller",
+		"price": 18000,
+		"category": "upgrade",
+		"icon": "🧊",
+		"description": "Keeps your zobo and canned drinks chilled, preserving food freshness indefinitely."
+	},
+	{
+		"id": "study_lamp",
+		"name": "Solar LED Rechargeable Study Lamp",
+		"price": 3500,
+		"category": "upgrade",
+		"icon": "💡",
+		"description": "Enables quiet desk cramming and revision even when campus electricity is cut off."
+	},
+	{
+		"id": "mac_desk",
+		"name": "Executive Coding Desk & Ergonomic Chair",
+		"price": 12500,
+		"category": "upgrade",
+		"icon": "🖥️",
+		"description": "Upgraded workstation that increases all hostel freelance typing and coding earnings by +35%."
+	},
+	{
+		"id": "sound_speaker",
+		"name": "Bluetooth Boombox Wireless Speaker",
+		"price": 6000,
+		"category": "upgrade",
+		"icon": "📻",
+		"description": "Plays soothing hostel music tunes to clear exam stress and boost student happiness."
 	}
 ]
 

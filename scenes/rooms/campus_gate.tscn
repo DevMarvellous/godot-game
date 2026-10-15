@@ -219,6 +219,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, -2.5)
 object_type = 9
 object_name = "Keke & Shuttle Bus Station (Board for ₦100)"
 
+[node name="MamaBoliSnack" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.0, 0, -5.5)
+object_type = 10
+object_name = "Mama Boli & Roasted Groundnuts (₦200)"
+
 [node name="NPCs" type="Node3D" parent="."]
 
 [node name="DriverRasheed" parent="NPCs" instance=ExtResource("5_npc")]
