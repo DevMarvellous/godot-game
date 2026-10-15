@@ -240,20 +240,20 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(68, 76)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "🟢
-WhatsApp"
+text = "💬
+CampusChat"
 
 [node name="BankAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(68, 76)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "🏦
-OPay"
+text = "💳
+CampusPay"
 
 [node name="HustleAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true

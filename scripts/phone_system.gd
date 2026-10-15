@@ -198,19 +198,19 @@ func _open_app(app_id: String) -> void:
 			action_btn.visible = false
 
 		"chat":
-			app_title.text = "💬 CAMPUS WHATSAPP & GIST HUB"
+			app_title.text = "💬 CAMPUSCHAT (CLASS & HOSTEL GROUPS)"
 			_render_whatsapp_gist()
 			action_btn.visible = true
 			action_btn.text = "Send Message to Department Group 💬"
 
 		"bank":
-			app_title.text = "🏦 OPAY / CAMPUS WALLET"
+			app_title.text = "💳 CAMPUSPAY (MOBILE BANK & TRANSFERS)"
 			var wallet: int = 5000
 			if current_player:
 				var needs: NeedsManager = current_player.get_node_or_null("NeedsManager") as NeedsManager
 				if needs:
 					wallet = needs.money
-			content_label.text = "ACCOUNT BALANCE: ₦%s\nACCOUNT NUMBER: 0812345678\nBANK: Campus Microfinance Bank\n\nNeed pocket money? Request Urgent 2k from family!" % _format_number(wallet)
+			content_label.text = "ACCOUNT BALANCE: ₦%s\nACCOUNT NUMBER: 0812345678\nBANK: Campus Microfinance Bank (CampusPay)\n\nNeed pocket money? Request Urgent 2k from family via CampusPay!" % _format_number(wallet)
 			action_btn.visible = true
 			action_btn.text = "Request Urgent 2k from Home"
 
