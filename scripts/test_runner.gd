@@ -187,6 +187,16 @@ func _ready() -> void:
 	exam_menu.queue_free()
 	print("  -> Comprehensive Semester Final Exam Hall & Senate Results Docket OK")
 
+	var cooking_scene = load("res://scenes/hostel_cooking_dialog.tscn")
+	var cooking_dialog = cooking_scene.instantiate()
+	add_child(cooking_dialog)
+	cooking_dialog.open_cooking(player)
+	assert(cooking_dialog.MEALS.size() >= 5, "Must have at least 5 hostel meals!")
+	cooking_dialog._on_cook_meal(cooking_dialog.MEALS[1], 150)
+	cooking_dialog.close_dialog()
+	cooking_dialog.queue_free()
+	print("  -> Hostel Room Kitchenette & Hotplate Cooking OK")
+
 	# 5. Test Key Rooms
 	print("[5/6] Verifying Room Scenes instancing & fan rotations...")
 	var rooms_to_test = [

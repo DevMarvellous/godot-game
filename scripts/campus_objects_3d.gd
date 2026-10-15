@@ -23,7 +23,9 @@ enum ObjectType {
 	STADIUM_SPORTS,
 	GARDEN_GAZEBO,
 	SENATE_REGISTRY,
-	SUB_ARCADE
+	SUB_ARCADE,
+	HOSTEL_KITCHEN,
+	HOSTEL_WATER
 }
 
 @export var object_type: ObjectType = ObjectType.BED
@@ -106,6 +108,12 @@ func update_object_display() -> void:
 		ObjectType.SUB_ARCADE:
 			prompt_message = "[E] Play Campus Snooker & Arcade Games (₦200)"
 			object_name = "Student Union Arcade & Games Table"
+		ObjectType.HOSTEL_KITCHEN:
+			prompt_message = "[E] Cook Indomie / Soak Garri / Hot Drink"
+			object_name = "Hostel Hotplate & Kitchenette"
+		ObjectType.HOSTEL_WATER:
+			prompt_message = "[E] Cold Bucket Bath & Face Wash (+30 Energy)"
+			object_name = "Hostel Water Jerrycan & Bucket"
 
 	if label_3d:
 		label_3d.text = object_name
@@ -239,6 +247,16 @@ func interact(player: CharacterBody3D) -> void:
 
 		ObjectType.SUB_ARCADE:
 			menu_requested.emit(&"snooker", player)
+
+		ObjectType.HOSTEL_KITCHEN:
+			menu_requested.emit(&"hostel_cooking", player)
+
+		ObjectType.HOSTEL_WATER:
+			needs.modify_energy(30.0)
+			TimeSystem.advance_minutes(10)
+			if player.has_method("play_dressing_animation"):
+				player.play_dressing_animation()
+			_show_feedback(player, "Took a cold bucket bath! Morning sleepiness washed away. Energy +30%!")
 
 
 func _show_feedback(player: CharacterBody3D, msg: String) -> void:

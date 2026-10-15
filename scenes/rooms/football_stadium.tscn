@@ -157,6 +157,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.0)
 object_type = 13
 object_name = "Match Training & Penalty Shootout"
 
+[node name="AthleticRunningTrack" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.0, 0, 0.0)
+object_type = 13
+object_name = "Stadium 400m Running Track (Stamina Training)"
+
 [node name="NPCs" type="Node3D" parent="."]
 
 [node name="CoachBalogun" parent="NPCs" instance=ExtResource("5_npc")]

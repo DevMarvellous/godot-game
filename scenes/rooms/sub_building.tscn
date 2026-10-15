@@ -195,6 +195,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.0)
 object_type = 16
 object_name = "Student Union Snooker & Games Table"
 
+[node name="ProvisionsKiosk" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, 0.0)
+object_type = 8
+object_name = "Mama Nkechi Provisions & Snack Kiosk"
+
 [node name="NPCs" type="Node3D" parent="."]
 
 [node name="BrotherChinedu" parent="NPCs" instance=ExtResource("5_npc")]

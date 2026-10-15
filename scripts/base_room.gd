@@ -26,6 +26,7 @@ const CourseworkScene = preload("res://scenes/coursework_menu.tscn")
 const LectureSessionScene = preload("res://scenes/lecture_session_dialog.tscn")
 const LectureDeskScene = preload("res://scenes/lecture_desk_menu.tscn")
 const ExamHallScene = preload("res://scenes/exam_hall_menu.tscn")
+const HostelCookingScene = preload("res://scenes/hostel_cooking_dialog.tscn")
 var phone_menu: Control = null
 var salon_menu: Control = null
 var chat_menu: Control = null
@@ -39,6 +40,7 @@ var coursework_menu: Control = null
 var lecture_session_dialog: Control = null
 var lecture_desk_menu: Control = null
 var exam_hall_menu: Control = null
+var hostel_cooking_dialog: Control = null
 var remote_player_nodes: Dictionary = {}
 var active_ceiling_fans: Array[Node3D] = []
 
@@ -338,6 +340,14 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 				coursework_menu.menu_closed.connect(_on_menu_closed)
 		if coursework_menu:
 			coursework_menu.open_coursework(p)
+	elif menu_type == &"hostel_cooking":
+		if not hostel_cooking_dialog and menus_layer:
+			hostel_cooking_dialog = HostelCookingScene.instantiate()
+			menus_layer.add_child(hostel_cooking_dialog)
+			if hostel_cooking_dialog.has_signal("dialog_closed"):
+				hostel_cooking_dialog.dialog_closed.connect(_on_menu_closed)
+		if hostel_cooking_dialog:
+			hostel_cooking_dialog.open_cooking(p)
 
 
 func _on_live_lecture_requested(p: CharacterBody3D) -> void:
