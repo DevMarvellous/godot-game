@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://examhallmenu01"]
+[gd_scene format=3 uid="uid://svr3awa8dyxo"]
 
 [ext_resource type="Script" path="res://scripts/exam_hall_menu.gd" id="1_script"]
 
