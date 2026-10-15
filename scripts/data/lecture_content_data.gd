@@ -131,3 +131,4 @@ static func get_lecture_for_department(dept_code: String) -> Dictionary:
 	elif dept_code in ["BAA", "ECN", "BFN", "MCX"]:
 		return DEFAULT_COURSES["ACC"]
 	return DEFAULT_COURSES["GST"]
+

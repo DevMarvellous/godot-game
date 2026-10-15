@@ -397,3 +397,4 @@ func _unhandled_input(event: InputEvent) -> void:
 				_on_action_pressed()
 			elif finish_btn and report_panel and report_panel.visible:
 				_on_finish_pressed()
+

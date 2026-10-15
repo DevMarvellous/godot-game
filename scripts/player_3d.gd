@@ -539,4 +539,3 @@ func play_pray_animation() -> void:
 	if left_arm and right_arm:
 		pray_tween.parallel().tween_property(left_arm, "rotation:z", 0.0, 0.25)
 		pray_tween.parallel().tween_property(right_arm, "rotation:z", 0.0, 0.25)
-
