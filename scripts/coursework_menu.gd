@@ -44,6 +44,10 @@ func close_menu() -> void:
 	menu_closed.emit()
 
 
+func close_coursework() -> void:
+	close_menu()
+
+
 func _refresh_ui() -> void:
 	Coursework.load_from_disk()
 

@@ -6,6 +6,7 @@ extends Control
 
 signal study_completed(activity_name: String, cgpa_gain: float, energy_cost: float)
 signal menu_closed
+signal live_lecture_requested(player: CharacterBody3D)
 
 @export var study_options: Array[Dictionary] = [
 	{
@@ -189,6 +190,12 @@ func _create_study_card(opt: Dictionary, player_energy: float) -> PanelContainer
 func _on_attend_lecture_pressed() -> void:
 	if not current_player:
 		return
+	if live_lecture_requested.get_connections().size() > 0:
+		var p: CharacterBody3D = current_player
+		close_menu()
+		live_lecture_requested.emit(p)
+		return
+
 	var needs: NeedsManager = current_player.get_node_or_null("NeedsManager") as NeedsManager
 	if not needs:
 		return

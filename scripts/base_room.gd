@@ -23,6 +23,9 @@ const GigsScene = preload("res://scenes/campus_gigs_menu.tscn")
 const ShuttleDialogScene = preload("res://scenes/campus_shuttle_dialog.tscn")
 const LibraryStudyScene = preload("res://scenes/library_study_dialog.tscn")
 const CourseworkScene = preload("res://scenes/coursework_menu.tscn")
+const LectureSessionScene = preload("res://scenes/lecture_session_dialog.tscn")
+const LectureDeskScene = preload("res://scenes/lecture_desk_menu.tscn")
+const ExamHallScene = preload("res://scenes/exam_hall_menu.tscn")
 var phone_menu: Control = null
 var salon_menu: Control = null
 var chat_menu: Control = null
@@ -33,6 +36,9 @@ var gigs_menu: Control = null
 var shuttle_dialog: Control = null
 var library_study_dialog: Control = null
 var coursework_menu: Control = null
+var lecture_session_dialog: Control = null
+var lecture_desk_menu: Control = null
+var exam_hall_menu: Control = null
 var remote_player_nodes: Dictionary = {}
 var active_ceiling_fans: Array[Node3D] = []
 
@@ -100,6 +106,8 @@ func _ready() -> void:
 		food_menu.menu_closed.connect(_on_menu_closed)
 	if study_menu:
 		study_menu.menu_closed.connect(_on_menu_closed)
+		if study_menu.has_signal("live_lecture_requested"):
+			study_menu.live_lecture_requested.connect(_on_live_lecture_requested)
 	if ca_test_menu:
 		ca_test_menu.test_closed.connect(_on_menu_closed)
 	if dialogue_menu:
@@ -261,26 +269,22 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 	if menu_type == &"food" and food_menu:
 		food_menu.open_menu(p)
 	elif menu_type == &"study":
-		if ca_test_menu and (room_id == &"lecture" or room_id == &"lecture2"):
-			const ProfileStore = preload("res://scripts/data/student_profile.gd")
-			const AcademicCatalog = preload("res://scripts/data/academic_catalog.gd")
-			var dept: String = ProfileStore.admitted_department
-			var dept_info: Dictionary = AcademicCatalog.get_department(dept)
-			var dept_courses: Array = dept_info.get("courses", [])
-			var course_to_test: String = "GST 101"
-
-			if room_id == &"lecture":
-				if dept_courses.size() > 0:
-					course_to_test = String(dept_courses[0].get("code", "GST 101"))
-			elif room_id == &"lecture2":
-				if dept_courses.size() > 1:
-					course_to_test = String(dept_courses[1].get("code", "GST 102"))
-				elif dept_courses.size() > 0:
-					course_to_test = String(dept_courses[0].get("code", "GST 102"))
-
-			ca_test_menu.start_test(p, course_to_test)
+		if (room_id == &"lecture" or room_id == &"lecture2"):
+			if not lecture_desk_menu and menus_layer:
+				lecture_desk_menu = LectureDeskScene.instantiate()
+				menus_layer.add_child(lecture_desk_menu)
+				if lecture_desk_menu.has_signal("menu_closed"):
+					lecture_desk_menu.menu_closed.connect(_on_menu_closed)
+				if lecture_desk_menu.has_signal("action_chosen"):
+					lecture_desk_menu.action_chosen.connect(_on_lecture_desk_action)
+			if lecture_desk_menu:
+				lecture_desk_menu.open_desk(p)
 		elif study_menu:
 			study_menu.open_menu(p)
+	elif menu_type == &"live_lecture":
+		_open_live_lecture(p)
+	elif menu_type == &"exam":
+		_open_final_exam(p)
 	elif menu_type == &"salon" and salon_menu:
 		salon_menu.open_salon(p)
 	elif menu_type == &"mall" and mall_menu:
@@ -334,6 +338,64 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 				coursework_menu.menu_closed.connect(_on_menu_closed)
 		if coursework_menu:
 			coursework_menu.open_coursework(p)
+
+
+func _on_live_lecture_requested(p: CharacterBody3D) -> void:
+	_open_live_lecture(p)
+
+
+func _on_lecture_desk_action(action: StringName) -> void:
+	if not player:
+		return
+	match action:
+		&"live_lecture":
+			_open_live_lecture(player)
+		&"coursework":
+			if not coursework_menu and menus_layer:
+				coursework_menu = CourseworkScene.instantiate()
+				menus_layer.add_child(coursework_menu)
+				if coursework_menu.has_signal("menu_closed"):
+					coursework_menu.menu_closed.connect(_on_menu_closed)
+			if coursework_menu:
+				coursework_menu.open_coursework(player)
+		&"ca_test":
+			if ca_test_menu:
+				const ProfileStore = preload("res://scripts/data/student_profile.gd")
+				const AcademicCatalog = preload("res://scripts/data/academic_catalog.gd")
+				var dept: String = ProfileStore.admitted_department
+				var dept_info: Dictionary = AcademicCatalog.get_department(dept)
+				var dept_courses: Array = dept_info.get("courses", [])
+				var course_to_test: String = "GST 101"
+				if room_id == &"lecture" and dept_courses.size() > 0:
+					course_to_test = String(dept_courses[0].get("code", "GST 101"))
+				elif room_id == &"lecture2" and dept_courses.size() > 1:
+					course_to_test = String(dept_courses[1].get("code", "GST 102"))
+				ca_test_menu.start_test(player, course_to_test)
+		&"study_options":
+			if study_menu:
+				study_menu.open_menu(player)
+		&"final_exam":
+			_open_final_exam(player)
+
+
+func _open_live_lecture(p: CharacterBody3D) -> void:
+	if not lecture_session_dialog and menus_layer:
+		lecture_session_dialog = LectureSessionScene.instantiate()
+		menus_layer.add_child(lecture_session_dialog)
+		if lecture_session_dialog.has_signal("dialog_closed"):
+			lecture_session_dialog.dialog_closed.connect(_on_menu_closed)
+	if lecture_session_dialog:
+		lecture_session_dialog.start_lecture(p)
+
+
+func _open_final_exam(p: CharacterBody3D) -> void:
+	if not exam_hall_menu and menus_layer:
+		exam_hall_menu = ExamHallScene.instantiate()
+		menus_layer.add_child(exam_hall_menu)
+		if exam_hall_menu.has_signal("menu_closed"):
+			exam_hall_menu.menu_closed.connect(_on_menu_closed)
+	if exam_hall_menu:
+		exam_hall_menu.open_exam(p)
 
 
 func _on_npc_dialogue_requested(npc: NPC3D, p: CharacterBody3D) -> void:

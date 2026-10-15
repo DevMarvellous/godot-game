@@ -234,7 +234,8 @@ func interact(player: CharacterBody3D) -> void:
 					player.play_celebrate_animation("👑 FIRST CLASS SCHOLARSHIP! +₦25,000")
 				_show_feedback(player, "🎉 FIRST CLASS MERIT! University Senate awards you ₦25,000 Scholarship Allowance!")
 			else:
-				_show_feedback(player, "Senate Registry: Student %s (%s) verified. CGPA: %.2f / 5.00." % [ProfileStore.student_name, ProfileStore.matric_no, needs.cgpa])
+				menu_requested.emit(&"exam", player)
+				_show_feedback(player, "Senate Registry: Clearance Docket loaded for %s (%s)." % [ProfileStore.student_name, ProfileStore.matric_no])
 
 		ObjectType.SUB_ARCADE:
 			menu_requested.emit(&"snooker", player)

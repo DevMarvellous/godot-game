@@ -1,0 +1,250 @@
+[gd_scene format=3 uid="uid://examhallmenu01"]
+
+[ext_resource type="Script" path="res://scripts/exam_hall_menu.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frame"]
+bg_color = Color(0.07, 0.09, 0.13, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.75, 0.60, 0.20, 0.9)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+content_margin_left = 18.0
+content_margin_top = 16.0
+content_margin_right = 18.0
+content_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_docket"]
+bg_color = Color(0.11, 0.14, 0.20, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.45, 0.65, 0.7)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_paper"]
+bg_color = Color(0.09, 0.12, 0.18, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.40, 0.55, 0.75, 0.8)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14.0
+content_margin_top = 12.0
+content_margin_right = 14.0
+content_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_results"]
+bg_color = Color(0.04, 0.14, 0.08, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.30, 0.85, 0.50, 0.9)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 16.0
+content_margin_top = 14.0
+content_margin_right = 16.0
+content_margin_bottom = 14.0
+
+[node name="ExamHallMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.8)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainPanel" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(480, 580)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_frame")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/MainPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HeaderHBox" type="HBoxContainer" parent="CenterContainer/MainPanel/VBox"]
+layout_mode = 2
+
+[node name="TitleBox" type="VBoxContainer" parent="CenterContainer/MainPanel/VBox/HeaderHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ExamHeaderLabel" type="Label" parent="CenterContainer/MainPanel/VBox/HeaderHBox/TitleBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
+theme_override_font_sizes/font_size = 15
+text = "🏛️ SEMESTER FINAL EXAMINATION (100 MARKS)"
+
+[node name="CandidateDocketLabel" type="Label" parent="CenterContainer/MainPanel/VBox/HeaderHBox/TitleBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.90, 0.95, 1)
+theme_override_font_sizes/font_size = 11
+text = "Candidate: Emeka | Matric: 24/CSC/1042"
+
+[node name="CloseBtn" type="Button" parent="CenterContainer/MainPanel/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(34, 34)
+layout_mode = 2
+text = "✕"
+
+[node name="DocketPanel" type="PanelContainer" parent="CenterContainer/MainPanel/VBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_docket")
+
+[node name="VBoxDocket" type="VBoxContainer" parent="CenterContainer/MainPanel/VBox/DocketPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="MarksGrid" type="GridContainer" parent="CenterContainer/MainPanel/VBox/DocketPanel/VBoxDocket"]
+layout_mode = 2
+theme_override_constants/h_separation = 14
+theme_override_constants/v_separation = 4
+columns = 2
+
+[node name="AttendanceScoreLabel" type="Label" parent="CenterContainer/MainPanel/VBox/DocketPanel/VBoxDocket/MarksGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.6, 1)
+theme_override_font_sizes/font_size = 12
+text = "Attendance: 18.0 / 20"
+
+[node name="CourseworkScoreLabel" type="Label" parent="CenterContainer/MainPanel/VBox/DocketPanel/VBoxDocket/MarksGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.6, 1)
+theme_override_font_sizes/font_size = 12
+text = "Coursework: 26.0 / 30"
+
+[node name="LibraryScoreLabel" type="Label" parent="CenterContainer/MainPanel/VBox/DocketPanel/VBoxDocket/MarksGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 0.6, 1)
+theme_override_font_sizes/font_size = 12
+text = "Library Revision: 17.5 / 20"
+
+[node name="ExamPaperScoreLabel" type="Label" parent="CenterContainer/MainPanel/VBox/DocketPanel/VBoxDocket/MarksGrid"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 12
+text = "Final Exam: Pending / 30"
+
+[node name="TotalPreExamLabel" type="Label" parent="CenterContainer/MainPanel/VBox/DocketPanel/VBoxDocket"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 12
+text = "Continuous Assessment (CA) Subtotal: 61.5 / 70 Marks"
+
+[node name="ExamPaperPanel" type="PanelContainer" parent="CenterContainer/MainPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_paper")
+
+[node name="VBoxPaper" type="VBoxContainer" parent="CenterContainer/MainPanel/VBox/ExamPaperPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="QuestionProgressLabel" type="Label" parent="CenterContainer/MainPanel/VBox/ExamPaperPanel/VBoxPaper"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 12
+text = "EXAM QUESTION 1 OF 3 (10 MARKS EACH)"
+
+[node name="QuestionText" type="Label" parent="CenterContainer/MainPanel/VBox/ExamPaperPanel/VBoxPaper"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
+theme_override_font_sizes/font_size = 14
+text = "Question text here..."
+autowrap_mode = 2
+
+[node name="ScholarHintLabel" type="Label" parent="CenterContainer/MainPanel/VBox/ExamPaperPanel/VBoxPaper"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.95, 0.55, 1)
+theme_override_font_sizes/font_size = 11
+text = "💡 Scholar Insight from library study"
+
+[node name="OptionsContainer" type="VBoxContainer" parent="CenterContainer/MainPanel/VBox/ExamPaperPanel/VBoxPaper"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="ExpoStealthBtn" type="Button" parent="CenterContainer/MainPanel/VBox/ExamPaperPanel/VBoxPaper"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "🤫 Sneak Expo Formula Sheet (+10 Marks, Invigilator Risk)"
+
+[node name="ResultsPanel" type="PanelContainer" parent="CenterContainer/MainPanel/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_results")
+
+[node name="VBoxResults" type="VBoxContainer" parent="CenterContainer/MainPanel/VBox/ResultsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ResultsTranscriptText" type="Label" parent="CenterContainer/MainPanel/VBox/ResultsPanel/VBoxResults"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.95, 1, 0.95, 1)
+theme_override_font_sizes/font_size = 12
+text = "Official results docket text..."
+autowrap_mode = 2
+
+[node name="AdvanceSemesterBtn" type="Button" parent="CenterContainer/MainPanel/VBox/ResultsPanel/VBoxResults"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "🎓 Progress to Next Semester / Promote Level ➔"

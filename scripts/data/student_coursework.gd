@@ -66,6 +66,26 @@ static func initialize_for_department(dept_code: String) -> void:
 		project_title = "Departmental Practical Research & Term Paper"
 	save_to_disk()
 
+static func get_current_project() -> Dictionary:
+	load_from_disk()
+	return {
+		"title": project_title,
+		"department": department,
+		"progress": progress,
+		"milestone_index": milestone_step,
+		"is_submitted": is_submitted,
+		"score_awarded": score_awarded,
+		"milestones": [
+			{"title": MILESTONES[0]},
+			{"title": MILESTONES[1]},
+			{"title": MILESTONES[2]}
+		]
+	}
+
+static func get_project_progress() -> float:
+	load_from_disk()
+	return progress
+
 static func work_on_milestone(work_amount: float = 35.0) -> Dictionary:
 	load_from_disk()
 	if is_submitted:

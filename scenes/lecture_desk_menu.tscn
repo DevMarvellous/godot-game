@@ -1,0 +1,163 @@
+[gd_scene format=3 uid="uid://lecturedeskmenu01"]
+
+[ext_resource type="Script" path="res://scripts/lecture_desk_menu.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.08, 0.10, 0.14, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.45, 0.70, 0.9)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+content_margin_left = 18.0
+content_margin_top = 16.0
+content_margin_right = 18.0
+content_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_infobox"]
+bg_color = Color(0.12, 0.16, 0.22, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.20, 0.35, 0.50, 0.8)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[node name="LectureDeskMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.7)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainPanel" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(460, 520)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/MainPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HeaderHBox" type="HBoxContainer" parent="CenterContainer/MainPanel/VBox"]
+layout_mode = 2
+
+[node name="TitleBox" type="VBoxContainer" parent="CenterContainer/MainPanel/VBox/HeaderHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DeskTitleLabel" type="Label" parent="CenterContainer/MainPanel/VBox/HeaderHBox/TitleBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.35, 1)
+theme_override_font_sizes/font_size = 18
+text = "🎓 STUDENT LECTURE DESK"
+
+[node name="StatusBadge" type="Label" parent="CenterContainer/MainPanel/VBox/HeaderHBox/TitleBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.9, 0.5, 1)
+theme_override_font_sizes/font_size = 12
+text = "Free Period • Available for Coursework & Revision"
+
+[node name="CloseBtn" type="Button" parent="CenterContainer/MainPanel/VBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+text = "✕"
+
+[node name="InfoPanel" type="PanelContainer" parent="CenterContainer/MainPanel/VBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_infobox")
+
+[node name="VBoxInfo" type="VBoxContainer" parent="CenterContainer/MainPanel/VBox/InfoPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="StudentInfoLabel" type="Label" parent="CenterContainer/MainPanel/VBox/InfoPanel/VBoxInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "Student Name • Matric No • Level • Semester"
+
+[node name="CourseworkSummaryLabel" type="Label" parent="CenterContainer/MainPanel/VBox/InfoPanel/VBoxInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.75, 0.35, 1)
+theme_override_font_sizes/font_size = 12
+text = "Practical Term Project: Progress 0%"
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/MainPanel/VBox"]
+layout_mode = 2
+
+[node name="ActionsContainer" type="VBoxContainer" parent="CenterContainer/MainPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="AttendLectureBtn" type="Button" parent="CenterContainer/MainPanel/VBox/ActionsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "🎓 Attend Live Interactive Lecture (QTEs & Notes)"
+
+[node name="CourseworkBtn" type="Button" parent="CenterContainer/MainPanel/VBox/ActionsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "📝 Work on Department Practical Term Project"
+
+[node name="CATestBtn" type="Button" parent="CenterContainer/MainPanel/VBox/ActionsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "🤫 Take Continuous Assessment (CA) Test Paper"
+
+[node name="StudyOptionsBtn" type="Button" parent="CenterContainer/MainPanel/VBox/ActionsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "📖 Revision Handouts & Group Study Options"
+
+[node name="FinalExamBtn" type="Button" parent="CenterContainer/MainPanel/VBox/ActionsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 14
+text = "🏛️ Sit for Semester Final Examination (100 Marks)"
