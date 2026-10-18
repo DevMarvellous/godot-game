@@ -163,19 +163,36 @@ func _create_food_card(item: Dictionary, player_money: int) -> PanelContainer:
 	desc_lbl.add_theme_color_override(&"font_color", Color(0.75, 0.8, 0.85))
 	vbox.add_child(desc_lbl)
 
-	# Price and Buy button
-	var btn: Button = Button.new()
+	# Button Column: Dine Here vs Takeaway Pack (+₦100)
+	var btn_vbox: VBoxContainer = VBoxContainer.new()
+	btn_vbox.add_theme_constant_override(&"separation", 6)
+	hbox.add_child(btn_vbox)
+
 	var cost: int = int(item["cost"])
-	btn.text = "Buy ₦%s" % _format_number(cost)
-	btn.custom_minimum_size = Vector2(110, 36)
+	var takeaway_cost: int = cost + 100
 
+	# 1. Dine Here button
+	var dine_btn: Button = Button.new()
+	dine_btn.text = "🍽️ Dine Here ₦%s" % _format_number(cost)
+	dine_btn.custom_minimum_size = Vector2(130, 32)
 	if player_money < cost:
-		btn.disabled = true
-		btn.text = "₦%s (No Sapa)" % _format_number(cost)
+		dine_btn.disabled = true
+		dine_btn.text = "₦%s (Can't Afford)" % _format_number(cost)
 	else:
-		btn.pressed.connect(_on_buy_pressed.bind(item))
+		dine_btn.pressed.connect(_on_buy_pressed.bind(item))
+	btn_vbox.add_child(dine_btn)
 
-	hbox.add_child(btn)
+	# 2. Takeaway Pack button
+	var takeaway_btn: Button = Button.new()
+	takeaway_btn.text = "🥡 Takeaway ₦%s" % _format_number(takeaway_cost)
+	takeaway_btn.custom_minimum_size = Vector2(130, 32)
+	if player_money < takeaway_cost:
+		takeaway_btn.disabled = true
+		takeaway_btn.text = "🥡 ₦%s (Can't Afford)" % _format_number(takeaway_cost)
+	else:
+		takeaway_btn.pressed.connect(_on_takeaway_pressed.bind(item))
+	btn_vbox.add_child(takeaway_btn)
+
 	return panel
 
 
@@ -193,15 +210,54 @@ func _on_buy_pressed(item: Dictionary) -> void:
 		needs.modify_energy(float(item["energy"]))
 		TimeSystem.advance_minutes(int(item["time_minutes"]))
 
+		if current_player.has_method("play_eating_animation"):
+			current_player.play_eating_animation()
+
 		if current_player.has_method("display_notification"):
-			current_player.display_notification("Bought %s! Paid ₦%s" % [String(item["name"]), _format_number(cost)])
+			current_player.display_notification("Dined on %s! Paid ₦%s." % [String(item["name"]), _format_number(cost)])
 
 		if SoundManager:
 			SoundManager.play_coin()
 
-		# Refresh wallet & available dishes
 		_populate_items()
 		meal_purchased.emit(String(item["name"]), cost, float(item["hunger"]), float(item["energy"]))
+
+
+func _on_takeaway_pressed(item: Dictionary) -> void:
+	if not current_player:
+		return
+
+	var needs: NeedsManager = current_player.get_node_or_null("NeedsManager") as NeedsManager
+	if not needs:
+		return
+
+	var cost: int = int(item["cost"])
+	var total_cost: int = cost + 100
+
+	if needs.modify_money(-total_cost):
+		TimeSystem.advance_minutes(5)
+
+		const ProfileStore = preload("res://scripts/data/student_profile.gd")
+		var item_id: String = "takeaway_" + String(item["name"]).to_lower().replace(" ", "_").replace("&", "and")
+		var takeaway_item: Dictionary = {
+			"id": item_id,
+			"name": "Takeaway: %s" % String(item["name"]),
+			"type": "food",
+			"hunger": float(item["hunger"]),
+			"energy": float(item["energy"]),
+			"desc": "Sealed warm takeaway food pack. Eat anywhere or store in hostel fridge.",
+			"count": 1
+		}
+		ProfileStore.add_backpack_item(takeaway_item)
+
+		if current_player.has_method("display_notification"):
+			current_player.display_notification("🥡 Packed %s (+₦100 pack)! Added to backpack." % String(item["name"]))
+
+		if SoundManager:
+			SoundManager.play_coin()
+
+		_populate_items()
+		meal_purchased.emit(String(item["name"]), total_cost, float(item["hunger"]), float(item["energy"]))
 
 
 func _format_number(n: int) -> String:

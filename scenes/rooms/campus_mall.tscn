@@ -156,6 +156,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.0)
 object_type = 8
 object_name = "Madam Kikelomo Boutique Counter"
 
+[node name="FittingRoomMirror" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, -6.0)
+object_type = 7
+object_name = "Fitting Room Mirror (Try Outfits & Styles)"
+
 [node name="NPCs" type="Node3D" parent="."]
 
 [node name="MadamKikelomo" parent="NPCs" instance=ExtResource("8_npc")]

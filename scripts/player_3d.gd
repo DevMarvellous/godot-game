@@ -45,6 +45,15 @@ var walk_anim_time: float = 0.0
 # Smooth Lagos Life style camera offset & interpolation (Elevated 3/4 Isometric)
 var cam_target_offset: Vector3 = Vector3(0, 5.0, 4.8)
 
+# Dynamic Camera Zoom (mouse wheel on desktop, toggle button on mobile)
+var cam_zoom_factor: float = 1.0
+const CAM_ZOOM_MIN: float = 0.55 # Close-up avatar view
+const CAM_ZOOM_MAX: float = 1.8  # Wide room overview
+const CAM_ZOOM_STEP: float = 0.12
+const CAM_BASE_OFFSET: Vector3 = Vector3(0, 5.0, 4.8)
+const CAM_ZOOM_PRESETS: Array[float] = [0.65, 1.0, 1.4] # Close / Medium / Wide
+var cam_zoom_preset_idx: int = 1
+
 
 func _ready() -> void:
 	if camera_node:
@@ -77,6 +86,19 @@ func set_mobile_movement(vec: Vector2) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	# Mouse wheel camera zoom (desktop)
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			cam_zoom_factor = clampf(cam_zoom_factor - CAM_ZOOM_STEP, CAM_ZOOM_MIN, CAM_ZOOM_MAX)
+			cam_target_offset = CAM_BASE_OFFSET * cam_zoom_factor
+			get_viewport().set_input_as_handled()
+			return
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			cam_zoom_factor = clampf(cam_zoom_factor + CAM_ZOOM_STEP, CAM_ZOOM_MIN, CAM_ZOOM_MAX)
+			cam_target_offset = CAM_BASE_OFFSET * cam_zoom_factor
+			get_viewport().set_input_as_handled()
+			return
+
 	# Tap / Click anywhere on ground to walk there (Lagos Life tap navigation)
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var cam: Camera3D = get_viewport().get_camera_3d()
@@ -90,6 +112,15 @@ func _unhandled_input(event: InputEvent) -> void:
 				nav_target_pos = Vector3(result.position.x, global_position.y, result.position.z)
 				has_nav_target = true
 				_show_nav_beacon(result.position)
+
+
+## Toggle camera zoom through Close / Medium / Wide presets (mobile button)
+func cycle_camera_zoom() -> String:
+	cam_zoom_preset_idx = (cam_zoom_preset_idx + 1) % CAM_ZOOM_PRESETS.size()
+	cam_zoom_factor = CAM_ZOOM_PRESETS[cam_zoom_preset_idx]
+	cam_target_offset = CAM_BASE_OFFSET * cam_zoom_factor
+	var labels: Array[String] = ["Close", "Medium", "Wide"]
+	return labels[cam_zoom_preset_idx]
 
 
 func _create_nav_beacon() -> void:

@@ -33,6 +33,19 @@ static var spawn_badge: String = "🎒"
 static var owned_upgrades: Array[String] = []
 static var merit_scholarship_claimed: bool = false
 
+# Persistent Backpack & Supplies Inventory
+static var backpack_items: Array[Dictionary] = [
+	{
+		"id": "pure_water_cabin",
+		"name": "Pure Water & Cabin Biscuit",
+		"type": "food",
+		"hunger": 18.0,
+		"energy": 10.0,
+		"desc": "Fresher emergency survival pack (Chilled water + crunchy biscuits).",
+		"count": 2
+	}
+]
+
 # Endless Sandbox Progression & Degree Status
 static var current_level: int = 100 # 100, 200, 300, 400, 500 (Postgrad/Alumnus)
 static var current_semester: int = 1 # 1 or 2
@@ -138,6 +151,63 @@ static func _calculate_placement(first_dept: String, score_pct: int) -> Dictiona
 		}
 
 
+static func add_backpack_item(item: Dictionary) -> void:
+	var item_id: String = String(item.get("id", ""))
+	for existing: Dictionary in backpack_items:
+		if String(existing.get("id", "")) == item_id:
+			existing["count"] = int(existing.get("count", 1)) + int(item.get("count", 1))
+			save_to_disk()
+			return
+	var new_entry: Dictionary = item.duplicate()
+	if not new_entry.has("count"):
+		new_entry["count"] = 1
+	backpack_items.append(new_entry)
+	save_to_disk()
+
+
+static func remove_backpack_item(item_id: String, amount: int = 1) -> bool:
+	for i in range(backpack_items.size() - 1, -1, -1):
+		if String(backpack_items[i].get("id", "")) == item_id:
+			var cnt: int = int(backpack_items[i].get("count", 1)) - amount
+			if cnt <= 0:
+				backpack_items.remove_at(i)
+			else:
+				backpack_items[i]["count"] = cnt
+			save_to_disk()
+			return true
+	return false
+
+
+static func get_backpack_items() -> Array[Dictionary]:
+	return backpack_items
+
+
+static func consume_backpack_food(player: CharacterBody3D, item_id: String) -> Dictionary:
+	for i in range(backpack_items.size() - 1, -1, -1):
+		var it: Dictionary = backpack_items[i]
+		if String(it.get("id", "")) == item_id:
+			var hunger: float = float(it.get("hunger", 30.0))
+			var energy: float = float(it.get("energy", 10.0))
+			var item_name: String = String(it.get("name", "Snack"))
+
+			if player:
+				var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
+				if needs:
+					needs.modify_hunger(hunger)
+					needs.modify_energy(energy)
+				if player.has_method("play_eating_animation"):
+					player.play_eating_animation()
+
+			var cnt: int = int(it.get("count", 1)) - 1
+			if cnt <= 0:
+				backpack_items.remove_at(i)
+			else:
+				it["count"] = cnt
+			save_to_disk()
+			return { "success": true, "name": item_name, "hunger": hunger, "energy": energy }
+	return { "success": false }
+
+
 static func get_profile_data() -> Dictionary:
 	return {
 		"student_name": student_name,
@@ -161,6 +231,7 @@ static func get_profile_data() -> Dictionary:
 		"spawn_badge": spawn_badge,
 		"owned_upgrades": owned_upgrades,
 		"merit_scholarship_claimed": merit_scholarship_claimed,
+		"backpack_items": backpack_items,
 		"current_level": current_level,
 		"current_semester": current_semester,
 		"degree_awarded": degree_awarded
@@ -216,8 +287,26 @@ static func load_from_disk() -> bool:
 			owned_upgrades.append(String(up))
 	merit_scholarship_claimed = bool(d.get("merit_scholarship_claimed", false))
 
+	backpack_items.clear()
+	var raw_items = d.get("backpack_items", [])
+	if raw_items is Array:
+		for it in raw_items:
+			if it is Dictionary:
+				backpack_items.append(it)
+	if backpack_items.is_empty():
+		backpack_items.append({
+			"id": "pure_water_cabin",
+			"name": "Pure Water & Cabin Biscuit",
+			"type": "food",
+			"hunger": 18.0,
+			"energy": 10.0,
+			"desc": "Fresher emergency survival pack (Chilled water + crunchy biscuits).",
+			"count": 2
+		})
+
 	current_level = int(d.get("current_level", 100))
 	current_semester = int(d.get("current_semester", 1))
 	degree_awarded = String(d.get("degree_awarded", ""))
 	return true
+
 

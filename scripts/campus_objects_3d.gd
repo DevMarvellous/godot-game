@@ -25,7 +25,10 @@ enum ObjectType {
 	SENATE_REGISTRY,
 	SUB_ARCADE,
 	HOSTEL_KITCHEN,
-	HOSTEL_WATER
+	HOSTEL_WATER,
+	COURSEWORK_DESK,
+	CHAPEL_PIANO,
+	GATE_SECURITY
 }
 
 @export var object_type: ObjectType = ObjectType.BED
@@ -114,6 +117,15 @@ func update_object_display() -> void:
 		ObjectType.HOSTEL_WATER:
 			prompt_message = "[E] Cold Bucket Bath & Face Wash (+30 Energy)"
 			object_name = "Hostel Water Jerrycan & Bucket"
+		ObjectType.COURSEWORK_DESK:
+			prompt_message = "[E] Department Practical Coursework Station"
+			object_name = "Department Project & Coursework Station"
+		ObjectType.CHAPEL_PIANO:
+			prompt_message = "[E] Worship Piano & Keyboard (+40 Faith, 20m)"
+			object_name = "Campus Chapel Grand Piano"
+		ObjectType.GATE_SECURITY:
+			prompt_message = "[E] Security Checkpoint (Show Student Matric ID)"
+			object_name = "Campus Security Clearance Barrier"
 
 	if label_3d:
 		label_3d.text = object_name
@@ -257,6 +269,24 @@ func interact(player: CharacterBody3D) -> void:
 			if player.has_method("play_dressing_animation"):
 				player.play_dressing_animation()
 			_show_feedback(player, "Took a cold bucket bath! Morning sleepiness washed away. Energy +30%!")
+
+		ObjectType.COURSEWORK_DESK:
+			menu_requested.emit(&"coursework", player)
+
+		ObjectType.CHAPEL_PIANO:
+			needs.modify_faith(40.0)
+			needs.modify_energy(15.0)
+			TimeSystem.advance_minutes(20)
+			if player.has_method("play_pray_animation"):
+				player.play_pray_animation()
+			_show_feedback(player, "Played uplifting hymns on the chapel piano! Faith +40, Energy +15!")
+
+		ObjectType.GATE_SECURITY:
+			const ProfileStore = preload("res://scripts/data/student_profile.gd")
+			ProfileStore.load_from_disk()
+			needs.modify_faith(20.0)
+			TimeSystem.advance_minutes(5)
+			_show_feedback(player, "Officer Balogun salutes: 'Valid Matric ID: %s (%s). Safe journey, %s!' Faith +20!" % [ProfileStore.matric_no, ProfileStore.admitted_department, ProfileStore.student_name])
 
 
 func _show_feedback(player: CharacterBody3D, msg: String) -> void:

@@ -54,6 +54,18 @@ albedo_color = Color(0.42, 0.26, 0.14, 1)
 [sub_resource type="BoxMesh" id="BoxMesh_pulpit"]
 size = Vector3(1.6, 1.1, 1.0)
 
+[sub_resource type="BoxMesh" id="BoxMesh_piano"]
+size = Vector3(1.8, 1.0, 1.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_piano"]
+albedo_color = Color(0.1, 0.1, 0.12, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_keys"]
+size = Vector3(1.4, 0.15, 0.3)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_keys"]
+albedo_color = Color(0.95, 0.95, 0.92, 1)
+
 [node name="ChapelHall" type="Node3D"]
 script = ExtResource("1_room")
 room_name = "Campus Chapel / Fellowship Auditorium"
@@ -187,6 +199,24 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 0.4, 4.0)
 mesh = SubResource("BoxMesh_pew")
 surface_material_override/0 = SubResource("StandardMaterial3D_pew")
 
+[node name="PianoBody" type="MeshInstance3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0.5, -5.5)
+mesh = SubResource("BoxMesh_piano")
+surface_material_override/0 = SubResource("StandardMaterial3D_piano")
+
+[node name="PianoKeys" type="MeshInstance3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 1.05, -5.0)
+mesh = SubResource("BoxMesh_keys")
+surface_material_override/0 = SubResource("StandardMaterial3D_keys")
+
+[node name="PianoSign" type="Label3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 1.8, -5.5)
+billboard = 1
+text = "🎹 WORSHIP PIANO & KEYBOARD"
+font_size = 18
+outline_size = 4
+modulate = Color(1, 0.9, 0.45, 1)
+
 [node name="WorldObjects" type="Node3D" parent="."]
 
 [node name="ChapelAltar" parent="WorldObjects" instance=ExtResource("4_obj")]
@@ -198,6 +228,11 @@ object_name = "Chapel Fellowship Altar"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 0, -2.0)
 object_type = 12
 object_name = "Prayer & Peace of Mind Pew"
+
+[node name="WorshipPiano" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, -5.5)
+object_type = 20
+object_name = "Worship Piano & Keyboard (+40 Faith)"
 
 [node name="NPCs" type="Node3D" parent="."]
 

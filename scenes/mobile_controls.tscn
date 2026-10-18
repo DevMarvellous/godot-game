@@ -182,6 +182,14 @@ theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBoxFlat_map_btn")
 text = "🚌 MAP"
 
+[node name="ZoomButton" type="Button" parent="TouchZone/ButtonsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(105, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_map_btn")
+text = "🔍 Medium"
+
 [node name="TransitSheet" type="PanelContainer" parent="TouchZone"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(340, 360)

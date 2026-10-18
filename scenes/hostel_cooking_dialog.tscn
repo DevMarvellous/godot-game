@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://hostelcooking01"]
+[gd_scene format=3 uid="uid://cscn6b625jkym"]
 
 [ext_resource type="Script" path="res://scripts/hostel_cooking_dialog.gd" id="1_script"]
 
@@ -125,3 +125,4 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
+

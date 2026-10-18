@@ -84,6 +84,8 @@ func _ready() -> void:
 		_wire_app_btn(%GistAppBtn, "gist")
 	if has_node("%OnlineAppBtn"):
 		_wire_app_btn(%OnlineAppBtn, "online")
+	if has_node("%BackpackAppBtn"):
+		_wire_app_btn(%BackpackAppBtn, "backpack")
 	_wire_app_btn(%SettingsAppBtn, "settings")
 
 	apply_wallpaper(0)
@@ -267,6 +269,31 @@ Need instant cash without draining energy? Watch a campus partner promo!""" % gi
 			action_btn.visible = true
 			action_btn.text = "Post Campus Tweet 🐦 (+10 Clout)"
 
+		"backpack":
+			app_title.text = "🎒 MY BACKPACK & SUPPLIES"
+			const ProfileStore = preload("res://scripts/data/student_profile.gd")
+			ProfileStore.load_from_disk()
+			var items: Array[Dictionary] = ProfileStore.get_backpack_items()
+			if items.is_empty():
+				content_label.text = "Your backpack is currently empty.\nVisit Mama Put or Campus Kiosk to purchase food takeaway packs and provisions."
+				action_btn.visible = false
+			else:
+				var item_lines: String = ""
+				var has_food: bool = false
+				for it: Dictionary in items:
+					var it_name: String = String(it.get("name", "Item"))
+					var cnt: int = int(it.get("count", 1))
+					var it_type: String = String(it.get("type", "misc"))
+					if it_type == "food":
+						has_food = true
+						item_lines += "• 🍱 %s (x%d) — +%d Hunger, +%d Energy\n" % [it_name, cnt, int(it.get("hunger", 0)), int(it.get("energy", 0))]
+					else:
+						item_lines += "• 📦 %s (x%d)\n" % [it_name, cnt]
+				content_label.text = "ITEMS IN BACKPACK (%d):\n\n%s\nTap below to eat your packed takeaway meal on-the-go!" % [items.size(), item_lines]
+				action_btn.visible = has_food
+				action_btn.disabled = not has_food
+				action_btn.text = "Eat Takeaway Food from Backpack 🍱"
+
 		"settings":
 			app_title.text = "⚙️ PHONE & GAME SETTINGS"
 			var active_wp: String = WALLPAPERS[current_wallpaper_idx]["name"]
@@ -365,6 +392,29 @@ Your wallet and stamina are replenished for next lecture!"""
 		action_btn.disabled = true
 		if current_player and current_player.has_method("show_chat_bubble"):
 			current_player.show_chat_bubble("Posted on Campus Gist! 🐦")
+
+	elif current_app_id == "backpack":
+		const ProfileStore = preload("res://scripts/data/student_profile.gd")
+		var items: Array[Dictionary] = ProfileStore.get_backpack_items()
+		var consumed: bool = false
+		for it: Dictionary in items:
+			if String(it.get("type", "")) == "food":
+				var res: Dictionary = ProfileStore.consume_backpack_food(current_player, String(it.get("id", "")))
+				if res.get("success", false):
+					consumed = true
+					if SoundManager:
+						SoundManager.play_coin()
+					if current_player and current_player.has_method("display_notification"):
+						current_player.display_notification("Ate %s from bag! +%d Hunger, +%d Energy" % [
+							String(res.get("name", "food")),
+							int(res.get("hunger", 0)),
+							int(res.get("energy", 0))
+						])
+					TimeSystem.advance_minutes(5)
+					_open_app("backpack")
+					break
+		if not consumed:
+			action_btn.disabled = true
 
 	elif current_app_id == "settings":
 		apply_wallpaper(current_wallpaper_idx + 1)

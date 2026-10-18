@@ -197,6 +197,37 @@ func _ready() -> void:
 	cooking_dialog.queue_free()
 	print("  -> Hostel Room Kitchenette & Hotplate Cooking OK")
 
+	# Dynamic Camera Zoom test
+	var initial_zoom: float = player.cam_zoom_factor
+	var zoom_label: String = player.cycle_camera_zoom()
+	assert(player.cam_zoom_factor != initial_zoom, "Camera zoom cycle must update zoom factor!")
+	assert(zoom_label != "", "Camera zoom cycle must return a label!")
+	print("  -> Dynamic Camera Zoom (Presets & Cycle) OK")
+
+	# Backpack Inventory & Takeaway System test
+	const ProfileStore = preload("res://scripts/data/student_profile.gd")
+	ProfileStore.add_backpack_item({
+		"id": "test_takeaway_rice",
+		"name": "Takeaway: Firewood Jollof Rice",
+		"type": "food",
+		"hunger": 55.0,
+		"energy": 25.0,
+		"desc": "Sealed warm takeaway food pack.",
+		"count": 1
+	})
+	var bp_items: Array[Dictionary] = ProfileStore.get_backpack_items()
+	assert(bp_items.size() >= 1, "Backpack must store items!")
+	var consume_res: Dictionary = ProfileStore.consume_backpack_food(player, "test_takeaway_rice")
+	assert(consume_res.get("success", false) == true, "Must successfully consume takeaway food from backpack!")
+
+	var backpack_scene = load("res://scenes/backpack_menu.tscn")
+	var bp_menu = backpack_scene.instantiate()
+	add_child(bp_menu)
+	bp_menu.open_menu(player)
+	bp_menu.close_menu()
+	bp_menu.queue_free()
+	print("  -> Backpack Inventory & Takeaway Food System OK")
+
 	# 5. Test Key Rooms
 	print("[5/6] Verifying Room Scenes instancing & fan rotations...")
 	var rooms_to_test = [

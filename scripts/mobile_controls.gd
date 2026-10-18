@@ -9,6 +9,7 @@ const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 signal transit_requested(destination_name: StringName)
 signal phone_requested
 signal chat_requested
+signal backpack_requested
 
 @onready var joystick: TouchJoystick = %VirtualJoystick
 @onready var interact_btn: Button = %InteractButton
@@ -16,6 +17,7 @@ signal chat_requested
 @onready var phone_btn: Button = %PhoneButton
 @onready var chat_btn: Button = %ChatButton if has_node("%ChatButton") else null
 @onready var transit_sheet: PanelContainer = %TransitSheet
+@onready var zoom_btn: Button = %ZoomButton if has_node("%ZoomButton") else null
 
 var bound_player: Player3D = null
 
@@ -31,6 +33,8 @@ func _ready() -> void:
 		phone_btn.pressed.connect(_on_phone_pressed)
 	if chat_btn:
 		chat_btn.pressed.connect(_on_chat_pressed)
+	if zoom_btn:
+		zoom_btn.pressed.connect(_on_zoom_pressed)
 	if transit_sheet:
 		transit_sheet.visible = false
 
@@ -94,6 +98,12 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_E:
 				_on_interact_pressed()
 				get_viewport().set_input_as_handled()
+			KEY_Z:
+				_on_zoom_pressed()
+				get_viewport().set_input_as_handled()
+			KEY_B:
+				_on_backpack_pressed()
+				get_viewport().set_input_as_handled()
 			KEY_ESCAPE:
 				if transit_sheet and transit_sheet.visible:
 					transit_sheet.visible = false
@@ -129,6 +139,21 @@ func _on_chat_pressed() -> void:
 	if SoundManager:
 		SoundManager.play_click()
 	chat_requested.emit()
+
+
+func _on_backpack_pressed() -> void:
+	if SoundManager:
+		SoundManager.play_click()
+	backpack_requested.emit()
+
+
+func _on_zoom_pressed() -> void:
+	if SoundManager:
+		SoundManager.play_click()
+	if bound_player and bound_player.has_method("cycle_camera_zoom"):
+		var label: String = bound_player.cycle_camera_zoom()
+		if zoom_btn:
+			zoom_btn.text = "🔍 %s" % label
 
 
 func _on_transit_dest_pressed(dest: StringName) -> void:

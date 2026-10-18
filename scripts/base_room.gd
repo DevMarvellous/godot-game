@@ -27,6 +27,7 @@ const LectureSessionScene = preload("res://scenes/lecture_session_dialog.tscn")
 const LectureDeskScene = preload("res://scenes/lecture_desk_menu.tscn")
 const ExamHallScene = preload("res://scenes/exam_hall_menu.tscn")
 const HostelCookingScene = preload("res://scenes/hostel_cooking_dialog.tscn")
+const BackpackScene = preload("res://scenes/backpack_menu.tscn")
 var phone_menu: Control = null
 var salon_menu: Control = null
 var chat_menu: Control = null
@@ -41,6 +42,7 @@ var lecture_session_dialog: Control = null
 var lecture_desk_menu: Control = null
 var exam_hall_menu: Control = null
 var hostel_cooking_dialog: Control = null
+var backpack_menu: Control = null
 var remote_player_nodes: Dictionary = {}
 var active_ceiling_fans: Array[Node3D] = []
 
@@ -65,6 +67,10 @@ func _ready() -> void:
 			mobile_controls.phone_requested.connect(_on_phone_requested)
 		if mobile_controls.has_signal("chat_requested"):
 			mobile_controls.chat_requested.connect(_on_chat_requested)
+		if mobile_controls.has_signal("backpack_requested"):
+			mobile_controls.backpack_requested.connect(func():
+				_on_fixture_menu_requested(&"backpack", player)
+			)
 
 	if menus_layer:
 		if menus_layer.has_node("PhoneSystem"):
@@ -348,6 +354,14 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 				hostel_cooking_dialog.dialog_closed.connect(_on_menu_closed)
 		if hostel_cooking_dialog:
 			hostel_cooking_dialog.open_cooking(p)
+	elif menu_type == &"backpack":
+		if not backpack_menu and menus_layer:
+			backpack_menu = BackpackScene.instantiate()
+			menus_layer.add_child(backpack_menu)
+			if backpack_menu.has_signal("menu_closed"):
+				backpack_menu.menu_closed.connect(_on_menu_closed)
+		if backpack_menu:
+			backpack_menu.open_menu(p)
 
 
 func _on_live_lecture_requested(p: CharacterBody3D) -> void:

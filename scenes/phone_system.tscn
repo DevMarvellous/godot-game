@@ -275,6 +275,16 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
 text = "🐦
 Gist"
 
+[node name="BackpackAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(68, 76)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
+text = "🎒
+Bag"
+
 [node name="SettingsAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(68, 76)

@@ -224,6 +224,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.0, 0, -5.5)
 object_type = 10
 object_name = "Mama Boli & Roasted Groundnuts (₦200)"
 
+[node name="SecurityCheckpoint" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5)
+object_type = 21
+object_name = "Security Clearance Checkpoint (Flash Matric ID)"
+
 [node name="NPCs" type="Node3D" parent="."]
 
 [node name="DriverRasheed" parent="NPCs" instance=ExtResource("5_npc")]
