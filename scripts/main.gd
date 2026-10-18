@@ -64,26 +64,26 @@ func _ready() -> void:
 
 
 func _on_transit_requested(dest: StringName) -> void:
-	match dest:
-		&"hostel":
-			TimeSystem.advance_minutes(5)
-			get_tree().change_scene_to_file("res://scenes/rooms/hostel_room.tscn")
-		&"class":
-			TimeSystem.advance_minutes(5)
-			get_tree().change_scene_to_file("res://scenes/rooms/lecture_hall.tscn")
-		&"mama_put", &"buka":
-			TimeSystem.advance_minutes(5)
-			get_tree().change_scene_to_file("res://scenes/rooms/mama_put.tscn")
-		&"chapel":
-			TimeSystem.advance_minutes(5)
-			get_tree().change_scene_to_file("res://scenes/rooms/chapel_hall.tscn")
-		&"atm":
-			if atm and player:
-				player.global_position = atm.global_position + Vector3(0, 0.1, 2.8)
-				player.velocity = Vector3.ZERO
-				TimeSystem.advance_minutes(2)
-				if player.has_method("display_notification"):
-					player.display_notification("Arrived at Campus ATM!")
+	if RoomManager:
+		TimeSystem.advance_minutes(5)
+		RoomManager.change_room(dest, true)
+	else:
+		match dest:
+			&"hostel":
+				get_tree().change_scene_to_file("res://scenes/rooms/hostel_room.tscn")
+			&"class":
+				get_tree().change_scene_to_file("res://scenes/rooms/lecture_hall.tscn")
+			&"mama_put", &"buka":
+				get_tree().change_scene_to_file("res://scenes/rooms/mama_put.tscn")
+			&"chapel":
+				get_tree().change_scene_to_file("res://scenes/rooms/chapel_hall.tscn")
+			&"atm":
+				if atm and player:
+					player.global_position = atm.global_position + Vector3(0, 0.1, 2.8)
+					player.velocity = Vector3.ZERO
+					TimeSystem.advance_minutes(2)
+					if player.has_method("display_notification"):
+						player.display_notification("Arrived at Campus ATM!")
 
 
 func _on_menu_requested(menu_type: StringName, p: CharacterBody3D) -> void:

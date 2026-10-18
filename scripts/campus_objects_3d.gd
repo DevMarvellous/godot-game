@@ -28,7 +28,9 @@ enum ObjectType {
 	HOSTEL_WATER,
 	COURSEWORK_DESK,
 	CHAPEL_PIANO,
-	GATE_SECURITY
+	GATE_SECURITY,
+	DOOR_EXIT,
+	MINI_FRIDGE
 }
 
 @export var object_type: ObjectType = ObjectType.BED
@@ -126,6 +128,12 @@ func update_object_display() -> void:
 		ObjectType.GATE_SECURITY:
 			prompt_message = "[E] Security Checkpoint (Show Student Matric ID)"
 			object_name = "Campus Security Clearance Barrier"
+		ObjectType.DOOR_EXIT:
+			prompt_message = "[E] Step Outside to Campus Quad / Catch Shuttle"
+			object_name = "Hostel Exit Door"
+		ObjectType.MINI_FRIDGE:
+			prompt_message = "[E] Open Mini-Fridge (Chilled Food & Drinks)"
+			object_name = "Hostel Mini-Fridge"
 
 	if label_3d:
 		label_3d.text = object_name
@@ -287,6 +295,12 @@ func interact(player: CharacterBody3D) -> void:
 			needs.modify_faith(20.0)
 			TimeSystem.advance_minutes(5)
 			_show_feedback(player, "Officer Balogun salutes: 'Valid Matric ID: %s (%s). Safe journey, %s!' Faith +20!" % [ProfileStore.matric_no, ProfileStore.admitted_department, ProfileStore.student_name])
+
+		ObjectType.DOOR_EXIT:
+			menu_requested.emit(&"shuttle", player)
+
+		ObjectType.MINI_FRIDGE:
+			menu_requested.emit(&"fridge", player)
 
 
 func _show_feedback(player: CharacterBody3D, msg: String) -> void:

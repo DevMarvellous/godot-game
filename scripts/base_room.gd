@@ -28,6 +28,7 @@ const LectureDeskScene = preload("res://scenes/lecture_desk_menu.tscn")
 const ExamHallScene = preload("res://scenes/exam_hall_menu.tscn")
 const HostelCookingScene = preload("res://scenes/hostel_cooking_dialog.tscn")
 const BackpackScene = preload("res://scenes/backpack_menu.tscn")
+const FridgeScene = preload("res://scenes/fridge_dialog.tscn")
 var phone_menu: Control = null
 var salon_menu: Control = null
 var chat_menu: Control = null
@@ -43,6 +44,7 @@ var lecture_desk_menu: Control = null
 var exam_hall_menu: Control = null
 var hostel_cooking_dialog: Control = null
 var backpack_menu: Control = null
+var fridge_dialog: Control = null
 var remote_player_nodes: Dictionary = {}
 var active_ceiling_fans: Array[Node3D] = []
 
@@ -184,7 +186,7 @@ func _configure_dynamic_hostel_room() -> void:
 	# Dynamic Room Upgrades Visual Spawning
 	var decor: Node3D = get_node_or_null("RoomDecor") as Node3D
 	if decor:
-		if ProfileStore.owned_upgrades.has("mini_fridge") and not decor.has_node("MiniFridgeMesh"):
+		if ProfileStore.owned_upgrades.has("mini_fridge") and not decor.has_node("MiniFridgeMesh") and not decor.has_node("HostelMiniFridgeMesh"):
 			var fridge = MeshInstance3D.new()
 			fridge.name = "MiniFridgeMesh"
 			var box = BoxMesh.new()
@@ -362,6 +364,14 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 				backpack_menu.menu_closed.connect(_on_menu_closed)
 		if backpack_menu:
 			backpack_menu.open_menu(p)
+	elif menu_type == &"fridge":
+		if not fridge_dialog and menus_layer:
+			fridge_dialog = FridgeScene.instantiate()
+			menus_layer.add_child(fridge_dialog)
+			if fridge_dialog.has_signal("fridge_closed"):
+				fridge_dialog.fridge_closed.connect(_on_menu_closed)
+		if fridge_dialog:
+			fridge_dialog.open_fridge(p)
 
 
 func _on_live_lecture_requested(p: CharacterBody3D) -> void:
@@ -504,7 +514,7 @@ func _go_to_scene(scene_path: String) -> void:
 	else:
 		TimeSystem.advance_minutes(5) # Walking to hostel is free
 
-	get_tree().change_scene_to_file(scene_path)
+	RoomManager.change_room_to_path(scene_path, "", &"", true)
 
 
 func _on_menu_closed() -> void:

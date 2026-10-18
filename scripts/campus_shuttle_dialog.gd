@@ -13,6 +13,12 @@ var current_player: CharacterBody3D = null
 
 const DESTINATIONS: Array[Dictionary] = [
 	{
+		"name": "Main Campus Quad & Quadrangle",
+		"scene": "res://scenes/main.tscn",
+		"icon": "🌳",
+		"fare": 100
+	},
+	{
 		"name": "Hostel Quarters (Hall 2 / Moremi)",
 		"scene": "res://scenes/rooms/hostel_room.tscn",
 		"icon": "🏠",

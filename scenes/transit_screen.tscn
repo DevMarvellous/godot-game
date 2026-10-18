@@ -1,0 +1,310 @@
+[gd_scene format=3 uid="uid://transit001"]
+
+[ext_resource type="Script" path="res://scripts/transit_screen.gd" id="1_transit"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bus"]
+bg_color = Color(0.96, 0.76, 0.12, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.15, 0.15, 0.15, 1)
+corner_radius_top_left = 22
+corner_radius_top_right = 16
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_window"]
+bg_color = Color(0.25, 0.45, 0.65, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_green_stripe"]
+bg_color = Color(0.12, 0.55, 0.28, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wheel"]
+bg_color = Color(0.12, 0.12, 0.14, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.4, 0.4, 0.45, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hub"]
+bg_color = Color(0.85, 0.85, 0.9, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.08, 0.11, 0.16, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.96, 0.76, 0.12, 0.8)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 20.0
+content_margin_top = 14.0
+content_margin_right = 20.0
+content_margin_bottom = 14.0
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 8
+
+[node name="TransitScreen" type="CanvasLayer"]
+layer = 100
+script = ExtResource("1_transit")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.06, 0.08, 0.12, 0.94)
+
+[node name="Road" type="ColorRect" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -240.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0.18, 0.20, 0.24, 1)
+
+[node name="RoadCurb" type="ColorRect" parent="Road"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 8.0
+grow_horizontal = 2
+color = Color(0.9, 0.75, 0.15, 1)
+
+[node name="Markings" type="Control" parent="Road"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dash1" type="ColorRect" parent="Road/Markings"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 110.0
+offset_right = 70.0
+offset_bottom = 120.0
+color = Color(0.95, 0.95, 0.95, 0.85)
+
+[node name="Dash2" type="ColorRect" parent="Road/Markings"]
+layout_mode = 0
+offset_left = 160.0
+offset_top = 110.0
+offset_right = 230.0
+offset_bottom = 120.0
+color = Color(0.95, 0.95, 0.95, 0.85)
+
+[node name="Dash3" type="ColorRect" parent="Road/Markings"]
+layout_mode = 0
+offset_left = 320.0
+offset_top = 110.0
+offset_right = 390.0
+offset_bottom = 120.0
+color = Color(0.95, 0.95, 0.95, 0.85)
+
+[node name="Dash4" type="ColorRect" parent="Road/Markings"]
+layout_mode = 0
+offset_left = 480.0
+offset_top = 110.0
+offset_right = 550.0
+offset_bottom = 120.0
+color = Color(0.95, 0.95, 0.95, 0.85)
+
+[node name="Dash5" type="ColorRect" parent="Road/Markings"]
+layout_mode = 0
+offset_left = 640.0
+offset_top = 110.0
+offset_right = 710.0
+offset_bottom = 120.0
+color = Color(0.95, 0.95, 0.95, 0.85)
+
+[node name="Dash6" type="ColorRect" parent="Road/Markings"]
+layout_mode = 0
+offset_left = 800.0
+offset_top = 110.0
+offset_right = 870.0
+offset_bottom = 120.0
+color = Color(0.95, 0.95, 0.95, 0.85)
+
+[node name="VehicleRoot" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -200.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="BusBody" type="PanelContainer" parent="VehicleRoot"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 260.0
+offset_bottom = 110.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_bus")
+
+[node name="Details" type="Control" parent="VehicleRoot/BusBody"]
+layout_mode = 2
+
+[node name="GreenStripe" type="Panel" parent="VehicleRoot/BusBody/Details"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 54.0
+offset_bottom = 70.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_green_stripe")
+
+[node name="Win1" type="Panel" parent="VehicleRoot/BusBody/Details"]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 16.0
+offset_right = 72.0
+offset_bottom = 44.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_window")
+
+[node name="Win2" type="Panel" parent="VehicleRoot/BusBody/Details"]
+layout_mode = 0
+offset_left = 84.0
+offset_top = 16.0
+offset_right = 134.0
+offset_bottom = 44.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_window")
+
+[node name="Win3" type="Panel" parent="VehicleRoot/BusBody/Details"]
+layout_mode = 0
+offset_left = 146.0
+offset_top = 16.0
+offset_right = 196.0
+offset_bottom = 44.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_window")
+
+[node name="FrontWindshield" type="Panel" parent="VehicleRoot/BusBody/Details"]
+layout_mode = 0
+offset_left = 206.0
+offset_top = 16.0
+offset_right = 246.0
+offset_bottom = 48.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_window")
+
+[node name="BusLogo" type="Label" parent="VehicleRoot/BusBody/Details"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 74.0
+offset_right = 220.0
+offset_bottom = 98.0
+theme_override_colors/font_color = Color(0.1, 0.1, 0.12, 1)
+theme_override_font_sizes/font_size = 13
+text = "CAMPUS SHUTTLE • NO SMOKING"
+
+[node name="RearWheel" type="Panel" parent="VehicleRoot"]
+layout_mode = 0
+offset_left = 34.0
+offset_top = 84.0
+offset_right = 74.0
+offset_bottom = 124.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_wheel")
+
+[node name="Hub" type="Panel" parent="VehicleRoot/RearWheel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hub")
+
+[node name="FrontWheel" type="Panel" parent="VehicleRoot"]
+layout_mode = 0
+offset_left = 186.0
+offset_top = 84.0
+offset_right = 226.0
+offset_bottom = 124.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_wheel")
+
+[node name="Hub" type="Panel" parent="VehicleRoot/FrontWheel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hub")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 60.0
+offset_bottom = 260.0
+grow_horizontal = 2
+
+[node name="InfoCard" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/InfoCard"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DestinationLabel" type="Label" parent="CenterContainer/InfoCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
+theme_override_font_sizes/font_size = 18
+text = "🚖 CAMPUS SHUTTLE ➡️ FACULTY LECTURE THEATRE"
+horizontal_alignment = 1
+
+[node name="BanterLabel" type="Label" parent="CenterContainer/InfoCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.92, 0.95, 1)
+theme_override_font_sizes/font_size = 14
+text = "📢 Driver: \"Hold your exact ₦100 change o! No ₦1,000 note!\""
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="FareLabel" type="Label" parent="CenterContainer/InfoCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.85, 0.6, 1)
+theme_override_font_sizes/font_size = 13
+text = "Campus Transit Fare: ₦100 | Travel Time: 3 Mins"
+horizontal_alignment = 1
+
