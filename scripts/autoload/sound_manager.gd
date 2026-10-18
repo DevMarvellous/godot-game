@@ -43,29 +43,24 @@ func _play(stream: AudioStreamWAV, volume_db: float = 0.0) -> void:
 	fallback.play()
 
 
-static func play_click() -> void:
-	if instance and instance.has_method("_play"):
-		instance._play(instance._click_stream, -6.0)
+func play_click() -> void:
+	_play(_click_stream, -6.0)
 
 
-static func play_coin() -> void:
-	if instance and instance.has_method("_play"):
-		instance._play(instance._coin_stream, -3.0)
+func play_coin() -> void:
+	_play(_coin_stream, -3.0)
 
 
-static func play_transit_horn() -> void:
-	if instance and instance.has_method("_play"):
-		instance._play(instance._horn_stream, -4.0)
+func play_transit_horn() -> void:
+	_play(_horn_stream, -4.0)
 
 
-static func play_bell() -> void:
-	if instance and instance.has_method("_play"):
-		instance._play(instance._bell_stream, -2.0)
+func play_bell() -> void:
+	_play(_bell_stream, -2.0)
 
 
-static func play_alert() -> void:
-	if instance and instance.has_method("_play"):
-		instance._play(instance._alert_stream, -1.0)
+func play_alert() -> void:
+	_play(_alert_stream, -1.0)
 
 
 func _generate_sound_streams() -> void:

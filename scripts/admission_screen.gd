@@ -11,10 +11,6 @@ extends Control
 
 signal onboarding_completed(profile_data: Dictionary)
 
-const Customizer = preload("res://scripts/data/character_customizer.gd")
-const StudentProfile = preload("res://scripts/data/student_profile.gd")
-const AcademicCatalog = preload("res://scripts/data/academic_catalog.gd")
-
 const FACULTY_ORDER: Array[String] = [
 	"CMP_FAC", "ENG_FAC", "LAW_FAC", "SMS_FAC", "NAS_FAC", "MED_FAC", "HUM_FAC"
 ]
@@ -271,7 +267,7 @@ func _setup_options() -> void:
 
 	if complexion_options:
 		complexion_options.clear()
-		for item in Customizer.SKIN_TONES:
+		for item in CharacterCustomizer.SKIN_TONES:
 			complexion_options.add_item(item["name"])
 		complexion_options.select(selected_complexion)
 		complexion_options.item_selected.connect(func(idx: int):
@@ -281,7 +277,7 @@ func _setup_options() -> void:
 
 	if hair_options:
 		hair_options.clear()
-		for item in Customizer.HAIR_STYLES:
+		for item in CharacterCustomizer.HAIR_STYLES:
 			hair_options.add_item(item["name"])
 		hair_options.select(selected_hair)
 		hair_options.item_selected.connect(func(idx: int):
@@ -291,7 +287,7 @@ func _setup_options() -> void:
 
 	if shirt_options:
 		shirt_options.clear()
-		for item in Customizer.SHIRT_STYLES:
+		for item in CharacterCustomizer.SHIRT_STYLES:
 			shirt_options.add_item(item["name"])
 		shirt_options.select(selected_shirt)
 		shirt_options.item_selected.connect(func(idx: int):
@@ -301,7 +297,7 @@ func _setup_options() -> void:
 
 	if trouser_options:
 		trouser_options.clear()
-		for item in Customizer.TROUSER_STYLES:
+		for item in CharacterCustomizer.TROUSER_STYLES:
 			trouser_options.add_item(item["name"])
 		trouser_options.select(selected_trouser)
 		trouser_options.item_selected.connect(func(idx: int):
