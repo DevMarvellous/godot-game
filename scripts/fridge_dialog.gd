@@ -110,7 +110,7 @@ func _refresh_items_list() -> void:
 		card.add_theme_stylebox_override(&"panel", card_style)
 
 		var hbox = HBoxContainer.new()
-		hbox.theme_override_constants/separation = 12
+		hbox.add_theme_constant_override(&"separation", 12)
 
 		var icon_lbl = Label.new()
 		icon_lbl.text = def.get("icon", "🍱")
