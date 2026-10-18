@@ -199,6 +199,7 @@ var active_quiz_questions: Array = []
 
 # Navigation
 @onready var next_button: Button = %NextButton
+@onready var card_panel: PanelContainer = %CardPanel
 
 const PlayerScene = preload("res://scenes/player_3d.tscn")
 const Wardrobe = preload("res://scripts/data/wardrobe_data.gd")
@@ -209,9 +210,25 @@ func _ready() -> void:
 	if next_button:
 		next_button.pressed.connect(_on_next_pressed)
 
+	if name_input:
+		name_input.text_submitted.connect(func(_text: String) -> void: _on_next_pressed())
+	if email_input:
+		email_input.text_submitted.connect(func(_text: String) -> void: _on_next_pressed())
+
+	_adjust_responsive_layout()
+	get_viewport().size_changed.connect(_adjust_responsive_layout)
+
 	_setup_preview_player()
 	_setup_options()
 	_update_view()
+
+
+func _adjust_responsive_layout() -> void:
+	if not is_instance_valid(card_panel):
+		return
+	var vp_size: Vector2 = get_viewport_rect().size
+	var target_w: float = minf(vp_size.x - 24.0, 580.0)
+	card_panel.custom_minimum_size.x = maxf(target_w, 280.0)
 
 
 func _setup_preview_player() -> void:
@@ -238,7 +255,7 @@ func _setup_preview_player() -> void:
 
 
 func _process(delta: float) -> void:
-	if preview_player_instance and preview_player_instance.visual_root:
+	if is_instance_valid(preview_player_instance) and preview_player_instance.visual_root:
 		preview_player_instance.visual_root.rotate_y(delta * 0.8)
 
 
@@ -378,22 +395,26 @@ func _update_view() -> void:
 		Step.BIODATA:
 			step_title_label.text = "🏛️ STUDENT ADMISSIONS PORTAL"
 			step_subtitle_label.text = "Step 1 of 5: Candidate Biodata & Registration"
+			next_button.visible = true
 			next_button.text = "Next: Character Customization ➡️"
 		Step.AVATAR:
 			step_title_label.text = "🎨 STUDENT AVATAR STYLING"
 			step_subtitle_label.text = "Step 2 of 5: Melanin Complexion, Hairstyle & Wardrobe"
+			next_button.visible = true
 			next_button.text = "Next: Select Academic Course ➡️"
 		Step.DEPARTMENT:
 			step_title_label.text = "📚 FACULTY & COURSE SELECTION"
 			step_subtitle_label.text = "Step 3 of 5: Choose Your First Choice Degree Program"
+			next_button.visible = true
 			next_button.text = "Begin Post-UTME Screening Quiz 📝"
 		Step.SCREENING:
 			step_title_label.text = "📝 POST-UTME SCREENING TEST"
 			step_subtitle_label.text = "Step 4 of 5: University Aptitude Screening Test"
-			next_button.text = "Submit Test Answer ➡️"
+			next_button.visible = false
 		Step.ADMISSION_LETTER:
 			step_title_label.text = "📜 PROVISIONAL ADMISSION LETTER"
 			step_subtitle_label.text = "Step 5 of 5: Official University Senate Determination"
+			next_button.visible = true
 			next_button.text = "Accept Admission & Enter Campus! 🎒🎓"
 
 
