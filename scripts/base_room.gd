@@ -11,7 +11,6 @@ extends Node3D
 @onready var mobile_controls: CanvasLayer = $MobileControls
 @onready var menus_layer: CanvasLayer = $MenusLayer
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const PhoneScene = preload("res://scenes/phone_system.tscn")
 const SalonScene = preload("res://scenes/salon_menu.tscn")
 const ChatScene = preload("res://scenes/chat_wheel.tscn")
@@ -326,7 +325,7 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 			if shuttle_dialog.has_signal("destination_chosen"):
 				shuttle_dialog.destination_chosen.connect(func(target_scene: String):
 					_on_menu_closed()
-					_go_to_scene(target_scene)
+					_go_to_scene(target_scene, true)
 				)
 		if shuttle_dialog:
 			shuttle_dialog.open_shuttle(p)
@@ -489,14 +488,17 @@ func _on_transit_requested(dest: StringName) -> void:
 			_go_to_scene("res://scenes/main.tscn")
 
 
-func _go_to_scene(scene_path: String) -> void:
+func _go_to_scene(scene_path: String, fare_already_paid: bool = false) -> void:
 	if get_tree().current_scene.scene_file_path == scene_path:
 		if player and player.has_method("display_notification"):
 			player.display_notification("Already here!")
 		return
 
-	# Campus Keke Shuttle fare (₦100) except walking to hostel
-	if player and scene_path != "res://scenes/rooms/hostel_room.tscn":
+	# Campus Keke Shuttle fare (₦100) except walking to hostel.
+	# Skipped when the shuttle stop dialog has already charged the fare.
+	if fare_already_paid:
+		pass
+	elif player and scene_path != "res://scenes/rooms/hostel_room.tscn":
 		var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
 		if needs:
 			if not needs.modify_money(-100):

@@ -7,7 +7,6 @@ extends Control
 
 signal game_closed(total_winnings: int)
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 
 # Table geometry (Vertical portrait pool table: 480 x 700 px)
 const TABLE_RECT: Rect2 = Rect2(Vector2(120, 260), Vector2(480, 700))

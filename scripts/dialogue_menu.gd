@@ -1,7 +1,6 @@
 class_name DialogueMenu
 extends Control
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const NpcDialogueSystem = preload("res://scripts/data/dialogue_system.gd")
 const Relationship = preload("res://scripts/data/relationship_system.gd")
 

@@ -1,7 +1,6 @@
 class_name PhoneSystem
 extends Control
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 
 ## In-Game Smartphone (Campus Connect).
 ## 6 Essential Apps:

@@ -17,7 +17,6 @@ signal mall_closed
 var current_player: CharacterBody3D = null
 var current_category: int = 0 # 0: Outfits, 1: Hairstyles, 2: Gadgets & Provisions
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const Wardrobe = preload("res://scripts/data/wardrobe_data.gd")
 const MallData = preload("res://scripts/data/mall_items_data.gd")
 const ProfileStore = preload("res://scripts/data/student_profile.gd")

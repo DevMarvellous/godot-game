@@ -6,7 +6,6 @@ extends Control
 
 signal salon_closed
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const Customizer = preload("res://scripts/data/character_customizer.gd")
 
 const CUT_FEE: int = 1000

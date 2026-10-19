@@ -7,7 +7,6 @@ extends Control
 signal coursework_updated(new_progress: float, is_submitted: bool)
 signal menu_closed
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const ProfileStore = preload("res://scripts/data/student_profile.gd")
 const Coursework = preload("res://scripts/data/student_coursework.gd")
 

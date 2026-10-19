@@ -7,7 +7,6 @@ extends Control
 signal gig_completed(gig_id: String, payout: int)
 signal menu_closed
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const CampusGigsData = preload("res://scripts/data/campus_gigs.gd")
 
 var current_player: CharacterBody3D = null

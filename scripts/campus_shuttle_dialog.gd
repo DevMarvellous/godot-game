@@ -7,7 +7,6 @@ extends Control
 signal destination_chosen(scene_path: String)
 signal dialog_closed
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 
 var current_player: CharacterBody3D = null
 

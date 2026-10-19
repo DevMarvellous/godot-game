@@ -1,7 +1,6 @@
 class_name BackpackMenu
 extends Control
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const ProfileStore = preload("res://scripts/data/student_profile.gd")
 
 ## Student Backpack & Supplies Inventory Menu.

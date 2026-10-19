@@ -12,7 +12,6 @@ extends Control
 signal lecture_completed(course_code: String, attention_rating: float, cgpa_earned: float)
 signal dialog_closed
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const LectureContent = preload("res://scripts/data/lecture_content_data.gd")
 const StudentProfile = preload("res://scripts/data/student_profile.gd")
 

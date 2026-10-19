@@ -12,7 +12,6 @@ extends Control
 signal exam_completed(total_score: float, grade_letter: String, new_cgpa: float)
 signal menu_closed
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const StudentProfile = preload("res://scripts/data/student_profile.gd")
 const StudentCoursework = preload("res://scripts/data/student_coursework.gd")
 const LectureContent = preload("res://scripts/data/lecture_content_data.gd")

@@ -12,7 +12,6 @@ extends Control
 signal action_chosen(action_name: StringName)
 signal menu_closed
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const StudentProfile = preload("res://scripts/data/student_profile.gd")
 const StudentCoursework = preload("res://scripts/data/student_coursework.gd")
 

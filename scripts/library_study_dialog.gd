@@ -8,7 +8,6 @@ extends Control
 signal revision_completed(mode_name: String, cgpa_gain: float)
 signal dialog_closed
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const ProfileStore = preload("res://scripts/data/student_profile.gd")
 const AcademicCatalog = preload("res://scripts/data/academic_catalog.gd")
 

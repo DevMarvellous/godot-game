@@ -19,7 +19,6 @@ var selected_hair_idx: int = 0
 var selected_outfit_idx: int = 0
 var selected_skin_idx: int = 1
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const Wardrobe = preload("res://scripts/data/wardrobe_data.gd")
 const ProfileStore = preload("res://scripts/data/student_profile.gd")
 

@@ -11,7 +11,6 @@ extends Control
 signal meal_cooked(meal_name: String, hunger_gain: float, energy_gain: float)
 signal dialog_closed
 
-const SoundManager = preload("res://scripts/autoload/sound_manager.gd")
 const StudentProfile = preload("res://scripts/data/student_profile.gd")
 
 @onready var close_btn: Button = %CloseBtn
