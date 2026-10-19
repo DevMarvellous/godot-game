@@ -44,9 +44,13 @@ func _ready() -> void:
 		study_desk.menu_requested.connect(_on_menu_requested)
 
 	if food_menu:
+		food_menu.visible = false
 		food_menu.menu_closed.connect(_on_menu_closed)
 	if study_menu:
+		study_menu.visible = false
 		study_menu.menu_closed.connect(_on_menu_closed)
+	if summary_menu:
+		summary_menu.visible = false
 
 	# Connect Semester Manager daily summary & graduation results
 	if SemesterManager:

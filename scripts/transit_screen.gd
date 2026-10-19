@@ -49,9 +49,15 @@ func _process(delta: float) -> void:
 				dash.position.x += 160.0 * 6.0 # Wrap around seamlessly
 
 	# 2. Authentic Danfo / Shuttle bumpy road suspension bob
-	if vehicle_root:
+	if vehicle_root and bus_body:
 		var bounce: float = sin(anim_time * 24.0) * 3.5 + cos(anim_time * 14.0) * 1.8
 		bus_body.position.y = bounce
+		var rw: Control = vehicle_root.get_node_or_null("RearWheel") as Control
+		var fw: Control = vehicle_root.get_node_or_null("FrontWheel") as Control
+		if rw:
+			rw.position.y = 84.0 + bounce * 0.45
+		if fw:
+			fw.position.y = 84.0 + bounce * 0.45
 
 
 func play_drive_transition(dest_name: String, target_scene_path: String, on_scene_loaded_callback: Callable = Callable()) -> void:

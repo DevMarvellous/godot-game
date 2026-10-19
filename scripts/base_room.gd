@@ -74,6 +74,9 @@ func _ready() -> void:
 			)
 
 	if menus_layer:
+		for child in menus_layer.get_children():
+			if child is CanvasItem:
+				child.visible = false
 		if menus_layer.has_node("PhoneSystem"):
 			phone_menu = menus_layer.get_node("PhoneSystem")
 		else:

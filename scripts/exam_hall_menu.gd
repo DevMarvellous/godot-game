@@ -15,7 +15,6 @@ signal menu_closed
 const StudentProfile = preload("res://scripts/data/student_profile.gd")
 const StudentCoursework = preload("res://scripts/data/student_coursework.gd")
 const LectureContent = preload("res://scripts/data/lecture_content_data.gd")
-const SemesterManagerStore = preload("res://scripts/autoload/semester_manager.gd")
 
 @onready var close_btn: Button = %CloseBtn
 @onready var exam_header_label: Label = %ExamHeaderLabel

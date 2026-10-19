@@ -29,6 +29,7 @@ font_size = 14
 font_color = Color(0.3, 0.9, 0.5, 1)
 
 [node name="FoodMenu" type="Control"]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -55,7 +56,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="ModalPanel" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(640, 750)
+custom_minimum_size = Vector2(520, 520)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
 
