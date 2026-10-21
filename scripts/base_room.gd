@@ -151,6 +151,11 @@ func _ready() -> void:
 
 
 func _polish_room_decor_and_ambient_npcs() -> void:
+	if NetworkManager:
+		NetworkManager.local_player_data["room"] = String(name)
+		if not NetworkManager.chat_received.is_connected(_on_network_peer_chat):
+			NetworkManager.chat_received.connect(_on_network_peer_chat)
+
 	# 0. Architectural floor grid & dynamic Day/Night Lagos sun lighting
 	PropBuilder3D.enhance_room_atmosphere(self)
 	if not TimeSystem.minute_passed.is_connected(_on_room_Lighting_tick):
@@ -627,7 +632,18 @@ func _process_network_puppets() -> void:
 				var puppet: NetworkPlayer = NetworkPlayerScene.instantiate() as NetworkPlayer
 				puppet.peer_id = peer_id
 				puppet.student_name = String(p_data.get("name", "Student"))
+				var pos_init: Vector3 = p_data.get("pos", Vector3(1.5, 0.1, 1.5))
+				puppet.position = pos_init
 				add_child(puppet)
+				if puppet.name_label:
+					PropBuilder3D.configure_proximity_label(puppet.name_label, 8.0, 22)
+				if p_data.has("shirt_col"):
+					puppet.apply_appearance(
+						Color(0.35, 0.22, 0.14),
+						p_data.get("shirt_col", Color(0.2, 0.6, 0.4)),
+						p_data.get("trouser_col", Color(0.15, 0.18, 0.24)),
+						Color(0.08, 0.08, 0.08)
+					)
 				remote_player_nodes[peer_id] = puppet
 			var puppet_node: NetworkPlayer = remote_player_nodes[peer_id]
 			var pos: Vector3 = p_data.get("pos", Vector3.ZERO)
@@ -647,3 +663,10 @@ func _process_network_puppets() -> void:
 			var puppet_to_remove: Node = remote_player_nodes[peer_id]
 			puppet_to_remove.queue_free()
 			remote_player_nodes.erase(peer_id)
+
+
+func _on_network_peer_chat(_sender_name: String, msg: String, peer_id: int) -> void:
+	if remote_player_nodes.has(peer_id):
+		var puppet_node: NetworkPlayer = remote_player_nodes[peer_id]
+		if is_instance_valid(puppet_node) and puppet_node.has_method("show_chat"):
+			puppet_node.show_chat(msg)

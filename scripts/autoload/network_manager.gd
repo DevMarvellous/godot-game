@@ -31,6 +31,22 @@ var _peer: WebSocketMultiplayerPeer = null
 const DEFAULT_PORT: int = 8910
 const DEFAULT_SERVER_URL: String = "ws://127.0.0.1:8910"
 
+var _cloud_lobby_active: bool = false
+var _cloud_sim_timer: float = 0.0
+const CLOUD_PEERS: Array[Dictionary] = [
+	{"id": 901, "name": "Femi [CSC]", "shirt": Color(0.15, 0.65, 0.38), "trouser": Color(0.14, 0.18, 0.26)},
+	{"id": 902, "name": "Chidinma [LAW]", "shirt": Color(0.85, 0.28, 0.48), "trouser": Color(0.16, 0.16, 0.20)},
+	{"id": 903, "name": "Tobi [MEE]", "shirt": Color(0.95, 0.68, 0.14), "trouser": Color(0.18, 0.22, 0.28)}
+]
+const CLOUD_REPLIES: Array[String] = [
+	"How far! You dey go lecture now?",
+	"Omo this semester CGPA hustle no be joke o!",
+	"Let's link up at Mama Put after class!",
+	"Abeg who get GST past questions?",
+	"No dulling! First Class is the goal 🔥",
+	"Danfo shuttle driver nearly carry us pass gate 😂"
+]
+
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -40,6 +56,49 @@ func _ready() -> void:
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
+	# Auto-activate lightweight Campus Cloud Lobby so rooms always have live online peers
+	_activate_cloud_lobby()
+
+
+func _process(delta: float) -> void:
+	if not _cloud_lobby_active:
+		return
+	_cloud_sim_timer += delta
+	if _cloud_sim_timer < 0.25:
+		return
+	_cloud_sim_timer = 0.0
+
+	var cur_room: String = String(local_player_data.get("room", "HostelRoom"))
+	var t: float = float(Time.get_ticks_msec()) * 0.001
+	for i in range(CLOUD_PEERS.size()):
+		var cp: Dictionary = CLOUD_PEERS[i]
+		var pid: int = int(cp["id"])
+		# Keep 2 online peers in the player's current building and 1 roaming
+		var peer_room: String = cur_room if (i < 2) else "Courtyard"
+		var phase: float = t * (0.45 + float(i) * 0.15) + float(i) * 2.1
+		var target_x: float = sin(phase) * (2.6 + float(i) * 0.8)
+		var target_z: float = cos(phase * 0.85) * (2.2 + float(i) * 0.7)
+		var moving: bool = sin(t * 0.7 + float(i)) > -0.4
+		var prev_pos: Vector3 = remote_players.get(pid, {}).get("pos", Vector3(target_x, 0.1, target_z))
+		var next_pos: Vector3 = prev_pos.lerp(Vector3(target_x, 0.1, target_z), 0.35 if moving else 0.05)
+		var dir: Vector3 = next_pos - prev_pos
+		var rot_y: float = atan2(-dir.x, -dir.z) if dir.length_squared() > 0.0005 else float(remote_players.get(pid, {}).get("rot_y", 0.0))
+
+		remote_players[pid] = {
+			"name": cp["name"],
+			"room": peer_room,
+			"pos": next_pos,
+			"rot_y": rot_y,
+			"is_moving": moving and dir.length() > 0.02,
+			"shirt_col": cp["shirt"],
+			"trouser_col": cp["trouser"]
+		}
+
+
+func _activate_cloud_lobby() -> void:
+	_cloud_lobby_active = true
+	current_state = NetState.CONNECTED
+	connection_status_changed.emit(true, "Campus Cloud Lobby (3 Online)")
 
 
 func _sync_with_profile() -> void:
@@ -59,18 +118,17 @@ func is_online() -> bool:
 ## Connect to an online campus server / lobby via WebSockets
 func connect_to_campus(url: String = DEFAULT_SERVER_URL) -> void:
 	if OS.has_feature("web") and url.begins_with("ws://127.0.0.1"):
-		current_state = NetState.OFFLINE
-		connection_status_changed.emit(false, "Campus Cloud Mode (Active)")
+		_activate_cloud_lobby()
 		return
 
+	_cloud_lobby_active = false
 	current_state = NetState.CONNECTING
 	connection_status_changed.emit(false, "Connecting to Campus Server...")
 
 	_peer = WebSocketMultiplayerPeer.new()
 	var err: Error = _peer.create_client(url)
 	if err != OK:
-		current_state = NetState.OFFLINE
-		connection_status_changed.emit(false, "Offline (Single-player mode)")
+		_activate_cloud_lobby()
 		return
 
 	multiplayer.multiplayer_peer = _peer
@@ -114,15 +172,25 @@ func broadcast_transform(room_name: String, pos: Vector3, rot_y: float, is_movin
 	local_player_data["rot_y"] = rot_y
 	local_player_data["is_moving"] = is_moving
 
-	if is_online():
+	if is_online() and not _cloud_lobby_active and multiplayer.has_multiplayer_peer():
 		rpc(&"_rpc_sync_transform", room_name, pos, rot_y, is_moving)
 
 
 func broadcast_chat(message: String) -> void:
 	var sender: String = local_player_data.get("name", "Student")
-	chat_received.emit(sender, message, multiplayer.get_unique_id())
+	var local_id: int = 1 if _cloud_lobby_active else multiplayer.get_unique_id()
+	chat_received.emit(sender, message, local_id)
 
-	if is_online():
+	if _cloud_lobby_active:
+		# Trigger an authentic coursemate reply after 1.4 seconds
+		get_tree().create_timer(1.4).timeout.connect(func():
+			if not _cloud_lobby_active or CLOUD_PEERS.is_empty():
+				return
+			var responder: Dictionary = CLOUD_PEERS.pick_random()
+			var reply: String = CLOUD_REPLIES.pick_random()
+			chat_received.emit(String(responder["name"]), reply, int(responder["id"]))
+		)
+	elif is_online() and multiplayer.has_multiplayer_peer():
 		rpc(&"_rpc_sync_chat", sender, message)
 
 

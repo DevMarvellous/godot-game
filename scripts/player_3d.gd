@@ -409,8 +409,9 @@ func _on_chat_timeout() -> void:
 		chat_bubble.visible = false
 
 
-func _on_chat_received(_sender_name: String, msg: String, _peer_id: int) -> void:
-	show_chat_bubble(msg)
+func _on_chat_received(_sender_name: String, msg: String, peer_id: int) -> void:
+	if peer_id == 1 or (multiplayer.has_multiplayer_peer() and peer_id == multiplayer.get_unique_id()):
+		show_chat_bubble(msg)
 
 
 func _load_default_appearance() -> void:
