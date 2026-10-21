@@ -167,6 +167,15 @@ func _find_nearest_interactable(world_pos: Vector3, max_radius: float) -> Intera
 				if d < best_dist:
 					best_dist = d
 					best = child
+	var npcs_node: Node = scene_root.get_node_or_null("NPCs")
+	if npcs_node:
+		for npc in npcs_node.get_children():
+			var area: Interactable3D = npc.get_node_or_null("InteractArea") as Interactable3D
+			if area:
+				var d_npc: float = Vector2(world_pos.x - npc.global_position.x, world_pos.z - npc.global_position.z).length()
+				if d_npc < best_dist:
+					best_dist = d_npc
+					best = area
 	return best
 
 

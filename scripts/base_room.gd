@@ -151,6 +151,11 @@ func _ready() -> void:
 
 
 func _polish_room_decor_and_ambient_npcs() -> void:
+	# 0. Architectural floor grid & dynamic Day/Night Lagos sun lighting
+	PropBuilder3D.enhance_room_atmosphere(self)
+	if not TimeSystem.minute_passed.is_connected(_on_room_Lighting_tick):
+		TimeSystem.minute_passed.connect(_on_room_Lighting_tick)
+
 	# 1. Declutter floating Label3D signs inside RoomDecor using proximity fade
 	var decor: Node = get_node_or_null("RoomDecor")
 	if decor:
@@ -179,6 +184,10 @@ func _polish_room_decor_and_ambient_npcs() -> void:
 			if not lines_arr.is_empty():
 				npc.dialogues = lines_arr
 			npcs_root.add_child(npc)
+
+
+func _on_room_Lighting_tick() -> void:
+	PropBuilder3D.update_room_day_night_lighting(self)
 
 
 func _gather_ceiling_fans(node: Node) -> void:
@@ -530,8 +539,16 @@ func _on_transit_requested(dest: StringName) -> void:
 
 func _go_to_scene(scene_path: String, fare_already_paid: bool = false) -> void:
 	if get_tree().current_scene.scene_file_path == scene_path:
-		if player and player.has_method("display_notification"):
-			player.display_notification("Already here!")
+		if player:
+			var fixtures: Node = get_node_or_null("WorldObjects")
+			if fixtures and fixtures.get_child_count() > 0:
+				for child in fixtures.get_children():
+					if child is CampusObject3D and child.object_type != CampusObject3D.ObjectType.DOOR_EXIT and child.object_type != CampusObject3D.ObjectType.SHUTTLE_STOP:
+						if player.has_method("_walk_to_and_interact"):
+							player._walk_to_and_interact(child)
+							return
+			if player.has_method("display_notification"):
+				player.display_notification("Already here! Tap any highlighted object.")
 		return
 
 	# Campus Keke Shuttle fare (₦100) except walking to hostel.

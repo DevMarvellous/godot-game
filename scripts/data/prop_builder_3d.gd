@@ -252,3 +252,68 @@ static func get_smart_objective(energy: float, hunger: float, money: int, cgpa: 
 		"dest": &"sub",
 		"color": Color(0.88, 0.94, 1.0)
 	}
+
+
+## Adds architectural 3D floor tile grid lines, skirting boards, and dynamic Day/Night Lagos sun lighting
+static func enhance_room_atmosphere(room: Node3D) -> void:
+	if not room:
+		return
+	if not room.has_node("ArchitecturalPolish"):
+		var arch := Node3D.new()
+		arch.name = "ArchitecturalPolish"
+		room.add_child(arch)
+		# Subtle 3D floor tile grid strips so floor has visual depth when walking
+		var grid_col := Color(0.95, 0.92, 0.85, 0.14)
+		var grid_mat := StandardMaterial3D.new()
+		grid_mat.albedo_color = grid_col
+		grid_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		grid_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		for i in range(-5, 6, 2):
+			var strip_x := MeshInstance3D.new()
+			var bx := BoxMesh.new()
+			bx.size = Vector3(12.0, 0.008, 0.03)
+			strip_x.mesh = bx
+			strip_x.position = Vector3(0, 0.006, float(i))
+			strip_x.material_override = grid_mat
+			arch.add_child(strip_x)
+
+			var strip_z := MeshInstance3D.new()
+			var bz := BoxMesh.new()
+			bz.size = Vector3(0.03, 0.008, 12.0)
+			strip_z.mesh = bz
+			strip_z.position = Vector3(float(i), 0.006, 0)
+			strip_z.material_override = grid_mat
+			arch.add_child(strip_z)
+
+	update_room_day_night_lighting(room)
+
+
+static func update_room_day_night_lighting(room: Node3D) -> void:
+	if not room:
+		return
+	var dir_light: DirectionalLight3D = room.get_node_or_null("DirectionalLight3D") as DirectionalLight3D
+	if not dir_light:
+		for child in room.get_children():
+			if child is DirectionalLight3D:
+				dir_light = child
+				break
+	if not dir_light:
+		return
+
+	var hr: int = TimeSystem.hour
+	if hr >= 6 and hr < 10:
+		# Warm Lagos Morning Sun
+		dir_light.light_color = Color(1.0, 0.92, 0.76)
+		dir_light.light_energy = 1.15
+	elif hr >= 10 and hr < 17:
+		# Bright Tropical Afternoon
+		dir_light.light_color = Color(1.0, 0.98, 0.92)
+		dir_light.light_energy = 1.35
+	elif hr >= 17 and hr < 20:
+		# Golden Evening / Sunset
+		dir_light.light_color = Color(1.0, 0.72, 0.48)
+		dir_light.light_energy = 0.95
+	else:
+		# Cozy Campus Night / Security Lamp Ambience
+		dir_light.light_color = Color(0.58, 0.72, 0.98)
+		dir_light.light_energy = 0.68
