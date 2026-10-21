@@ -8,6 +8,7 @@ extends Node
 signal player_joined(peer_id: int, player_data: Dictionary)
 signal player_left(peer_id: int)
 signal chat_received(sender_name: String, message: String, peer_id: int)
+signal emote_received(peer_id: int, emote_name: String)
 signal connection_status_changed(is_connected: bool, info: String)
 
 enum NetState { OFFLINE, CONNECTING, CONNECTED, SERVER }
@@ -192,6 +193,42 @@ func broadcast_chat(message: String) -> void:
 		)
 	elif is_online() and multiplayer.has_multiplayer_peer():
 		rpc(&"_rpc_sync_chat", sender, message)
+
+
+func broadcast_emote(emote_name: String) -> void:
+	var local_id: int = 1 if _cloud_lobby_active else multiplayer.get_unique_id()
+	emote_received.emit(local_id, emote_name)
+
+	if _cloud_lobby_active:
+		# Coursemate reacts after 1.2 seconds!
+		get_tree().create_timer(1.2).timeout.connect(func():
+			if not _cloud_lobby_active or CLOUD_PEERS.is_empty():
+				return
+			var peer: Dictionary = CLOUD_PEERS.pick_random()
+			var pid: int = int(peer["id"])
+			match emote_name:
+				"shaku", "dance", "gbese":
+					emote_received.emit(pid, "shaku")
+					chat_received.emit(String(peer["name"]), "Oya gbese! Gbe body e! 🔥", pid)
+				"wave":
+					emote_received.emit(pid, "wave")
+					chat_received.emit(String(peer["name"]), "How far my guy! 👋", pid)
+				"sit":
+					emote_received.emit(pid, "sit")
+				"celebrate":
+					emote_received.emit(pid, "celebrate")
+					chat_received.emit(String(peer["name"]), "Congratulations o! 🎉", pid)
+				_:
+					emote_received.emit(pid, "wave")
+		)
+	elif is_online() and multiplayer.has_multiplayer_peer():
+		rpc(&"_rpc_sync_emote", emote_name)
+
+
+@rpc("any_peer", "reliable")
+func _rpc_sync_emote(emote_name: String) -> void:
+	var sender_id: int = multiplayer.get_remote_sender_id()
+	emote_received.emit(sender_id, emote_name)
 
 
 @rpc("any_peer", "unreliable")

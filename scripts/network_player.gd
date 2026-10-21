@@ -13,6 +13,10 @@ var target_rotation_y: float = 0.0
 var is_moving: bool = false
 var walk_anim_time: float = 0.0
 
+var is_sitting: bool = false
+var is_emoting: bool = false
+var _active_emote_tween: Tween = null
+
 @onready var visual_root: Node3D = $Visuals
 @onready var torso_mesh: MeshInstance3D = $Visuals/TorsoMesh
 @onready var head_mesh: MeshInstance3D = $Visuals/HeadMesh
@@ -41,6 +45,9 @@ func update_network_transform(new_pos: Vector3, new_rot_y: float, moving: bool) 
 	target_position = new_pos
 	target_rotation_y = new_rot_y
 	is_moving = moving
+	if moving and (is_sitting or is_emoting):
+		cancel_emote()
+		is_sitting = false
 
 
 func _process(delta: float) -> void:
@@ -62,6 +69,10 @@ func _process(delta: float) -> void:
 			var bob: float = abs(sin(walk_anim_time)) * 0.04
 			torso_mesh.position.y = 0.95 + bob
 			head_mesh.position.y = 1.45 + bob
+	elif is_sitting:
+		pass
+	elif is_emoting:
+		pass
 	else:
 		if left_arm and right_arm:
 			left_arm.rotation.x = move_toward(left_arm.rotation.x, 0.0, 6.0 * delta)
@@ -72,6 +83,177 @@ func _process(delta: float) -> void:
 		if torso_mesh and head_mesh:
 			torso_mesh.position.y = move_toward(torso_mesh.position.y, 0.95, 0.4 * delta)
 			head_mesh.position.y = move_toward(head_mesh.position.y, 1.45, 0.4 * delta)
+
+
+func play_emote(emote_name: String) -> void:
+	cancel_emote()
+	match emote_name.to_lower():
+		"shaku", "dance", "gbese":
+			_play_puppet_shaku()
+		"wave":
+			_play_puppet_wave()
+		"sit":
+			_play_puppet_sit()
+		"stand":
+			_play_puppet_stand()
+		"celebrate":
+			_play_puppet_celebrate()
+		"study":
+			_play_puppet_study()
+		"eat":
+			_play_puppet_eat()
+		"pray":
+			_play_puppet_pray()
+		_:
+			_play_puppet_wave()
+
+
+func cancel_emote() -> void:
+	is_emoting = false
+	if _active_emote_tween and _active_emote_tween.is_valid():
+		_active_emote_tween.kill()
+		_active_emote_tween = null
+	if left_arm: left_arm.rotation = Vector3.ZERO
+	if right_arm: right_arm.rotation = Vector3.ZERO
+	if left_leg: left_leg.rotation = Vector3.ZERO
+	if right_leg: right_leg.rotation = Vector3.ZERO
+	if head_mesh:
+		head_mesh.rotation = Vector3.ZERO
+		head_mesh.position = Vector3(0, 1.45, 0)
+	if torso_mesh:
+		torso_mesh.rotation = Vector3.ZERO
+		torso_mesh.position = Vector3(0, 0.95, 0)
+
+
+func _play_puppet_wave() -> void:
+	is_emoting = true
+	var wave_tw: Tween = create_tween()
+	_active_emote_tween = wave_tw
+	wave_tw.tween_callback(func():
+		if right_arm:
+			right_arm.rotation.x = -2.4
+			right_arm.rotation.z = 0.4
+	)
+	wave_tw.tween_interval(0.15)
+	for i in range(3):
+		wave_tw.tween_callback(func():
+			if right_arm: right_arm.rotation.z = -0.2
+		)
+		wave_tw.tween_interval(0.12)
+		wave_tw.tween_callback(func():
+			if right_arm: right_arm.rotation.z = 0.4
+		)
+		wave_tw.tween_interval(0.12)
+	wave_tw.tween_callback(func():
+		cancel_emote()
+	)
+
+
+func _play_puppet_shaku() -> void:
+	is_emoting = true
+	var dance_tw: Tween = create_tween()
+	_active_emote_tween = dance_tw
+	for i in range(2):
+		dance_tw.tween_callback(func():
+			if left_leg: left_leg.rotation.x = -0.75
+			if right_leg: right_leg.rotation.x = 0.35
+			if right_arm: right_arm.rotation.x = -1.1
+			if left_arm: left_arm.rotation.z = -0.6
+			if torso_mesh:
+				torso_mesh.rotation.y = 0.25
+				torso_mesh.position.y = 1.05
+		)
+		dance_tw.tween_interval(0.18)
+		dance_tw.tween_callback(func():
+			if left_leg: left_leg.rotation.x = 0.35
+			if right_leg: right_leg.rotation.x = -0.75
+			if left_arm: left_arm.rotation.x = -1.1
+			if right_arm: right_arm.rotation.z = 0.6
+			if torso_mesh:
+				torso_mesh.rotation.y = -0.25
+				torso_mesh.position.y = 1.05
+		)
+		dance_tw.tween_interval(0.18)
+	dance_tw.tween_callback(func():
+		cancel_emote()
+	)
+
+
+func _play_puppet_sit() -> void:
+	is_sitting = true
+	is_emoting = false
+	var sit_tw: Tween = create_tween().set_parallel(true)
+	_active_emote_tween = sit_tw
+	if torso_mesh:
+		sit_tw.tween_property(torso_mesh, "position:y", 0.62, 0.25)
+	if head_mesh:
+		sit_tw.tween_property(head_mesh, "position:y", 1.12, 0.25)
+	if left_leg and right_leg:
+		sit_tw.tween_property(left_leg, "rotation:x", -PI * 0.45, 0.25)
+		sit_tw.tween_property(right_leg, "rotation:x", -PI * 0.45, 0.25)
+	if left_arm and right_arm:
+		sit_tw.tween_property(left_arm, "rotation:x", -0.4, 0.25)
+		sit_tw.tween_property(right_arm, "rotation:x", -0.4, 0.25)
+
+
+func _play_puppet_stand() -> void:
+	is_sitting = false
+	cancel_emote()
+
+
+func _play_puppet_celebrate() -> void:
+	is_emoting = true
+	var tw: Tween = create_tween().set_parallel(true)
+	_active_emote_tween = tw
+	if torso_mesh: tw.tween_property(torso_mesh, "position:y", 1.35, 0.25)
+	if left_arm and right_arm:
+		tw.tween_property(left_arm, "rotation:x", -2.4, 0.25)
+		tw.tween_property(right_arm, "rotation:x", -2.4, 0.25)
+	tw.chain().tween_interval(0.3)
+	tw.chain().tween_callback(func():
+		cancel_emote()
+	)
+
+
+func _play_puppet_study() -> void:
+	is_emoting = true
+	var tw: Tween = create_tween()
+	_active_emote_tween = tw
+	if torso_mesh: tw.tween_property(torso_mesh, "rotation:x", 0.2, 0.2)
+	if right_arm:
+		for i in range(3):
+			tw.tween_property(right_arm, "rotation:x", -0.35, 0.12)
+			tw.tween_property(right_arm, "rotation:x", -0.15, 0.12)
+	tw.tween_callback(func():
+		cancel_emote()
+	)
+
+
+func _play_puppet_eat() -> void:
+	is_emoting = true
+	var tw: Tween = create_tween()
+	_active_emote_tween = tw
+	if head_mesh:
+		for i in range(3):
+			tw.tween_property(head_mesh, "rotation:x", 0.2, 0.12)
+			tw.tween_property(head_mesh, "rotation:x", -0.05, 0.12)
+	tw.tween_callback(func():
+		cancel_emote()
+	)
+
+
+func _play_puppet_pray() -> void:
+	is_emoting = true
+	var tw: Tween = create_tween().set_parallel(true)
+	_active_emote_tween = tw
+	if head_mesh: tw.tween_property(head_mesh, "rotation:x", 0.35, 0.25)
+	if left_arm and right_arm:
+		tw.tween_property(left_arm, "rotation:z", -0.3, 0.25)
+		tw.tween_property(right_arm, "rotation:z", 0.3, 0.25)
+	tw.chain().tween_interval(0.6)
+	tw.chain().tween_callback(func():
+		cancel_emote()
+	)
 
 
 func show_chat(msg: String) -> void:

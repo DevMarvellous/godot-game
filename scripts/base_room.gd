@@ -159,6 +159,8 @@ func _polish_room_decor_and_ambient_npcs() -> void:
 		NetworkManager.local_player_data["room"] = String(name)
 		if not NetworkManager.chat_received.is_connected(_on_network_peer_chat):
 			NetworkManager.chat_received.connect(_on_network_peer_chat)
+		if not NetworkManager.emote_received.is_connected(_on_network_peer_emote):
+			NetworkManager.emote_received.connect(_on_network_peer_emote)
 
 	# 0. Architectural floor grid & dynamic Day/Night Lagos sun lighting
 	PropBuilder3D.enhance_room_atmosphere(self)
@@ -700,3 +702,10 @@ func _on_network_peer_chat(_sender_name: String, msg: String, peer_id: int) -> v
 		var puppet_node: NetworkPlayer = remote_player_nodes[peer_id]
 		if is_instance_valid(puppet_node) and puppet_node.has_method("show_chat"):
 			puppet_node.show_chat(msg)
+
+
+func _on_network_peer_emote(peer_id: int, emote_name: String) -> void:
+	if remote_player_nodes.has(peer_id):
+		var puppet_node: NetworkPlayer = remote_player_nodes[peer_id]
+		if is_instance_valid(puppet_node) and puppet_node.has_method("play_emote"):
+			puppet_node.play_emote(emote_name)

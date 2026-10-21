@@ -18,6 +18,8 @@ signal backpack_requested
 @onready var transit_sheet: PanelContainer = %TransitSheet
 @onready var zoom_btn: Button = %ZoomButton if has_node("%ZoomButton") else null
 
+var emote_btn: Button = null
+var emote_sheet: PanelContainer = null
 var bound_player: Player3D = null
 
 
@@ -36,6 +38,7 @@ func _ready() -> void:
 		zoom_btn.pressed.connect(_on_zoom_pressed)
 	if transit_sheet:
 		transit_sheet.visible = false
+	_create_emote_ui()
 
 	# Wire transit quick-travel buttons
 	_wire_transit_btn(%HostelBtn, &"hostel")
@@ -106,8 +109,14 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_B:
 				_on_backpack_pressed()
 				get_viewport().set_input_as_handled()
+			KEY_X, KEY_G:
+				_toggle_emote_sheet()
+				get_viewport().set_input_as_handled()
 			KEY_ESCAPE:
-				if transit_sheet and transit_sheet.visible:
+				if emote_sheet and emote_sheet.visible:
+					emote_sheet.visible = false
+					get_viewport().set_input_as_handled()
+				elif transit_sheet and transit_sheet.visible:
 					transit_sheet.visible = false
 					get_viewport().set_input_as_handled()
 
@@ -165,3 +174,167 @@ func _on_transit_dest_pressed(dest: StringName) -> void:
 		transit_sheet.visible = false
 	if dest != &"close":
 		transit_requested.emit(dest)
+
+
+func _create_emote_ui() -> void:
+	var buttons_row: HBoxContainer = get_node_or_null("TouchZone/ButtonsRow") as HBoxContainer
+	if buttons_row:
+		emote_btn = Button.new()
+		emote_btn.name = "EmoteButton"
+		emote_btn.text = "💃 Emote"
+		emote_btn.custom_minimum_size = Vector2(76, 40)
+		emote_btn.focus_mode = Control.FOCUS_NONE
+		emote_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		emote_btn.add_theme_font_size_override(&"font_size", 13)
+
+		var btn_style := StyleBoxFlat.new()
+		btn_style.bg_color = Color(0.1, 0.14, 0.2, 0.85)
+		btn_style.border_width_left = 2
+		btn_style.border_width_top = 2
+		btn_style.border_width_right = 2
+		btn_style.border_width_bottom = 2
+		btn_style.border_color = Color(0.85, 0.65, 0.2, 0.9)
+		btn_style.corner_radius_top_left = 8
+		btn_style.corner_radius_top_right = 8
+		btn_style.corner_radius_bottom_left = 8
+		btn_style.corner_radius_bottom_right = 8
+		btn_style.content_margin_left = 8.0
+		btn_style.content_margin_right = 8.0
+		emote_btn.add_theme_stylebox_override(&"normal", btn_style)
+		emote_btn.add_theme_stylebox_override(&"hover", btn_style)
+		emote_btn.add_theme_stylebox_override(&"pressed", btn_style)
+
+		emote_btn.pressed.connect(_toggle_emote_sheet)
+		buttons_row.add_child(emote_btn)
+		buttons_row.move_child(emote_btn, 0)
+		buttons_row.offset_left = -420.0
+
+	var touch_zone: Control = get_node_or_null("TouchZone") as Control
+	if not touch_zone:
+		return
+
+	emote_sheet = PanelContainer.new()
+	emote_sheet.name = "EmoteSheet"
+	emote_sheet.custom_minimum_size = Vector2(350, 360)
+	emote_sheet.anchors_preset = Control.PRESET_CENTER
+	emote_sheet.anchor_left = 0.5
+	emote_sheet.anchor_top = 0.5
+	emote_sheet.anchor_right = 0.5
+	emote_sheet.anchor_bottom = 0.5
+	emote_sheet.offset_left = -175.0
+	emote_sheet.offset_top = -180.0
+	emote_sheet.offset_right = 175.0
+	emote_sheet.offset_bottom = 180.0
+	emote_sheet.visible = false
+
+	var sheet_style := StyleBoxFlat.new()
+	sheet_style.bg_color = Color(0.07, 0.10, 0.15, 0.96)
+	sheet_style.border_width_left = 2
+	sheet_style.border_width_top = 2
+	sheet_style.border_width_right = 2
+	sheet_style.border_width_bottom = 2
+	sheet_style.border_color = Color(1.0, 0.82, 0.24, 0.95)
+	sheet_style.corner_radius_top_left = 14
+	sheet_style.corner_radius_top_right = 14
+	sheet_style.corner_radius_bottom_left = 14
+	sheet_style.corner_radius_bottom_right = 14
+	sheet_style.content_margin_left = 16.0
+	sheet_style.content_margin_right = 16.0
+	sheet_style.content_margin_top = 16.0
+	sheet_style.content_margin_bottom = 16.0
+	emote_sheet.add_theme_stylebox_override(&"panel", sheet_style)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override(&"separation", 8)
+	emote_sheet.add_child(vbox)
+
+	var title_lbl := Label.new()
+	title_lbl.text = "💃 CAMPUS EMOTES & VIBES"
+	title_lbl.add_theme_font_size_override(&"font_size", 16)
+	title_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.25))
+	title_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(title_lbl)
+
+	var sub_lbl := Label.new()
+	sub_lbl.text = "Tap to express yourself to coursemates & online peers"
+	sub_lbl.add_theme_font_size_override(&"font_size", 11)
+	sub_lbl.add_theme_color_override(&"font_color", Color(0.75, 0.82, 0.9))
+	sub_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(sub_lbl)
+
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override(&"h_separation", 8)
+	grid.add_theme_constant_override(&"v_separation", 8)
+	vbox.add_child(grid)
+
+	var emote_options: Array[Dictionary] = [
+		{"id": "shaku", "label": "💃 Legwork / Shaku", "color": Color(0.95, 0.65, 0.15)},
+		{"id": "wave", "label": "👋 Wave Coursemate", "color": Color(0.3, 0.75, 1.0)},
+		{"id": "sit", "label": "🪑 Sit & Rest (+Energy)", "color": Color(0.4, 0.85, 0.5)},
+		{"id": "study", "label": "📚 Focused Study", "color": Color(0.65, 0.55, 1.0)},
+		{"id": "celebrate", "label": "🎉 Victory Cheer", "color": Color(1.0, 0.45, 0.65)},
+		{"id": "eat", "label": "🍲 Quick Snack", "color": Color(0.9, 0.75, 0.3)},
+		{"id": "pray", "label": "🙏 Faith & Prayer", "color": Color(0.85, 0.9, 1.0)}
+	]
+
+	for opt in emote_options:
+		var opt_btn := Button.new()
+		opt_btn.text = opt["label"]
+		opt_btn.custom_minimum_size = Vector2(150, 42)
+		opt_btn.add_theme_font_size_override(&"font_size", 12)
+		opt_btn.focus_mode = Control.FOCUS_NONE
+		opt_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+
+		var opt_style := StyleBoxFlat.new()
+		opt_style.bg_color = Color(0.12, 0.16, 0.24, 0.85)
+		opt_style.border_width_left = 2
+		opt_style.border_width_top = 1
+		opt_style.border_width_right = 1
+		opt_style.border_width_bottom = 1
+		opt_style.border_color = opt["color"]
+		opt_style.corner_radius_top_left = 8
+		opt_style.corner_radius_top_right = 8
+		opt_style.corner_radius_bottom_left = 8
+		opt_style.corner_radius_bottom_right = 8
+		opt_btn.add_theme_stylebox_override(&"normal", opt_style)
+		opt_btn.add_theme_stylebox_override(&"hover", opt_style)
+		opt_btn.add_theme_stylebox_override(&"pressed", opt_style)
+
+		var emote_id: String = String(opt["id"])
+		opt_btn.pressed.connect(func():
+			_on_emote_selected(emote_id)
+		)
+		grid.add_child(opt_btn)
+
+	var close_btn := Button.new()
+	close_btn.text = "✖ Close"
+	close_btn.custom_minimum_size = Vector2(0, 36)
+	close_btn.add_theme_font_size_override(&"font_size", 12)
+	close_btn.focus_mode = Control.FOCUS_NONE
+	close_btn.pressed.connect(func():
+		if SoundManager:
+			SoundManager.play_click()
+		emote_sheet.visible = false
+	)
+	vbox.add_child(close_btn)
+
+	touch_zone.add_child(emote_sheet)
+
+
+func _toggle_emote_sheet() -> void:
+	if SoundManager:
+		SoundManager.play_click()
+	if emote_sheet:
+		emote_sheet.visible = not emote_sheet.visible
+		if emote_sheet.visible and transit_sheet:
+			transit_sheet.visible = false
+
+
+func _on_emote_selected(emote_id: String) -> void:
+	if SoundManager:
+		SoundManager.play_click()
+	if emote_sheet:
+		emote_sheet.visible = false
+	if bound_player and bound_player.has_method("play_emote"):
+		bound_player.play_emote(emote_id)

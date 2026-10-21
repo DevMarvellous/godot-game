@@ -279,16 +279,106 @@ static func get_smart_objective(energy: float, hunger: float, money: int, cgpa: 
 	}
 
 
-## Adds architectural 3D floor tile grid lines, skirting boards, and dynamic Day/Night Lagos sun lighting
+## Adds procedural WorldEnvironment, DirectionalLight3D, architectural floor grid lines, and room-specific lighting
 static func enhance_room_atmosphere(room: Node3D) -> void:
 	if not room:
 		return
+
+	# 1. Procedural WorldEnvironment for vibrant tropical sky and ACES tonemapping
+	if not room.has_node("ProceduralWorldEnv"):
+		var env_node := WorldEnvironment.new()
+		env_node.name = "ProceduralWorldEnv"
+		var env := Environment.new()
+		env.background_mode = Environment.BG_SKY
+		var sky := Sky.new()
+		var sky_mat := ProceduralSkyMaterial.new()
+		sky_mat.sky_top_color = Color(0.22, 0.52, 0.88)
+		sky_mat.sky_horizon_color = Color(0.82, 0.88, 0.96)
+		sky_mat.ground_bottom_color = Color(0.24, 0.20, 0.16)
+		sky_mat.ground_horizon_color = Color(0.75, 0.82, 0.90)
+		sky.sky_material = sky_mat
+		env.sky = sky
+		env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
+		env.ambient_light_sky_contribution = 0.60
+		env.ambient_light_color = Color(0.92, 0.88, 0.82)
+		env.ambient_light_energy = 0.95
+		env.tonemap_mode = Environment.TONE_MAPPER_ACES
+		env.tonemap_exposure = 1.12
+		env.glow_enabled = true
+		env.glow_intensity = 0.35
+		env.glow_bloom = 0.12
+		env_node.environment = env
+		room.add_child(env_node)
+
+	# 2. Procedural Sun (DirectionalLight3D) if room has none
+	var has_dir_light: bool = false
+	for child in room.get_children():
+		if child is DirectionalLight3D:
+			has_dir_light = true
+			break
+	if not has_dir_light:
+		var sun := DirectionalLight3D.new()
+		sun.name = "DirectionalLight3D"
+		sun.position = Vector3(4.0, 14.0, 6.0)
+		sun.rotation_degrees = Vector3(-48.0, 32.0, 0.0)
+		sun.light_color = Color(1.0, 0.94, 0.84)
+		sun.light_energy = 1.25
+		# Zero lag optimization: disable shadows on web/mobile browsers
+		if OS.has_feature("web") or OS.has_feature("mobile"):
+			sun.shadow_enabled = false
+		else:
+			sun.shadow_enabled = true
+			sun.shadow_bias = 0.05
+		room.add_child(sun)
+
+	# 3. Room-Specific Atmospheric Accent Lights
+	var r_name: String = room.name.to_lower()
+	if not room.has_node("RoomAtmosphereLight"):
+		var acc_light := OmniLight3D.new()
+		acc_light.name = "RoomAtmosphereLight"
+		if "hostel" in r_name:
+			acc_light.light_color = Color(1.0, 0.84, 0.52) # Warm incandescent hostel bulb
+			acc_light.light_energy = 1.4
+			acc_light.omni_range = 8.5
+			acc_light.position = Vector3(0, 2.4, 0)
+		elif "lecture" in r_name:
+			acc_light.light_color = Color(0.92, 0.96, 1.0) # Daylight lecture fluorescent
+			acc_light.light_energy = 1.5
+			acc_light.omni_range = 11.0
+			acc_light.position = Vector3(0, 3.2, 0)
+		elif "mama_put" in r_name or "buka" in r_name:
+			acc_light.light_color = Color(1.0, 0.65, 0.25) # Warm food warmer glow
+			acc_light.light_energy = 1.6
+			acc_light.omni_range = 9.5
+			acc_light.position = Vector3(0, 2.6, 0)
+		elif "chapel" in r_name:
+			acc_light.light_color = Color(1.0, 0.85, 0.40) # Serene cathedral amber
+			acc_light.light_energy = 1.8
+			acc_light.omni_range = 12.0
+			acc_light.position = Vector3(0, 3.5, 0)
+		elif "stadium" in r_name:
+			acc_light.light_color = Color(0.96, 1.0, 0.96) # Stadium floodlight
+			acc_light.light_energy = 2.0
+			acc_light.omni_range = 18.0
+			acc_light.position = Vector3(0, 5.0, 0)
+		elif "mall" in r_name or "sub" in r_name:
+			acc_light.light_color = Color(0.40, 0.85, 1.0) # Neon cyan arcade/mall
+			acc_light.light_energy = 1.5
+			acc_light.omni_range = 10.0
+			acc_light.position = Vector3(0, 2.8, 0)
+		else:
+			acc_light.light_color = Color(1.0, 0.92, 0.80)
+			acc_light.light_energy = 1.2
+			acc_light.omni_range = 8.0
+			acc_light.position = Vector3(0, 2.5, 0)
+		room.add_child(acc_light)
+
+	# 4. Architectural 3D floor tile grid lines for depth perception
 	if not room.has_node("ArchitecturalPolish"):
 		var arch := Node3D.new()
 		arch.name = "ArchitecturalPolish"
 		room.add_child(arch)
-		# Subtle 3D floor tile grid strips so floor has visual depth when walking
-		var grid_col := Color(0.95, 0.92, 0.85, 0.14)
+		var grid_col := Color(0.95, 0.92, 0.85, 0.16)
 		var grid_mat := StandardMaterial3D.new()
 		grid_mat.albedo_color = grid_col
 		grid_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -296,7 +386,7 @@ static func enhance_room_atmosphere(room: Node3D) -> void:
 		for i in range(-5, 6, 2):
 			var strip_x := MeshInstance3D.new()
 			var bx := BoxMesh.new()
-			bx.size = Vector3(12.0, 0.008, 0.03)
+			bx.size = Vector3(14.0, 0.008, 0.035)
 			strip_x.mesh = bx
 			strip_x.position = Vector3(0, 0.006, float(i))
 			strip_x.material_override = grid_mat
@@ -304,7 +394,7 @@ static func enhance_room_atmosphere(room: Node3D) -> void:
 
 			var strip_z := MeshInstance3D.new()
 			var bz := BoxMesh.new()
-			bz.size = Vector3(0.03, 0.008, 12.0)
+			bz.size = Vector3(0.035, 0.008, 14.0)
 			strip_z.mesh = bz
 			strip_z.position = Vector3(float(i), 0.006, 0)
 			strip_z.material_override = grid_mat
