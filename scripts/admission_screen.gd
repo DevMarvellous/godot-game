@@ -924,6 +924,10 @@ func _update_view() -> void:
 	if screening_panel: screening_panel.visible = (current_step == Step.SCREENING)
 	if letter_panel: letter_panel.visible = (current_step == Step.ADMISSION_LETTER)
 
+	if has_node("%PreviewViewport"):
+		var vp: SubViewport = %PreviewViewport
+		vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS if (current_step == Step.AVATAR) else SubViewport.UPDATE_DISABLED
+
 	_update_step_navbar()
 
 	match current_step:

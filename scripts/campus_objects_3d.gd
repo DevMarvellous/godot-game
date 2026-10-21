@@ -232,7 +232,9 @@ func interact(player: CharacterBody3D) -> void:
 
 		ObjectType.STADIUM_SPORTS:
 			TimeSystem.advance_minutes(25)
-			if SoundManager:
+			if player.has_method("play_penalty_kick_animation"):
+				player.play_penalty_kick_animation()
+			elif SoundManager:
 				SoundManager.play_whistle()
 			# Physically kick the 3D football towards the goal net!
 			var ball: RigidBody3D = get_tree().current_scene.get_node_or_null("StadiumFixtures/InteractiveFootball") as RigidBody3D

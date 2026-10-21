@@ -225,7 +225,9 @@ func _on_cook_meal(meal: Dictionary, cost: int) -> void:
 	needs.modify_energy(energy_boost)
 	TimeSystem.advance_minutes(mins)
 
-	if current_player.has_method("play_eating_animation"):
+	if current_player.has_method("play_cooking_animation"):
+		current_player.play_cooking_animation()
+	elif current_player.has_method("play_eating_animation"):
 		current_player.play_eating_animation()
 
 	var meal_title: String = String(meal.get("name", "Meal"))

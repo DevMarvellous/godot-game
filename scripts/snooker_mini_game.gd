@@ -283,6 +283,9 @@ func strike() -> void:
 	if balls_moving or not cue_ball or cue_ball.potted:
 		return
 
+	if current_player and current_player.has_method("play_snooker_shot_animation"):
+		current_player.play_snooker_shot_animation()
+
 	var impulse_speed: float = (power / 100.0) * 850.0
 	cue_ball.vel = Vector2(cos(aim_angle), sin(aim_angle)) * impulse_speed
 	balls_moving = true

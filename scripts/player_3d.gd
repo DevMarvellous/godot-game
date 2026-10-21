@@ -305,7 +305,7 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
-	# Animate walking limbs (arms + legs swinging) and subtle torso bobbing
+	# Animate walking limbs (arms + legs swinging) with natural human stride dynamics
 	var horiz_speed: float = Vector2(velocity.x, velocity.z).length()
 	if horiz_speed > 0.3:
 		if is_sitting:
@@ -314,27 +314,45 @@ func _physics_process(delta: float) -> void:
 			cancel_emote()
 		_idle_time = 0.0
 
-		var speed_factor: float = clampf(horiz_speed / move_speed, 0.8, 1.6)
-		walk_anim_time += delta * 12.0 * speed_factor
-		var arm_amp: float = 0.45 * speed_factor
-		var leg_amp: float = 0.48 * speed_factor
+		var speed_factor: float = clampf(horiz_speed / move_speed, 0.8, 1.8)
+		walk_anim_time += delta * 12.5 * speed_factor
+		var arm_amp: float = 0.52 * speed_factor
+		var leg_amp: float = 0.55 * speed_factor
 
-		# Arm swing (opposing)
+		# 1. Arm swing with natural outward flare
 		if left_arm and right_arm:
 			left_arm.rotation.x = sin(walk_anim_time) * arm_amp
 			right_arm.rotation.x = -sin(walk_anim_time) * arm_amp
-		# Leg stride (opposing to arms)
+			left_arm.rotation.z = 0.08 + sin(walk_anim_time * 0.5) * 0.04
+			right_arm.rotation.z = -0.08 - sin(walk_anim_time * 0.5) * 0.04
+
+		# 2. Leg stride with ground lift clearance (feet don't drag into floor)
 		if left_leg and right_leg:
 			left_leg.rotation.x = -sin(walk_anim_time) * leg_amp
 			right_leg.rotation.x = sin(walk_anim_time) * leg_amp
-		# Torso bounce & subtle lateral sway
+			left_leg.position.y = 0.42 + maxf(0.0, -sin(walk_anim_time)) * 0.06 * speed_factor
+			right_leg.position.y = 0.42 + maxf(0.0, sin(walk_anim_time)) * 0.06 * speed_factor
+			left_leg.rotation.z = -0.02 * sin(walk_anim_time)
+			right_leg.rotation.z = 0.02 * sin(walk_anim_time)
+
+		# 3. Organic torso dynamics: bounce, dynamic forward stride lean, and pelvic twist
 		if torso_mesh and head_mesh and hair_mesh:
-			var bob: float = abs(sin(walk_anim_time)) * 0.04
-			var sway: float = sin(walk_anim_time * 0.5) * 0.03
+			var bob: float = abs(sin(walk_anim_time)) * (0.048 * speed_factor)
+			var sway: float = sin(walk_anim_time * 0.5) * (0.035 * speed_factor)
+			var twist: float = sin(walk_anim_time) * (0.075 * speed_factor)
+			var fwd_lean: float = -0.085 * speed_factor
+
 			torso_mesh.position.y = 0.95 + bob
-			head_mesh.position.y = 1.45 + bob
-			hair_mesh.position.y = 1.58 + bob
+			torso_mesh.rotation.x = fwd_lean
+			torso_mesh.rotation.y = twist
 			torso_mesh.rotation.z = sway
+
+			# Stabilized head gaze
+			head_mesh.position.y = 1.45 + bob * 0.4
+			head_mesh.rotation.x = 0.035 * speed_factor
+			head_mesh.rotation.z = -sway * 0.4
+			hair_mesh.position.y = 1.58 + bob * 0.4
+			hair_mesh.rotation.z = -sway * 0.4
 	elif is_sitting:
 		# Gradually regain energy while seated and resting
 		_sit_rest_timer += delta
@@ -346,22 +364,40 @@ func _physics_process(delta: float) -> void:
 		# Emote tween has active control over character pose
 		pass
 	else:
-		# Return smoothly to neutral standing posture
+		# 1. Natural procedural breathing & weight shifting (Sims / Lagos Life aesthetic)
+		var breathe: float = sin(Time.get_ticks_msec() * 0.0024) * 0.016
+		var hip_shift: float = sin(Time.get_ticks_msec() * 0.0008) * 0.025
+
 		if left_arm and right_arm:
 			left_arm.rotation.x = move_toward(left_arm.rotation.x, 0.0, 6.0 * delta)
 			right_arm.rotation.x = move_toward(right_arm.rotation.x, 0.0, 6.0 * delta)
+			left_arm.rotation.z = move_toward(left_arm.rotation.z, 0.06 + breathe * 0.35, 4.0 * delta)
+			right_arm.rotation.z = move_toward(right_arm.rotation.z, -0.06 - breathe * 0.35, 4.0 * delta)
+
 		if left_leg and right_leg:
 			left_leg.rotation.x = move_toward(left_leg.rotation.x, 0.0, 7.0 * delta)
 			right_leg.rotation.x = move_toward(right_leg.rotation.x, 0.0, 7.0 * delta)
-		if torso_mesh and head_mesh and hair_mesh:
-			torso_mesh.position.y = move_toward(torso_mesh.position.y, 0.95, 0.4 * delta)
-			head_mesh.position.y = move_toward(head_mesh.position.y, 1.45, 0.4 * delta)
-			hair_mesh.position.y = move_toward(hair_mesh.position.y, 1.58, 0.4 * delta)
-			torso_mesh.rotation.z = move_toward(torso_mesh.rotation.z, 0.0, 4.0 * delta)
+			left_leg.position.y = move_toward(left_leg.position.y, 0.42, 6.0 * delta)
+			right_leg.position.y = move_toward(right_leg.position.y, 0.42, 6.0 * delta)
+			left_leg.rotation.z = move_toward(left_leg.rotation.z, 0.0, 4.0 * delta)
+			right_leg.rotation.z = move_toward(right_leg.rotation.z, 0.0, 4.0 * delta)
 
-		# Idle micro-actions (phone check, stretch, look around)
+		if torso_mesh and head_mesh and hair_mesh:
+			torso_mesh.position.y = move_toward(torso_mesh.position.y, 0.95 + breathe * 0.35, 0.8 * delta)
+			torso_mesh.rotation.x = move_toward(torso_mesh.rotation.x, 0.0, 4.0 * delta)
+			torso_mesh.rotation.y = move_toward(torso_mesh.rotation.y, 0.0, 4.0 * delta)
+			torso_mesh.rotation.z = move_toward(torso_mesh.rotation.z, hip_shift, 2.0 * delta)
+			torso_mesh.scale = Vector3(1.0 - breathe * 0.35, 1.0 + breathe, 1.0 - breathe * 0.35)
+
+			head_mesh.position.y = move_toward(head_mesh.position.y, 1.45 + breathe * 0.35, 0.8 * delta)
+			head_mesh.rotation.x = move_toward(head_mesh.rotation.x, 0.0, 4.0 * delta)
+			head_mesh.rotation.z = move_toward(head_mesh.rotation.z, 0.0, 4.0 * delta)
+			hair_mesh.position.y = move_toward(hair_mesh.position.y, 1.58 + breathe * 0.35, 0.8 * delta)
+			hair_mesh.rotation.z = move_toward(hair_mesh.rotation.z, 0.0, 4.0 * delta)
+
+		# 2. Idle micro-actions (phone check, stretch, look around, afrobeats vibe)
 		_idle_time += delta
-		if _idle_time >= 8.5:
+		if _idle_time >= 7.0:
 			_idle_time = 0.0
 			_trigger_idle_fidget()
 
@@ -889,6 +925,14 @@ func play_emote(emote_name: String) -> void:
 		"pray":
 			play_pray_animation()
 			if NetworkManager: NetworkManager.broadcast_emote("pray")
+		"kick", "penalty", "football":
+			play_penalty_kick_animation()
+		"snooker", "pool":
+			play_snooker_shot_animation()
+		"cook", "cooking":
+			play_cooking_animation()
+		"haircut", "salon", "fade":
+			play_salon_haircut_animation()
 		_:
 			play_wave_animation()
 
@@ -912,37 +956,219 @@ func cancel_emote() -> void:
 		torso_mesh.position = Vector3(0, 0.95, 0)
 
 
-## Subtle natural idle movements (stretch, phone check, look around)
+## Subtle natural idle movements (stretch, phone check, Afrobeats vibe, fade check, look around)
 func _trigger_idle_fidget() -> void:
 	if not visual_root or not is_inside_tree() or is_sitting or is_emoting:
 		return
-	var choice: int = randi() % 3
+	var choice: int = randi() % 5
 	var fidget_tw: Tween = create_tween()
 	match choice:
 		0:
-			# Phone check
+			# Phone check with two-hand tap
 			if right_arm and head_mesh:
-				fidget_tw.tween_property(right_arm, "rotation:x", -1.2, 0.25)
-				fidget_tw.parallel().tween_property(head_mesh, "rotation:x", 0.28, 0.25)
-				fidget_tw.tween_interval(1.6)
-				fidget_tw.tween_property(right_arm, "rotation:x", 0.0, 0.25)
-				fidget_tw.parallel().tween_property(head_mesh, "rotation:x", 0.0, 0.25)
+				fidget_tw.tween_property(right_arm, "rotation:x", -1.35, 0.22)
+				fidget_tw.parallel().tween_property(right_arm, "rotation:z", 0.2, 0.22)
+				if left_arm:
+					fidget_tw.parallel().tween_property(left_arm, "rotation:x", -0.75, 0.22)
+					fidget_tw.parallel().tween_property(left_arm, "rotation:z", 0.35, 0.22)
+				fidget_tw.parallel().tween_property(head_mesh, "rotation:x", 0.35, 0.22)
+				fidget_tw.tween_interval(1.8)
+				fidget_tw.tween_property(right_arm, "rotation", Vector3.ZERO, 0.22)
+				if left_arm:
+					fidget_tw.parallel().tween_property(left_arm, "rotation", Vector3.ZERO, 0.22)
+				fidget_tw.parallel().tween_property(head_mesh, "rotation:x", 0.0, 0.22)
 		1:
-			# Stretch / yawn
-			if left_arm and right_arm and torso_mesh:
-				fidget_tw.tween_property(left_arm, "rotation:x", -2.2, 0.35)
-				fidget_tw.parallel().tween_property(right_arm, "rotation:x", -2.2, 0.35)
-				fidget_tw.parallel().tween_property(torso_mesh, "rotation:x", -0.15, 0.35)
-				fidget_tw.tween_interval(1.0)
-				fidget_tw.tween_property(left_arm, "rotation:x", 0.0, 0.3)
-				fidget_tw.parallel().tween_property(right_arm, "rotation:x", 0.0, 0.3)
-				fidget_tw.parallel().tween_property(torso_mesh, "rotation:x", 0.0, 0.3)
+			# Afrobeats rhythmic shoulder vibe
+			if torso_mesh and head_mesh:
+				fidget_tw.tween_property(torso_mesh, "rotation:z", 0.08, 0.18)
+				fidget_tw.parallel().tween_property(head_mesh, "rotation:z", -0.06, 0.18)
+				fidget_tw.tween_property(torso_mesh, "rotation:z", -0.08, 0.2)
+				fidget_tw.parallel().tween_property(head_mesh, "rotation:z", 0.06, 0.2)
+				fidget_tw.tween_property(torso_mesh, "rotation:z", 0.06, 0.18)
+				fidget_tw.tween_property(torso_mesh, "rotation:z", 0.0, 0.15)
+				fidget_tw.parallel().tween_property(head_mesh, "rotation:z", 0.0, 0.15)
 		2:
-			# Campus look around
+			# Hair / fade touch-up with approval nod
+			if right_arm and head_mesh:
+				fidget_tw.tween_property(right_arm, "rotation:x", -2.1, 0.24)
+				fidget_tw.parallel().tween_property(right_arm, "rotation:z", 0.45, 0.24)
+				fidget_tw.parallel().tween_property(head_mesh, "rotation:z", -0.15, 0.24)
+				fidget_tw.tween_interval(0.8)
+				fidget_tw.tween_property(right_arm, "rotation", Vector3.ZERO, 0.24)
+				fidget_tw.parallel().tween_property(head_mesh, "rotation:z", 0.0, 0.24)
+				fidget_tw.parallel().tween_property(head_mesh, "rotation:x", 0.15, 0.14)
+				fidget_tw.tween_property(head_mesh, "rotation:x", 0.0, 0.14)
+		3:
+			# Big campus stretch & yawn
+			if left_arm and right_arm and torso_mesh:
+				fidget_tw.tween_property(left_arm, "rotation:x", -2.3, 0.35)
+				fidget_tw.parallel().tween_property(right_arm, "rotation:x", -2.3, 0.35)
+				fidget_tw.parallel().tween_property(torso_mesh, "rotation:x", -0.16, 0.35)
+				fidget_tw.tween_interval(1.1)
+				fidget_tw.tween_property(left_arm, "rotation:x", 0.0, 0.28)
+				fidget_tw.parallel().tween_property(right_arm, "rotation:x", 0.0, 0.28)
+				fidget_tw.parallel().tween_property(torso_mesh, "rotation:x", 0.0, 0.28)
+		4:
+			# Quad scouting / look around
 			if head_mesh:
-				fidget_tw.tween_property(head_mesh, "rotation:y", 0.55, 0.3)
-				fidget_tw.tween_interval(0.6)
-				fidget_tw.tween_property(head_mesh, "rotation:y", -0.55, 0.4)
-				fidget_tw.tween_interval(0.6)
+				fidget_tw.tween_property(head_mesh, "rotation:y", 0.65, 0.3)
+				fidget_tw.tween_interval(0.7)
+				fidget_tw.tween_property(head_mesh, "rotation:y", -0.65, 0.4)
+				fidget_tw.tween_interval(0.7)
 				fidget_tw.tween_property(head_mesh, "rotation:y", 0.0, 0.25)
+
+
+## Dynamic penalty kick animation in the campus stadium
+func play_penalty_kick_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	cancel_emote()
+	is_emoting = true
+	_idle_time = 0.0
+	spawn_floating_stat("⚽ PENALTY STRIKE!", Color(0.35, 0.95, 0.65, 1.0))
+
+	var kick_tw: Tween = create_tween()
+	_active_emote_tween = kick_tw
+
+	# 1. Anticipation wind-up: leg pulls back, arms balance
+	kick_tw.tween_callback(func():
+		if right_leg: right_leg.rotation.x = 0.95
+		if torso_mesh: torso_mesh.rotation.x = -0.22
+		if left_arm: left_arm.rotation.z = 0.6
+		if right_arm: right_arm.rotation.z = -0.6
+	)
+	kick_tw.tween_interval(0.22)
+
+	# 2. Forward powerful strike
+	kick_tw.tween_callback(func():
+		if right_leg: right_leg.rotation.x = -1.35
+		if torso_mesh: torso_mesh.rotation.x = 0.25
+		if SoundManager and SoundManager.has_method("play_whistle"):
+			SoundManager.play_whistle()
+	)
+	kick_tw.tween_interval(0.2)
+
+	# 3. Follow-through and celebratory jump
+	kick_tw.tween_callback(func():
+		cancel_emote()
+		play_celebrate_animation("⚽ GOAL! Clean Strike!")
+	)
+
+
+## Snooker cue stick strike animation at the SUB arcade
+func play_snooker_shot_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	cancel_emote()
+	is_emoting = true
+	_idle_time = 0.0
+	spawn_floating_stat("🎱 Snooker Shot!", Color(0.95, 0.65, 0.9, 1.0))
+
+	var shot_tw: Tween = create_tween()
+	_active_emote_tween = shot_tw
+
+	# Lean forward over table, aim cue
+	shot_tw.tween_callback(func():
+		if torso_mesh:
+			torso_mesh.rotation.x = 0.42
+			torso_mesh.position.y = 0.76
+		if head_mesh: head_mesh.rotation.x = -0.2
+		if right_arm: right_arm.rotation.x = -0.7
+		if left_arm: left_arm.rotation.x = -0.3
+	)
+	shot_tw.tween_interval(0.3)
+
+	# Cue pullback
+	shot_tw.tween_callback(func():
+		if right_arm: right_arm.rotation.x = -0.95
+	)
+	shot_tw.tween_interval(0.22)
+
+	# Forward stroke hit
+	shot_tw.tween_callback(func():
+		if right_arm: right_arm.rotation.x = -0.2
+		if SoundManager: SoundManager.play_click()
+	)
+	shot_tw.tween_interval(0.25)
+
+	shot_tw.tween_callback(func():
+		cancel_emote()
+	)
+
+
+## Hostel kitchenette cooking & stirring animation
+func play_cooking_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	cancel_emote()
+	is_emoting = true
+	_idle_time = 0.0
+	spawn_floating_stat("🍲 Cooking Spicy Meal!", Color(1.0, 0.65, 0.35, 1.0))
+	if SoundManager and SoundManager.has_method("play_sizzle"):
+		SoundManager.play_sizzle()
+
+	var cook_tw: Tween = create_tween()
+	_active_emote_tween = cook_tw
+
+	# Forward lean over stove
+	cook_tw.tween_callback(func():
+		if torso_mesh: torso_mesh.rotation.x = 0.18
+		if head_mesh: head_mesh.rotation.x = 0.25
+	)
+
+	# 3 stirring cycles
+	for i in range(3):
+		cook_tw.tween_callback(func():
+			if right_arm:
+				right_arm.rotation.x = -0.9
+				right_arm.rotation.z = 0.35
+		)
+		cook_tw.tween_interval(0.18)
+		cook_tw.tween_callback(func():
+			if right_arm:
+				right_arm.rotation.x = -0.6
+				right_arm.rotation.z = 0.15
+		)
+		cook_tw.tween_interval(0.18)
+
+	cook_tw.tween_callback(func():
+		cancel_emote()
+	)
+
+
+## Fresh haircut & styling mirror check animation
+func play_salon_haircut_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	cancel_emote()
+	is_emoting = true
+	_idle_time = 0.0
+	spawn_floating_stat("💈 Fresh Campus Fade!", Color(1.0, 0.85, 0.35, 1.0))
+	if SoundManager:
+		SoundManager.play_bell()
+
+	var salon_tw: Tween = create_tween()
+	_active_emote_tween = salon_tw
+
+	# Hands touch hairline/taper
+	salon_tw.tween_callback(func():
+		if left_arm and right_arm:
+			left_arm.rotation.x = -2.1
+			left_arm.rotation.z = -0.35
+			right_arm.rotation.x = -2.1
+			right_arm.rotation.z = 0.35
+		if head_mesh: head_mesh.rotation.y = 0.45
+	)
+	salon_tw.tween_interval(0.4)
+
+	# Turn other side
+	salon_tw.tween_callback(func():
+		if head_mesh: head_mesh.rotation.y = -0.45
+	)
+	salon_tw.tween_interval(0.4)
+
+	# Settle with confidence
+	salon_tw.tween_callback(func():
+		cancel_emote()
+	)
 

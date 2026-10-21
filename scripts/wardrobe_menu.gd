@@ -24,6 +24,7 @@ const ProfileStore = preload("res://scripts/data/student_profile.gd")
 const PlayerScene = preload("res://scenes/player_3d.tscn")
 
 var mirror_player: Player3D = null
+var mirror_viewport: SubViewport = null
 
 
 func _ready() -> void:
@@ -66,7 +67,8 @@ func _build_3d_mirror_preview() -> void:
 	vp.own_world_3d = true
 	vp.transparent_bg = true
 	vp.size = Vector2i(320, 150)
-	vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	vp.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	mirror_viewport = vp
 	svc.add_child(vp)
 
 	var cam := Camera3D.new()
@@ -166,11 +168,15 @@ func open_wardrobe(player: CharacterBody3D) -> void:
 		outfit_options.select(selected_outfit_idx)
 
 	visible = true
+	if mirror_viewport:
+		mirror_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	_update_preview()
 
 
 func close_wardrobe() -> void:
 	visible = false
+	if mirror_viewport:
+		mirror_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	wardrobe_closed.emit()
 
 
@@ -213,9 +219,6 @@ func _on_equip_pressed() -> void:
 	ProfileStore.hair_index = selected_hair_idx
 	ProfileStore.shirt_index = selected_outfit_idx
 	ProfileStore.save_to_disk()
-
-	const PropBuilder = preload("res://scripts/data/prop_builder_3d.gd")
-	PropBuilder.complete_semester_task(0)
 
 	if current_player and current_player.has_method("play_dressing_animation"):
 		current_player.play_dressing_animation()

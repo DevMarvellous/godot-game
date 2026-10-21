@@ -21,6 +21,7 @@ signal dialogue_requested(npc: NPC3D, player: CharacterBody3D)
 @onready var visual_root: Node3D = $Visuals
 @onready var torso_mesh: MeshInstance3D = $Visuals/TorsoMesh if has_node("Visuals/TorsoMesh") else null
 @onready var head_mesh: MeshInstance3D = $Visuals/HeadMesh if has_node("Visuals/HeadMesh") else null
+@onready var hair_mesh: MeshInstance3D = $Visuals/HairMesh if has_node("Visuals/HairMesh") else null
 @onready var left_arm: MeshInstance3D = $Visuals/LeftArm if has_node("Visuals/LeftArm") else null
 @onready var right_arm: MeshInstance3D = $Visuals/RightArm if has_node("Visuals/RightArm") else null
 @onready var name_label: Label3D = $NameLabel
@@ -116,19 +117,44 @@ func _physics_process(delta: float) -> void:
 			var angle: float = atan2(-move_dir.x, -move_dir.z)
 			visual_root.rotation.y = lerp_angle(visual_root.rotation.y, angle, 8.0 * delta)
 
-			# Animate NPC arm swinging
-			walk_anim_time += delta * 10.0
+			# Animate NPC locomotion with forward lean, bounce, and arm swing
+			walk_anim_time += delta * 10.5
 			if left_arm and right_arm:
-				left_arm.rotation.x = sin(walk_anim_time) * 0.4
-				right_arm.rotation.x = -sin(walk_anim_time) * 0.4
+				left_arm.rotation.x = sin(walk_anim_time) * 0.45
+				right_arm.rotation.x = -sin(walk_anim_time) * 0.45
+				left_arm.rotation.z = 0.08
+				right_arm.rotation.z = -0.08
+			if torso_mesh:
+				torso_mesh.rotation.x = -0.06
+				torso_mesh.rotation.y = sin(walk_anim_time) * 0.05
+				torso_mesh.position.y = 0.95 + abs(sin(walk_anim_time)) * 0.035
+			if head_mesh:
+				head_mesh.position.y = 1.45 + abs(sin(walk_anim_time)) * 0.02
+			if hair_mesh:
+				hair_mesh.position.y = 1.58 + abs(sin(walk_anim_time)) * 0.02
 	else:
 		wait_timer -= delta
 		ambient_chatter_timer -= delta
 		velocity.x = move_toward(velocity.x, 0.0, 8.0 * delta)
 		velocity.z = move_toward(velocity.z, 0.0, 8.0 * delta)
+
+		# Procedural idle breathing
+		var breathe: float = sin(Time.get_ticks_msec() * 0.0022) * 0.015
 		if left_arm and right_arm:
 			left_arm.rotation.x = move_toward(left_arm.rotation.x, 0.0, 4.0 * delta)
 			right_arm.rotation.x = move_toward(right_arm.rotation.x, 0.0, 4.0 * delta)
+			left_arm.rotation.z = move_toward(left_arm.rotation.z, 0.06 + breathe * 0.3, 3.0 * delta)
+			right_arm.rotation.z = move_toward(right_arm.rotation.z, -0.06 - breathe * 0.3, 3.0 * delta)
+		if torso_mesh:
+			torso_mesh.position.y = move_toward(torso_mesh.position.y, 0.95 + breathe * 0.3, 0.6 * delta)
+			torso_mesh.rotation.x = move_toward(torso_mesh.rotation.x, 0.0, 4.0 * delta)
+			torso_mesh.rotation.y = move_toward(torso_mesh.rotation.y, 0.0, 4.0 * delta)
+			torso_mesh.scale = Vector3(1.0 - breathe * 0.3, 1.0 + breathe, 1.0 - breathe * 0.3)
+		if head_mesh:
+			head_mesh.position.y = move_toward(head_mesh.position.y, 1.45 + breathe * 0.3, 0.6 * delta)
+		if hair_mesh:
+			hair_mesh.position.y = move_toward(hair_mesh.position.y, 1.58 + breathe * 0.3, 0.6 * delta)
+
 		if ambient_chatter_timer <= 0.0:
 			ambient_chatter_timer = randf_range(14.0, 26.0)
 			if speech_label and not speech_label.visible and not dialogues.is_empty():
