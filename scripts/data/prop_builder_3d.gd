@@ -57,9 +57,9 @@ static func configure_proximity_label(lbl: Label3D, max_dist: float = 6.5, font_
 		return
 	lbl.font_size = font_sz
 	lbl.outline_size = 6
-	lbl.distance_fade_mode = BaseMaterial3D.DISTANCE_FADE_PIXEL_ALPHA
-	lbl.distance_fade_min_distance = max_dist
-	lbl.distance_fade_max_distance = max_dist - 2.2
+	lbl.visibility_range_end = max_dist + 3.0
+	lbl.visibility_range_end_margin = 2.0
+	lbl.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 
 
 ## Builds a recognizable 3D prop + interactive ground ring for any CampusObject3D
@@ -235,7 +235,7 @@ static func get_smart_objective(energy: float, hunger: float, money: int, cgpa: 
 			"dest": &"sub",
 			"color": Color(0.35, 0.95, 0.58)
 		}
-	if TimeSystem.hour >= 21 or TimeSystem.hour < 6:
+	if TimeSystem.is_night():
 		return {
 			"text": "🌙 Late Night: Head to Hostel Bed to rest for 07:00 AM",
 			"dest": &"hostel",
@@ -300,7 +300,7 @@ static func update_room_day_night_lighting(room: Node3D) -> void:
 	if not dir_light:
 		return
 
-	var hr: int = TimeSystem.hour
+	var hr: int = TimeSystem.get_hour()
 	if hr >= 6 and hr < 10:
 		# Warm Lagos Morning Sun
 		dir_light.light_color = Color(1.0, 0.92, 0.76)
