@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+	<title>My Campus Life — Lagos Life 3D</title>
+	<meta name="description" content="Authentic Nigerian University 3D Life-Sim: Lectures, Danfo Shuttles, Mama Put, Hostel Living & Hustles!">
+	<meta name="theme-color" content="#0b5334">
+	<style>
+html, body, #canvas {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #080c10;
+	color: #fff;
+	overflow: hidden;
+	touch-action: none;
+	font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+#status {
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	background: radial-gradient(circle at center, #11281e 0%, #060e0a 100%);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	z-index: 100;
+	padding: 20px;
+	box-sizing: border-box;
+}
+
+.loader-card {
+	background: rgba(14, 28, 22, 0.94);
+	border: 2px solid #f5c518;
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 197, 24, 0.25);
+	border-radius: 20px;
+	padding: 28px 24px;
+	max-width: 440px;
+	width: 90%;
+	text-align: center;
+	backdrop-filter: blur(8px);
+}
+
+.campus-title {
+	font-size: 24px;
+	font-weight: 800;
+	color: #f5c518;
+	margin: 0 0 6px 0;
+	text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+	letter-spacing: 0.5px;
+}
+
+.campus-sub {
+	font-size: 13px;
+	color: #a3e6be;
+	margin: 0 0 20px 0;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-weight: 600;
+}
+
+.progress-bar-wrap {
+	width: 100%;
+	background: #091a13;
+	border: 1px solid #1e4d37;
+	border-radius: 12px;
+	height: 18px;
+	overflow: hidden;
+	margin: 16px 0 10px 0;
+	box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+}
+
+.progress-bar-fill {
+	height: 100%;
+	width: 0%;
+	background: linear-gradient(90deg, #10b981 0%, #f5c518 100%);
+	border-radius: 10px;
+	transition: width 0.2s ease;
+}
+
+.progress-text {
+	font-size: 13px;
+	color: #e2e8f0;
+	font-weight: 600;
+	margin-bottom: 14px;
+}
+
+.tip-box {
+	background: rgba(8, 16, 12, 0.85);
+	border: 1px solid #16402d;
+	border-radius: 12px;
+	padding: 12px 14px;
+	font-size: 12px;
+	color: #cbd5e1;
+	line-height: 1.45;
+	min-height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#status-notice {
+	margin-top: 15px;
+	background: #7f1d1d;
+	border: 1px solid #ef4444;
+	color: #fecaca;
+	padding: 10px 14px;
+	border-radius: 8px;
+	font-size: 12px;
+	display: none;
+}
+
+/* Floating Fullscreen button on web */
+#web-fullscreen-btn {
+	position: fixed;
+	bottom: 14px;
+	right: 14px;
+	background: rgba(15, 23, 42, 0.85);
+	border: 1px solid #f5c518;
+	color: #f5c518;
+	border-radius: 20px;
+	padding: 7px 14px;
+	font-size: 12px;
+	font-weight: 700;
+	cursor: pointer;
+	z-index: 50;
+	backdrop-filter: blur(6px);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+	user-select: none;
+	-webkit-user-select: none;
+}
+#web-fullscreen-btn:hover {
+	background: #f5c518;
+	color: #0b2217;
+}
+	</style>
+	$GODOT_HEAD_INCLUDE
+</head>
+<body>
+	<canvas id="canvas">Your browser does not support the HTML5 canvas tag.</canvas>
+	<noscript>Your browser does not support JavaScript. Please enable JavaScript to play My Campus Life.</noscript>
+
+	<div id="status">
+		<div class="loader-card">
+			<div class="campus-title">🏛️ MY CAMPUS LIFE</div>
+			<div class="campus-sub">Lagos Life 3D Edition</div>
+
+			<div class="progress-bar-wrap">
+				<div id="loader-fill" class="progress-bar-fill"></div>
+			</div>
+			<div id="loader-percent" class="progress-text">Starting Campus Engine...</div>
+
+			<div id="campus-tip" class="tip-box">
+				💡 Tip: Catch the Danfo Shuttle (₦100) to get to 8:00 AM class on time!
+			</div>
+
+			<div id="status-notice"></div>
+		</div>
+	</div>
+
+	<button id="web-fullscreen-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
+
+	<script src="$GODOT_URL"></script>
+	<script>
+const GODOT_CONFIG = $GODOT_CONFIG;
+const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
+const engine = new Engine(GODOT_CONFIG);
+
+const TIPS = [
+	"💡 Tip: Tap on any object or student once to auto-walk and interact!",
+	"💡 Tip: Catch the yellow Danfo shuttle (₦100) to reach faculty halls instantly.",
+	"💡 Tip: Sleep in your hostel bed to wake up at 07:00 AM with 100% full Energy.",
+	"💡 Tip: Keep your CGPA above 4.50 to claim the ₦25,000 First Class Merit Scholarship at Senate!",
+	"💡 Tip: Grab Jollof + Zobo at Mama Put canteen to keep your hunger filled.",
+	"💡 Tip: Low on pocket money? Take freelance gigs at the SUB business center.",
+	"💡 Tip: Your hostel mini-fridge keeps chilled drinks to boost energy anywhere."
+];
+
+let tipIndex = 0;
+const tipEl = document.getElementById('campus-tip');
+setInterval(() => {
+	tipIndex = (tipIndex + 1) % TIPS.length;
+	if (tipEl) tipEl.textContent = TIPS[tipIndex];
+}, 3200);
+
+function toggleFullScreen() {
+	if (!document.fullscreenElement) {
+		document.documentElement.requestFullscreen().catch(() => {});
+	} else {
+		if (document.exitFullscreen) document.exitFullscreen();
+	}
+}
+
+(function () {
+	const statusOverlay = document.getElementById('status');
+	const fillBar = document.getElementById('loader-fill');
+	const percentText = document.getElementById('loader-percent');
+	const statusNotice = document.getElementById('status-notice');
+
+	function setStatusNotice(text) {
+		statusNotice.innerHTML = '';
+		const lines = text.split('\n');
+		lines.forEach((line) => {
+			const d = document.createElement('div');
+			d.textContent = line;
+			statusNotice.appendChild(d);
+		});
+		statusNotice.style.display = 'block';
+	}
+
+	engine.startGame({
+		'onProgress': function (current, total) {
+			if (current > 0 && total > 0) {
+				const pct = Math.min(100, Math.floor((current / total) * 100));
+				if (fillBar) fillBar.style.width = pct + '%';
+				if (percentText) percentText.textContent = `Loading Campus Assets (${pct}%)...`;
+			} else {
+				if (percentText) percentText.textContent = 'Entering Federal University Campus...';
+			}
+		},
+	}).then(() => {
+		if (statusOverlay) statusOverlay.style.display = 'none';
+	}).catch((err) => {
+		console.error(err);
+		setStatusNotice(err && err.message ? err.message : String(err));
+	});
+}());
+	</script>
+</body>
+</html>
+

@@ -1,220 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
-		<title>My Campus Life</title>
-		<style>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+	<title>My Campus Life — Lagos Life 3D</title>
+	<meta name="description" content="Authentic Nigerian University 3D Life-Sim: Lectures, Danfo Shuttles, Mama Put, Hostel Living & Hustles!">
+	<meta name="theme-color" content="#0b5334">
+	<style>
 html, body, #canvas {
 	margin: 0;
 	padding: 0;
 	border: 0;
-}
-
-body {
-	color: white;
-	background-color: black;
+	width: 100%;
+	height: 100%;
+	background-color: #080c10;
+	color: #fff;
 	overflow: hidden;
 	touch-action: none;
-}
-
-#canvas {
-	display: block;
-}
-
-#canvas:focus {
-	outline: none;
-}
-
-#status, #status-splash, #status-progress {
-	position: absolute;
-	left: 0;
-	right: 0;
-}
-
-#status, #status-splash {
-	top: 0;
-	bottom: 0;
+	font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 #status {
-	background-color: #242424;
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	background: radial-gradient(circle at center, #11281e 0%, #060e0a 100%);
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	visibility: hidden;
+	z-index: 100;
+	padding: 20px;
+	box-sizing: border-box;
 }
 
-#status-splash {
-	max-height: 100%;
-	max-width: 100%;
-	margin: auto;
+.loader-card {
+	background: rgba(14, 28, 22, 0.94);
+	border: 2px solid #f5c518;
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 197, 24, 0.25);
+	border-radius: 20px;
+	padding: 28px 24px;
+	max-width: 440px;
+	width: 90%;
+	text-align: center;
+	backdrop-filter: blur(8px);
 }
 
-#status-splash.show-image--false {
-	display: none;
+.campus-title {
+	font-size: 24px;
+	font-weight: 800;
+	color: #f5c518;
+	margin: 0 0 6px 0;
+	text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+	letter-spacing: 0.5px;
 }
 
-#status-splash.fullsize--true {
-	height: 100%;
+.campus-sub {
+	font-size: 13px;
+	color: #a3e6be;
+	margin: 0 0 20px 0;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-weight: 600;
+}
+
+.progress-bar-wrap {
 	width: 100%;
-	object-fit: contain;
+	background: #091a13;
+	border: 1px solid #1e4d37;
+	border-radius: 12px;
+	height: 18px;
+	overflow: hidden;
+	margin: 16px 0 10px 0;
+	box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
 }
 
-#status-splash.use-filter--false {
-	image-rendering: pixelated;
+.progress-bar-fill {
+	height: 100%;
+	width: 0%;
+	background: linear-gradient(90deg, #10b981 0%, #f5c518 100%);
+	border-radius: 10px;
+	transition: width 0.2s ease;
 }
 
-#status-progress, #status-notice {
-	display: none;
+.progress-text {
+	font-size: 13px;
+	color: #e2e8f0;
+	font-weight: 600;
+	margin-bottom: 14px;
 }
 
-#status-progress {
-	bottom: 10%;
-	width: 50%;
-	margin: 0 auto;
+.tip-box {
+	background: rgba(8, 16, 12, 0.85);
+	border: 1px solid #16402d;
+	border-radius: 12px;
+	padding: 12px 14px;
+	font-size: 12px;
+	color: #cbd5e1;
+	line-height: 1.45;
+	min-height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 #status-notice {
-	background-color: #5b3943;
-	border-radius: 0.5rem;
-	border: 1px solid #9b3943;
-	color: #e0e0e0;
-	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
-	line-height: 1.3;
-	margin: 0 2rem;
-	overflow: hidden;
-	padding: 1rem;
-	text-align: center;
-	z-index: 1;
+	margin-top: 15px;
+	background: #7f1d1d;
+	border: 1px solid #ef4444;
+	color: #fecaca;
+	padding: 10px 14px;
+	border-radius: 8px;
+	font-size: 12px;
+	display: none;
 }
-		</style>
-		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
+
+/* Floating Fullscreen button on web */
+#web-fullscreen-btn {
+	position: fixed;
+	bottom: 14px;
+	right: 14px;
+	background: rgba(15, 23, 42, 0.85);
+	border: 1px solid #f5c518;
+	color: #f5c518;
+	border-radius: 20px;
+	padding: 7px 14px;
+	font-size: 12px;
+	font-weight: 700;
+	cursor: pointer;
+	z-index: 50;
+	backdrop-filter: blur(6px);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+	user-select: none;
+	-webkit-user-select: none;
+}
+#web-fullscreen-btn:hover {
+	background: #f5c518;
+	color: #0b2217;
+}
+	</style>
+	<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
 
-	</head>
-	<body>
-		<canvas id="canvas">
-			Your browser does not support the canvas tag.
-		</canvas>
+</head>
+<body>
+	<canvas id="canvas">Your browser does not support the HTML5 canvas tag.</canvas>
+	<noscript>Your browser does not support JavaScript. Please enable JavaScript to play My Campus Life.</noscript>
 
-		<noscript>
-			Your browser does not support JavaScript.
-		</noscript>
+	<div id="status">
+		<div class="loader-card">
+			<div class="campus-title">🏛️ MY CAMPUS LIFE</div>
+			<div class="campus-sub">Lagos Life 3D Edition</div>
 
-		<div id="status">
-			<img id="status-splash" class="show-image--true fullsize--true use-filter--true" src="index.png" alt="">
-			<progress id="status-progress"></progress>
+			<div class="progress-bar-wrap">
+				<div id="loader-fill" class="progress-bar-fill"></div>
+			</div>
+			<div id="loader-percent" class="progress-text">Starting Campus Engine...</div>
+
+			<div id="campus-tip" class="tip-box">
+				💡 Tip: Catch the Danfo Shuttle (₦100) to get to 8:00 AM class on time!
+			</div>
+
 			<div id="status-notice"></div>
 		</div>
+	</div>
 
-		<script src="index.js"></script>
-		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":735308,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+	<button id="web-fullscreen-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
+
+	<script src="index.js"></script>
+	<script>
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":735324,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
+const TIPS = [
+	"💡 Tip: Tap on any object or student once to auto-walk and interact!",
+	"💡 Tip: Catch the yellow Danfo shuttle (₦100) to reach faculty halls instantly.",
+	"💡 Tip: Sleep in your hostel bed to wake up at 07:00 AM with 100% full Energy.",
+	"💡 Tip: Keep your CGPA above 4.50 to claim the ₦25,000 First Class Merit Scholarship at Senate!",
+	"💡 Tip: Grab Jollof + Zobo at Mama Put canteen to keep your hunger filled.",
+	"💡 Tip: Low on pocket money? Take freelance gigs at the SUB business center.",
+	"💡 Tip: Your hostel mini-fridge keeps chilled drinks to boost energy anywhere."
+];
+
+let tipIndex = 0;
+const tipEl = document.getElementById('campus-tip');
+setInterval(() => {
+	tipIndex = (tipIndex + 1) % TIPS.length;
+	if (tipEl) tipEl.textContent = TIPS[tipIndex];
+}, 3200);
+
+function toggleFullScreen() {
+	if (!document.fullscreenElement) {
+		document.documentElement.requestFullscreen().catch(() => {});
+	} else {
+		if (document.exitFullscreen) document.exitFullscreen();
+	}
+}
+
 (function () {
 	const statusOverlay = document.getElementById('status');
-	const statusProgress = document.getElementById('status-progress');
+	const fillBar = document.getElementById('loader-fill');
+	const percentText = document.getElementById('loader-percent');
 	const statusNotice = document.getElementById('status-notice');
 
-	let initializing = true;
-	let statusMode = '';
-
-	function setStatusMode(mode) {
-		if (statusMode === mode || !initializing) {
-			return;
-		}
-		if (mode === 'hidden') {
-			statusOverlay.remove();
-			initializing = false;
-			return;
-		}
-		statusOverlay.style.visibility = 'visible';
-		statusProgress.style.display = mode === 'progress' ? 'block' : 'none';
-		statusNotice.style.display = mode === 'notice' ? 'block' : 'none';
-		statusMode = mode;
-	}
-
 	function setStatusNotice(text) {
-		while (statusNotice.lastChild) {
-			statusNotice.removeChild(statusNotice.lastChild);
-		}
+		statusNotice.innerHTML = '';
 		const lines = text.split('\n');
 		lines.forEach((line) => {
-			statusNotice.appendChild(document.createTextNode(line));
-			statusNotice.appendChild(document.createElement('br'));
+			const d = document.createElement('div');
+			d.textContent = line;
+			statusNotice.appendChild(d);
 		});
+		statusNotice.style.display = 'block';
 	}
 
-	function displayFailureNotice(err) {
-		console.error(err);
-		if (err instanceof Error) {
-			setStatusNotice(err.message);
-		} else if (typeof err === 'string') {
-			setStatusNotice(err);
-		} else {
-			setStatusNotice('An unknown error occurred.');
-		}
-		setStatusMode('notice');
-		initializing = false;
-	}
-
-	const missing = Engine.getMissingFeatures({
-		threads: GODOT_THREADS_ENABLED,
-	});
-
-	if (missing.length !== 0) {
-		if (GODOT_CONFIG['serviceWorker'] && GODOT_CONFIG['ensureCrossOriginIsolationHeaders'] && 'serviceWorker' in navigator) {
-			let serviceWorkerRegistrationPromise;
-			try {
-				serviceWorkerRegistrationPromise = navigator.serviceWorker.getRegistration();
-			} catch (err) {
-				serviceWorkerRegistrationPromise = Promise.reject(new Error('Service worker registration failed.'));
+	engine.startGame({
+		'onProgress': function (current, total) {
+			if (current > 0 && total > 0) {
+				const pct = Math.min(100, Math.floor((current / total) * 100));
+				if (fillBar) fillBar.style.width = pct + '%';
+				if (percentText) percentText.textContent = `Loading Campus Assets (${pct}%)...`;
+			} else {
+				if (percentText) percentText.textContent = 'Entering Federal University Campus...';
 			}
-			// There's a chance that installing the service worker would fix the issue
-			Promise.race([
-				serviceWorkerRegistrationPromise.then((registration) => {
-					if (registration != null) {
-						return Promise.reject(new Error('Service worker already exists.'));
-					}
-					return registration;
-				}).then(() => engine.installServiceWorker()),
-				// For some reason, `getRegistration()` can stall
-				new Promise((resolve) => {
-					setTimeout(() => resolve(), 2000);
-				}),
-			]).then(() => {
-				// Reload if there was no error.
-				window.location.reload();
-			}).catch((err) => {
-				console.error('Error while registering service worker:', err);
-			});
-		} else {
-			// Display the message as usual
-			const missingMsg = 'Error\nThe following features required to run Godot projects on the Web are missing:\n';
-			displayFailureNotice(missingMsg + missing.join('\n'));
-		}
-	} else {
-		setStatusMode('progress');
-		engine.startGame({
-			'onProgress': function (current, total) {
-				if (current > 0 && total > 0) {
-					statusProgress.value = current;
-					statusProgress.max = total;
-				} else {
-					statusProgress.removeAttribute('value');
-					statusProgress.removeAttribute('max');
-				}
-			},
-		}).then(() => {
-			setStatusMode('hidden');
-		}, displayFailureNotice);
-	}
+		},
+	}).then(() => {
+		if (statusOverlay) statusOverlay.style.display = 'none';
+	}).catch((err) => {
+		console.error(err);
+		setStatusNotice(err && err.message ? err.message : String(err));
+	});
 }());
-		</script>
-	</body>
+	</script>
+</body>
 </html>
+
 
