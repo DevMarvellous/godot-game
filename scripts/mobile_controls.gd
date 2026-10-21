@@ -70,16 +70,19 @@ func bind_player(p: Player3D) -> void:
 
 
 func _process(_delta: float) -> void:
-	# Light up the interact button when player is near something!
+	# Contextual Lagos Life action button: only show when near an interactable object!
 	if not interact_btn or not bound_player:
 		return
 
 	if bound_player.current_interactable != null:
-		interact_btn.modulate = Color(1.0, 1.0, 1.0, 1.0)
-		interact_btn.text = "INTERACT\n[TAP]"
+		interact_btn.visible = true
+		interact_btn.modulate = Color(1.0, 0.95, 0.75, 1.0)
+		var obj_title: String = bound_player.current_interactable.object_name
+		if obj_title.length() > 14:
+			obj_title = obj_title.substr(0, 14) + "…"
+		interact_btn.text = "USE [E]\n%s" % obj_title
 	else:
-		interact_btn.modulate = Color(1.0, 1.0, 1.0, 0.45)
-		interact_btn.text = "INTERACT"
+		interact_btn.visible = false
 
 
 func _unhandled_input(event: InputEvent) -> void:

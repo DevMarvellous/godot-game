@@ -41,9 +41,10 @@ func _ready() -> void:
 	target_destination = spawn_origin
 	wait_timer = randf_range(1.0, 3.0)
 
-	# Visual setup
+	# Visual setup with proximity fade so room isn't cluttered from afar
 	if name_label:
 		name_label.text = "%s\n[%s]" % [character_name, character_role]
+		PropBuilder3D.configure_proximity_label(name_label, 7.5, 22)
 	apply_character_data()
 
 	if speech_label:

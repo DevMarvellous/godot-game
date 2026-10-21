@@ -40,7 +40,11 @@ var has_nav_target: bool = false
 @onready var camera_node: Camera3D = $Camera3D if has_node("Camera3D") else null
 
 var current_interactable: Interactable3D = null
+var pending_interactable: Interactable3D = null
 var walk_anim_time: float = 0.0
+var _net_sync_timer: float = 0.0
+var _last_net_pos: Vector3 = Vector3.ZERO
+var _last_net_moving: bool = false
 
 # Smooth Lagos Life style camera offset & interpolation (Elevated 3/4 Isometric)
 var cam_target_offset: Vector3 = Vector3(0, 5.0, 4.8)
@@ -82,6 +86,7 @@ func set_mobile_movement(vec: Vector2) -> void:
 	mobile_input_vector = vec
 	if vec != Vector2.ZERO:
 		has_nav_target = false # Joystick movement overrides tap-to-move
+		pending_interactable = null
 		_hide_nav_beacon()
 
 
@@ -99,19 +104,70 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 
-	# Tap / Click anywhere on ground to walk there (Lagos Life tap navigation)
+	# Tap / Click anywhere to walk or 1-tap auto-interact (Lagos Life tap navigation)
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var cam: Camera3D = get_viewport().get_camera_3d()
 		if cam:
 			var from: Vector3 = cam.project_ray_origin(event.position)
 			var to: Vector3 = from + cam.project_ray_normal(event.position) * 100.0
 			var space_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
-			var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(from, to, 4) # layer 4 = Ground
+
+			# 1. Check if player directly tapped an Interactable3D (Layer 2 Area3D)
+			var area_query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(from, to, 2)
+			area_query.collide_with_areas = true
+			area_query.collide_with_bodies = false
+			var area_hit: Dictionary = space_state.intersect_ray(area_query)
+			if area_hit.has("collider") and area_hit.collider is Interactable3D:
+				var tapped_obj: Interactable3D = area_hit.collider as Interactable3D
+				_walk_to_and_interact(tapped_obj)
+				return
+
+			# 2. Otherwise raycast to Ground (Layer 4)
+			var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(from, to, 4)
 			var result: Dictionary = space_state.intersect_ray(query)
 			if result.has("position"):
-				nav_target_pos = Vector3(result.position.x, global_position.y, result.position.z)
-				has_nav_target = true
-				_show_nav_beacon(result.position)
+				var hit_pos: Vector3 = result.position
+				# Check if tap is right next to an Interactable3D in the room
+				var near_obj: Interactable3D = _find_nearest_interactable(hit_pos, 1.85)
+				if near_obj:
+					_walk_to_and_interact(near_obj)
+				else:
+					pending_interactable = null
+					nav_target_pos = Vector3(hit_pos.x, global_position.y, hit_pos.z)
+					has_nav_target = true
+					_show_nav_beacon(hit_pos)
+
+
+func _walk_to_and_interact(target: Interactable3D) -> void:
+	if not is_instance_valid(target):
+		return
+	if current_interactable == target or global_position.distance_to(target.global_position) < 2.2:
+		pending_interactable = null
+		has_nav_target = false
+		_hide_nav_beacon()
+		target.interact(self)
+		return
+	pending_interactable = target
+	nav_target_pos = Vector3(target.global_position.x, global_position.y, target.global_position.z)
+	has_nav_target = true
+	_show_nav_beacon(target.global_position)
+
+
+func _find_nearest_interactable(world_pos: Vector3, max_radius: float) -> Interactable3D:
+	var best: Interactable3D = null
+	var best_dist: float = max_radius
+	var scene_root: Node = get_tree().current_scene
+	if not scene_root:
+		return null
+	var fixtures: Node = scene_root.get_node_or_null("WorldObjects")
+	if fixtures:
+		for child in fixtures.get_children():
+			if child is Interactable3D:
+				var d: float = Vector2(world_pos.x - child.global_position.x, world_pos.z - child.global_position.z).length()
+				if d < best_dist:
+					best_dist = d
+					best = child
+	return best
 
 
 ## Toggle camera zoom through Close / Medium / Wide presets (mobile button)
@@ -172,6 +228,7 @@ func _hide_nav_beacon() -> void:
 
 func trigger_interaction() -> void:
 	if current_interactable:
+		pending_interactable = null
 		current_interactable.interact(self)
 
 
@@ -187,12 +244,14 @@ func _physics_process(delta: float) -> void:
 	if mobile_input_vector != Vector2.ZERO:
 		input_dir = mobile_input_vector
 		has_nav_target = false
+		pending_interactable = null
 		_hide_nav_beacon()
 	else:
 		input_dir.x = Input.get_axis("move_left", "move_right")
 		input_dir.y = Input.get_axis("move_up", "move_down")
 		if input_dir != Vector2.ZERO:
 			has_nav_target = false
+			pending_interactable = null
 			_hide_nav_beacon()
 
 	# Check sprint action (Shift or fast push)
@@ -210,7 +269,8 @@ func _physics_process(delta: float) -> void:
 		var to_target: Vector3 = nav_target_pos - global_position
 		to_target.y = 0.0
 		var dist: float = to_target.length()
-		if dist > 0.4:
+		var stop_dist: float = 1.65 if is_instance_valid(pending_interactable) else 0.4
+		if dist > stop_dist:
 			var move_dir: Vector3 = to_target.normalized()
 			target_vel = move_dir * current_move_speed
 			var target_angle: float = atan2(-move_dir.x, -move_dir.z)
@@ -218,6 +278,10 @@ func _physics_process(delta: float) -> void:
 		else:
 			has_nav_target = false
 			_hide_nav_beacon()
+			if is_instance_valid(pending_interactable):
+				var obj_to_use: Interactable3D = pending_interactable
+				pending_interactable = null
+				obj_to_use.interact(self)
 
 	velocity.x = move_toward(velocity.x, target_vel.x, acceleration * delta)
 	velocity.z = move_toward(velocity.z, target_vel.z, acceleration * delta)
@@ -262,10 +326,17 @@ func _physics_process(delta: float) -> void:
 			hair_mesh.position.y = move_toward(hair_mesh.position.y, 1.58, 0.4 * delta)
 			torso_mesh.rotation.z = move_toward(torso_mesh.rotation.z, 0.0, 4.0 * delta)
 
-	# Broadcast position and movement to online room peers
-	if NetworkManager and is_inside_tree() and NetworkManager.is_online():
-		var current_room: String = String(get_tree().current_scene.name) if get_tree().current_scene else "room"
-		NetworkManager.broadcast_transform(current_room, global_position, visual_root.rotation.y, horiz_speed > 0.3)
+	# Broadcast position and movement to online room peers (Throttled to 4Hz delta-only: <2 KB/min)
+	_net_sync_timer += delta
+	if _net_sync_timer >= 0.25:
+		_net_sync_timer = 0.0
+		var is_moving_now: bool = horiz_speed > 0.3
+		if NetworkManager and is_inside_tree() and NetworkManager.is_online():
+			if global_position.distance_to(_last_net_pos) > 0.15 or is_moving_now != _last_net_moving:
+				_last_net_pos = global_position
+				_last_net_moving = is_moving_now
+				var current_room: String = String(get_tree().current_scene.name) if get_tree().current_scene else "room"
+				NetworkManager.broadcast_transform(current_room, global_position, visual_root.rotation.y, is_moving_now)
 
 	# Smooth Lagos Life camera follow (damped lerp)
 	if camera_node:
@@ -282,6 +353,11 @@ func set_interaction_target(target: Interactable3D) -> void:
 	if prompt_label:
 		prompt_label.text = target.prompt_message
 		prompt_label.visible = true
+	if pending_interactable == target:
+		pending_interactable = null
+		has_nav_target = false
+		_hide_nav_beacon()
+		target.interact(self)
 
 
 func clear_interaction_target(target: Interactable3D) -> void:

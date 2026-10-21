@@ -54,10 +54,15 @@ var active_ceiling_fans: Array[Node3D] = []
 @onready var summary_menu: Control = $MenusLayer/SummaryMenu if has_node("MenusLayer/SummaryMenu") else null
 
 
+const NPC3DScene = preload("res://scenes/npc_3d.tscn")
+
+
 func _ready() -> void:
 	if player and hud:
 		hud.connect_player_needs(player.needs_manager)
 		player.needs_manager.player_passed_out.connect(_on_player_passed_out)
+		if hud.has_signal("objective_clicked"):
+			hud.objective_clicked.connect(_on_transit_requested)
 
 	if mobile_controls and player:
 		if mobile_controls.has_method("bind_player"):
@@ -140,8 +145,40 @@ func _ready() -> void:
 			SemesterManager.semester_finished.connect(_on_semester_finished)
 
 	_configure_dynamic_hostel_room()
+	_polish_room_decor_and_ambient_npcs()
 	_connect_interactive_fixtures()
 	_gather_ceiling_fans(self)
+
+
+func _polish_room_decor_and_ambient_npcs() -> void:
+	# 1. Declutter floating Label3D signs inside RoomDecor using proximity fade
+	var decor: Node = get_node_or_null("RoomDecor")
+	if decor:
+		for child in decor.get_children():
+			if child is Label3D and child.name != "RoomTitle3D":
+				PropBuilder3D.configure_proximity_label(child as Label3D, 7.0, 22)
+
+	# 2. Ensure every room has active, walking campus students so it never feels empty
+	var npcs_root: Node3D = get_node_or_null("NPCs") as Node3D
+	if not npcs_root:
+		npcs_root = Node3D.new()
+		npcs_root.name = "NPCs"
+		add_child(npcs_root)
+
+	if npcs_root.get_child_count() < 3:
+		var templates: Array[Dictionary] = PropBuilder3D.get_ambient_npcs_for_room(room_id)
+		for tpl in templates:
+			var npc: NPC3D = NPC3DScene.instantiate() as NPC3D
+			npc.character_name = String(tpl.get("name", "Student"))
+			npc.character_role = String(tpl.get("role", "Course Mate"))
+			npc.shirt_color = tpl.get("color", Color(0.2, 0.5, 0.8))
+			npc.position = tpl.get("pos", Vector3(0, 0.1, 2.0))
+			var lines_arr: Array[String] = []
+			for l in tpl.get("lines", []):
+				lines_arr.append(String(l))
+			if not lines_arr.is_empty():
+				npc.dialogues = lines_arr
+			npcs_root.add_child(npc)
 
 
 func _gather_ceiling_fans(node: Node) -> void:

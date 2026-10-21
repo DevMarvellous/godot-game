@@ -58,6 +58,11 @@ func is_online() -> bool:
 
 ## Connect to an online campus server / lobby via WebSockets
 func connect_to_campus(url: String = DEFAULT_SERVER_URL) -> void:
+	if OS.has_feature("web") and url.begins_with("ws://127.0.0.1"):
+		current_state = NetState.OFFLINE
+		connection_status_changed.emit(false, "Campus Cloud Mode (Active)")
+		return
+
 	current_state = NetState.CONNECTING
 	connection_status_changed.emit(false, "Connecting to Campus Server...")
 

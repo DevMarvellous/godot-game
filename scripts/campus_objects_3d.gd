@@ -41,6 +41,10 @@ enum ObjectType {
 
 func _ready() -> void:
 	super._ready()
+	if mesh_instance:
+		mesh_instance.visible = false
+	PropBuilder3D.build_campus_prop(self, int(object_type))
+	PropBuilder3D.configure_proximity_label(label_3d, 6.2, 24)
 	update_object_display()
 	TimeSystem.minute_passed.connect(_on_minute_passed)
 
