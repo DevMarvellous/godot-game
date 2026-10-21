@@ -45,7 +45,8 @@ content_margin_right = 14.0
 content_margin_bottom = 10.0
 
 [node name="DialogueMenu" type="Control"]
-visible = false`r`nlayout_mode = 3
+visible = false
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -60,7 +61,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.6)
+color = Color(0, 0, 0, 0.35)
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -71,7 +72,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="ModalPanel" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(520, 520)
+custom_minimum_size = Vector2(380, 420)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
 

@@ -609,28 +609,22 @@ func _show_admission_letter(placement: Dictionary, score_pct: int) -> void:
 			formatted_allowance = formatted_allowance.insert(idx, ",")
 			idx -= 3
 
-		var letter_content: String = """[center][b]FEDERAL UNIVERSITY OF CAMPUS LIFE[/b]
-[b]OFFICE OF THE REGISTRAR & ACADEMIC BOARD[/b][/center]
----------------------------------------------------------------
-[b]CANDIDATE:[/b] %s
-[b]MATRIC NUMBER:[/b] %s
-[b]SCREENING SCORE:[/b] %d%%
+		var letter_content: String = """[center][color=#ffd54f][font_size=18][b]🎉 CONGRATULATIONS, %s! 🎉[/b][/font_size][/color]
+[color=#7ef29d][b]MATRIC NO: %s  •  SCREENING SCORE: %d%%[/b][/color][/center]
 
-[b]ADMISSION STATUS:[/b]
-%s
+[color=#ffd54f][b]🏛️ ADMITTED DEGREE PROGRAM:[/b][/color]
+[b]🎓 %s[/b] (%s)
+[color=#b8d4e8]%s[/color]
 
-[b]ADMITTED PROGRAM:[/b]
-🎓 %s
-🏛️ %s
-
-[b]MATRICULATION BACKGROUND & SPONSOR TIER:[/b]
+[color=#ffd54f][b]💳 STUDENT LIFESTYLE & SPONSOR PACK:[/b][/color]
 %s [b]%s[/b]
-💰 Initial Pocket Money: ₦%s
-📱 Phone Device: %s
-💡 [i]%s[/i]
+💰 [color=#69f0ae][b]Starting Wallet: ₦%s[/b][/color]   •   📱 [b]%s[/b]
+[color=#b8d4e8][i]"%s"[/i][/color]
 
-[i]"Report to the Student Hostel immediately for room allocation and clearance."[/i]
-""" % [student_n, matric, score_pct, remark, admitted_title, admitted_fac, spawn_badge, spawn_t, formatted_allowance, spawn_phone, spawn_tag]
+[color=#ffd54f][b]🚀 YOUR FIRST 3 CAMPUS GOALS:[/b][/color]
+1️⃣ Try on a fresh outfit at your [b]Hostel Wardrobe[/b] (+₦500 Bonus)
+2️⃣ Greet your [b]Hostel Roommate[/b] (+₦500 Bonus)
+3️⃣ Catch the [b]Danfo Shuttle[/b] to Faculty Hall LT1 (+₦500 Bonus)""" % [student_n.to_upper(), matric, score_pct, admitted_title, admitted_fac, remark, spawn_badge, spawn_t, formatted_allowance, spawn_phone, spawn_tag]
 
 		letter_text_label.text = letter_content
 
