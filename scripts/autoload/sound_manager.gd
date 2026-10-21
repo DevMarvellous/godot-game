@@ -11,6 +11,8 @@ var _coin_stream: AudioStreamWAV = null
 var _horn_stream: AudioStreamWAV = null
 var _bell_stream: AudioStreamWAV = null
 var _alert_stream: AudioStreamWAV = null
+var _whistle_stream: AudioStreamWAV = null
+var _sizzle_stream: AudioStreamWAV = null
 
 var _audio_players: Array[AudioStreamPlayer] = []
 const POOL_SIZE: int = 5
@@ -63,12 +65,22 @@ func play_alert() -> void:
 	_play(_alert_stream, -1.0)
 
 
+func play_whistle() -> void:
+	_play(_whistle_stream, -3.0)
+
+
+func play_sizzle() -> void:
+	_play(_sizzle_stream, -4.0)
+
+
 func _generate_sound_streams() -> void:
 	_click_stream = _create_tone(800.0, 0.04, 0.3)
 	_coin_stream = _create_coin_chime()
 	_horn_stream = _create_horn_beep()
 	_bell_stream = _create_bell_chime()
 	_alert_stream = _create_tone(220.0, 0.35, 0.6)
+	_whistle_stream = _create_whistle()
+	_sizzle_stream = _create_sizzle()
 
 
 func _create_tone(freq: float, duration_sec: float, decay_rate: float) -> AudioStreamWAV:
@@ -163,3 +175,50 @@ func _create_bell_chime() -> AudioStreamWAV:
 	stream.data = bytes
 	return stream
 
+
+func _create_whistle() -> AudioStreamWAV:
+	# High-pitched flutter referee whistle for sports, goals, and campus events
+	var sample_rate: int = 22050
+	var duration_sec: float = 0.35
+	var total_samples: int = int(sample_rate * duration_sec)
+	var bytes: PackedByteArray = PackedByteArray()
+	bytes.resize(total_samples * 2)
+
+	for i in range(total_samples):
+		var t: float = float(i) / float(sample_rate)
+		var env: float = 1.0 if t < 0.28 else (duration_sec - t) / 0.07
+		var flutter: float = sin(TAU * 38.0 * t) * 110.0
+		var sample: float = sin(TAU * (2350.0 + flutter) * t) * env * 0.65
+		var val_16: int = int(clampf(sample * 32767.0, -32768.0, 32767.0))
+		bytes.encode_s16(i * 2, val_16)
+
+	var stream = AudioStreamWAV.new()
+	stream.format = AudioStreamWAV.FORMAT_16_BITS
+	stream.mix_rate = sample_rate
+	stream.stereo = false
+	stream.data = bytes
+	return stream
+
+
+func _create_sizzle() -> AudioStreamWAV:
+	# Gentle frying / sizzling sound for Mama Put and hostel cooking
+	var sample_rate: int = 22050
+	var duration_sec: float = 0.50
+	var total_samples: int = int(sample_rate * duration_sec)
+	var bytes: PackedByteArray = PackedByteArray()
+	bytes.resize(total_samples * 2)
+
+	for i in range(total_samples):
+		var t: float = float(i) / float(sample_rate)
+		var env: float = exp(-t / 0.22)
+		var noise: float = randf_range(-1.0, 1.0) * 0.32
+		var sample: float = noise * env
+		var val_16: int = int(clampf(sample * 32767.0, -32768.0, 32767.0))
+		bytes.encode_s16(i * 2, val_16)
+
+	var stream = AudioStreamWAV.new()
+	stream.format = AudioStreamWAV.FORMAT_16_BITS
+	stream.mix_rate = sample_rate
+	stream.stereo = false
+	stream.data = bytes
+	return stream

@@ -201,6 +201,8 @@ func interact(player: CharacterBody3D) -> void:
 				needs.modify_hunger(35.0)
 				needs.modify_energy(20.0)
 				TimeSystem.advance_minutes(25)
+				if SoundManager:
+					SoundManager.play_sizzle()
 				if player.has_method("play_eating_animation"):
 					player.play_eating_animation()
 				const GISTS: Array[String] = [
@@ -229,6 +231,8 @@ func interact(player: CharacterBody3D) -> void:
 
 		ObjectType.STADIUM_SPORTS:
 			TimeSystem.advance_minutes(25)
+			if SoundManager:
+				SoundManager.play_whistle()
 			# Physically kick the 3D football towards the goal net!
 			var ball: RigidBody3D = get_tree().current_scene.get_node_or_null("StadiumFixtures/InteractiveFootball") as RigidBody3D
 			if ball:

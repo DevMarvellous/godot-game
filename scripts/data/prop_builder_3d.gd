@@ -400,7 +400,144 @@ static func enhance_room_atmosphere(room: Node3D) -> void:
 			strip_z.material_override = grid_mat
 			arch.add_child(strip_z)
 
+	# 5. Brighten and stylize room floor & wall surfaces (eliminate dark/muddy look)
+	_brighten_room_surfaces(room, r_name)
+
+	# 6. Procedural authentic room signature fixtures (chalkboards, plates, posters, pitch markings)
+	_inject_room_decor(room, r_name)
+
 	update_room_day_night_lighting(room)
+
+
+static func _brighten_room_surfaces(room: Node3D, r_name: String) -> void:
+	if not room:
+		return
+
+	# 1. Elevate floor surface to bright, warm, slightly reflective material
+	var floor_node: MeshInstance3D = null
+	if room.has_node("Floor/MeshInstance3D"):
+		floor_node = room.get_node("Floor/MeshInstance3D") as MeshInstance3D
+	elif room.has_node("PitchFloor/MeshInstance3D"):
+		floor_node = room.get_node("PitchFloor/MeshInstance3D") as MeshInstance3D
+	elif room.has_node("Floor"):
+		var f_child = room.get_node("Floor")
+		if f_child is MeshInstance3D:
+			floor_node = f_child
+
+	if floor_node:
+		var floor_mat := StandardMaterial3D.new()
+		floor_mat.roughness = 0.42
+		floor_mat.metallic = 0.04
+		if "hostel" in r_name:
+			floor_mat.albedo_color = Color(0.86, 0.74, 0.58) # Warm parquet
+		elif "lecture" in r_name:
+			floor_mat.albedo_color = Color(0.88, 0.90, 0.92) # Clean terrazzo
+		elif "mama_put" in r_name or "buka" in r_name:
+			floor_mat.albedo_color = Color(0.90, 0.84, 0.74) # Cheerful cafeteria tile
+		elif "chapel" in r_name:
+			floor_mat.albedo_color = Color(0.90, 0.86, 0.80) # Sanctuary marble
+		elif "library" in r_name:
+			floor_mat.albedo_color = Color(0.84, 0.80, 0.72) # Oak study wood
+		elif "stadium" in r_name:
+			floor_mat.albedo_color = Color(0.20, 0.62, 0.25) # Lush pitch green
+		elif "garden" in r_name:
+			floor_mat.albedo_color = Color(0.24, 0.65, 0.28) # Park lawn
+		elif "sub" in r_name:
+			floor_mat.albedo_color = Color(0.20, 0.24, 0.32) # Sleek lounge
+		elif "mall" in r_name or "salon" in r_name:
+			floor_mat.albedo_color = Color(0.92, 0.92, 0.95) # Glossy porcelain
+		elif "senate" in r_name:
+			floor_mat.albedo_color = Color(0.92, 0.90, 0.84) # Senate marble
+		elif "gate" in r_name:
+			floor_mat.albedo_color = Color(0.78, 0.76, 0.72) # Campus road paving
+		else:
+			floor_mat.albedo_color = Color(0.86, 0.84, 0.80)
+		floor_node.material_override = floor_mat
+
+	# 2. Brighten walls to clean warm ivory
+	var walls_node: Node = room.get_node_or_null("Walls")
+	if not walls_node:
+		walls_node = room.get_node_or_null("BoundaryWalls")
+	if walls_node:
+		var wall_mat := StandardMaterial3D.new()
+		wall_mat.albedo_color = Color(0.96, 0.94, 0.89)
+		wall_mat.roughness = 0.85
+		for child in walls_node.get_children():
+			if child is MeshInstance3D and not "fence" in child.name.to_lower():
+				child.material_override = wall_mat
+
+
+static func _inject_room_decor(room: Node3D, r_name: String) -> void:
+	if not room or room.has_node("AtmosphereDecor"):
+		return
+
+	var decor := Node3D.new()
+	decor.name = "AtmosphereDecor"
+	room.add_child(decor)
+
+	if "mama_put" in r_name or "buka" in r_name:
+		# Stack of red & green Nigerian beverage crates in corner
+		_add_box(decor, Vector3(0.55, 0.32, 0.42), Vector3(-6.2, 0.16, -4.5), Color(0.85, 0.15, 0.15))
+		_add_box(decor, Vector3(0.55, 0.32, 0.42), Vector3(-6.2, 0.48, -4.5), Color(0.12, 0.65, 0.25))
+		_add_box(decor, Vector3(0.55, 0.32, 0.42), Vector3(-5.5, 0.16, -4.5), Color(0.12, 0.65, 0.25))
+
+		# Dining table food plates on dining spots
+		var plates_pos: Array[Vector3] = [Vector3(-2.8, 0.82, -1.0), Vector3(2.8, 0.82, -1.0), Vector3(0, 0.82, 3.2)]
+		for pos in plates_pos:
+			_add_cyl(decor, 0.22, 0.22, 0.02, pos, Color.WHITE) # Plate
+			_add_cyl(decor, 0.14, 0.16, 0.06, pos + Vector3(0, 0.03, 0), Color(0.95, 0.62, 0.12)) # Jollof rice
+			_add_box(decor, Vector3(0.08, 0.04, 0.12), pos + Vector3(0.12, 0.04, 0), Color(0.85, 0.45, 0.08)) # Dodo
+			_add_box(decor, Vector3(0.10, 0.06, 0.14), pos + Vector3(-0.10, 0.05, 0), Color(0.68, 0.24, 0.14)) # Chicken
+
+	elif "lecture" in r_name:
+		# Front wall faculty chalkboard
+		_add_box(decor, Vector3(6.4, 2.3, 0.05), Vector3(0, 2.3, -11.45), Color(0.52, 0.34, 0.18)) # Wood frame
+		_add_box(decor, Vector3(6.2, 2.1, 0.06), Vector3(0, 2.3, -11.44), Color(0.10, 0.22, 0.14)) # Dark green board
+		var board_lbl := Label3D.new()
+		board_lbl.text = "FACULTY OF COMPUTING & SCIENCE — LT1\nCSC 101: INTRO TO LOGIC & ALGORITHMS\n• Time Complexity: O(log N)  • Pointer Ops\nNOTE: 1st In-Course Test next week!"
+		board_lbl.font_size = 20
+		board_lbl.outline_size = 4
+		board_lbl.modulate = Color(0.92, 0.96, 0.88)
+		board_lbl.position = Vector3(0, 2.3, -11.38)
+		decor.add_child(board_lbl)
+
+	elif "hostel" in r_name:
+		# Hostel wall poster
+		_add_box(decor, Vector3(1.1, 1.5, 0.02), Vector3(-2.8, 2.2, -5.85), Color(0.96, 0.78, 0.18))
+		var poster_lbl := Label3D.new()
+		poster_lbl.text = "LAGOS LIFE 2026\nCAMPUS CARNIVAL\n& AFROBEATS NIGHT\n\"No Dulling This Semester!\""
+		poster_lbl.font_size = 18
+		poster_lbl.outline_size = 4
+		poster_lbl.modulate = Color(0.10, 0.12, 0.15)
+		poster_lbl.position = Vector3(-2.8, 2.2, -5.82)
+		decor.add_child(poster_lbl)
+
+	elif "stadium" in r_name:
+		# White field markings
+		var line_mat := StandardMaterial3D.new()
+		line_mat.albedo_color = Color(0.96, 0.96, 0.96, 0.85)
+		line_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		line_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+
+		# Center circle
+		var c_ring := MeshInstance3D.new()
+		var cyl := CylinderMesh.new()
+		cyl.top_radius = 4.2
+		cyl.bottom_radius = 4.28
+		cyl.height = 0.006
+		cyl.radial_segments = 24
+		c_ring.mesh = cyl
+		c_ring.position = Vector3(0, 0.008, 0)
+		c_ring.material_override = line_mat
+		decor.add_child(c_ring)
+
+		# Center halfway line
+		var half_line := _add_box(decor, Vector3(34.0, 0.006, 0.12), Vector3(0, 0.008, 0), Color.WHITE)
+		half_line.material_override = line_mat
+
+		# Penalty area box
+		var box_front := _add_box(decor, Vector3(14.0, 0.006, 0.12), Vector3(0, 0.008, -6.5), Color.WHITE)
+		box_front.material_override = line_mat
 
 
 static func update_room_day_night_lighting(room: Node3D) -> void:
