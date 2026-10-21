@@ -28,7 +28,7 @@ corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
 [sub_resource type="LabelSettings" id="LabelSettings_bigclock"]
-font_size = 46
+font_size = 32
 font_color = Color(1, 1, 1, 1)
 outline_size = 4
 outline_color = Color(0, 0, 0, 0.8)
@@ -109,13 +109,13 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PhoneFrame" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(360, 650)
+custom_minimum_size = Vector2(336, 470)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_phone")
 
 [node name="VBox" type="VBoxContainer" parent="CenterContainer/PhoneFrame"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 6
 
 [node name="DynamicIslandContainer" type="HBoxContainer" parent="CenterContainer/PhoneFrame/VBox"]
 layout_mode = 2
@@ -194,106 +194,97 @@ label_settings = SubResource("LabelSettings_date")
 horizontal_alignment = 1
 
 [node name="WidgetSpacer" type="Control" parent="CenterContainer/PhoneFrame/VBox/HomeScreenWidgets"]
-custom_minimum_size = Vector2(0, 10)
+custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
 
 [node name="AppGrid" type="GridContainer" parent="CenterContainer/PhoneFrame/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/h_separation = 10
-theme_override_constants/v_separation = 12
-columns = 4
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 3
 
 [node name="IDCardAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(68, 76)
+custom_minimum_size = Vector2(88, 60)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "🪪
-ID Card"
+text = "🪪 ID Card"
 
 [node name="TimetableAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(68, 76)
+custom_minimum_size = Vector2(88, 60)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "📅
-Classes"
+text = "📅 Classes"
 
 [node name="ResultsAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(68, 76)
+custom_minimum_size = Vector2(88, 60)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "📊
-CGPA"
+text = "📊 CGPA"
 
 [node name="ChatAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(68, 76)
+custom_minimum_size = Vector2(88, 60)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "💬
-CampusChat"
+text = "💬 Chat"
 
 [node name="BankAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(68, 76)
+custom_minimum_size = Vector2(88, 60)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "💳
-CampusPay"
+text = "💳 Wallet"
 
 [node name="HustleAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(68, 76)
+custom_minimum_size = Vector2(88, 60)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "💼
-Hustle"
+text = "💼 Hustle"
 
 [node name="GistAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(68, 76)
+custom_minimum_size = Vector2(88, 60)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "🐦
-Gist"
+text = "🐦 Gist"
 
 [node name="BackpackAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(68, 76)
+custom_minimum_size = Vector2(88, 60)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "🎒
-Bag"
+text = "🎒 Bag"
 
 [node name="SettingsAppBtn" type="Button" parent="CenterContainer/PhoneFrame/VBox/AppGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(68, 76)
+custom_minimum_size = Vector2(88, 60)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_appbtn")
-text = "⚙️
-Settings"
+text = "⚙️ Setup"
 
 [node name="AppContent" type="PanelContainer" parent="CenterContainer/PhoneFrame/VBox"]
 unique_name_in_owner = true

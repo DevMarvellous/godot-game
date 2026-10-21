@@ -6,6 +6,29 @@ extends RefCounted
 ## configures proximity label fading, and provides room-aware student NPC & objective data.
 
 static var _mat_cache: Dictionary = {}
+static var onboarding_quest_step: int = 0
+
+const ONBOARDING_QUESTS: Array[Dictionary] = [
+	{"text": "📋 Task 1/5: Try on an Outfit at your Hostel Wardrobe (+₦500)", "dest": &"hostel", "color": Color(1.0, 0.88, 0.28), "reward": 500},
+	{"text": "📋 Task 2/5: Greet your Roommate or any Student (+₦500)", "dest": &"hostel", "color": Color(0.45, 0.95, 0.62), "reward": 500},
+	{"text": "📋 Task 3/5: Ride the Danfo Shuttle to Faculty Hall LT1 (+₦500)", "dest": &"class", "color": Color(0.38, 0.88, 1.0), "reward": 500},
+	{"text": "📋 Task 4/5: Study or Attend Class at a Lecture Desk (+₦1,000)", "dest": &"class", "color": Color(1.0, 0.78, 0.32), "reward": 1000},
+	{"text": "📋 Task 5/5: Eat a hot meal at Mama Put Canteen (+₦1,000)", "dest": &"mama_put", "color": Color(1.0, 0.58, 0.28), "reward": 1000}
+]
+
+
+static func advance_quest_if_matching(step_index: int, player: Node) -> void:
+	if onboarding_quest_step != step_index or onboarding_quest_step >= ONBOARDING_QUESTS.size():
+		return
+	var q: Dictionary = ONBOARDING_QUESTS[onboarding_quest_step]
+	var reward: int = int(q.get("reward", 500))
+	onboarding_quest_step += 1
+	if player:
+		var needs = player.get_node_or_null("NeedsManager")
+		if needs and needs.has_method("modify_money"):
+			needs.modify_money(reward)
+		if player.has_method("play_celebrate_animation"):
+			player.play_celebrate_animation("✅ TASK %d DONE! +₦%d" % [step_index + 1, reward])
 
 
 static func get_mat(color: Color, roughness: float = 0.65, metallic: float = 0.05, emission_energy: float = 0.0) -> StandardMaterial3D:
@@ -209,6 +232,8 @@ static func get_ambient_npcs_for_room(room_id: StringName) -> Array[Dictionary]:
 
 ## Computes a dynamic, actionable "Next Hustle" objective for the HUD pill
 static func get_smart_objective(energy: float, hunger: float, money: int, cgpa: float) -> Dictionary:
+	if onboarding_quest_step < ONBOARDING_QUESTS.size():
+		return ONBOARDING_QUESTS[onboarding_quest_step]
 	var lec_idx: int = Schedule.get_current_lecture_index()
 	if lec_idx != -1 and not Schedule.is_attended(lec_idx):
 		var lec: Dictionary = Schedule.get_lecture(lec_idx)

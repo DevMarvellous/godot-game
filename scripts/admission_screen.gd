@@ -205,18 +205,99 @@ var preview_player_instance: Player3D = null
 func _ready() -> void:
 	if next_button:
 		next_button.pressed.connect(_on_next_pressed)
+		var next_style := StyleBoxFlat.new()
+		next_style.bg_color = Color(0.96, 0.74, 0.12, 1.0)
+		next_style.corner_radius_top_left = 12
+		next_style.corner_radius_top_right = 12
+		next_style.corner_radius_bottom_left = 12
+		next_style.corner_radius_bottom_right = 12
+		next_button.add_theme_stylebox_override(&"normal", next_style)
+		next_button.add_theme_stylebox_override(&"hover", next_style)
+		next_button.add_theme_color_override(&"font_color", Color(0.06, 0.10, 0.14, 1.0))
 
 	if name_input:
 		name_input.text_submitted.connect(func(_text: String) -> void: _on_next_pressed())
 	if email_input:
 		email_input.text_submitted.connect(func(_text: String) -> void: _on_next_pressed())
 
+	_build_easy_typing_helpers()
 	_adjust_responsive_layout()
 	get_viewport().size_changed.connect(_adjust_responsive_layout)
 
 	_setup_preview_player()
 	_setup_options()
 	_update_view()
+
+
+func _build_easy_typing_helpers() -> void:
+	if not biodata_panel or not name_input:
+		return
+	var input_style := StyleBoxFlat.new()
+	input_style.bg_color = Color(0.96, 0.98, 1.0, 1.0)
+	input_style.border_width_left = 2
+	input_style.border_width_top = 2
+	input_style.border_width_right = 2
+	input_style.border_width_bottom = 2
+	input_style.border_color = Color(0.15, 0.68, 0.42, 1.0)
+	input_style.corner_radius_top_left = 10
+	input_style.corner_radius_top_right = 10
+	input_style.corner_radius_bottom_left = 10
+	input_style.corner_radius_bottom_right = 10
+	input_style.content_margin_left = 14.0
+	input_style.content_margin_right = 14.0
+	for le: LineEdit in [name_input, email_input]:
+		if le:
+			le.add_theme_stylebox_override(&"normal", input_style)
+			le.add_theme_stylebox_override(&"focus", input_style)
+			le.add_theme_color_override(&"font_color", Color(0.06, 0.10, 0.16, 1.0))
+			le.add_theme_color_override(&"font_placeholder_color", Color(0.42, 0.48, 0.56, 1.0))
+			le.add_theme_color_override(&"caret_color", Color(0.08, 0.55, 0.32, 1.0))
+			le.add_theme_font_size_override(&"font_size", 16)
+
+	# Quick-tap Nigerian name chips + Native mobile keyboard button right below NameInput
+	var chip_row := HFlowContainer.new()
+	chip_row.name = "QuickNameChips"
+	chip_row.add_theme_constant_override(&"h_separation", 6)
+	chip_row.add_theme_constant_override(&"v_separation", 6)
+
+	var preset_names: Array[String] = [
+		"🎲 Random Name", "Tunde Bakare", "Chisom Okafor", "Femi Adeleke", "Zainab Bello", "Kelechi Nwosu"
+	]
+	const RANDOM_POOL: Array[String] = [
+		"Adebayo Ogunlesi", "Ngozi Eze", "Damilola Balogun", "Ibrahim Danjuma",
+		"Bolanle Coker", "Emeka Obi", "Ayomide Williams", "Halima Lawal"
+	]
+	for label_txt in preset_names:
+		var b := Button.new()
+		b.text = label_txt
+		b.custom_minimum_size = Vector2(0, 34)
+		b.add_theme_font_size_override(&"font_size", 13)
+		b.pressed.connect(func():
+			SoundManager.play_click()
+			var chosen: String = RANDOM_POOL.pick_random() if label_txt.begins_with("🎲") else label_txt
+			name_input.text = chosen
+			if email_input:
+				var slug: String = chosen.to_lower().replace(" ", ".")
+				email_input.text = "%s@campus.edu.ng" % slug
+		)
+		chip_row.add_child(b)
+
+	if OS.has_feature("web"):
+		var kb_btn := Button.new()
+		kb_btn.text = "⌨️ Tap to Type Name"
+		kb_btn.custom_minimum_size = Vector2(0, 34)
+		kb_btn.add_theme_font_size_override(&"font_size", 13)
+		kb_btn.pressed.connect(func():
+			var res = JavaScriptBridge.eval("window.prompt('Enter your Student Full Name:', '%s') || ''" % name_input.text.replace("'", ""))
+			if res is String and not String(res).strip_edges().is_empty():
+				name_input.text = String(res).strip_edges()
+				if email_input and email_input.text.is_empty():
+					email_input.text = "%s@campus.edu.ng" % name_input.text.to_lower().replace(" ", ".")
+		)
+		chip_row.add_child(kb_btn)
+
+	biodata_panel.add_child(chip_row)
+	biodata_panel.move_child(chip_row, name_input.get_index() + 1)
 
 
 func _adjust_responsive_layout() -> void:
@@ -267,32 +348,32 @@ func _setup_options() -> void:
 
 	if complexion_options:
 		complexion_options.clear()
-		for item in CharacterCustomizer.SKIN_TONES:
+		for item in Wardrobe.COMPLEXIONS:
 			complexion_options.add_item(item["name"])
 		complexion_options.select(selected_complexion)
 		complexion_options.item_selected.connect(func(idx: int):
 			selected_complexion = idx
-			_refresh_avatar_preview()
+			_refresh_avatar_preview(true)
 		)
 
 	if hair_options:
 		hair_options.clear()
-		for item in CharacterCustomizer.HAIR_STYLES:
+		for item in Wardrobe.HAIRSTYLES:
 			hair_options.add_item(item["name"])
 		hair_options.select(selected_hair)
 		hair_options.item_selected.connect(func(idx: int):
 			selected_hair = idx
-			_refresh_avatar_preview()
+			_refresh_avatar_preview(true)
 		)
 
 	if shirt_options:
 		shirt_options.clear()
-		for item in CharacterCustomizer.SHIRT_STYLES:
+		for item in Wardrobe.OUTFITS:
 			shirt_options.add_item(item["name"])
 		shirt_options.select(selected_shirt)
 		shirt_options.item_selected.connect(func(idx: int):
 			selected_shirt = idx
-			_refresh_avatar_preview()
+			_refresh_avatar_preview(true)
 		)
 
 	if trouser_options:
@@ -302,7 +383,7 @@ func _setup_options() -> void:
 		trouser_options.select(selected_trouser)
 		trouser_options.item_selected.connect(func(idx: int):
 			selected_trouser = idx
-			_refresh_avatar_preview()
+			_refresh_avatar_preview(true)
 		)
 
 	if faculty_options:
@@ -317,31 +398,37 @@ func _setup_options() -> void:
 		dept_options.item_selected.connect(_on_dept_selected)
 
 	_on_faculty_selected(0)
-	_refresh_avatar_preview()
+	_refresh_avatar_preview(false)
 
 
-func _refresh_avatar_preview() -> void:
+func _refresh_avatar_preview(animate_spin: bool = false) -> void:
 	var hair_item: Dictionary = Wardrobe.HAIRSTYLES[clampi(selected_hair, 0, Wardrobe.HAIRSTYLES.size() - 1)]
 	var outfit_item: Dictionary = Wardrobe.OUTFITS[clampi(selected_shirt, 0, Wardrobe.OUTFITS.size() - 1)]
 	var skin_item: Dictionary = Wardrobe.COMPLEXIONS[clampi(selected_complexion, 0, Wardrobe.COMPLEXIONS.size() - 1)]
+	var tr_item: Dictionary = CharacterCustomizer.TROUSER_STYLES[clampi(selected_trouser, 0, CharacterCustomizer.TROUSER_STYLES.size() - 1)]
 
 	if avatar_preview_label:
-		avatar_preview_label.text = "👤 PREVIEW: %s | %s Tone\n💈 %s | 👕 %s" % [
-			selected_gender, skin_item["name"], hair_item["name"], outfit_item["name"]
+		avatar_preview_label.text = "✨ %s | %s Tone | 💈 %s\n👕 %s  •  👖 %s" % [
+			selected_gender, skin_item["name"], hair_item["name"], outfit_item["name"], tr_item["name"]
 		]
 
 	if preview_player_instance and preview_player_instance.has_method("apply_appearance"):
 		var top_col: Color = outfit_item.get("top_color", Color(0.12, 0.55, 0.32))
-		var btm_col: Color = outfit_item.get("bottom_color", Color(0.15, 0.22, 0.32))
+		var btm_col: Color = tr_item.get("color", outfit_item.get("bottom_color", Color(0.15, 0.22, 0.32)))
 		var hair_col: Color = hair_item.get("default_color", Color(0.08, 0.08, 0.08))
-		preview_player_instance.apply_appearance(
-			skin_item["color"],
-			top_col,
-			btm_col,
-			hair_col,
-			hair_item.get("mesh_type", "low_cut"),
-			outfit_item.get("mesh_type", "casual")
-		)
+		var apply_fn := func():
+			preview_player_instance.apply_appearance(
+				skin_item["color"],
+				top_col,
+				btm_col,
+				hair_col,
+				hair_item.get("mesh_type", "low_cut"),
+				outfit_item.get("mesh_type", "casual")
+			)
+		if animate_spin and preview_player_instance.has_method("play_dressing_animation"):
+			preview_player_instance.play_dressing_animation(apply_fn)
+		else:
+			apply_fn.call()
 
 
 func _on_faculty_selected(idx: int) -> void:

@@ -148,6 +148,10 @@ func _ready() -> void:
 	_polish_room_decor_and_ambient_npcs()
 	_connect_interactive_fixtures()
 	_gather_ceiling_fans(self)
+	if room_id == &"lecture" or room_id == &"lecture2":
+		PropBuilder3D.advance_quest_if_matching(2, player)
+		if hud and hud.has_method("_refresh_objective_pill"):
+			hud._refresh_objective_pill()
 
 
 func _polish_room_decor_and_ambient_npcs() -> void:
@@ -330,8 +334,10 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 		player.velocity = Vector3.ZERO
 
 	if menu_type == &"food" and food_menu:
+		PropBuilder3D.advance_quest_if_matching(4, p)
 		food_menu.open_menu(p)
 	elif menu_type == &"study":
+		PropBuilder3D.advance_quest_if_matching(3, p)
 		if (room_id == &"lecture" or room_id == &"lecture2"):
 			if not lecture_desk_menu and menus_layer:
 				lecture_desk_menu = LectureDeskScene.instantiate()
@@ -345,6 +351,7 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 		elif study_menu:
 			study_menu.open_menu(p)
 	elif menu_type == &"live_lecture":
+		PropBuilder3D.advance_quest_if_matching(3, p)
 		_open_live_lecture(p)
 	elif menu_type == &"exam":
 		_open_final_exam(p)
@@ -353,6 +360,7 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 	elif menu_type == &"mall" and mall_menu:
 		mall_menu.open_mall(p)
 	elif (menu_type == &"wardrobe" or menu_type == &"mall") and wardrobe_menu:
+		PropBuilder3D.advance_quest_if_matching(0, p)
 		wardrobe_menu.open_wardrobe(p)
 	elif menu_type == &"snooker":
 		if not snooker_menu and menus_layer:
@@ -486,6 +494,9 @@ func _open_final_exam(p: CharacterBody3D) -> void:
 
 
 func _on_npc_dialogue_requested(npc: NPC3D, p: CharacterBody3D) -> void:
+	PropBuilder3D.advance_quest_if_matching(1, p if p else player)
+	if hud and hud.has_method("_refresh_objective_pill"):
+		hud._refresh_objective_pill()
 	if player:
 		player.set_physics_process(false)
 		player.velocity = Vector3.ZERO
@@ -545,6 +556,23 @@ func _on_transit_requested(dest: StringName) -> void:
 func _go_to_scene(scene_path: String, fare_already_paid: bool = false) -> void:
 	if get_tree().current_scene.scene_file_path == scene_path:
 		if player:
+			# If on Task 1 (Wardrobe), walk straight to Wardrobe
+			if PropBuilder3D.onboarding_quest_step == 0:
+				var fixtures_w: Node = get_node_or_null("WorldObjects")
+				if fixtures_w:
+					for child in fixtures_w.get_children():
+						if child is CampusObject3D and child.object_type == CampusObject3D.ObjectType.WARDROBE:
+							player._walk_to_and_interact(child)
+							return
+			# If on Task 2 (Greet Roommate), walk straight to first NPC
+			elif PropBuilder3D.onboarding_quest_step == 1:
+				var npcs_w: Node = get_node_or_null("NPCs")
+				if npcs_w and npcs_w.get_child_count() > 0:
+					var first_npc: Node = npcs_w.get_child(0)
+					var area: Interactable3D = first_npc.get_node_or_null("InteractArea") as Interactable3D
+					if area:
+						player._walk_to_and_interact(area)
+						return
 			var fixtures: Node = get_node_or_null("WorldObjects")
 			if fixtures and fixtures.get_child_count() > 0:
 				for child in fixtures.get_children():
@@ -584,6 +612,8 @@ func _go_to_scene(scene_path: String, fare_already_paid: bool = false) -> void:
 func _on_menu_closed() -> void:
 	if player:
 		player.set_physics_process(true)
+	if hud and hud.has_method("_refresh_objective_pill"):
+		hud._refresh_objective_pill()
 
 
 func _on_day_ended(summary_data: Dictionary) -> void:
