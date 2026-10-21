@@ -20,6 +20,8 @@ var toast_desc: Label = null
 var toast_tween: Tween = null
 
 var objective_btn: Button = null
+var tasks_toggle_btn: Button = null
+var tasks_sheet: PanelContainer = null
 var _cached_energy: float = 100.0
 var _cached_hunger: float = 100.0
 var _cached_money: int = 5000
@@ -39,21 +41,26 @@ func _ready() -> void:
 
 
 func _create_objective_pill_ui() -> void:
+	var container := HBoxContainer.new()
+	container.name = "ObjectiveContainer"
+	container.anchors_preset = Control.PRESET_TOP_LEFT
+	container.offset_left = 12.0
+	container.offset_top = 84.0
+	container.offset_right = 380.0
+	container.offset_bottom = 120.0
+	container.add_theme_constant_override(&"separation", 6)
+
 	objective_btn = Button.new()
 	objective_btn.name = "ObjectivePillBtn"
-	objective_btn.custom_minimum_size = Vector2(280, 34)
-	objective_btn.anchors_preset = Control.PRESET_TOP_LEFT
-	objective_btn.offset_left = 16.0
-	objective_btn.offset_top = 86.0
-	objective_btn.offset_right = 430.0
-	objective_btn.offset_bottom = 122.0
+	objective_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	objective_btn.custom_minimum_size = Vector2(250, 36)
 	objective_btn.focus_mode = Control.FOCUS_NONE
 	objective_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	objective_btn.add_theme_font_size_override(&"font_size", 13)
+	objective_btn.add_theme_font_size_override(&"font_size", 12)
 	objective_btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 	var pill_style := StyleBoxFlat.new()
-	pill_style.bg_color = Color(0.06, 0.11, 0.16, 0.88)
+	pill_style.bg_color = Color(0.06, 0.11, 0.16, 0.92)
 	pill_style.border_width_left = 3
 	pill_style.border_width_top = 1
 	pill_style.border_width_right = 1
@@ -63,10 +70,10 @@ func _create_objective_pill_ui() -> void:
 	pill_style.corner_radius_top_right = 10
 	pill_style.corner_radius_bottom_left = 10
 	pill_style.corner_radius_bottom_right = 10
-	pill_style.content_margin_left = 12.0
-	pill_style.content_margin_right = 12.0
-	pill_style.content_margin_top = 5.0
-	pill_style.content_margin_bottom = 5.0
+	pill_style.content_margin_left = 10.0
+	pill_style.content_margin_right = 10.0
+	pill_style.content_margin_top = 4.0
+	pill_style.content_margin_bottom = 4.0
 	objective_btn.add_theme_stylebox_override(&"normal", pill_style)
 	objective_btn.add_theme_stylebox_override(&"hover", pill_style)
 	objective_btn.add_theme_stylebox_override(&"pressed", pill_style)
@@ -76,8 +83,205 @@ func _create_objective_pill_ui() -> void:
 			SoundManager.play_click()
 		objective_clicked.emit(_current_obj_dest)
 	)
-	add_child(objective_btn)
+	container.add_child(objective_btn)
+
+	tasks_toggle_btn = Button.new()
+	tasks_toggle_btn.name = "TasksToggleBtn"
+	tasks_toggle_btn.text = "📋 Tasks"
+	tasks_toggle_btn.custom_minimum_size = Vector2(74, 36)
+	tasks_toggle_btn.focus_mode = Control.FOCUS_NONE
+	tasks_toggle_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	tasks_toggle_btn.add_theme_font_size_override(&"font_size", 12)
+
+	var t_style := StyleBoxFlat.new()
+	t_style.bg_color = Color(0.10, 0.14, 0.22, 0.92)
+	t_style.border_width_left = 2
+	t_style.border_width_top = 1
+	t_style.border_width_right = 1
+	t_style.border_width_bottom = 1
+	t_style.border_color = Color(0.4, 0.85, 0.6, 0.95)
+	t_style.corner_radius_top_left = 10
+	t_style.corner_radius_top_right = 10
+	t_style.corner_radius_bottom_left = 10
+	t_style.corner_radius_bottom_right = 10
+	t_style.content_margin_left = 8.0
+	t_style.content_margin_right = 8.0
+	tasks_toggle_btn.add_theme_stylebox_override(&"normal", t_style)
+	tasks_toggle_btn.add_theme_stylebox_override(&"hover", t_style)
+	tasks_toggle_btn.add_theme_stylebox_override(&"pressed", t_style)
+	tasks_toggle_btn.pressed.connect(_toggle_tasks_sheet)
+	container.add_child(tasks_toggle_btn)
+
+	add_child(container)
 	_refresh_objective_pill()
+	_create_tasks_sheet_ui()
+
+
+func _create_tasks_sheet_ui() -> void:
+	tasks_sheet = PanelContainer.new()
+	tasks_sheet.name = "TasksSheet"
+	tasks_sheet.custom_minimum_size = Vector2(360, 440)
+	tasks_sheet.anchors_preset = Control.PRESET_CENTER
+	tasks_sheet.anchor_left = 0.5
+	tasks_sheet.anchor_top = 0.5
+	tasks_sheet.anchor_right = 0.5
+	tasks_sheet.anchor_bottom = 0.5
+	tasks_sheet.offset_left = -180.0
+	tasks_sheet.offset_top = -220.0
+	tasks_sheet.offset_right = 180.0
+	tasks_sheet.offset_bottom = 220.0
+	tasks_sheet.visible = false
+
+	var sheet_style := StyleBoxFlat.new()
+	sheet_style.bg_color = Color(0.07, 0.10, 0.15, 0.98)
+	sheet_style.border_width_left = 2
+	sheet_style.border_width_top = 2
+	sheet_style.border_width_right = 2
+	sheet_style.border_width_bottom = 2
+	sheet_style.border_color = Color(1.0, 0.82, 0.24, 0.95)
+	sheet_style.corner_radius_top_left = 14
+	sheet_style.corner_radius_top_right = 14
+	sheet_style.corner_radius_bottom_left = 14
+	sheet_style.corner_radius_bottom_right = 14
+	sheet_style.content_margin_left = 16.0
+	sheet_style.content_margin_right = 16.0
+	sheet_style.content_margin_top = 16.0
+	sheet_style.content_margin_bottom = 14.0
+	tasks_sheet.add_theme_stylebox_override(&"panel", sheet_style)
+
+	var outer_vbox := VBoxContainer.new()
+	outer_vbox.add_theme_constant_override(&"separation", 8)
+	tasks_sheet.add_child(outer_vbox)
+
+	var title_lbl := Label.new()
+	title_lbl.text = "📋 SEMESTER MISSIONS & TASKS"
+	title_lbl.add_theme_font_size_override(&"font_size", 16)
+	title_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.25))
+	title_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	outer_vbox.add_child(title_lbl)
+
+	var sub_lbl := Label.new()
+	sub_lbl.text = "Complete campus milestones for cash, CGPA boosts & honor roll!"
+	sub_lbl.add_theme_font_size_override(&"font_size", 11)
+	sub_lbl.add_theme_color_override(&"font_color", Color(0.75, 0.85, 0.95))
+	sub_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	outer_vbox.add_child(sub_lbl)
+
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	outer_vbox.add_child(scroll)
+
+	var list_vbox := VBoxContainer.new()
+	list_vbox.name = "TaskListVBox"
+	list_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	list_vbox.add_theme_constant_override(&"separation", 6)
+	scroll.add_child(list_vbox)
+
+	var close_btn := Button.new()
+	close_btn.text = "✖ Close Missions"
+	close_btn.custom_minimum_size = Vector2(0, 36)
+	close_btn.add_theme_font_size_override(&"font_size", 12)
+	close_btn.focus_mode = Control.FOCUS_NONE
+	close_btn.pressed.connect(func():
+		if SoundManager: SoundManager.play_click()
+		tasks_sheet.visible = false
+	)
+	outer_vbox.add_child(close_btn)
+
+	add_child(tasks_sheet)
+
+
+func _toggle_tasks_sheet() -> void:
+	if SoundManager:
+		SoundManager.play_click()
+	if not tasks_sheet:
+		return
+	tasks_sheet.visible = not tasks_sheet.visible
+	if tasks_sheet.visible:
+		_populate_tasks_sheet()
+
+
+func _populate_tasks_sheet() -> void:
+	if not tasks_sheet:
+		return
+	var list_vbox: VBoxContainer = tasks_sheet.find_child("TaskListVBox", true, false) as VBoxContainer
+	if not list_vbox:
+		return
+
+	for c in list_vbox.get_children():
+		c.queue_free()
+
+	var cur_step: int = PropBuilder3D.onboarding_quest_step
+	var all_quests = PropBuilder3D.ONBOARDING_QUESTS
+
+	for i in range(all_quests.size()):
+		var q: Dictionary = all_quests[i]
+		var item_panel := PanelContainer.new()
+		var p_style := StyleBoxFlat.new()
+		p_style.corner_radius_top_left = 8
+		p_style.corner_radius_top_right = 8
+		p_style.corner_radius_bottom_right = 8
+		p_style.corner_radius_bottom_left = 8
+		p_style.content_margin_left = 10.0
+		p_style.content_margin_right = 10.0
+		p_style.content_margin_top = 8.0
+		p_style.content_margin_bottom = 8.0
+
+		var is_done: bool = i < cur_step
+		var is_active: bool = (i == cur_step)
+
+		if is_done:
+			p_style.bg_color = Color(0.08, 0.14, 0.12, 0.85)
+			p_style.border_color = Color(0.2, 0.6, 0.35, 0.6)
+		elif is_active:
+			p_style.bg_color = Color(0.15, 0.18, 0.28, 0.95)
+			p_style.border_color = Color(1.0, 0.85, 0.25, 0.95)
+		else:
+			p_style.bg_color = Color(0.08, 0.10, 0.15, 0.75)
+			p_style.border_color = Color(0.2, 0.25, 0.35, 0.5)
+
+		p_style.border_width_left = 2 if (is_done or is_active) else 1
+		p_style.border_width_top = 1
+		p_style.border_width_right = 1
+		p_style.border_width_bottom = 1
+		item_panel.add_theme_stylebox_override(&"panel", p_style)
+
+		var hbox := HBoxContainer.new()
+		hbox.add_theme_constant_override(&"separation", 8)
+
+		var text_lbl := Label.new()
+		text_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		text_lbl.add_theme_font_size_override(&"font_size", 12)
+
+		if is_done:
+			text_lbl.text = "✓ %s" % String(q.get("text", ""))
+			text_lbl.add_theme_color_override(&"font_color", Color(0.45, 0.85, 0.55))
+		elif is_active:
+			text_lbl.text = "➔ %s" % String(q.get("text", ""))
+			text_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.88, 0.35))
+		else:
+			text_lbl.text = "🔒 %s" % String(q.get("text", ""))
+			text_lbl.add_theme_color_override(&"font_color", Color(0.55, 0.60, 0.70))
+
+		hbox.add_child(text_lbl)
+
+		if is_active:
+			var go_btn := Button.new()
+			go_btn.text = "GO ➔"
+			go_btn.custom_minimum_size = Vector2(56, 30)
+			go_btn.add_theme_font_size_override(&"font_size", 11)
+			go_btn.focus_mode = Control.FOCUS_NONE
+			go_btn.pressed.connect(func():
+				if SoundManager: SoundManager.play_click()
+				tasks_sheet.visible = false
+				objective_clicked.emit(q.get("dest", &"hostel"))
+			)
+			hbox.add_child(go_btn)
+
+		item_panel.add_child(hbox)
+		list_vbox.add_child(item_panel)
 
 
 func _refresh_objective_pill() -> void:
@@ -87,6 +291,8 @@ func _refresh_objective_pill() -> void:
 	objective_btn.text = "%s  [TAP]" % String(info.get("text", "🎯 Explore Campus"))
 	objective_btn.add_theme_color_override(&"font_color", info.get("color", Color.WHITE))
 	_current_obj_dest = info.get("dest", &"sub")
+	if tasks_sheet and tasks_sheet.visible:
+		_populate_tasks_sheet()
 
 
 func _create_event_toast_ui() -> void:

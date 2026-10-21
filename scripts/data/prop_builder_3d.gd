@@ -9,11 +9,20 @@ static var _mat_cache: Dictionary = {}
 static var onboarding_quest_step: int = 0
 
 const ONBOARDING_QUESTS: Array[Dictionary] = [
-	{"text": "📋 Task 1/5: Try on an Outfit at your Hostel Wardrobe (+₦500)", "dest": &"hostel", "color": Color(1.0, 0.88, 0.28), "reward": 500},
-	{"text": "📋 Task 2/5: Greet your Roommate or any Student (+₦500)", "dest": &"hostel", "color": Color(0.45, 0.95, 0.62), "reward": 500},
-	{"text": "📋 Task 3/5: Ride the Danfo Shuttle to Faculty Hall LT1 (+₦500)", "dest": &"class", "color": Color(0.38, 0.88, 1.0), "reward": 500},
-	{"text": "📋 Task 4/5: Study or Attend Class at a Lecture Desk (+₦1,000)", "dest": &"class", "color": Color(1.0, 0.78, 0.32), "reward": 1000},
-	{"text": "📋 Task 5/5: Eat a hot meal at Mama Put Canteen (+₦1,000)", "dest": &"mama_put", "color": Color(1.0, 0.58, 0.28), "reward": 1000}
+	{"text": "📋 Task 1/14: Try on an Outfit at Hostel Wardrobe (+₦500)", "dest": &"hostel", "color": Color(1.0, 0.88, 0.28), "reward": 500},
+	{"text": "📋 Task 2/14: Greet your Roommate or Coursemate (+₦500)", "dest": &"hostel", "color": Color(0.45, 0.95, 0.62), "reward": 500},
+	{"text": "📋 Task 3/14: Ride the Danfo Shuttle to Faculty Hall LT1 (+₦500)", "dest": &"class", "color": Color(0.38, 0.88, 1.0), "reward": 500},
+	{"text": "📋 Task 4/14: Study or Attend Class at Lecture Desk (+₦1,000)", "dest": &"class", "color": Color(1.0, 0.78, 0.32), "reward": 1000},
+	{"text": "📋 Task 5/14: Eat a hot meal at Mama Put Canteen (+₦1,000)", "dest": &"mama_put", "color": Color(1.0, 0.58, 0.28), "reward": 1000},
+	{"text": "📋 Task 6/14: Score a Penalty Goal in the Stadium (+₦1,500)", "dest": &"stadium", "color": Color(0.35, 0.95, 0.58), "reward": 1500},
+	{"text": "📋 Task 7/14: Take an In-Course CA Test at Lecture Hall (+₦2,000)", "dest": &"class", "color": Color(1.0, 0.82, 0.25), "reward": 2000},
+	{"text": "📋 Task 8/14: Complete a Freelance Tech Gig at the SUB (+₦2,500)", "dest": &"sub", "color": Color(0.40, 0.85, 1.0), "reward": 2500},
+	{"text": "📋 Task 9/14: Play Snooker Match at the SUB Arcade (+₦1,000)", "dest": &"sub", "color": Color(0.95, 0.55, 0.85), "reward": 1000},
+	{"text": "📋 Task 10/14: Study Past Questions at Library Carrel (+₦1,500)", "dest": &"library", "color": Color(0.55, 0.88, 1.0), "reward": 1500},
+	{"text": "📋 Task 11/14: Fellowship & Prayer at the Chapel (+₦1,000)", "dest": &"chapel", "color": Color(0.95, 0.85, 0.55), "reward": 1000},
+	{"text": "📋 Task 12/14: Get a Fresh Haircut/Styling at the Salon (+₦1,000)", "dest": &"salon", "color": Color(1.0, 0.65, 0.45), "reward": 1000},
+	{"text": "📋 Task 13/14: Cook a hot meal in the Hostel Kitchenette (+₦1,000)", "dest": &"hostel", "color": Color(0.98, 0.55, 0.35), "reward": 1000},
+	{"text": "📋 Task 14/14: Senate Clearance & Merit Scholarship (+₦5,000)", "dest": &"senate", "color": Color(1.0, 0.85, 0.20), "reward": 5000}
 ]
 
 
@@ -29,6 +38,10 @@ static func advance_quest_if_matching(step_index: int, player: Node) -> void:
 			needs.modify_money(reward)
 		if player.has_method("play_celebrate_animation"):
 			player.play_celebrate_animation("✅ TASK %d DONE! +₦%d" % [step_index + 1, reward])
+		if player.is_inside_tree() and player.get_tree() and player.get_tree().current_scene:
+			var hud = player.get_tree().current_scene.get_node_or_null("HUD")
+			if hud and hud.has_method("_refresh_objective_pill"):
+				hud._refresh_objective_pill()
 
 
 static func get_mat(color: Color, roughness: float = 0.65, metallic: float = 0.05, emission_energy: float = 0.0) -> StandardMaterial3D:

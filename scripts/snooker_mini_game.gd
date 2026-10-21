@@ -273,6 +273,8 @@ func _pocket_ball(b: Ball) -> void:
 		session_winnings += reward
 		if SoundManager:
 			SoundManager.play_coin()
+		if current_player:
+			PropBuilder3D.advance_quest_if_matching(8, current_player)
 
 	_update_ui()
 

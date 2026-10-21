@@ -112,6 +112,8 @@ func _on_mode_selected(mode: Dictionary) -> void:
 	if current_player.has_method("display_notification"):
 		current_player.display_notification("Library Study Finished! Exam Preparation +%.2f CGPA!" % boost)
 
+	PropBuilder3D.advance_quest_if_matching(9, current_player)
+
 	if status_label:
 		status_label.text = "✓ %s completed! +%.2f CGPA preparation." % [mode.get("title"), boost]
 		status_label.add_theme_color_override(&"font_color", Color(0.3, 0.95, 0.45))

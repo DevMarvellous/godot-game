@@ -113,6 +113,8 @@ func _on_confirm_pressed() -> void:
 	elif current_player.has_method("display_notification"):
 		current_player.display_notification("Looking fresh! Paid Master Sunday ₦1,000.")
 
+	PropBuilder3D.advance_quest_if_matching(11, current_player)
+
 	close_menu()
 
 

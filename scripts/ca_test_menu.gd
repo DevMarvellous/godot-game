@@ -421,6 +421,8 @@ func _finish_test() -> void:
 		SoundManager.play_bell()
 
 	TimeSystem.advance_minutes(45)
+	if current_player:
+		PropBuilder3D.advance_quest_if_matching(6, current_player)
 	test_submitted.emit(current_course, total_correct, total_q, marks_earned)
 	close_test()
 

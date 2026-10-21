@@ -577,6 +577,26 @@ func _go_to_scene(scene_path: String, fare_already_paid: bool = false) -> void:
 						return
 			var fixtures: Node = get_node_or_null("WorldObjects")
 			if fixtures and fixtures.get_child_count() > 0:
+				var target_type: int = -1
+				match PropBuilder3D.onboarding_quest_step:
+					0: target_type = CampusObject3D.ObjectType.WARDROBE
+					3, 6: target_type = CampusObject3D.ObjectType.DESK
+					4: target_type = CampusObject3D.ObjectType.CAFETERIA
+					5: target_type = CampusObject3D.ObjectType.STADIUM_SPORTS
+					7: target_type = CampusObject3D.ObjectType.HUSTLE_DESK
+					8: target_type = CampusObject3D.ObjectType.SUB_ARCADE
+					9: target_type = CampusObject3D.ObjectType.LIBRARY_CARREL
+					10: target_type = CampusObject3D.ObjectType.CHAPEL_WORSHIP
+					11: target_type = CampusObject3D.ObjectType.SALON_CHAIR
+					12: target_type = CampusObject3D.ObjectType.HOSTEL_KITCHEN
+					13: target_type = CampusObject3D.ObjectType.SENATE_REGISTRY
+
+				if target_type != -1:
+					for child in fixtures.get_children():
+						if child is CampusObject3D and child.object_type == target_type:
+							player._walk_to_and_interact(child)
+							return
+
 				for child in fixtures.get_children():
 					if child is CampusObject3D and child.object_type != CampusObject3D.ObjectType.DOOR_EXIT and child.object_type != CampusObject3D.ObjectType.SHUTTLE_STOP:
 						if player.has_method("_walk_to_and_interact"):

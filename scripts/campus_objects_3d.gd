@@ -225,6 +225,7 @@ func interact(player: CharacterBody3D) -> void:
 			needs.modify_faith(35.0)
 			needs.modify_energy(15.0)
 			TimeSystem.advance_minutes(20)
+			PropBuilder3D.advance_quest_if_matching(10, player)
 			if player.has_method("play_pray_animation"):
 				player.play_pray_animation()
 			_show_feedback(player, "Deep worship and prayer! Peace of Mind granted. Faith +35, Energy +15!")
@@ -241,6 +242,7 @@ func interact(player: CharacterBody3D) -> void:
 				ball.angular_velocity = Vector3.ZERO
 				ball.apply_central_impulse(Vector3(randf_range(-3.5, 3.5), 7.2, -18.0))
 
+			PropBuilder3D.advance_quest_if_matching(5, player)
 			if randi() % 100 < 70:
 				needs.modify_money(1000)
 				needs.modify_energy(15.0)
@@ -262,6 +264,7 @@ func interact(player: CharacterBody3D) -> void:
 		ObjectType.SENATE_REGISTRY:
 			const ProfileStore = preload("res://scripts/data/student_profile.gd")
 			ProfileStore.load_from_disk()
+			PropBuilder3D.advance_quest_if_matching(13, player)
 			if needs.cgpa >= 4.50 and not ProfileStore.merit_scholarship_claimed:
 				ProfileStore.merit_scholarship_claimed = true
 				ProfileStore.save_to_disk()

@@ -229,6 +229,7 @@ func _on_cook_meal(meal: Dictionary, cost: int) -> void:
 		current_player.play_eating_animation()
 
 	var meal_title: String = String(meal.get("name", "Meal"))
+	PropBuilder3D.advance_quest_if_matching(12, current_player)
 	if current_player.has_method("display_notification"):
 		current_player.display_notification("Enjoyed %s! Hunger +%d%%, Energy +%d%%" % [
 			meal_title,

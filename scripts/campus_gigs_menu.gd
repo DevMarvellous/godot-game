@@ -162,6 +162,8 @@ func _on_work_gig_pressed(gig: Dictionary) -> void:
 	if current_player.has_method("play_celebrate_animation"):
 		current_player.play_celebrate_animation("💼 GIG PAID! +₦%s" % _format_number(payout))
 
+	PropBuilder3D.advance_quest_if_matching(7, current_player)
+
 	if status_label:
 		status_label.text = "✓ Finished %s! Credited +₦%s to your wallet." % [gig.get("title"), _format_number(payout)]
 		status_label.add_theme_color_override(&"font_color", Color(0.3, 0.95, 0.5))
