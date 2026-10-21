@@ -48,9 +48,11 @@ var _last_net_moving: bool = false
 
 var is_sitting: bool = false
 var is_emoting: bool = false
+var is_dressing_animating: bool = false
 var _idle_time: float = 0.0
 var _sit_rest_timer: float = 0.0
 var _active_emote_tween: Tween = null
+var _dress_tween: Tween = null
 
 # Smooth Lagos Life style camera offset & interpolation (Elevated 3/4 Isometric)
 var cam_target_offset: Vector3 = Vector3(0, 5.0, 4.8)
@@ -561,14 +563,19 @@ func play_dressing_animation(midpoint_callback: Callable = Callable()) -> void:
 			midpoint_callback.call()
 		return
 
+	if _dress_tween and _dress_tween.is_valid():
+		_dress_tween.kill()
+
+	is_dressing_animating = true
+
 	var start_rot: float = visual_root.rotation.y
 	var full_spin_rot: float = start_rot + TAU
 
 	# First half spin (0 to 180 degrees) with subtle wind-up crouch
-	var half_tween: Tween = create_tween().set_parallel(true)
-	half_tween.tween_property(visual_root, "rotation:y", start_rot + PI, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	half_tween.tween_property(visual_root, "scale", Vector3(0.92, 1.08, 0.92), 0.22)
-	await half_tween.finished
+	_dress_tween = create_tween().set_parallel(true)
+	_dress_tween.tween_property(visual_root, "rotation:y", start_rot + PI, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	_dress_tween.tween_property(visual_root, "scale", Vector3(0.90, 1.10, 0.90), 0.22)
+	await _dress_tween.finished
 
 	# Swap clothes at the midpoint!
 	if midpoint_callback.is_valid():
@@ -579,15 +586,18 @@ func play_dressing_animation(midpoint_callback: Callable = Callable()) -> void:
 		SoundManager.play_bell()
 
 	# Second half spin (180 to 360 degrees) with celebratory bounce
-	var second_tween: Tween = create_tween().set_parallel(true)
-	second_tween.tween_property(visual_root, "rotation:y", full_spin_rot, 0.28).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	second_tween.tween_property(visual_root, "scale", Vector3(1.15, 1.15, 1.15), 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	await second_tween.finished
+	_dress_tween = create_tween().set_parallel(true)
+	_dress_tween.tween_property(visual_root, "rotation:y", full_spin_rot, 0.26).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_dress_tween.tween_property(visual_root, "scale", Vector3(1.20, 1.20, 1.20), 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	await _dress_tween.finished
 
 	# Settle smoothly back to regular scale & normalize rotation
 	var settle_tween: Tween = create_tween()
 	settle_tween.tween_property(visual_root, "scale", Vector3.ONE, 0.12)
+	await settle_tween.finished
+
 	visual_root.rotation.y = fmod(visual_root.rotation.y, TAU)
+	is_dressing_animating = false
 
 
 ## Spawns a floating stat particle above player's head (Sims / Lagos Life style)

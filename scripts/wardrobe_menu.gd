@@ -76,11 +76,31 @@ func _build_3d_mirror_preview() -> void:
 	cam.current = true
 	vp.add_child(cam)
 
+	# Ambient WorldEnvironment for bright, vivid lighting from all angles
+	var env_node := WorldEnvironment.new()
+	var env := Environment.new()
+	env.background_mode = Environment.BG_CLEAR_COLOR
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color(0.85, 0.90, 0.98)
+	env.ambient_light_energy = 1.15
+	env_node.environment = env
+	vp.add_child(env_node)
+
+	# Key Light (warm Lagos sunshine)
 	var dlight := DirectionalLight3D.new()
 	dlight.position = Vector3(2, 4, 3)
 	dlight.rotation_degrees = Vector3(-30, 30, 0)
-	dlight.light_energy = 1.65
+	dlight.light_energy = 1.45
+	dlight.light_color = Color(1.0, 0.97, 0.92)
 	vp.add_child(dlight)
+
+	# Fill Light (prevents dark pitch shadows)
+	var fill_light := DirectionalLight3D.new()
+	fill_light.position = Vector3(-2.5, 2.0, 1.5)
+	fill_light.rotation_degrees = Vector3(-20, -45, 0)
+	fill_light.light_energy = 0.85
+	fill_light.light_color = Color(0.85, 0.92, 1.0)
+	vp.add_child(fill_light)
 
 	mirror_player = PlayerScene.instantiate() as Player3D
 	mirror_player.set_physics_process(false)
@@ -97,7 +117,8 @@ func _build_3d_mirror_preview() -> void:
 
 func _process(delta: float) -> void:
 	if visible and is_instance_valid(mirror_player) and mirror_player.visual_root:
-		mirror_player.visual_root.rotate_y(delta * 0.9)
+		if not mirror_player.is_dressing_animating:
+			mirror_player.visual_root.rotate_y(delta * 0.9)
 
 
 func _populate_selectors() -> void:
@@ -192,6 +213,9 @@ func _on_equip_pressed() -> void:
 	ProfileStore.hair_index = selected_hair_idx
 	ProfileStore.shirt_index = selected_outfit_idx
 	ProfileStore.save_to_disk()
+
+	const PropBuilder = preload("res://scripts/data/prop_builder_3d.gd")
+	PropBuilder.complete_semester_task(0)
 
 	if current_player and current_player.has_method("play_dressing_animation"):
 		current_player.play_dressing_animation()

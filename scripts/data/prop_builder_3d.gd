@@ -26,22 +26,33 @@ const ONBOARDING_QUESTS: Array[Dictionary] = [
 ]
 
 
-static func advance_quest_if_matching(step_index: int, player: Node) -> void:
+static func advance_quest_if_matching(step_index: int, player: Node = null) -> void:
 	if onboarding_quest_step != step_index or onboarding_quest_step >= ONBOARDING_QUESTS.size():
 		return
 	var q: Dictionary = ONBOARDING_QUESTS[onboarding_quest_step]
 	var reward: int = int(q.get("reward", 500))
 	onboarding_quest_step += 1
-	if player:
-		var needs = player.get_node_or_null("NeedsManager")
+
+	var target_player: Node = player
+	if not target_player:
+		var st = Engine.get_main_loop() as SceneTree
+		if st and st.current_scene:
+			target_player = st.current_scene.get_node_or_null("Player3D")
+
+	if target_player:
+		var needs = target_player.get_node_or_null("NeedsManager")
 		if needs and needs.has_method("modify_money"):
 			needs.modify_money(reward)
-		if player.has_method("play_celebrate_animation"):
-			player.play_celebrate_animation("✅ TASK %d DONE! +₦%d" % [step_index + 1, reward])
-		if player.is_inside_tree() and player.get_tree() and player.get_tree().current_scene:
-			var hud = player.get_tree().current_scene.get_node_or_null("HUD")
+		if target_player.has_method("play_celebrate_animation"):
+			target_player.play_celebrate_animation("✅ TASK %d DONE! +₦%d" % [step_index + 1, reward])
+		if target_player.is_inside_tree() and target_player.get_tree() and target_player.get_tree().current_scene:
+			var hud = target_player.get_tree().current_scene.get_node_or_null("HUD")
 			if hud and hud.has_method("_refresh_objective_pill"):
 				hud._refresh_objective_pill()
+
+
+static func complete_semester_task(step_index: int, player: Node = null) -> void:
+	advance_quest_if_matching(step_index, player)
 
 
 static func get_mat(color: Color, roughness: float = 0.65, metallic: float = 0.05, emission_energy: float = 0.0) -> StandardMaterial3D:

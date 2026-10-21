@@ -152,6 +152,10 @@ func _on_destination_selected(dest: Dictionary) -> void:
 		current_player.display_notification("Boarded Campus Shuttle: Arrived at %s (-₦%d)" % [dest.get("name"), fare])
 
 	var target_scene: String = String(dest.get("scene", ""))
+	if target_scene.contains("lecture_hall"):
+		const PropBuilder = preload("res://scripts/data/prop_builder_3d.gd")
+		PropBuilder.complete_semester_task(2)
+
 	visible = false
 	current_player = null
 	destination_chosen.emit(target_scene)

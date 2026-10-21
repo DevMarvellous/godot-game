@@ -4,9 +4,9 @@ extends Control
 ## University Admissions & Student Onboarding Portal.
 ## Multi-step authentic admission journey:
 ## Step 1: JAMB / Student Biodata (Name, Email, Gender)
-## Step 2: Physical Character Styling (Complexion, Hairstyle, Clothes)
+## Step 2: Physical Character Styling (Complexion, Hairstyle, Clothes with Live 3D Drip & Animation)
 ## Step 3: Choice of Faculty & Primary Academic Department
-## Step 4: Post-UTME Screening Aptitude Quiz (3 Questions)
+## Step 4: Post-UTME Screening Aptitude Quiz (3 Questions with Real-time Interactive Feedback)
 ## Step 5: Official University Admission Letter Presentation & Matriculation Number
 
 signal onboarding_completed(profile_data: Dictionary)
@@ -156,6 +156,15 @@ var current_faculty_dept_codes: Array = []
 var quiz_q_idx: int = 0
 var quiz_score: int = 0
 var active_quiz_questions: Array = []
+var is_quiz_answering: bool = false
+
+# Drip UI state
+var active_drip_tab: String = "outfits"
+var drip_cards_vbox: VBoxContainer = null
+var floating_drip_badge: Label = null
+var quick_status_btn: Button = null
+var step_nav_buttons: Array[Button] = []
+var tab_buttons_map: Dictionary = {}
 
 # UI references
 @onready var step_title_label: Label = %StepTitle
@@ -206,7 +215,12 @@ func _ready() -> void:
 	if next_button:
 		next_button.pressed.connect(_on_next_pressed)
 		var next_style := StyleBoxFlat.new()
-		next_style.bg_color = Color(0.96, 0.74, 0.12, 1.0)
+		next_style.bg_color = Color(0.96, 0.76, 0.14, 1.0)
+		next_style.border_width_left = 2
+		next_style.border_width_top = 2
+		next_style.border_width_right = 2
+		next_style.border_width_bottom = 2
+		next_style.border_color = Color(1.0, 0.92, 0.55, 1.0)
 		next_style.corner_radius_top_left = 12
 		next_style.corner_radius_top_right = 12
 		next_style.corner_radius_bottom_left = 12
@@ -220,13 +234,85 @@ func _ready() -> void:
 	if email_input:
 		email_input.text_submitted.connect(func(_text: String) -> void: _on_next_pressed())
 
+	_build_step_indicator_bar()
 	_build_easy_typing_helpers()
 	_adjust_responsive_layout()
 	get_viewport().size_changed.connect(_adjust_responsive_layout)
 
 	_setup_preview_player()
 	_setup_options()
+	_build_visual_drip_station()
 	_update_view()
+
+
+func _build_step_indicator_bar() -> void:
+	var header_vbox: VBoxContainer = get_node_or_null("SafeArea/CardCenter/CardPanel/CardVBox/HeaderPanel/HeaderVBox") as VBoxContainer
+	if not header_vbox or header_vbox.has_node("StepNavBar"):
+		return
+
+	var nav_row := HBoxContainer.new()
+	nav_row.name = "StepNavBar"
+	nav_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	nav_row.add_theme_constant_override(&"separation", 6)
+
+	var step_labels: Array[String] = [
+		"1. Biodata 👤", "2. Drip 👔", "3. Course 🎓", "4. Screening 📝", "5. Letter 📜"
+	]
+	step_nav_buttons.clear()
+
+	for i in step_labels.size():
+		var btn := Button.new()
+		btn.text = step_labels[i]
+		btn.custom_minimum_size = Vector2(0, 26)
+		btn.add_theme_font_size_override(&"font_size", 11)
+		btn.focus_mode = Control.FOCUS_NONE
+		btn.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		nav_row.add_child(btn)
+		step_nav_buttons.append(btn)
+
+	header_vbox.add_child(nav_row)
+
+
+func _update_step_navbar() -> void:
+	var step_labels: Array[String] = [
+		"1. Biodata 👤", "2. Drip 👔", "3. Course 🎓", "4. Screening 📝", "5. Letter 📜"
+	]
+	for i in step_nav_buttons.size():
+		var btn: Button = step_nav_buttons[i]
+		var st := StyleBoxFlat.new()
+		st.corner_radius_top_left = 6
+		st.corner_radius_top_right = 6
+		st.corner_radius_bottom_left = 6
+		st.corner_radius_bottom_right = 6
+		st.content_margin_left = 8.0
+		st.content_margin_right = 8.0
+
+		if i < int(current_step):
+			st.bg_color = Color(0.08, 0.40, 0.24, 0.95)
+			st.border_color = Color(0.20, 0.85, 0.45, 0.8)
+			st.border_width_left = 1
+			st.border_width_top = 1
+			st.border_width_right = 1
+			st.border_width_bottom = 1
+			btn.text = "✓ " + step_labels[i]
+			btn.add_theme_color_override(&"font_color", Color(0.85, 0.98, 0.90, 1.0))
+		elif i == int(current_step):
+			st.bg_color = Color(0.96, 0.78, 0.16, 1.0)
+			st.border_color = Color(1.0, 0.95, 0.70, 1.0)
+			st.border_width_left = 2
+			st.border_width_top = 2
+			st.border_width_right = 2
+			st.border_width_bottom = 2
+			btn.text = "★ " + step_labels[i]
+			btn.add_theme_color_override(&"font_color", Color(0.06, 0.10, 0.14, 1.0))
+		else:
+			st.bg_color = Color(0.09, 0.14, 0.20, 0.7)
+			st.border_color = Color(0.20, 0.28, 0.38, 0.5)
+			btn.text = step_labels[i]
+			btn.add_theme_color_override(&"font_color", Color(0.55, 0.65, 0.75, 0.8))
+
+		btn.add_theme_stylebox_override(&"normal", st)
+		btn.add_theme_stylebox_override(&"disabled", st)
 
 
 func _build_easy_typing_helpers() -> void:
@@ -261,20 +347,23 @@ func _build_easy_typing_helpers() -> void:
 	chip_row.add_theme_constant_override(&"v_separation", 6)
 
 	var preset_names: Array[String] = [
-		"🎲 Random Name", "Tunde Bakare", "Chisom Okafor", "Femi Adeleke", "Zainab Bello", "Kelechi Nwosu"
+		"🎲 Lucky Dip Name", "Tunde 'Tech Bro' Adeleke", "Chisom 'First Class' Okafor",
+		"Femi 'Party Starter' Bakare", "Zainab 'Big Brain' Bello", "Kelechi 'Danfo Pilot' Nwosu"
 	]
 	const RANDOM_POOL: Array[String] = [
 		"Adebayo Ogunlesi", "Ngozi Eze", "Damilola Balogun", "Ibrahim Danjuma",
-		"Bolanle Coker", "Emeka Obi", "Ayomide Williams", "Halima Lawal"
+		"Bolanle Coker", "Emeka Obi", "Ayomide Williams", "Halima Lawal", "Segun Alabi", "Tolani Davies"
 	]
 	for label_txt in preset_names:
 		var b := Button.new()
 		b.text = label_txt
-		b.custom_minimum_size = Vector2(0, 34)
+		b.custom_minimum_size = Vector2(0, 36)
 		b.add_theme_font_size_override(&"font_size", 13)
 		b.pressed.connect(func():
 			SoundManager.play_click()
-			var chosen: String = RANDOM_POOL.pick_random() if label_txt.begins_with("🎲") else label_txt
+			var chosen: String = RANDOM_POOL.pick_random() if label_txt.begins_with("🎲") else label_txt.split("'")[0].strip_edges() + " " + label_txt.split("'")[-1].strip_edges()
+			if label_txt.begins_with("🎲"):
+				chosen = RANDOM_POOL.pick_random()
 			name_input.text = chosen
 			if email_input:
 				var slug: String = chosen.to_lower().replace(" ", ".")
@@ -285,7 +374,7 @@ func _build_easy_typing_helpers() -> void:
 	if OS.has_feature("web"):
 		var kb_btn := Button.new()
 		kb_btn.text = "⌨️ Tap to Type Name"
-		kb_btn.custom_minimum_size = Vector2(0, 34)
+		kb_btn.custom_minimum_size = Vector2(0, 36)
 		kb_btn.add_theme_font_size_override(&"font_size", 13)
 		kb_btn.pressed.connect(func():
 			var res = JavaScriptBridge.eval("window.prompt('Enter your Student Full Name:', '%s') || ''" % name_input.text.replace("'", ""))
@@ -312,28 +401,59 @@ func _setup_preview_player() -> void:
 	if not has_node("%PreviewViewport"):
 		return
 	var vp: SubViewport = %PreviewViewport
+
+	# Environment for vivid bright Lagos daylight from all angles
+	if not vp.has_node("PreviewEnv"):
+		var env_node := WorldEnvironment.new()
+		env_node.name = "PreviewEnv"
+		var env := Environment.new()
+		env.background_mode = Environment.BG_CLEAR_COLOR
+		env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+		env.ambient_light_color = Color(0.85, 0.90, 0.98, 1.0)
+		env.ambient_light_energy = 1.25
+		env_node.environment = env
+		vp.add_child(env_node)
+
+	# Key Light (warm Lagos sunshine)
+	var dlight: DirectionalLight3D = vp.get_node_or_null("PreviewLight") as DirectionalLight3D
+	if dlight:
+		dlight.position = Vector3(2.0, 3.5, 3.0)
+		dlight.rotation_degrees = Vector3(-30, 30, 0)
+		dlight.light_energy = 1.45
+		dlight.light_color = Color(1.0, 0.97, 0.92, 1.0)
+
+	# Fill Light (prevents pitch black shadows)
+	if not vp.has_node("PreviewFillLight"):
+		var fill_light := DirectionalLight3D.new()
+		fill_light.name = "PreviewFillLight"
+		fill_light.position = Vector3(-2.5, 2.0, 1.5)
+		fill_light.rotation_degrees = Vector3(-20, -45, 0)
+		fill_light.light_energy = 0.85
+		fill_light.light_color = Color(0.85, 0.92, 1.0, 1.0)
+		vp.add_child(fill_light)
+
+	var pcam: Camera3D = vp.get_node_or_null("PreviewCamera") as Camera3D
+	if pcam:
+		pcam.position = Vector3(0, 0.98, 2.30)
+		pcam.rotation_degrees = Vector3(-5, 0, 0)
+		pcam.fov = 42.0
+
 	preview_player_instance = PlayerScene.instantiate() as Player3D
 	preview_player_instance.set_physics_process(false)
 	preview_player_instance.set_process_unhandled_input(false)
 	vp.add_child(preview_player_instance)
 
-	var pcam = preview_player_instance.get_node_or_null("Camera3D")
-	if pcam:
-		pcam.queue_free()
-	var pcol = preview_player_instance.get_node_or_null("CollisionShape3D")
-	if pcol:
-		pcol.queue_free()
-	var pnotif = preview_player_instance.get_node_or_null("NotifLabel")
-	if pnotif:
-		pnotif.queue_free()
-	var pprompt = preview_player_instance.get_node_or_null("PromptLabel")
-	if pprompt:
-		pprompt.queue_free()
+	for child_name in ["Camera3D", "CollisionShape3D", "NotifLabel", "PromptLabel"]:
+		var n = preview_player_instance.get_node_or_null(child_name)
+		if n:
+			n.queue_free()
 
 
 func _process(delta: float) -> void:
 	if is_instance_valid(preview_player_instance) and preview_player_instance.visual_root:
-		preview_player_instance.visual_root.rotate_y(delta * 0.8)
+		# Pause idle rotation while the 360 spin dressing animation is active
+		if not preview_player_instance.is_dressing_animating:
+			preview_player_instance.visual_root.rotate_y(delta * 0.8)
 
 
 func _setup_options() -> void:
@@ -343,7 +463,7 @@ func _setup_options() -> void:
 		gender_options.add_item("Female Student")
 		gender_options.item_selected.connect(func(idx: int):
 			selected_gender = "Male" if idx == 0 else "Female"
-			_refresh_avatar_preview()
+			_refresh_avatar_preview(true)
 		)
 
 	if complexion_options:
@@ -401,6 +521,335 @@ func _setup_options() -> void:
 	_refresh_avatar_preview(false)
 
 
+func _build_visual_drip_station() -> void:
+	if not avatar_panel:
+		return
+
+	# Hide raw text dropdowns & labels to replace them with rich visual cards
+	for raw_node in [complexion_options, hair_options, shirt_options, trouser_options]:
+		if raw_node:
+			raw_node.visible = false
+	for lbl_name in ["SkinLabel", "HairLabel", "ShirtLabel", "TrouserLabel"]:
+		var lbl = avatar_panel.get_node_or_null(lbl_name)
+		if lbl:
+			lbl.visible = false
+
+	if avatar_panel.has_node("DripStationContainer"):
+		return
+
+	var station := VBoxContainer.new()
+	station.name = "DripStationContainer"
+	station.add_theme_constant_override(&"separation", 10)
+
+	# 1. Quick Cycle Drip Bar (Placed directly under 3D Preview)
+	var cycle_bar := HBoxContainer.new()
+	cycle_bar.add_theme_constant_override(&"separation", 8)
+
+	var prev_btn := Button.new()
+	prev_btn.text = "◀ Prev Drip"
+	prev_btn.custom_minimum_size = Vector2(100, 38)
+	prev_btn.add_theme_font_size_override(&"font_size", 13)
+	prev_btn.pressed.connect(func():
+		SoundManager.play_click()
+		if active_drip_tab == "hair":
+			selected_hair = (selected_hair - 1 + Wardrobe.HAIRSTYLES.size()) % Wardrobe.HAIRSTYLES.size()
+		elif active_drip_tab == "skin":
+			selected_complexion = (selected_complexion - 1 + Wardrobe.COMPLEXIONS.size()) % Wardrobe.COMPLEXIONS.size()
+		elif active_drip_tab == "trousers":
+			selected_trouser = (selected_trouser - 1 + CharacterCustomizer.TROUSER_STYLES.size()) % CharacterCustomizer.TROUSER_STYLES.size()
+		else:
+			selected_shirt = (selected_shirt - 1 + Wardrobe.OUTFITS.size()) % Wardrobe.OUTFITS.size()
+		_refresh_avatar_preview(true)
+		_render_drip_cards()
+	)
+	cycle_bar.add_child(prev_btn)
+
+	quick_status_btn = Button.new()
+	quick_status_btn.text = "✨ Spin & Try On Drip 🔄 ✨"
+	quick_status_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	quick_status_btn.custom_minimum_size = Vector2(0, 38)
+	quick_status_btn.add_theme_font_size_override(&"font_size", 13)
+	quick_status_btn.pressed.connect(func():
+		if preview_player_instance and preview_player_instance.has_method("play_dressing_animation"):
+			preview_player_instance.play_dressing_animation()
+	)
+	cycle_bar.add_child(quick_status_btn)
+
+	var next_btn := Button.new()
+	next_btn.text = "Next Drip ▶"
+	next_btn.custom_minimum_size = Vector2(100, 38)
+	next_btn.add_theme_font_size_override(&"font_size", 13)
+	next_btn.pressed.connect(func():
+		SoundManager.play_click()
+		if active_drip_tab == "hair":
+			selected_hair = (selected_hair + 1) % Wardrobe.HAIRSTYLES.size()
+		elif active_drip_tab == "skin":
+			selected_complexion = (selected_complexion + 1) % Wardrobe.COMPLEXIONS.size()
+		elif active_drip_tab == "trousers":
+			selected_trouser = (selected_trouser + 1) % CharacterCustomizer.TROUSER_STYLES.size()
+		else:
+			selected_shirt = (selected_shirt + 1) % Wardrobe.OUTFITS.size()
+		_refresh_avatar_preview(true)
+		_render_drip_cards()
+	)
+	cycle_bar.add_child(next_btn)
+	station.add_child(cycle_bar)
+
+	# 2. Category Tabs (Outfits, Hairstyles, Complexion, Trousers)
+	var tabs_bar := HBoxContainer.new()
+	tabs_bar.add_theme_constant_override(&"separation", 6)
+
+	var tabs_def: Array[Dictionary] = [
+		{"id": "outfits", "label": "👔 Outfits (5)"},
+		{"id": "hair", "label": "💈 Hair (5)"},
+		{"id": "skin", "label": "🎨 Melanin (4)"},
+		{"id": "trousers", "label": "👖 Pants (4)"}
+	]
+	tab_buttons_map.clear()
+
+	for t in tabs_def:
+		var tab_btn := Button.new()
+		tab_btn.text = t["label"]
+		tab_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		tab_btn.custom_minimum_size = Vector2(0, 36)
+		tab_btn.add_theme_font_size_override(&"font_size", 13)
+		var t_id: String = t["id"]
+		tab_btn.pressed.connect(func():
+			SoundManager.play_click()
+			active_drip_tab = t_id
+			_update_drip_tabs_ui()
+			_render_drip_cards()
+		)
+		tabs_bar.add_child(tab_btn)
+		tab_buttons_map[t_id] = tab_btn
+
+	station.add_child(tabs_bar)
+
+	# 3. Dynamic Visual Cards Container
+	drip_cards_vbox = VBoxContainer.new()
+	drip_cards_vbox.name = "DripCardsVBox"
+	drip_cards_vbox.add_theme_constant_override(&"separation", 8)
+	station.add_child(drip_cards_vbox)
+
+	avatar_panel.add_child(station)
+	_update_drip_tabs_ui()
+	_render_drip_cards()
+
+
+func _update_drip_tabs_ui() -> void:
+	for t_id in tab_buttons_map.keys():
+		var btn: Button = tab_buttons_map[t_id]
+		var st := StyleBoxFlat.new()
+		st.corner_radius_top_left = 8
+		st.corner_radius_top_right = 8
+		st.corner_radius_bottom_left = 8
+		st.corner_radius_bottom_right = 8
+		if t_id == active_drip_tab:
+			st.bg_color = Color(0.96, 0.78, 0.16, 1.0)
+			st.border_width_left = 2
+			st.border_width_top = 2
+			st.border_width_right = 2
+			st.border_width_bottom = 2
+			st.border_color = Color(1.0, 0.95, 0.70, 1.0)
+			btn.add_theme_color_override(&"font_color", Color(0.06, 0.10, 0.14, 1.0))
+		else:
+			st.bg_color = Color(0.12, 0.18, 0.26, 0.9)
+			st.border_width_left = 1
+			st.border_width_top = 1
+			st.border_width_right = 1
+			st.border_width_bottom = 1
+			st.border_color = Color(0.25, 0.35, 0.48, 0.6)
+			btn.add_theme_color_override(&"font_color", Color(0.85, 0.92, 0.98, 1.0))
+		btn.add_theme_stylebox_override(&"normal", st)
+		btn.add_theme_stylebox_override(&"hover", st)
+
+
+func _render_drip_cards() -> void:
+	if not drip_cards_vbox:
+		return
+
+	for child in drip_cards_vbox.get_children():
+		child.queue_free()
+
+	match active_drip_tab:
+		"outfits":
+			var outfit_emojis: Array[String] = ["👕", "👔", "🧥", "💼", "👗"]
+			for i in Wardrobe.OUTFITS.size():
+				var o: Dictionary = Wardrobe.OUTFITS[i]
+				var is_sel: bool = (i == selected_shirt)
+				var card := _create_drip_card(
+					outfit_emojis[clampi(i, 0, outfit_emojis.size() - 1)],
+					o["name"],
+					o["description"],
+					o.get("top_color", Color(0.12, 0.55, 0.32)),
+					o.get("bottom_color", Color(0.15, 0.22, 0.32)),
+					is_sel,
+					func():
+						selected_shirt = i
+						_refresh_avatar_preview(true)
+						_render_drip_cards()
+				)
+				drip_cards_vbox.add_child(card)
+
+		"hair":
+			var hair_emojis: Array[String] = ["💈", "👑", "🪢", "🧢", "👒"]
+			for i in Wardrobe.HAIRSTYLES.size():
+				var h: Dictionary = Wardrobe.HAIRSTYLES[i]
+				var is_sel: bool = (i == selected_hair)
+				var card := _create_drip_card(
+					hair_emojis[clampi(i, 0, hair_emojis.size() - 1)],
+					h["name"],
+					h["description"],
+					h.get("default_color", Color(0.08, 0.08, 0.08)),
+					h.get("default_color", Color(0.08, 0.08, 0.08)),
+					is_sel,
+					func():
+						selected_hair = i
+						_refresh_avatar_preview(true)
+						_render_drip_cards()
+				)
+				drip_cards_vbox.add_child(card)
+
+		"skin":
+			var skin_emojis: Array[String] = ["🌰", "🍫", "🍯", "🥜"]
+			for i in Wardrobe.COMPLEXIONS.size():
+				var s: Dictionary = Wardrobe.COMPLEXIONS[i]
+				var is_sel: bool = (i == selected_complexion)
+				var card := _create_drip_card(
+					skin_emojis[clampi(i, 0, skin_emojis.size() - 1)],
+					s["name"],
+					"Rich melanin campus complexion tone",
+					s["color"],
+					s["color"],
+					is_sel,
+					func():
+						selected_complexion = i
+						_refresh_avatar_preview(true)
+						_render_drip_cards()
+				)
+				drip_cards_vbox.add_child(card)
+
+		"trousers":
+			var trouser_emojis: Array[String] = ["👖", "👖", "👖", "👖"]
+			for i in CharacterCustomizer.TROUSER_STYLES.size():
+				var tr: Dictionary = CharacterCustomizer.TROUSER_STYLES[i]
+				var is_sel: bool = (i == selected_trouser)
+				var card := _create_drip_card(
+					trouser_emojis[clampi(i, 0, trouser_emojis.size() - 1)],
+					tr["name"],
+					"Campus lecture trousers and pants",
+					tr["color"],
+					tr["color"],
+					is_sel,
+					func():
+						selected_trouser = i
+						_refresh_avatar_preview(true)
+						_render_drip_cards()
+				)
+				drip_cards_vbox.add_child(card)
+
+
+func _create_drip_card(
+	icon_emoji: String,
+	item_title: String,
+	item_desc: String,
+	top_col: Color,
+	bottom_col: Color,
+	is_selected: bool,
+	on_click: Callable
+) -> PanelContainer:
+	var card := PanelContainer.new()
+	var st := StyleBoxFlat.new()
+	st.corner_radius_top_left = 10
+	st.corner_radius_top_right = 10
+	st.corner_radius_bottom_left = 10
+	st.corner_radius_bottom_right = 10
+	st.content_margin_left = 12.0
+	st.content_margin_top = 8.0
+	st.content_margin_right = 12.0
+	st.content_margin_bottom = 8.0
+
+	if is_selected:
+		st.bg_color = Color(0.18, 0.28, 0.40, 1.0)
+		st.border_width_left = 3
+		st.border_width_top = 3
+		st.border_width_right = 3
+		st.border_width_bottom = 3
+		st.border_color = Color(1.0, 0.84, 0.22, 1.0)
+	else:
+		st.bg_color = Color(0.11, 0.17, 0.24, 0.95)
+		st.border_width_left = 1
+		st.border_width_top = 1
+		st.border_width_right = 1
+		st.border_width_bottom = 1
+		st.border_color = Color(0.24, 0.34, 0.46, 0.6)
+
+	card.add_theme_stylebox_override(&"panel", st)
+
+	var hbox := HBoxContainer.new()
+	hbox.add_theme_constant_override(&"separation", 10)
+
+	# Left Icon Emoji Badge
+	var icon_lbl := Label.new()
+	icon_lbl.text = icon_emoji
+	icon_lbl.add_theme_font_size_override(&"font_size", 24)
+	icon_lbl.custom_minimum_size = Vector2(36, 0)
+	icon_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hbox.add_child(icon_lbl)
+
+	# Center text
+	var text_vbox := VBoxContainer.new()
+	text_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+	var title_lbl := Label.new()
+	title_lbl.text = item_title + ("  [✓ EQUIPPED]" if is_selected else "")
+	title_lbl.add_theme_font_size_override(&"font_size", 14)
+	if is_selected:
+		title_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.86, 0.32, 1.0))
+	else:
+		title_lbl.add_theme_color_override(&"font_color", Color(0.92, 0.96, 1.0, 1.0))
+	text_vbox.add_child(title_lbl)
+
+	var desc_lbl := Label.new()
+	desc_lbl.text = item_desc
+	desc_lbl.add_theme_font_size_override(&"font_size", 11)
+	desc_lbl.add_theme_color_override(&"font_color", Color(0.72, 0.82, 0.92, 0.85))
+	desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	text_vbox.add_child(desc_lbl)
+	hbox.add_child(text_vbox)
+
+	# Right Color Swatch Indicator (split dual-color pill)
+	var swatch_panel := PanelContainer.new()
+	swatch_panel.custom_minimum_size = Vector2(28, 28)
+	var sw_st := StyleBoxFlat.new()
+	sw_st.corner_radius_top_left = 14
+	sw_st.corner_radius_top_right = 14
+	sw_st.corner_radius_bottom_left = 14
+	sw_st.corner_radius_bottom_right = 14
+	sw_st.bg_color = top_col
+	sw_st.border_width_left = 2
+	sw_st.border_width_top = 2
+	sw_st.border_width_right = 2
+	sw_st.border_width_bottom = 2
+	sw_st.border_color = bottom_col
+	swatch_panel.add_theme_stylebox_override(&"panel", sw_st)
+	hbox.add_child(swatch_panel)
+
+	card.add_child(hbox)
+
+	# Invisible overlay button for easy touch/mouse tapping
+	var overlay_btn := Button.new()
+	overlay_btn.flat = true
+	overlay_btn.focus_mode = Control.FOCUS_NONE
+	overlay_btn.anchors_preset = Control.PRESET_FULL_RECT
+	overlay_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	overlay_btn.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	overlay_btn.pressed.connect(on_click)
+	card.add_child(overlay_btn)
+
+	return card
+
+
 func _refresh_avatar_preview(animate_spin: bool = false) -> void:
 	var hair_item: Dictionary = Wardrobe.HAIRSTYLES[clampi(selected_hair, 0, Wardrobe.HAIRSTYLES.size() - 1)]
 	var outfit_item: Dictionary = Wardrobe.OUTFITS[clampi(selected_shirt, 0, Wardrobe.OUTFITS.size() - 1)]
@@ -417,14 +866,15 @@ func _refresh_avatar_preview(animate_spin: bool = false) -> void:
 		var btm_col: Color = tr_item.get("color", outfit_item.get("bottom_color", Color(0.15, 0.22, 0.32)))
 		var hair_col: Color = hair_item.get("default_color", Color(0.08, 0.08, 0.08))
 		var apply_fn := func():
-			preview_player_instance.apply_appearance(
-				skin_item["color"],
-				top_col,
-				btm_col,
-				hair_col,
-				hair_item.get("mesh_type", "low_cut"),
-				outfit_item.get("mesh_type", "casual")
-			)
+			if is_instance_valid(preview_player_instance):
+				preview_player_instance.apply_appearance(
+					skin_item["color"],
+					top_col,
+					btm_col,
+					hair_col,
+					hair_item.get("mesh_type", "low_cut"),
+					outfit_item.get("mesh_type", "casual")
+				)
 		if animate_spin and preview_player_instance.has_method("play_dressing_animation"):
 			preview_player_instance.play_dressing_animation(apply_fn)
 		else:
@@ -473,6 +923,8 @@ func _update_view() -> void:
 	if dept_panel: dept_panel.visible = (current_step == Step.DEPARTMENT)
 	if screening_panel: screening_panel.visible = (current_step == Step.SCREENING)
 	if letter_panel: letter_panel.visible = (current_step == Step.ADMISSION_LETTER)
+
+	_update_step_navbar()
 
 	match current_step:
 		Step.BIODATA:
@@ -528,7 +980,6 @@ func _on_next_pressed() -> void:
 			_update_view()
 			_load_screening_question()
 		Step.SCREENING:
-			# Handled by option selection or advancement
 			pass
 		Step.ADMISSION_LETTER:
 			_complete_onboarding_and_start_game()
@@ -560,8 +1011,8 @@ func _load_screening_question() -> void:
 
 	var q: Dictionary = active_quiz_questions[quiz_q_idx]
 	if screening_progress_label:
-		screening_progress_label.text = "Screening Question %d of %d (Passing Score: 67%%)" % [
-			quiz_q_idx + 1, active_quiz_questions.size()
+		screening_progress_label.text = "Screening Question %d of %d  •  Current Score: %d / %d" % [
+			quiz_q_idx + 1, active_quiz_questions.size(), quiz_score, quiz_q_idx
 		]
 	if question_label:
 		question_label.text = String(q["q"])
@@ -574,19 +1025,107 @@ func _load_screening_question() -> void:
 	for i in opts.size():
 		var btn: Button = Button.new()
 		btn.text = "%c)  %s" % [65 + i, String(opts[i])]
-		btn.custom_minimum_size = Vector2(0, 52)
-		btn.add_theme_font_size_override(&"font_size", 16)
+		btn.custom_minimum_size = Vector2(0, 54)
+		btn.add_theme_font_size_override(&"font_size", 15)
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		btn.focus_mode = Control.FOCUS_NONE
+
+		var btn_st := StyleBoxFlat.new()
+		btn_st.bg_color = Color(0.12, 0.19, 0.28, 0.95)
+		btn_st.border_width_left = 2
+		btn_st.border_width_top = 2
+		btn_st.border_width_right = 2
+		btn_st.border_width_bottom = 2
+		btn_st.border_color = Color(0.25, 0.38, 0.52, 0.8)
+		btn_st.corner_radius_top_left = 10
+		btn_st.corner_radius_top_right = 10
+		btn_st.corner_radius_bottom_left = 10
+		btn_st.corner_radius_bottom_right = 10
+		btn_st.content_margin_left = 16.0
+		btn_st.content_margin_right = 16.0
+		btn.add_theme_stylebox_override(&"normal", btn_st)
+		btn.add_theme_stylebox_override(&"hover", btn_st)
+
 		btn.pressed.connect(_on_quiz_option_chosen.bind(i))
 		options_container.add_child(btn)
 
 
 func _on_quiz_option_chosen(opt_idx: int) -> void:
-	SoundManager.play_click()
-	var q: Dictionary = active_quiz_questions[quiz_q_idx]
-	if opt_idx == int(q["correct"]):
-		quiz_score += 1
+	if is_quiz_answering:
+		return
+	is_quiz_answering = true
 
+	var q: Dictionary = active_quiz_questions[quiz_q_idx]
+	var correct_idx: int = int(q.get("correct", 0))
+	var is_correct: bool = (opt_idx == correct_idx)
+
+	# Disable all option buttons to avoid spam
+	var option_buttons := options_container.get_children()
+	for btn_node in option_buttons:
+		if btn_node is Button:
+			btn_node.disabled = true
+
+	# Style the chosen button and correct button
+	if opt_idx < option_buttons.size() and option_buttons[opt_idx] is Button:
+		var chosen_btn: Button = option_buttons[opt_idx] as Button
+		if is_correct:
+			var success_style := StyleBoxFlat.new()
+			success_style.bg_color = Color(0.10, 0.62, 0.32, 1.0)
+			success_style.border_width_left = 3
+			success_style.border_width_top = 3
+			success_style.border_width_right = 3
+			success_style.border_width_bottom = 3
+			success_style.border_color = Color(1.0, 0.84, 0.25, 1.0)
+			success_style.corner_radius_top_left = 10
+			success_style.corner_radius_top_right = 10
+			success_style.corner_radius_bottom_left = 10
+			success_style.corner_radius_bottom_right = 10
+			chosen_btn.add_theme_stylebox_override(&"disabled", success_style)
+			chosen_btn.text = "✅  %s  (+1 MARK!)" % chosen_btn.text
+			quiz_score += 1
+			if SoundManager:
+				SoundManager.play_bell()
+		else:
+			var wrong_style := StyleBoxFlat.new()
+			wrong_style.bg_color = Color(0.78, 0.18, 0.18, 1.0)
+			wrong_style.border_width_left = 2
+			wrong_style.border_width_top = 2
+			wrong_style.border_width_right = 2
+			wrong_style.border_width_bottom = 2
+			wrong_style.border_color = Color(1.0, 0.5, 0.5, 1.0)
+			wrong_style.corner_radius_top_left = 10
+			wrong_style.corner_radius_top_right = 10
+			wrong_style.corner_radius_bottom_left = 10
+			wrong_style.corner_radius_bottom_right = 10
+			chosen_btn.add_theme_stylebox_override(&"disabled", wrong_style)
+			chosen_btn.text = "❌  %s  (INCORRECT)" % chosen_btn.text
+			if SoundManager:
+				SoundManager.play_click()
+
+			# Highlight the correct answer for student learning
+			if correct_idx < option_buttons.size() and option_buttons[correct_idx] is Button:
+				var correct_btn: Button = option_buttons[correct_idx] as Button
+				var hint_style := StyleBoxFlat.new()
+				hint_style.bg_color = Color(0.12, 0.44, 0.28, 0.95)
+				hint_style.border_width_left = 2
+				hint_style.border_width_top = 2
+				hint_style.border_width_right = 2
+				hint_style.border_width_bottom = 2
+				hint_style.border_color = Color(0.3, 0.9, 0.5, 1.0)
+				hint_style.corner_radius_top_left = 10
+				hint_style.corner_radius_top_right = 10
+				hint_style.corner_radius_bottom_left = 10
+				hint_style.corner_radius_bottom_right = 10
+				correct_btn.add_theme_stylebox_override(&"disabled", hint_style)
+				correct_btn.text = "✓ Correct Answer: %s" % correct_btn.text
+
+	if screening_progress_label:
+		screening_progress_label.text = "Screening Question %d of %d  •  Current Score: %d / %d" % [
+			quiz_q_idx + 1, active_quiz_questions.size(), quiz_score, quiz_q_idx + 1
+		]
+
+	await get_tree().create_timer(0.75).timeout
+	is_quiz_answering = false
 	quiz_q_idx += 1
 	_load_screening_question()
 
@@ -637,4 +1176,3 @@ func _complete_onboarding_and_start_game() -> void:
 	var err: Error = get_tree().change_scene_to_file("res://scenes/rooms/hostel_room.tscn")
 	if err != OK:
 		push_error("Failed to load hostel room: %d" % err)
-

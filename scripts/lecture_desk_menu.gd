@@ -103,6 +103,8 @@ func open_desk(player: CharacterBody3D) -> void:
 func _choose_action(action: StringName) -> void:
 	if SoundManager:
 		SoundManager.play_click()
+	const PropBuilder = preload("res://scripts/data/prop_builder_3d.gd")
+	PropBuilder.complete_semester_task(3)
 	close_menu()
 	action_chosen.emit(action)
 

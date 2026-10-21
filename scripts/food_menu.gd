@@ -205,6 +205,8 @@ func _on_buy_pressed(item: Dictionary) -> void:
 
 	var cost: int = int(item["cost"])
 	if needs.modify_money(-cost):
+		const PropBuilder = preload("res://scripts/data/prop_builder_3d.gd")
+		PropBuilder.complete_semester_task(4)
 		needs.modify_hunger(float(item["hunger"]))
 		needs.modify_energy(float(item["energy"]))
 		TimeSystem.advance_minutes(int(item["time_minutes"]))

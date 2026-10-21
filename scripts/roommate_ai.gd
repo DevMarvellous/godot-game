@@ -153,6 +153,9 @@ func _apply_routine_behavior() -> void:
 func talk() -> void:
 	super.talk()
 
+	const PropBuilder = preload("res://scripts/data/prop_builder_3d.gd")
+	PropBuilder.complete_semester_task(1)
+
 	if not current_player:
 		return
 	var needs: NeedsManager = current_player.get_node_or_null("NeedsManager") as NeedsManager
