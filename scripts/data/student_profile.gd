@@ -22,7 +22,7 @@ static var matric_no: String = "CSC/2026/042"
 static var utme_screening_score: int = 100 # percentage score from admission aptitude test
 static var admission_remark: String = "Merit List Direct Admission"
 
-# Lagos Life style asymmetric Matriculation Spawns
+# My Campus Life style asymmetric Matriculation Spawns
 static var spawn_title: String = "Average Hustler (Indomie Sponsor)"
 static var spawn_allowance: int = 30000
 static var spawn_phone_model: String = "Tecno Spark 10"
@@ -32,6 +32,8 @@ static var spawn_badge: String = "🎒"
 # Persistent Hostel Room Upgrades & Achievements
 static var owned_upgrades: Array[String] = []
 static var merit_scholarship_claimed: bool = false
+static var cgpa: float = 3.50
+static var money: int = 5000
 
 # Persistent Backpack & Supplies Inventory
 static var backpack_items: Array[Dictionary] = [
@@ -87,7 +89,7 @@ static func apply_admission(
 	var random_matric_id: int = randi_range(101, 899)
 	matric_no = "%s/2026/%03d" % [admitted_department, random_matric_id]
 
-	# Roll asymmetric Matriculation Spawn Background (Lagos Life mechanic)
+	# Roll asymmetric Matriculation Spawn Background (My Campus Life mechanic)
 	var roll: int = randi_range(1, 100)
 	if roll <= 10:
 		spawn_title = "The Chief's Child / Scholarship Kid"
@@ -108,6 +110,8 @@ static func apply_admission(
 		spawn_tagline = "Broke fresher! Must hustle campus odd jobs (POS attendant, assignments, styling) to survive the semester."
 		spawn_badge = "🔥"
 
+	money = spawn_allowance
+	cgpa = 3.50
 	save_to_disk()
 	placement["spawn_title"] = spawn_title
 	placement["spawn_allowance"] = spawn_allowance
@@ -229,6 +233,8 @@ static func get_profile_data() -> Dictionary:
 		"spawn_phone_model": spawn_phone_model,
 		"spawn_tagline": spawn_tagline,
 		"spawn_badge": spawn_badge,
+		"cgpa": cgpa,
+		"money": money,
 		"owned_upgrades": owned_upgrades,
 		"merit_scholarship_claimed": merit_scholarship_claimed,
 		"backpack_items": backpack_items,
@@ -279,6 +285,8 @@ static func load_from_disk() -> bool:
 	spawn_phone_model = String(d.get("spawn_phone_model", "Tecno Spark 10"))
 	spawn_tagline = String(d.get("spawn_tagline", "Standard fresher budget. Balance Mama Put meals with lecture CA tests."))
 	spawn_badge = String(d.get("spawn_badge", "🎒"))
+	cgpa = float(d.get("cgpa", 3.50))
+	money = int(d.get("money", 5000))
 
 	owned_upgrades.clear()
 	var raw_upgrades = d.get("owned_upgrades", [])

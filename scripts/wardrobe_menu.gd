@@ -20,7 +20,6 @@ var selected_outfit_idx: int = 0
 var selected_skin_idx: int = 1
 
 const Wardrobe = preload("res://scripts/data/wardrobe_data.gd")
-const ProfileStore = preload("res://scripts/data/student_profile.gd")
 const PlayerScene = preload("res://scenes/player_3d.tscn")
 
 var mirror_player: Player3D = null
@@ -33,9 +32,21 @@ func _ready() -> void:
 		equip_btn.pressed.connect(_on_equip_pressed)
 	if close_btn:
 		close_btn.pressed.connect(close_wardrobe)
+	var backdrop: Control = get_node_or_null("DarkBackdrop") as Control
+	if backdrop:
+		backdrop.gui_input.connect(func(ev: InputEvent):
+			if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
+				close_wardrobe()
+		)
 
 	_build_3d_mirror_preview()
 	_populate_selectors()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if visible and event.is_action_pressed("ui_cancel"):
+		close_wardrobe()
+		get_viewport().set_input_as_handled()
 
 
 func _build_3d_mirror_preview() -> void:
@@ -88,7 +99,7 @@ func _build_3d_mirror_preview() -> void:
 	env_node.environment = env
 	vp.add_child(env_node)
 
-	# Key Light (warm Lagos sunshine)
+	# Key Light (warm campus sunshine)
 	var dlight := DirectionalLight3D.new()
 	dlight.position = Vector3(2, 4, 3)
 	dlight.rotation_degrees = Vector3(-30, 30, 0)
@@ -154,11 +165,11 @@ func _populate_selectors() -> void:
 
 func open_wardrobe(player: CharacterBody3D) -> void:
 	current_player = player
-	ProfileStore.load_from_disk()
+	StudentProfile.load_from_disk()
 
-	selected_skin_idx = clampi(ProfileStore.complexion_index, 0, Wardrobe.COMPLEXIONS.size() - 1)
-	selected_hair_idx = clampi(ProfileStore.hair_index, 0, Wardrobe.HAIRSTYLES.size() - 1)
-	selected_outfit_idx = clampi(ProfileStore.shirt_index, 0, Wardrobe.OUTFITS.size() - 1)
+	selected_skin_idx = clampi(StudentProfile.complexion_index, 0, Wardrobe.COMPLEXIONS.size() - 1)
+	selected_hair_idx = clampi(StudentProfile.hair_index, 0, Wardrobe.HAIRSTYLES.size() - 1)
+	selected_outfit_idx = clampi(StudentProfile.shirt_index, 0, Wardrobe.OUTFITS.size() - 1)
 
 	if skin_options:
 		skin_options.select(selected_skin_idx)
@@ -215,10 +226,12 @@ func _update_preview(animate_spin: bool = true) -> void:
 
 
 func _on_equip_pressed() -> void:
-	ProfileStore.complexion_index = selected_skin_idx
-	ProfileStore.hair_index = selected_hair_idx
-	ProfileStore.shirt_index = selected_outfit_idx
-	ProfileStore.save_to_disk()
+	StudentProfile.complexion_index = selected_skin_idx
+	StudentProfile.hair_index = selected_hair_idx
+	StudentProfile.shirt_index = selected_outfit_idx
+	StudentProfile.save_to_disk()
+	if SupabaseClient:
+		SupabaseClient.sync_profile_to_cloud(StudentProfile.get_profile_data())
 
 	if current_player and current_player.has_method("play_dressing_animation"):
 		current_player.play_dressing_animation()

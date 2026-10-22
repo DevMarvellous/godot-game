@@ -181,7 +181,7 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="PreviewCard" type="PanelContainer" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel"]
-custom_minimum_size = Vector2(0, 220)
+custom_minimum_size = Vector2(0, 275)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_preview")
 
@@ -189,7 +189,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_preview")
 layout_mode = 2
 
 [node name="PreviewViewportContainer" type="SubViewportContainer" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel/PreviewCard/PreviewVBox"]
-custom_minimum_size = Vector2(0, 175)
+custom_minimum_size = Vector2(0, 225)
 layout_mode = 2
 stretch = true
 
@@ -198,13 +198,13 @@ unique_name_in_owner = true
 own_world_3d = true
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(520, 175)
+size = Vector2i(520, 225)
 render_target_update_mode = 4
 
 [node name="PreviewCamera" type="Camera3D" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel/PreviewCard/PreviewVBox/PreviewViewportContainer/PreviewViewport"]
-transform = Transform3D(1, 0, 0, 0, 0.996195, 0.087156, 0, -0.087156, 0.996195, 0, 0.98, 2.30)
+transform = Transform3D(1, 0, 0, 0, 0.996195, 0.087156, 0, -0.087156, 0.996195, 0, 0.88, 2.05)
 current = true
-fov = 42.0
+fov = 38.0
 
 [node name="PreviewLight" type="DirectionalLight3D" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel/PreviewCard/PreviewVBox/PreviewViewportContainer/PreviewViewport"]
 transform = Transform3D(0.866025, -0.25, 0.433013, 0, 0.866025, 0.5, -0.5, -0.433013, 0.75, 2, 4, 3)

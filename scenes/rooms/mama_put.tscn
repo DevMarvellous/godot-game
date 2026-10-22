@@ -74,6 +74,16 @@ top_radius = 1.0
 bottom_radius = 1.0
 height = 0.08
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_steam"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 1, 1, 0.28)
+
+[sub_resource type="SphereMesh" id="SphereMesh_steam"]
+material = SubResource("StandardMaterial3D_steam")
+radius = 0.08
+height = 0.16
+
 [node name="MamaPut" type="Node3D"]
 script = ExtResource("1_room")
 room_name = "Mama Put (Campus Food Joint)"
@@ -211,6 +221,32 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 1.1, -5.5)
 light_color = Color(1, 0.45, 0.1, 1)
 light_energy = 1.5
 omni_range = 2.8
+
+[node name="Pot1Steam" type="CPUParticles3D" parent="MamaPutFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 1.55, -5.5)
+amount = 16
+lifetime = 1.4
+mesh = SubResource("SphereMesh_steam")
+emission_shape = 1
+emission_sphere_radius = 0.15
+direction = Vector3(0, 1, 0)
+spread = 15.0
+gravity = Vector3(0, 0.45, 0)
+initial_velocity_min = 0.2
+initial_velocity_max = 0.5
+
+[node name="Pot2Steam" type="CPUParticles3D" parent="MamaPutFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 1.55, -5.5)
+amount = 16
+lifetime = 1.4
+mesh = SubResource("SphereMesh_steam")
+emission_shape = 1
+emission_sphere_radius = 0.15
+direction = Vector3(0, 1, 0)
+spread = 15.0
+gravity = Vector3(0, 0.45, 0)
+initial_velocity_min = 0.2
+initial_velocity_max = 0.5
 
 [node name="CeilingFan" type="MeshInstance3D" parent="MamaPutFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)

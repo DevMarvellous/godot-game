@@ -29,7 +29,8 @@ const MEALS: Array[Dictionary] = [
 		"hunger": 55.0,
 		"energy": 25.0,
 		"time_mins": 15,
-		"uses_carton": true
+		"uses_carton": true,
+		"uses_electricity": true
 	},
 	{
 		"id": "garri",
@@ -39,7 +40,8 @@ const MEALS: Array[Dictionary] = [
 		"hunger": 40.0,
 		"energy": 18.0,
 		"time_mins": 5,
-		"uses_carton": false
+		"uses_carton": false,
+		"uses_electricity": false
 	},
 	{
 		"id": "bournvita",
@@ -49,7 +51,8 @@ const MEALS: Array[Dictionary] = [
 		"hunger": 15.0,
 		"energy": 28.0,
 		"time_mins": 8,
-		"uses_carton": false
+		"uses_carton": false,
+		"uses_electricity": true
 	},
 	{
 		"id": "agege_bread",
@@ -59,7 +62,8 @@ const MEALS: Array[Dictionary] = [
 		"hunger": 45.0,
 		"energy": 20.0,
 		"time_mins": 10,
-		"uses_carton": false
+		"uses_carton": false,
+		"uses_electricity": false
 	},
 	{
 		"id": "chilled_water",
@@ -69,7 +73,8 @@ const MEALS: Array[Dictionary] = [
 		"hunger": 10.0,
 		"energy": 20.0,
 		"time_mins": 3,
-		"requires_fridge": true
+		"requires_fridge": true,
+		"uses_electricity": false
 	}
 ]
 
@@ -134,31 +139,31 @@ func _build_meal_card(meal: Dictionary, wallet: int, has_carton: bool, has_fridg
 	style.corner_radius_top_right = 10
 	style.corner_radius_bottom_right = 10
 	style.corner_radius_bottom_left = 10
-	style.content_margin_left = 14.0
-	style.content_margin_top = 10.0
-	style.content_margin_right = 14.0
-	style.content_margin_bottom = 10.0
+	style.content_margin_left = 16.0
+	style.content_margin_top = 12.0
+	style.content_margin_right = 16.0
+	style.content_margin_bottom = 12.0
 	panel.add_theme_stylebox_override(&"panel", style)
 
 	var hbox: HBoxContainer = HBoxContainer.new()
-	hbox.add_theme_constant_override(&"separation", 12)
+	hbox.add_theme_constant_override(&"separation", 14)
 	panel.add_child(hbox)
 
 	var vbox: VBoxContainer = VBoxContainer.new()
 	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	vbox.add_theme_constant_override(&"separation", 3)
+	vbox.add_theme_constant_override(&"separation", 4)
 	hbox.add_child(vbox)
 
 	var name_lbl: Label = Label.new()
 	name_lbl.text = String(meal.get("name", "Meal"))
-	name_lbl.add_theme_font_size_override(&"font_size", 14)
+	name_lbl.add_theme_font_size_override(&"font_size", 16)
 	name_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.9, 0.4))
 	vbox.add_child(name_lbl)
 
 	var desc_lbl: Label = Label.new()
 	desc_lbl.text = String(meal.get("desc", ""))
-	desc_lbl.add_theme_font_size_override(&"font_size", 11)
-	desc_lbl.add_theme_color_override(&"font_color", Color(0.8, 0.85, 0.9))
+	desc_lbl.add_theme_font_size_override(&"font_size", 13)
+	desc_lbl.add_theme_color_override(&"font_color", Color(0.85, 0.88, 0.94))
 	desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vbox.add_child(desc_lbl)
 
@@ -168,7 +173,7 @@ func _build_meal_card(meal: Dictionary, wallet: int, has_carton: bool, has_fridg
 		int(meal.get("energy", 15)),
 		int(meal.get("time_mins", 10))
 	]
-	stats_lbl.add_theme_font_size_override(&"font_size", 11)
+	stats_lbl.add_theme_font_size_override(&"font_size", 13)
 	stats_lbl.add_theme_color_override(&"font_color", Color(0.35, 0.95, 0.55))
 	vbox.add_child(stats_lbl)
 
@@ -182,11 +187,18 @@ func _build_meal_card(meal: Dictionary, wallet: int, has_carton: bool, has_fridg
 		cost = 0
 		is_free = true
 
-	var btn: Button = Button.new()
-	btn.custom_minimum_size = Vector2(110, 44)
-	btn.add_theme_font_size_override(&"font_size", 13)
+	var has_power: bool = CampusEvents.has_electricity if CampusEvents else true
+	var needs_power: bool = meal.get("uses_electricity", false)
 
-	if meal.get("requires_fridge", false) and not has_fridge:
+	var btn: Button = Button.new()
+	btn.custom_minimum_size = Vector2(130, 48)
+	btn.add_theme_font_size_override(&"font_size", 14)
+
+	if needs_power and not has_power:
+		btn.text = "⚡ No Light"
+		btn.disabled = true
+		desc_lbl.text += " (⚡ Hotplate off - NEPA took light)"
+	elif meal.get("requires_fridge", false) and not has_fridge:
 		btn.text = "Needs Fridge"
 		btn.disabled = true
 	elif is_free:

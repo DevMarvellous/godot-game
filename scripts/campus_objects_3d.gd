@@ -30,7 +30,8 @@ enum ObjectType {
 	CHAPEL_PIANO,
 	GATE_SECURITY,
 	DOOR_EXIT,
-	MINI_FRIDGE
+	MINI_FRIDGE,
+	HOSTEL_BOOMBOX
 }
 
 @export var object_type: ObjectType = ObjectType.BED
@@ -138,6 +139,9 @@ func update_object_display() -> void:
 		ObjectType.MINI_FRIDGE:
 			prompt_message = "[E] Open Mini-Fridge (Chilled Food & Drinks)"
 			object_name = "Hostel Mini-Fridge"
+		ObjectType.HOSTEL_BOOMBOX:
+			prompt_message = "[E] Toggle Afrobeats & Lofi Dorm Speaker"
+			object_name = "Bluetooth Boombox Speaker"
 
 	if label_3d:
 		label_3d.text = object_name
@@ -151,16 +155,27 @@ func interact(player: CharacterBody3D) -> void:
 
 	match object_type:
 		ObjectType.BED:
-			const ProfileStore = preload("res://scripts/data/student_profile.gd")
-			ProfileStore.load_from_disk()
-			TimeSystem.sleep_until(7)
-			needs.energy = needs.max_energy
-			needs.stat_changed.emit(&"energy", needs.energy, needs.max_energy)
-			if ProfileStore.owned_upgrades.has("hostel_fan"):
-				needs.modify_faith(15.0)
-				_show_feedback(player, "Slept with your rechargeable fan on! Deep, cool sleep. Energy 100%, Faith +15!")
+			StudentProfile.load_from_disk()
+			if player.has_method("play_sleep_animation"):
+				player.play_sleep_animation(self, func():
+					TimeSystem.sleep_until(7)
+					needs.energy = needs.max_energy
+					needs.stat_changed.emit(&"energy", needs.energy, needs.max_energy)
+					if StudentProfile.owned_upgrades.has("hostel_fan"):
+						needs.modify_faith(15.0)
+						_show_feedback(player, "Slept with your rechargeable fan on! Deep, cool sleep. Energy 100%, Faith +15!")
+					else:
+						_show_feedback(player, "Woke up at 07:00 AM! Full Energy restored.")
+				)
 			else:
-				_show_feedback(player, "Slept until 07:00! Full Energy restored.")
+				TimeSystem.sleep_until(7)
+				needs.energy = needs.max_energy
+				needs.stat_changed.emit(&"energy", needs.energy, needs.max_energy)
+				if StudentProfile.owned_upgrades.has("hostel_fan"):
+					needs.modify_faith(15.0)
+					_show_feedback(player, "Slept with your rechargeable fan on! Deep, cool sleep. Energy 100%, Faith +15!")
+				else:
+					_show_feedback(player, "Slept until 07:00! Full Energy restored.")
 
 		ObjectType.DESK:
 			menu_requested.emit(&"study", player)
@@ -264,19 +279,18 @@ func interact(player: CharacterBody3D) -> void:
 			_show_feedback(player, "Relaxed under the cool park shade with gentle breeze. Stress 0%!")
 
 		ObjectType.SENATE_REGISTRY:
-			const ProfileStore = preload("res://scripts/data/student_profile.gd")
-			ProfileStore.load_from_disk()
+			StudentProfile.load_from_disk()
 			PropBuilder3D.advance_quest_if_matching(13, player)
-			if needs.cgpa >= 4.50 and not ProfileStore.merit_scholarship_claimed:
-				ProfileStore.merit_scholarship_claimed = true
-				ProfileStore.save_to_disk()
+			if needs.cgpa >= 4.50 and not StudentProfile.merit_scholarship_claimed:
+				StudentProfile.merit_scholarship_claimed = true
+				StudentProfile.save_to_disk()
 				needs.modify_money(25000)
 				if player.has_method("play_celebrate_animation"):
 					player.play_celebrate_animation("👑 FIRST CLASS SCHOLARSHIP! +₦25,000")
 				_show_feedback(player, "🎉 FIRST CLASS MERIT! University Senate awards you ₦25,000 Scholarship Allowance!")
 			else:
 				menu_requested.emit(&"exam", player)
-				_show_feedback(player, "Senate Registry: Clearance Docket loaded for %s (%s)." % [ProfileStore.student_name, ProfileStore.matric_no])
+				_show_feedback(player, "Senate Registry: Clearance Docket loaded for %s (%s)." % [StudentProfile.student_name, StudentProfile.matric_no])
 
 		ObjectType.SUB_ARCADE:
 			menu_requested.emit(&"snooker", player)
@@ -303,17 +317,36 @@ func interact(player: CharacterBody3D) -> void:
 			_show_feedback(player, "Played uplifting hymns on the chapel piano! Faith +40, Energy +15!")
 
 		ObjectType.GATE_SECURITY:
-			const ProfileStore = preload("res://scripts/data/student_profile.gd")
-			ProfileStore.load_from_disk()
+			StudentProfile.load_from_disk()
 			needs.modify_faith(20.0)
 			TimeSystem.advance_minutes(5)
-			_show_feedback(player, "Officer Balogun salutes: 'Valid Matric ID: %s (%s). Safe journey, %s!' Faith +20!" % [ProfileStore.matric_no, ProfileStore.admitted_department, ProfileStore.student_name])
+			if SoundManager:
+				SoundManager.play_bell()
+			# Lift the boom barrier arm smoothly
+			var gate_barrier = get_node_or_null("ProceduralProp")
+			if gate_barrier:
+				var tw = create_tween()
+				tw.tween_property(gate_barrier, "rotation_degrees:z", 75.0, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+				tw.tween_interval(3.0)
+				tw.tween_property(gate_barrier, "rotation_degrees:z", 0.0, 0.4).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+			_show_feedback(player, "Officer Balogun salutes: 'Valid Matric ID: %s (%s). Safe journey, %s!' Gate barrier lifted! Faith +20!" % [StudentProfile.matric_no, StudentProfile.admitted_department, StudentProfile.student_name])
 
 		ObjectType.DOOR_EXIT:
 			menu_requested.emit(&"shuttle", player)
 
 		ObjectType.MINI_FRIDGE:
 			menu_requested.emit(&"fridge", player)
+
+		ObjectType.HOSTEL_BOOMBOX:
+			if SoundManager:
+				var is_playing: bool = SoundManager.toggle_boombox()
+				if is_playing:
+					needs.modify_faith(15.0)
+					if player.has_method("play_celebrate_animation"):
+						player.play_celebrate_animation("🎶 CHILL AFROBEATS!")
+					_show_feedback(player, "🎶 Bluetooth Boombox ON! Relaxing Afrobeats & Lofi dorm vibes! Faith +15!")
+				else:
+					_show_feedback(player, "🔇 Bluetooth Boombox paused.")
 
 
 func _show_feedback(player: CharacterBody3D, msg: String) -> void:

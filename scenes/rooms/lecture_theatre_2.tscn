@@ -58,6 +58,21 @@ height = 0.08
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
 albedo_color = Color(0.2, 0.22, 0.25, 1)
 
+[sub_resource type="BoxMesh" id="BoxMesh_bench_row"]
+size = Vector3(14.0, 0.75, 1.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bench"]
+albedo_color = Color(0.35, 0.24, 0.16, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_riser1"]
+size = Vector3(16, 0.45, 3.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_riser2"]
+size = Vector3(16, 0.90, 3.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_riser"]
+albedo_color = Color(0.24, 0.26, 0.30, 1)
+
 [node name="LectureTheatre2" type="Node3D"]
 script = ExtResource("1_room")
 room_name = "Mathematics & Sciences Auditorium (LT2)"
@@ -152,6 +167,31 @@ outline_size = 6
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
 mesh = SubResource("CylinderMesh_fan")
 surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="BenchRow1" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, -3.5)
+mesh = SubResource("BoxMesh_bench_row")
+surface_material_override/0 = SubResource("StandardMaterial3D_bench")
+
+[node name="RiserPlatform2" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0.2)
+mesh = SubResource("BoxMesh_riser1")
+surface_material_override/0 = SubResource("StandardMaterial3D_riser")
+
+[node name="BenchRow2" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0.2)
+mesh = SubResource("BoxMesh_bench_row")
+surface_material_override/0 = SubResource("StandardMaterial3D_bench")
+
+[node name="RiserPlatform3" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 3.9)
+mesh = SubResource("BoxMesh_riser2")
+surface_material_override/0 = SubResource("StandardMaterial3D_riser")
+
+[node name="BenchRow3" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.30, 3.9)
+mesh = SubResource("BoxMesh_bench_row")
+surface_material_override/0 = SubResource("StandardMaterial3D_bench")
 
 [node name="WorldObjects" type="Node3D" parent="."]
 

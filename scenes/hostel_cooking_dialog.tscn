@@ -61,7 +61,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MainPanel" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(460, 540)
+custom_minimum_size = Vector2(540, 600)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_frame")
 
@@ -79,19 +79,20 @@ size_flags_horizontal = 3
 [node name="TitleLabel" type="Label" parent="CenterContainer/MainPanel/VBox/HeaderHBox/TitleBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
-theme_override_font_sizes/font_size = 17
+theme_override_font_sizes/font_size = 20
 text = "🍳 HOSTEL ROOM KITCHENETTE"
 
 [node name="SubtitleLabel" type="Label" parent="CenterContainer/MainPanel/VBox/HeaderHBox/TitleBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "Electric Hotplate & Provision Corner"
 
 [node name="CloseBtn" type="Button" parent="CenterContainer/MainPanel/VBox/HeaderHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(34, 34)
+custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
+theme_override_font_sizes/font_size = 18
 text = "✕"
 
 [node name="StatusPanel" type="PanelContainer" parent="CenterContainer/MainPanel/VBox"]

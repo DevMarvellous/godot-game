@@ -46,6 +46,12 @@ var backpack_menu: Control = null
 var fridge_dialog: Control = null
 var remote_player_nodes: Dictionary = {}
 var active_ceiling_fans: Array[Node3D] = []
+var _saved_room_lights: Dictionary = {}
+var warden_panic_timer: float = 0.0
+var is_warden_panic_active: bool = false
+var is_contraband_hidden: bool = false
+var warden_banner_ui: PanelContainer = null
+var warden_countdown_label: Label = null
 
 @onready var food_menu: Control = $MenusLayer/FoodMenu if has_node("MenusLayer/FoodMenu") else null
 @onready var study_menu: Control = $MenusLayer/StudyMenu if has_node("MenusLayer/StudyMenu") else null
@@ -89,6 +95,8 @@ func _ready() -> void:
 			menus_layer.add_child(phone_menu)
 		if phone_menu and phone_menu.has_signal("phone_closed"):
 			phone_menu.phone_closed.connect(_on_menu_closed)
+		if phone_menu and phone_menu.has_signal("transit_requested"):
+			phone_menu.transit_requested.connect(_on_transit_requested)
 
 		if not menus_layer.has_node("ChatWheel"):
 			chat_menu = ChatScene.instantiate()
@@ -148,6 +156,14 @@ func _ready() -> void:
 	_polish_room_decor_and_ambient_npcs()
 	_connect_interactive_fixtures()
 	_gather_ceiling_fans(self)
+
+	if CampusEvents:
+		if not CampusEvents.power_state_changed.is_connected(_on_power_state_changed):
+			CampusEvents.power_state_changed.connect(_on_power_state_changed)
+		if not CampusEvents.event_triggered.is_connected(_on_campus_event_triggered):
+			CampusEvents.event_triggered.connect(_on_campus_event_triggered)
+		_apply_power_state(CampusEvents.has_electricity)
+
 	if room_id == &"lecture" or room_id == &"lecture2":
 		PropBuilder3D.advance_quest_if_matching(2, player)
 		if hud and hud.has_method("_refresh_objective_pill"):
@@ -162,7 +178,7 @@ func _polish_room_decor_and_ambient_npcs() -> void:
 		if not NetworkManager.emote_received.is_connected(_on_network_peer_emote):
 			NetworkManager.emote_received.connect(_on_network_peer_emote)
 
-	# 0. Architectural floor grid & dynamic Day/Night Lagos sun lighting
+	# 0. Architectural floor grid & dynamic Day/Night campus sun lighting
 	PropBuilder3D.enhance_room_atmosphere(self)
 	if not TimeSystem.minute_passed.is_connected(_on_room_Lighting_tick):
 		TimeSystem.minute_passed.connect(_on_room_Lighting_tick)
@@ -209,10 +225,163 @@ func _gather_ceiling_fans(node: Node) -> void:
 
 
 func _process(delta: float) -> void:
-	for fan in active_ceiling_fans:
-		if is_instance_valid(fan):
-			fan.rotate_y(delta * 8.5)
+	if CampusEvents and CampusEvents.has_electricity:
+		for fan in active_ceiling_fans:
+			if is_instance_valid(fan):
+				fan.rotate_y(delta * 8.5)
+
+	if is_warden_panic_active:
+		warden_panic_timer -= delta
+		if warden_countdown_label:
+			warden_countdown_label.text = "🚨 HIDE BOILING RING! Warden knocks: %ds remaining!" % [int(ceil(warden_panic_timer))]
+		if warden_panic_timer <= 0.0:
+			_resolve_warden_caught()
+
 	_process_network_puppets()
+
+
+func _gather_room_lights(node: Node, result: Array[Light3D]) -> void:
+	if node is Light3D:
+		result.append(node as Light3D)
+	for child in node.get_children():
+		_gather_room_lights(child, result)
+
+
+func _apply_power_state(has_power: bool) -> void:
+	var lights: Array[Light3D] = []
+	_gather_room_lights(self, lights)
+	for light in lights:
+		var light_path: String = String(light.get_path())
+		if not _saved_room_lights.has(light_path):
+			_saved_room_lights[light_path] = {
+				"energy": light.light_energy,
+				"color": light.light_color
+			}
+		if not has_power:
+			# NEPA blackout: dark dim blue tint
+			light.light_energy = 0.12
+			light.light_color = Color(0.24, 0.35, 0.65)
+		else:
+			var orig: Dictionary = _saved_room_lights[light_path]
+			light.light_energy = float(orig.get("energy", 1.0))
+			light.light_color = orig.get("color", Color.WHITE)
+
+
+func _on_power_state_changed(has_power: bool) -> void:
+	_apply_power_state(has_power)
+	if not has_power:
+		if SoundManager:
+			SoundManager.play_power_cut()
+		if player and player.has_method("display_notification"):
+			player.display_notification("⚡ NEPA TOOK LIGHT! Blackout in the hall!")
+	else:
+		if SoundManager:
+			SoundManager.play_cheer()
+		if player and player.has_method("display_notification"):
+			player.display_notification("💡 \"UP NEPA!!\" Power restored across campus!")
+
+
+func _on_campus_event_triggered(event_id: StringName, event_title: String, _event_desc: String) -> void:
+	if event_id == &"warden_inspection" and room_id == &"hostel":
+		_trigger_warden_panic()
+	elif player and player.has_method("display_notification"):
+		player.display_notification("%s" % event_title)
+
+
+func _trigger_warden_panic() -> void:
+	if room_id != &"hostel" or is_warden_panic_active:
+		return
+	is_warden_panic_active = true
+	is_contraband_hidden = false
+	warden_panic_timer = 20.0
+	if SoundManager:
+		SoundManager.play_knock()
+	_create_warden_panic_ui()
+	if player and player.has_method("display_notification"):
+		player.display_notification("🚨 KNOCK KNOCK! 'Hall Warden on rounds! Open this door!'")
+
+
+func _create_warden_panic_ui() -> void:
+	if warden_banner_ui:
+		warden_banner_ui.visible = true
+		return
+
+	warden_banner_ui = PanelContainer.new()
+	warden_banner_ui.name = "WardenPanicBanner"
+	warden_banner_ui.anchors_preset = Control.PRESET_CENTER_TOP
+	warden_banner_ui.offset_left = -260.0
+	warden_banner_ui.offset_top = 100.0
+	warden_banner_ui.offset_right = 260.0
+	warden_banner_ui.offset_bottom = 165.0
+
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.85, 0.15, 0.15, 0.94)
+	style.border_width_left = 3
+	style.border_width_top = 3
+	style.border_width_right = 3
+	style.border_width_bottom = 3
+	style.border_color = Color(1.0, 0.85, 0.25, 1.0)
+	style.corner_radius_top_left = 12
+	style.corner_radius_top_right = 12
+	style.corner_radius_bottom_right = 12
+	style.corner_radius_bottom_left = 12
+	style.content_margin_left = 16.0
+	style.content_margin_top = 10.0
+	style.content_margin_right = 16.0
+	style.content_margin_bottom = 10.0
+	warden_banner_ui.add_theme_stylebox_override(&"panel", style)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override(&"separation", 4)
+	warden_banner_ui.add_child(vbox)
+
+	warden_countdown_label = Label.new()
+	warden_countdown_label.text = "🚨 HIDE BOILING RING! Warden knocks: 20s remaining!"
+	warden_countdown_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	warden_countdown_label.add_theme_font_size_override(&"font_size", 16)
+	warden_countdown_label.add_theme_color_override(&"font_color", Color(1.0, 0.95, 0.9))
+	vbox.add_child(warden_countdown_label)
+
+	var sub_lbl := Label.new()
+	sub_lbl.text = "⚡ Sprint to Wardrobe or Desk Drawer and press [E] to stow coil!"
+	sub_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sub_lbl.add_theme_font_size_override(&"font_size", 13)
+	sub_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.9, 0.35))
+	vbox.add_child(sub_lbl)
+
+	if menus_layer:
+		menus_layer.add_child(warden_banner_ui)
+
+
+func _resolve_warden_caught() -> void:
+	is_warden_panic_active = false
+	if is_instance_valid(warden_banner_ui):
+		warden_banner_ui.visible = false
+	if player:
+		var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
+		if needs:
+			needs.modify_money(-1500)
+			needs.modify_faith(-15.0)
+		if player.has_method("display_notification"):
+			player.display_notification("🚨 CAUGHT! Warden seized boiling ring + ₦1,500 Disciplinary Fine!")
+
+
+func _resolve_warden_success() -> void:
+	if not is_warden_panic_active:
+		return
+	is_warden_panic_active = false
+	is_contraband_hidden = true
+	if is_instance_valid(warden_banner_ui):
+		warden_banner_ui.visible = false
+	if player:
+		var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
+		if needs:
+			needs.modify_money(1000)
+			needs.modify_faith(20.0)
+		if player.has_method("play_celebrate_animation"):
+			player.play_celebrate_animation("🎖️ WARDEN COMMENDATION! +₦1,000")
+		if player.has_method("display_notification"):
+			player.display_notification("Phew! Contraband hidden! Warden: 'Clean room, student! Commendation awarded!' +₦1,000!")
 
 
 func _configure_dynamic_hostel_room() -> void:
@@ -331,6 +500,9 @@ func _connect_interactive_fixtures() -> void:
 
 
 func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> void:
+	if is_warden_panic_active and (menu_type == &"wardrobe" or menu_type == &"study"):
+		_resolve_warden_success()
+
 	if player:
 		player.set_physics_process(false)
 		player.velocity = Vector3.ZERO

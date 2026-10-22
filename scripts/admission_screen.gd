@@ -385,6 +385,47 @@ func _build_easy_typing_helpers() -> void:
 		)
 		chip_row.add_child(kb_btn)
 
+	# Returning Student Sign In Pill
+	var login_banner := PanelContainer.new()
+	login_banner.name = "ReturningStudentBanner"
+	var b_style := StyleBoxFlat.new()
+	b_style.bg_color = Color(0.10, 0.16, 0.26, 0.95)
+	b_style.border_width_left = 2
+	b_style.border_width_top = 2
+	b_style.border_width_right = 2
+	b_style.border_width_bottom = 2
+	b_style.border_color = Color(0.35, 0.65, 0.95, 0.8)
+	b_style.corner_radius_top_left = 10
+	b_style.corner_radius_top_right = 10
+	b_style.corner_radius_bottom_left = 10
+	b_style.corner_radius_bottom_right = 10
+	b_style.content_margin_left = 14.0
+	b_style.content_margin_top = 10.0
+	b_style.content_margin_right = 14.0
+	b_style.content_margin_bottom = 10.0
+	login_banner.add_theme_stylebox_override(&"panel", b_style)
+
+	var b_hbox := HBoxContainer.new()
+	b_hbox.add_theme_constant_override(&"separation", 10)
+	login_banner.add_child(b_hbox)
+
+	var b_lbl := Label.new()
+	b_lbl.text = "Already admitted? Resume your semester:"
+	b_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	b_lbl.add_theme_font_size_override(&"font_size", 13)
+	b_lbl.add_theme_color_override(&"font_color", Color(0.85, 0.92, 1.0))
+	b_hbox.add_child(b_lbl)
+
+	var signin_btn := Button.new()
+	signin_btn.text = "🔑 Sign In"
+	signin_btn.custom_minimum_size = Vector2(100, 36)
+	signin_btn.add_theme_font_size_override(&"font_size", 13)
+	signin_btn.pressed.connect(_open_signin_dialog)
+	b_hbox.add_child(signin_btn)
+
+	biodata_panel.add_child(login_banner)
+	biodata_panel.move_child(login_banner, 0)
+
 	biodata_panel.add_child(chip_row)
 	biodata_panel.move_child(chip_row, name_input.get_index() + 1)
 
@@ -397,12 +438,142 @@ func _adjust_responsive_layout() -> void:
 	card_panel.custom_minimum_size.x = maxf(target_w, 280.0)
 
 
+func _open_signin_dialog() -> void:
+	if has_node("SignInModal"):
+		get_node("SignInModal").visible = true
+		return
+
+	var modal := Control.new()
+	modal.name = "SignInModal"
+	modal.anchors_preset = Control.PRESET_FULL_RECT
+	modal.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	modal.size_flags_vertical = Control.SIZE_EXPAND_FILL
+
+	var backdrop := ColorRect.new()
+	backdrop.anchors_preset = Control.PRESET_FULL_RECT
+	backdrop.color = Color(0, 0, 0, 0.75)
+	modal.add_child(backdrop)
+
+	var center := CenterContainer.new()
+	center.anchors_preset = Control.PRESET_FULL_RECT
+	modal.add_child(center)
+
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(460, 360)
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.08, 0.12, 0.18, 0.98)
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.border_color = Color(0.35, 0.65, 0.95, 0.9)
+	style.corner_radius_top_left = 14
+	style.corner_radius_top_right = 14
+	style.corner_radius_bottom_right = 14
+	style.corner_radius_bottom_left = 14
+	style.content_margin_left = 20.0
+	style.content_margin_top = 18.0
+	style.content_margin_right = 20.0
+	style.content_margin_bottom = 18.0
+	panel.add_theme_stylebox_override(&"panel", style)
+	center.add_child(panel)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override(&"separation", 12)
+	panel.add_child(vbox)
+
+	var title_lbl := Label.new()
+	title_lbl.text = "🔑 RETURNING STUDENT SIGN IN"
+	title_lbl.add_theme_font_size_override(&"font_size", 18)
+	title_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.35))
+	vbox.add_child(title_lbl)
+
+	var sub_lbl := Label.new()
+	sub_lbl.text = "Enter your campus student email and password to resume your semester progress."
+	sub_lbl.add_theme_font_size_override(&"font_size", 13)
+	sub_lbl.add_theme_color_override(&"font_color", Color(0.80, 0.86, 0.94))
+	sub_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	vbox.add_child(sub_lbl)
+
+	var email_box := LineEdit.new()
+	email_box.placeholder_text = "Student Email (e.g. femi.student@campus.edu.ng)"
+	email_box.custom_minimum_size = Vector2(0, 46)
+	email_box.add_theme_font_size_override(&"font_size", 14)
+	vbox.add_child(email_box)
+
+	var pass_box := LineEdit.new()
+	pass_box.placeholder_text = "Student Password"
+	pass_box.secret = true
+	pass_box.custom_minimum_size = Vector2(0, 46)
+	pass_box.add_theme_font_size_override(&"font_size", 14)
+	vbox.add_child(pass_box)
+
+	var status_lbl := Label.new()
+	status_lbl.text = ""
+	status_lbl.add_theme_font_size_override(&"font_size", 13)
+	status_lbl.add_theme_color_override(&"font_color", Color(0.95, 0.45, 0.35))
+	status_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	vbox.add_child(status_lbl)
+
+	var btn_row := HBoxContainer.new()
+	btn_row.add_theme_constant_override(&"separation", 10)
+	vbox.add_child(btn_row)
+
+	var cancel_btn := Button.new()
+	cancel_btn.text = "Cancel"
+	cancel_btn.custom_minimum_size = Vector2(100, 44)
+	cancel_btn.add_theme_font_size_override(&"font_size", 14)
+	cancel_btn.pressed.connect(func(): modal.visible = false)
+	btn_row.add_child(cancel_btn)
+
+	var submit_btn := Button.new()
+	submit_btn.text = "🔑 Sign In & Resume"
+	submit_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	submit_btn.custom_minimum_size = Vector2(0, 44)
+	submit_btn.add_theme_font_size_override(&"font_size", 14)
+	submit_btn.pressed.connect(func():
+		var em: String = email_box.text.strip_edges()
+		var pw: String = pass_box.text
+		if em.is_empty() or pw.is_empty():
+			status_lbl.text = "Please enter both email and password."
+			return
+		status_lbl.add_theme_color_override(&"font_color", Color(0.35, 0.85, 1.0))
+		status_lbl.text = "Authenticating with campus server..."
+		if SupabaseClient:
+			SupabaseClient.sign_in_student(em, pw)
+	)
+	btn_row.add_child(submit_btn)
+
+	if SupabaseClient:
+		SupabaseClient.auth_state_changed.connect(func(is_logged_in: bool, student_em: String):
+			if not is_instance_valid(modal) or not modal.visible:
+				return
+			if is_logged_in:
+				status_lbl.add_theme_color_override(&"font_color", Color(0.35, 0.95, 0.55))
+				status_lbl.text = "Logged in successfully! Loading student profile..."
+				await get_tree().create_timer(0.6).timeout
+				if StudentProfile.load_from_disk() and not StudentProfile.matric_no.is_empty():
+					modal.visible = false
+					RoomManager.change_room(&"courtyard")
+				else:
+					modal.visible = false
+					name_input.text = student_em.split("@")[0].capitalize()
+					email_input.text = student_em
+					_on_next_pressed()
+			else:
+				status_lbl.add_theme_color_override(&"font_color", Color(0.95, 0.45, 0.35))
+				status_lbl.text = "Sign in failed. Check your password or register as new student."
+		)
+
+	add_child(modal)
+
+
 func _setup_preview_player() -> void:
 	if not has_node("%PreviewViewport"):
 		return
 	var vp: SubViewport = %PreviewViewport
 
-	# Environment for vivid bright Lagos daylight from all angles
+	# Environment for vivid bright campus daylight from all angles
 	if not vp.has_node("PreviewEnv"):
 		var env_node := WorldEnvironment.new()
 		env_node.name = "PreviewEnv"
@@ -414,7 +585,7 @@ func _setup_preview_player() -> void:
 		env_node.environment = env
 		vp.add_child(env_node)
 
-	# Key Light (warm Lagos sunshine)
+	# Key Light (warm campus sunshine)
 	var dlight: DirectionalLight3D = vp.get_node_or_null("PreviewLight") as DirectionalLight3D
 	if dlight:
 		dlight.position = Vector3(2.0, 3.5, 3.0)
@@ -434,19 +605,25 @@ func _setup_preview_player() -> void:
 
 	var pcam: Camera3D = vp.get_node_or_null("PreviewCamera") as Camera3D
 	if pcam:
-		pcam.position = Vector3(0, 0.98, 2.30)
-		pcam.rotation_degrees = Vector3(-5, 0, 0)
-		pcam.fov = 42.0
+		pcam.position = Vector3(0, 0.88, 2.05)
+		pcam.rotation_degrees = Vector3(-4, 0, 0)
+		pcam.fov = 38.0
+		pcam.make_current()
 
 	preview_player_instance = PlayerScene.instantiate() as Player3D
 	preview_player_instance.set_physics_process(false)
 	preview_player_instance.set_process_unhandled_input(false)
-	vp.add_child(preview_player_instance)
 
+	# Strip inner camera and physics before adding to viewport so it never steals current camera
 	for child_name in ["Camera3D", "CollisionShape3D", "NotifLabel", "PromptLabel"]:
 		var n = preview_player_instance.get_node_or_null(child_name)
 		if n:
-			n.queue_free()
+			preview_player_instance.remove_child(n)
+			n.free()
+
+	vp.add_child(preview_player_instance)
+	if pcam:
+		pcam.make_current()
 
 
 func _process(delta: float) -> void:
@@ -927,6 +1104,8 @@ func _update_view() -> void:
 	if has_node("%PreviewViewport"):
 		var vp: SubViewport = %PreviewViewport
 		vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS if (current_step == Step.AVATAR) else SubViewport.UPDATE_DISABLED
+		if current_step == Step.AVATAR:
+			_refresh_avatar_preview(false)
 
 	_update_step_navbar()
 

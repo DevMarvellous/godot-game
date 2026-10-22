@@ -2,7 +2,7 @@ extends Node
 
 func _ready() -> void:
 	print("\n========================================================")
-	print("   LAGOS CAMPUS SIMULATOR - AUTOMATED INTEGRATION TEST")
+	print("   MY CAMPUS LIFE - AUTOMATED INTEGRATION TEST")
 	print("========================================================")
 
 	# 1. Test Data files
@@ -36,6 +36,10 @@ func _ready() -> void:
 	var transfer_placement = profile.apply_admission("Emeka", "emeka@campus.edu.ng", "Male", 1, 0, 0, 0, "MEE", 0)
 	assert(transfer_placement["dept"] == "MTH", "0% score in MEE should transfer to allied MTH!")
 	print("  -> StudentProfile Admission Placement & Reassignment Posting OK")
+
+	assert(AdManager != null, "AdManager autoload must exist!")
+	assert(AdManager.CAMPUS_SPONSORS.size() >= 4, "Must have 4 campus sponsors!")
+	print("  -> AdManager OK: 4 Campus Sponsors (MTN, Indomie, CampusPay, PowerPro)")
 
 	# 2. Test Player 3D Mesh Swapping & Needs Manager
 	print("[2/6] Verifying Player3D appearance and 3D meshes...")
@@ -205,8 +209,7 @@ func _ready() -> void:
 	print("  -> Dynamic Camera Zoom (Presets & Cycle) OK")
 
 	# Backpack Inventory & Takeaway System test
-	const ProfileStore = preload("res://scripts/data/student_profile.gd")
-	ProfileStore.add_backpack_item({
+	StudentProfile.add_backpack_item({
 		"id": "test_takeaway_rice",
 		"name": "Takeaway: Firewood Jollof Rice",
 		"type": "food",
@@ -215,9 +218,9 @@ func _ready() -> void:
 		"desc": "Sealed warm takeaway food pack.",
 		"count": 1
 	})
-	var bp_items: Array[Dictionary] = ProfileStore.get_backpack_items()
+	var bp_items: Array[Dictionary] = StudentProfile.get_backpack_items()
 	assert(bp_items.size() >= 1, "Backpack must store items!")
-	var consume_res: Dictionary = ProfileStore.consume_backpack_food(player, "test_takeaway_rice")
+	var consume_res: Dictionary = StudentProfile.consume_backpack_food(player, "test_takeaway_rice")
 	assert(consume_res.get("success", false) == true, "Must successfully consume takeaway food from backpack!")
 
 	var backpack_scene = load("res://scenes/backpack_menu.tscn")

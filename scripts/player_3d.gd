@@ -31,10 +31,10 @@ var has_nav_target: bool = false
 @onready var hoodie_cowl: MeshInstance3D = $Visuals/HoodieCowl if has_node("Visuals/HoodieCowl") else null
 @onready var gown_flare: MeshInstance3D = $Visuals/GownFlare if has_node("Visuals/GownFlare") else null
 
-@onready var needs_manager: NeedsManager = $NeedsManager
-@onready var prompt_label: Label3D = $PromptLabel
-@onready var notif_label: Label3D = $NotifLabel
-@onready var notif_timer: Timer = $NotifTimer
+@onready var needs_manager: NeedsManager = $NeedsManager if has_node("NeedsManager") else null
+@onready var prompt_label: Label3D = $PromptLabel if has_node("PromptLabel") else null
+@onready var notif_label: Label3D = $NotifLabel if has_node("NotifLabel") else null
+@onready var notif_timer: Timer = $NotifTimer if has_node("NotifTimer") else null
 @onready var chat_bubble: Label3D = $ChatBubble if has_node("ChatBubble") else null
 @onready var chat_timer: Timer = $ChatTimer if has_node("ChatTimer") else null
 @onready var camera_node: Camera3D = $Camera3D if has_node("Camera3D") else null
@@ -47,22 +47,26 @@ var _last_net_pos: Vector3 = Vector3.ZERO
 var _last_net_moving: bool = false
 
 var is_sitting: bool = false
+var is_sleeping: bool = false
+var is_collapsing: bool = false
 var is_emoting: bool = false
 var is_dressing_animating: bool = false
 var _idle_time: float = 0.0
 var _sit_rest_timer: float = 0.0
+var _exhaust_fidget_timer: float = 0.0
 var _active_emote_tween: Tween = null
 var _dress_tween: Tween = null
+var _screen_fade_rect: ColorRect = null
 
-# Smooth Lagos Life style camera offset & interpolation (Elevated 3/4 Isometric)
-var cam_target_offset: Vector3 = Vector3(0, 5.0, 4.8)
+# Smooth My Campus Life camera offset & interpolation (Elevated 3/4 Isometric)
+var cam_target_offset: Vector3 = Vector3(0, 2.85, 2.65)
 
 # Dynamic Camera Zoom (mouse wheel on desktop, toggle button on mobile)
 var cam_zoom_factor: float = 1.0
 const CAM_ZOOM_MIN: float = 0.55 # Close-up avatar view
-const CAM_ZOOM_MAX: float = 1.8  # Wide room overview
+const CAM_ZOOM_MAX: float = 1.6  # Wide room overview
 const CAM_ZOOM_STEP: float = 0.12
-const CAM_BASE_OFFSET: Vector3 = Vector3(0, 5.0, 4.8)
+const CAM_BASE_OFFSET: Vector3 = Vector3(0, 2.85, 2.65)
 const CAM_ZOOM_PRESETS: Array[float] = [0.65, 1.0, 1.4] # Close / Medium / Wide
 var cam_zoom_preset_idx: int = 1
 
@@ -112,7 +116,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 
-	# Tap / Click anywhere to walk or 1-tap auto-interact (Lagos Life tap navigation)
+	# Tap / Click anywhere to walk or 1-tap auto-interact (My Campus Life tap navigation)
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var cam: Camera3D = get_viewport().get_camera_3d()
 		if cam:
@@ -250,6 +254,12 @@ func trigger_interaction() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if is_sleeping or is_collapsing:
+		velocity.x = 0.0
+		velocity.z = 0.0
+		move_and_slide()
+		return
+
 	# Apply gravity
 	if not is_on_floor():
 		velocity.y -= gravity * delta
@@ -271,9 +281,16 @@ func _physics_process(delta: float) -> void:
 			pending_interactable = null
 			_hide_nav_beacon()
 
-	# Check sprint action (Shift or fast push)
+	# Check sprint action (Shift or fast push) and energy exhaustion
 	var is_sprinting: bool = Input.is_action_pressed("sprint")
-	var current_move_speed: float = move_speed * (1.55 if is_sprinting else 1.0)
+	var energy_val: float = 100.0
+	if needs_manager:
+		energy_val = needs_manager.energy
+	var is_exhausted: bool = (energy_val < 20.0)
+	if is_exhausted:
+		is_sprinting = false
+
+	var current_move_speed: float = move_speed * (1.55 if is_sprinting else (0.68 if is_exhausted else 1.0))
 
 	var target_vel: Vector3 = Vector3.ZERO
 	if input_dir != Vector2.ZERO:
@@ -360,11 +377,11 @@ func _physics_process(delta: float) -> void:
 			_sit_rest_timer = 0.0
 			if needs_manager:
 				needs_manager.modify_energy(1.2)
-	elif is_emoting:
-		# Emote tween has active control over character pose
+	elif is_emoting or is_dressing_animating:
+		# Emote or dressing spin tween has active control over character pose
 		pass
 	else:
-		# 1. Natural procedural breathing & weight shifting (Sims / Lagos Life aesthetic)
+		# 1. Natural procedural breathing & weight shifting (My Campus Life aesthetic)
 		var breathe: float = sin(Time.get_ticks_msec() * 0.0024) * 0.016
 		var hip_shift: float = sin(Time.get_ticks_msec() * 0.0008) * 0.025
 
@@ -413,7 +430,7 @@ func _physics_process(delta: float) -> void:
 				var current_room: String = String(get_tree().current_scene.name) if get_tree().current_scene else "room"
 				NetworkManager.broadcast_transform(current_room, global_position, visual_root.rotation.y, is_moving_now)
 
-	# Smooth Lagos Life camera follow (damped lerp)
+	# Smooth My Campus Life camera follow (damped lerp)
 	if camera_node:
 		var desired_cam_pos: Vector3 = global_position + cam_target_offset
 		camera_node.global_position = camera_node.global_position.lerp(desired_cam_pos, 7.5 * delta)
@@ -482,13 +499,12 @@ func _on_chat_received(_sender_name: String, msg: String, peer_id: int) -> void:
 
 func _load_default_appearance() -> void:
 	const Wardrobe = preload("res://scripts/data/wardrobe_data.gd")
-	const ProfileStore = preload("res://scripts/data/student_profile.gd")
-	ProfileStore.load_from_disk()
+	StudentProfile.load_from_disk()
 
-	var skin_idx: int = clampi(ProfileStore.complexion_index, 0, Wardrobe.COMPLEXIONS.size() - 1)
-	var hair_idx: int = clampi(ProfileStore.hair_index, 0, Wardrobe.HAIRSTYLES.size() - 1)
-	var shirt_idx: int = clampi(ProfileStore.shirt_index, 0, Wardrobe.OUTFITS.size() - 1)
-	var trouser_idx: int = ProfileStore.trouser_index
+	var skin_idx: int = clampi(StudentProfile.complexion_index, 0, Wardrobe.COMPLEXIONS.size() - 1)
+	var hair_idx: int = clampi(StudentProfile.hair_index, 0, Wardrobe.HAIRSTYLES.size() - 1)
+	var shirt_idx: int = clampi(StudentProfile.shirt_index, 0, Wardrobe.OUTFITS.size() - 1)
+	var trouser_idx: int = StudentProfile.trouser_index
 
 	var hair_item: Dictionary = Wardrobe.HAIRSTYLES[hair_idx]
 	var outfit_item: Dictionary = Wardrobe.OUTFITS[shirt_idx]
@@ -607,36 +623,41 @@ func play_dressing_animation(midpoint_callback: Callable = Callable()) -> void:
 	var start_rot: float = visual_root.rotation.y
 	var full_spin_rot: float = start_rot + TAU
 
+	var tw: Tween = create_tween()
+	_dress_tween = tw
+
 	# First half spin (0 to 180 degrees) with subtle wind-up crouch
-	_dress_tween = create_tween().set_parallel(true)
-	_dress_tween.tween_property(visual_root, "rotation:y", start_rot + PI, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	_dress_tween.tween_property(visual_root, "scale", Vector3(0.90, 1.10, 0.90), 0.22)
-	await _dress_tween.finished
+	tw.set_parallel(true)
+	tw.tween_property(visual_root, "rotation:y", start_rot + PI, 0.20).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_property(visual_root, "scale", Vector3(0.88, 1.12, 0.88), 0.20)
 
-	# Swap clothes at the midpoint!
-	if midpoint_callback.is_valid():
-		midpoint_callback.call()
-
-	# Midpoint celebratory sparkle & chime
-	if SoundManager:
-		SoundManager.play_bell()
+	# Swap clothes & audio chime at midpoint
+	tw.set_parallel(false)
+	tw.tween_callback(func():
+		if midpoint_callback.is_valid():
+			midpoint_callback.call()
+		if SoundManager:
+			SoundManager.play_bell()
+	)
 
 	# Second half spin (180 to 360 degrees) with celebratory bounce
-	_dress_tween = create_tween().set_parallel(true)
-	_dress_tween.tween_property(visual_root, "rotation:y", full_spin_rot, 0.26).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	_dress_tween.tween_property(visual_root, "scale", Vector3(1.20, 1.20, 1.20), 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	await _dress_tween.finished
+	tw.set_parallel(true)
+	tw.tween_property(visual_root, "rotation:y", full_spin_rot, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(visual_root, "scale", Vector3(1.16, 1.16, 1.16), 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
-	# Settle smoothly back to regular scale & normalize rotation
-	var settle_tween: Tween = create_tween()
-	settle_tween.tween_property(visual_root, "scale", Vector3.ONE, 0.12)
-	await settle_tween.finished
+	# Settle scale back to 1.0
+	tw.set_parallel(false)
+	tw.tween_property(visual_root, "scale", Vector3.ONE, 0.12)
 
-	visual_root.rotation.y = fmod(visual_root.rotation.y, TAU)
-	is_dressing_animating = false
+	# Complete spin cleanly
+	tw.tween_callback(func():
+		if is_instance_valid(visual_root):
+			visual_root.rotation.y = fmod(visual_root.rotation.y, TAU)
+		is_dressing_animating = false
+	)
 
 
-## Spawns a floating stat particle above player's head (Sims / Lagos Life style)
+## Spawns a floating stat particle above player's head (My Campus Life style)
 func spawn_floating_stat(text_val: String, color_val: Color = Color.WHITE) -> void:
 	if not is_inside_tree():
 		return
@@ -793,6 +814,144 @@ func stand_up() -> void:
 
 	if NetworkManager:
 		NetworkManager.broadcast_emote("stand")
+
+
+func _get_or_create_screen_fade() -> ColorRect:
+	if _screen_fade_rect and is_instance_valid(_screen_fade_rect):
+		return _screen_fade_rect
+	var cl: CanvasLayer = CanvasLayer.new()
+	cl.layer = 99
+	add_child(cl)
+	_screen_fade_rect = ColorRect.new()
+	_screen_fade_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_screen_fade_rect.color = Color(0, 0, 0, 0)
+	_screen_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cl.add_child(_screen_fade_rect)
+	return _screen_fade_rect
+
+
+## Peaceful lying down sleep animation on bed with vignette fade and morning wake-up
+func play_sleep_animation(bed_node: Node3D = null, on_wake_callback: Callable = Callable()) -> void:
+	if not visual_root or not is_inside_tree() or is_sleeping:
+		return
+	cancel_emote()
+	if is_sitting:
+		stand_up()
+	is_sleeping = true
+	_idle_time = 0.0
+
+	if SoundManager:
+		SoundManager.play_click()
+	spawn_floating_stat("💤 Falling asleep... Zzz", Color(0.4, 0.8, 1.0))
+
+	if bed_node:
+		global_position = Vector3(bed_node.global_position.x, global_position.y, bed_node.global_position.z)
+		visual_root.rotation.y = bed_node.global_rotation.y
+
+	# Animate horizontal lying down pose on mattress
+	var sleep_tw: Tween = create_tween().set_parallel(true)
+	_active_emote_tween = sleep_tw
+
+	if torso_mesh:
+		sleep_tw.tween_property(torso_mesh, "position:y", 0.45, 0.35)
+		sleep_tw.tween_property(torso_mesh, "rotation:x", -PI * 0.48, 0.35)
+	if head_mesh:
+		sleep_tw.tween_property(head_mesh, "position:y", 0.52, 0.35)
+		sleep_tw.tween_property(head_mesh, "position:z", -0.45, 0.35)
+		sleep_tw.tween_property(head_mesh, "rotation:x", -PI * 0.45, 0.35)
+	if hair_mesh:
+		sleep_tw.tween_property(hair_mesh, "position:y", 0.56, 0.35)
+		sleep_tw.tween_property(hair_mesh, "position:z", -0.45, 0.35)
+	if left_leg and right_leg:
+		sleep_tw.tween_property(left_leg, "position:y", 0.42, 0.35)
+		sleep_tw.tween_property(right_leg, "position:y", 0.42, 0.35)
+		sleep_tw.tween_property(left_leg, "rotation:x", -PI * 0.48, 0.35)
+		sleep_tw.tween_property(right_leg, "rotation:x", -PI * 0.48, 0.35)
+	if left_arm and right_arm:
+		sleep_tw.tween_property(left_arm, "rotation:x", -PI * 0.35, 0.35)
+		sleep_tw.tween_property(right_arm, "rotation:x", -PI * 0.35, 0.35)
+		sleep_tw.tween_property(left_arm, "rotation:z", 0.3, 0.35)
+		sleep_tw.tween_property(right_arm, "rotation:z", -0.3, 0.35)
+
+	# Screen Fade to Black & Morning Alarm
+	var fade_rect: ColorRect = _get_or_create_screen_fade()
+	var fade_tw: Tween = create_tween()
+	fade_tw.tween_interval(0.6)
+	fade_tw.tween_property(fade_rect, "color:a", 1.0, 0.6)
+	fade_tw.tween_callback(func():
+		if on_wake_callback.is_valid():
+			on_wake_callback.call()
+	)
+	fade_tw.tween_interval(0.5)
+	fade_tw.tween_callback(func():
+		if SoundManager:
+			SoundManager.play_bell()
+	)
+	fade_tw.tween_property(fade_rect, "color:a", 0.0, 0.6)
+	fade_tw.tween_callback(func():
+		_wake_up_from_sleep()
+	)
+
+
+func _wake_up_from_sleep() -> void:
+	is_sleeping = false
+	_idle_time = 0.0
+	var wake_tw: Tween = create_tween().set_parallel(true)
+	if torso_mesh:
+		wake_tw.tween_property(torso_mesh, "position:y", 0.95, 0.3)
+		wake_tw.tween_property(torso_mesh, "rotation:x", 0.0, 0.3)
+	if head_mesh:
+		wake_tw.tween_property(head_mesh, "position:y", 1.45, 0.3)
+		wake_tw.tween_property(head_mesh, "position:z", 0.0, 0.3)
+		wake_tw.tween_property(head_mesh, "rotation:x", 0.0, 0.3)
+	if hair_mesh:
+		wake_tw.tween_property(hair_mesh, "position:y", 1.58, 0.3)
+		wake_tw.tween_property(hair_mesh, "position:z", 0.0, 0.3)
+	if left_leg and right_leg:
+		wake_tw.tween_property(left_leg, "position:y", 0.42, 0.3)
+		wake_tw.tween_property(right_leg, "position:y", 0.42, 0.3)
+		wake_tw.tween_property(left_leg, "rotation:x", 0.0, 0.3)
+		wake_tw.tween_property(right_leg, "rotation:x", 0.0, 0.3)
+	if left_arm and right_arm:
+		wake_tw.tween_property(left_arm, "rotation:x", 0.0, 0.3)
+		wake_tw.tween_property(right_arm, "rotation:x", 0.0, 0.3)
+		wake_tw.tween_property(left_arm, "rotation:z", 0.0, 0.3)
+		wake_tw.tween_property(right_arm, "rotation:z", 0.0, 0.3)
+	spawn_floating_stat("🌅 Refreshed! 100% Energy", Color(0.4, 0.95, 0.6))
+
+
+## Dramatic blackout collapse when energy hits 0% or staying up past 2:00 AM
+func play_collapse_animation(reason: String, on_teleport: Callable = Callable()) -> void:
+	if is_collapsing or not is_inside_tree():
+		return
+	cancel_emote()
+	is_collapsing = true
+	velocity = Vector3.ZERO
+
+	if SoundManager:
+		SoundManager.play_alert()
+	spawn_floating_stat("😵 COLLAPSED FROM SAPA!", Color(0.95, 0.25, 0.25))
+
+	var collapse_tw: Tween = create_tween().set_parallel(true)
+	if torso_mesh:
+		collapse_tw.tween_property(torso_mesh, "position:y", 0.25, 0.4).set_trans(Tween.TRANS_BOUNCE)
+		collapse_tw.tween_property(torso_mesh, "rotation:x", -PI * 0.45, 0.4)
+	if head_mesh:
+		collapse_tw.tween_property(head_mesh, "position:y", 0.30, 0.4)
+		collapse_tw.tween_property(head_mesh, "rotation:x", -PI * 0.4, 0.4)
+
+	var fade_rect: ColorRect = _get_or_create_screen_fade()
+	var fade_tw: Tween = create_tween()
+	fade_tw.tween_interval(0.4)
+	fade_tw.tween_property(fade_rect, "color:a", 1.0, 0.5)
+	fade_tw.tween_callback(func():
+		if on_teleport.is_valid():
+			on_teleport.call()
+		is_collapsing = false
+		_wake_up_from_sleep()
+	)
+	fade_tw.tween_interval(0.4)
+	fade_tw.tween_property(fade_rect, "color:a", 0.0, 0.6)
 
 
 ## Authentic Nigerian campus celebration dance (Legwork / Shaku-Shaku)
@@ -1171,4 +1330,3 @@ func play_salon_haircut_animation() -> void:
 	salon_tw.tween_callback(func():
 		cancel_emote()
 	)
-

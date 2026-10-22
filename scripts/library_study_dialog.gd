@@ -8,7 +8,6 @@ extends Control
 signal revision_completed(mode_name: String, cgpa_gain: float)
 signal dialog_closed
 
-const ProfileStore = preload("res://scripts/data/student_profile.gd")
 const AcademicCatalog = preload("res://scripts/data/academic_catalog.gd")
 
 var current_player: CharacterBody3D = null
@@ -60,11 +59,11 @@ func _ready() -> void:
 
 func open_library_study(player: CharacterBody3D) -> void:
 	current_player = player
-	ProfileStore.load_from_disk()
+	StudentProfile.load_from_disk()
 
 	if course_title_label:
-		var dept = AcademicCatalog.get_department(ProfileStore.admitted_department)
-		var course_name = ProfileStore.admitted_course_title
+		var dept = AcademicCatalog.get_department(StudentProfile.admitted_department)
+		var course_name = StudentProfile.admitted_course_title
 		course_title_label.text = "📚 %s REVISION ARCHIVE" % course_name.to_upper()
 
 	if status_label:
@@ -101,6 +100,10 @@ func _on_mode_selected(mode: Dictionary) -> void:
 
 	needs.modify_energy(-energy_cost)
 	needs.modify_cgpa(boost)
+	StudentProfile.cgpa = needs.cgpa
+	StudentProfile.save_to_disk()
+	if SupabaseClient:
+		SupabaseClient.sync_profile_to_cloud(StudentProfile.get_profile_data())
 	TimeSystem.advance_minutes(duration)
 
 	if current_player.has_method("play_study_animation"):

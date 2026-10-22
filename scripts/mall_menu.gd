@@ -19,7 +19,6 @@ var current_category: int = 0 # 0: Outfits, 1: Hairstyles, 2: Gadgets & Provisio
 
 const Wardrobe = preload("res://scripts/data/wardrobe_data.gd")
 const MallData = preload("res://scripts/data/mall_items_data.gd")
-const ProfileStore = preload("res://scripts/data/student_profile.gd")
 
 const MADAM_KIKELOMO_BANTER: Array[String] = [
 	"\"Welcome my dear! Only top quality items straight from Balogun Market!\"",
@@ -87,7 +86,7 @@ func _populate_items() -> void:
 	for child in items_container.get_children():
 		child.queue_free()
 
-	ProfileStore.load_from_disk()
+	StudentProfile.load_from_disk()
 
 	var needs: NeedsManager = null
 	if current_player:
@@ -101,7 +100,7 @@ func _populate_items() -> void:
 			for i in range(Wardrobe.OUTFITS.size()):
 				var item: Dictionary = Wardrobe.OUTFITS[i]
 				var price: int = int(item.get("price", 0))
-				var is_equipped: bool = (ProfileStore.shirt_index == i)
+				var is_equipped: bool = (StudentProfile.shirt_index == i)
 				_create_item_card(item["name"], price, item.get("description", ""), "👕", is_equipped, func():
 					_buy_or_equip_outfit(i, price)
 				)
@@ -111,7 +110,7 @@ func _populate_items() -> void:
 			for i in range(Wardrobe.HAIRSTYLES.size()):
 				var item: Dictionary = Wardrobe.HAIRSTYLES[i]
 				var price: int = int(item.get("price", 0))
-				var is_equipped: bool = (ProfileStore.hair_index == i)
+				var is_equipped: bool = (StudentProfile.hair_index == i)
 				_create_item_card(item["name"], price, item.get("description", ""), "💈", is_equipped, func():
 					_buy_or_equip_hair(i, price)
 				)
@@ -133,7 +132,7 @@ func _populate_items() -> void:
 					continue
 				var price: int = int(item.get("price", 0))
 				var item_id: String = String(item.get("id", ""))
-				var is_installed: bool = ProfileStore.owned_upgrades.has(item_id)
+				var is_installed: bool = StudentProfile.owned_upgrades.has(item_id)
 				_create_item_card(item["name"], price, item.get("description", ""), item.get("icon", "🛋️"), is_installed, func():
 					_buy_room_upgrade(item)
 				)
@@ -214,13 +213,16 @@ func _buy_or_equip_outfit(outfit_idx: int, price: int) -> void:
 		needs.modify_money(-price)
 		_update_wallet_display()
 
-	ProfileStore.shirt_index = outfit_idx
-	ProfileStore.save_to_disk()
+	StudentProfile.shirt_index = outfit_idx
+	StudentProfile.money = needs.money
+	StudentProfile.save_to_disk()
+	if SupabaseClient:
+		SupabaseClient.sync_profile_to_cloud(StudentProfile.get_profile_data())
 
 	var outfit_item: Dictionary = Wardrobe.OUTFITS[outfit_idx]
 	if current_player.has_method("apply_appearance"):
-		var skin_col = Wardrobe.COMPLEXIONS[clampi(ProfileStore.complexion_index, 0, Wardrobe.COMPLEXIONS.size() - 1)].color
-		var hair_item = Wardrobe.HAIRSTYLES[clampi(ProfileStore.hair_index, 0, Wardrobe.HAIRSTYLES.size() - 1)]
+		var skin_col = Wardrobe.COMPLEXIONS[clampi(StudentProfile.complexion_index, 0, Wardrobe.COMPLEXIONS.size() - 1)].color
+		var hair_item = Wardrobe.HAIRSTYLES[clampi(StudentProfile.hair_index, 0, Wardrobe.HAIRSTYLES.size() - 1)]
 		current_player.apply_appearance(
 			skin_col,
 			outfit_item.get("top_color", Color.WHITE),
@@ -252,13 +254,16 @@ func _buy_or_equip_hair(hair_idx: int, price: int) -> void:
 		needs.modify_money(-price)
 		_update_wallet_display()
 
-	ProfileStore.hair_index = hair_idx
-	ProfileStore.save_to_disk()
+	StudentProfile.hair_index = hair_idx
+	StudentProfile.money = needs.money
+	StudentProfile.save_to_disk()
+	if SupabaseClient:
+		SupabaseClient.sync_profile_to_cloud(StudentProfile.get_profile_data())
 
 	var hair_item: Dictionary = Wardrobe.HAIRSTYLES[hair_idx]
 	if current_player.has_method("apply_appearance"):
-		var skin_col = Wardrobe.COMPLEXIONS[clampi(ProfileStore.complexion_index, 0, Wardrobe.COMPLEXIONS.size() - 1)].color
-		var outfit_item = Wardrobe.OUTFITS[clampi(ProfileStore.shirt_index, 0, Wardrobe.OUTFITS.size() - 1)]
+		var skin_col = Wardrobe.COMPLEXIONS[clampi(StudentProfile.complexion_index, 0, Wardrobe.COMPLEXIONS.size() - 1)].color
+		var outfit_item = Wardrobe.OUTFITS[clampi(StudentProfile.shirt_index, 0, Wardrobe.OUTFITS.size() - 1)]
 		current_player.apply_appearance(
 			skin_col,
 			outfit_item.get("top_color", Color.WHITE),
@@ -288,6 +293,10 @@ func _buy_gadget(item: Dictionary) -> void:
 		return
 
 	needs.modify_money(-price)
+	StudentProfile.money = needs.money
+	StudentProfile.save_to_disk()
+	if SupabaseClient:
+		SupabaseClient.sync_profile_to_cloud(StudentProfile.get_profile_data())
 	_update_wallet_display()
 
 	# Give benefit
@@ -313,7 +322,7 @@ func _buy_room_upgrade(item: Dictionary) -> void:
 		return
 
 	var item_id: String = String(item.get("id", ""))
-	if ProfileStore.owned_upgrades.has(item_id):
+	if StudentProfile.owned_upgrades.has(item_id):
 		_notify_player("Already installed in your hostel room!")
 		return
 
@@ -323,10 +332,12 @@ func _buy_room_upgrade(item: Dictionary) -> void:
 		return
 
 	needs.modify_money(-price)
+	StudentProfile.money = needs.money
+	StudentProfile.owned_upgrades.append(item_id)
+	StudentProfile.save_to_disk()
+	if SupabaseClient:
+		SupabaseClient.sync_profile_to_cloud(StudentProfile.get_profile_data())
 	_update_wallet_display()
-
-	ProfileStore.owned_upgrades.append(item_id)
-	ProfileStore.save_to_disk()
 
 	SoundManager.play_coin()
 	_notify_player("Purchased %s! Delivered straight to your hostel room!" % item["name"])

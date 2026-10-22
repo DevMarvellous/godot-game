@@ -280,6 +280,10 @@ func _finish_exam_paper() -> void:
 		needs.cgpa = new_cgpa
 		needs.stat_changed.emit(&"cgpa", needs.cgpa, 5.0)
 		needs.modify_energy(-25.0)
+		StudentProfile.cgpa = new_cgpa
+		StudentProfile.save_to_disk()
+		if SupabaseClient:
+			SupabaseClient.sync_profile_to_cloud(StudentProfile.get_profile_data())
 
 	# 3D player animations
 	if current_player:

@@ -95,7 +95,20 @@ func _ready() -> void:
 	visible = false
 	if close_btn:
 		close_btn.pressed.connect(close_dialog)
+	var bg = get_node_or_null("Background")
+	if bg:
+		bg.mouse_filter = Control.MOUSE_FILTER_STOP
+		bg.gui_input.connect(func(ev: InputEvent):
+			if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
+				close_dialog()
+		)
 	_build_destinations()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if visible and event.is_action_pressed("ui_cancel"):
+		close_dialog()
+		get_viewport().set_input_as_handled()
 
 
 func open_shuttle(player: CharacterBody3D) -> void:
@@ -145,6 +158,11 @@ func _on_destination_selected(dest: Dictionary) -> void:
 		return
 
 	TimeSystem.advance_minutes(10)
+	StudentProfile.money = needs.money
+	StudentProfile.save_to_disk()
+	if SupabaseClient:
+		SupabaseClient.sync_profile_to_cloud(StudentProfile.get_profile_data())
+
 	if SoundManager:
 		SoundManager.play_coin()
 
@@ -153,8 +171,7 @@ func _on_destination_selected(dest: Dictionary) -> void:
 
 	var target_scene: String = String(dest.get("scene", ""))
 	if target_scene.contains("lecture_hall"):
-		const PropBuilder = preload("res://scripts/data/prop_builder_3d.gd")
-		PropBuilder.complete_semester_task(2)
+		PropBuilder3D.complete_semester_task(2)
 
 	visible = false
 	current_player = null

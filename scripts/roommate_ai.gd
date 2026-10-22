@@ -153,8 +153,7 @@ func _apply_routine_behavior() -> void:
 func talk() -> void:
 	super.talk()
 
-	const PropBuilder = preload("res://scripts/data/prop_builder_3d.gd")
-	PropBuilder.complete_semester_task(1)
+	PropBuilder3D.complete_semester_task(1)
 
 	if not current_player:
 		return
@@ -162,7 +161,17 @@ func talk() -> void:
 	if not needs:
 		return
 
+	# Roommate live campus gist & peer support
+	if CampusEvents and not CampusEvents.has_electricity:
+		if current_player.has_method("display_notification"):
+			current_player.display_notification("%s: \"Omo! NEPA has taken light again! Better preserve your phone battery!\"" % character_name)
+		return
+
 	match current_state:
+		RoutineState.MORNING_PREP:
+			needs.modify_faith(10.0)
+			if current_player.has_method("display_notification"):
+				current_player.display_notification("%s: \"You're looking sharp, roomie! Let's get front seats in the lecture hall!\" Faith +10!" % character_name)
 		RoutineState.COOKING_NOODLES:
 			if not indomie_shared_today:
 				indomie_shared_today = true
@@ -172,6 +181,9 @@ func talk() -> void:
 					current_player.play_eating_animation()
 				if current_player.has_method("display_notification"):
 					current_player.display_notification("%s shared a hot bowl of Indomie & eggs! +40 Hunger, +20 Energy!" % character_name)
+			else:
+				if current_player.has_method("display_notification"):
+					current_player.display_notification("%s: \"Food was sweet right? Let's digest and get ready for evening prep.\"" % character_name)
 		RoutineState.NIGHT_STUDY:
 			if not study_hint_shared_today:
 				study_hint_shared_today = true
@@ -179,4 +191,10 @@ func talk() -> void:
 				if current_player.has_method("play_study_animation"):
 					current_player.play_study_animation()
 				if current_player.has_method("display_notification"):
-					current_player.display_notification("%s explained tricky exam topics to you! CGPA preparation +0.08!" % character_name)
+					current_player.display_notification("%s explained tricky exam derivations to you! CGPA preparation +0.08!" % character_name)
+			else:
+				if current_player.has_method("display_notification"):
+					current_player.display_notification("%s: \"Keep revising! Night study is the secret of First Class students!\"" % character_name)
+		RoutineState.SLEEPING:
+			if current_player.has_method("display_notification"):
+				current_player.display_notification("%s is fast asleep on the bunk bed. (Zzz...)" % character_name)

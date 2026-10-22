@@ -148,6 +148,10 @@ func _on_work_gig_pressed(gig: Dictionary) -> void:
 	var duration: int = int(gig.get("duration_minutes", 30))
 	needs.modify_energy(-energy_req)
 	needs.modify_money(payout)
+	StudentProfile.money = needs.money
+	StudentProfile.save_to_disk()
+	if SupabaseClient:
+		SupabaseClient.sync_profile_to_cloud(StudentProfile.get_profile_data())
 	TimeSystem.advance_minutes(duration)
 
 	if gig.get("id") == "math_tutoring":

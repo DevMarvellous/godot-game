@@ -73,7 +73,7 @@ func bind_player(p: Player3D) -> void:
 
 
 func _process(_delta: float) -> void:
-	# Contextual Lagos Life action button: only show when near an interactable object!
+	# Contextual My Campus Life action button: only show when near an interactable object!
 	if not interact_btn or not bound_player:
 		return
 

@@ -124,36 +124,37 @@ func _evaluate_semester_outcome(summary: Dictionary) -> void:
 
 ## Advances the endless academic progression (Sem 1 -> Sem 2 -> Promotion -> Convocation -> Postgrad Sandbox)
 func advance_academic_period() -> Dictionary:
-	const ProfileStore = preload("res://scripts/data/student_profile.gd")
-	ProfileStore.load_from_disk()
+	StudentProfile.load_from_disk()
 
 	var notice: String = ""
 
-	if ProfileStore.current_semester == 1:
-		ProfileStore.current_semester = 2
+	if StudentProfile.current_semester == 1:
+		StudentProfile.current_semester = 2
 		notice = "Advanced to Semester 2! Prepare for final continuous assessments and examinations!"
 	else:
-		ProfileStore.current_semester = 1
-		if ProfileStore.current_level < 400:
-			ProfileStore.current_level += 100
-			notice = "🎉 PROMOTED! You are now a %d Level student!" % ProfileStore.current_level
-		elif ProfileStore.current_level == 400:
-			ProfileStore.current_level = 500 # Postgraduate / Master's / Campus Alumnus Sandbox
+		StudentProfile.current_semester = 1
+		if StudentProfile.current_level < 400:
+			StudentProfile.current_level += 100
+			notice = "🎉 PROMOTED! You are now a %d Level student!" % StudentProfile.current_level
+		elif StudentProfile.current_level == 400:
+			StudentProfile.current_level = 500 # Postgraduate / Master's / Campus Alumnus Sandbox
 			var needs: NeedsManager = _get_player_needs()
 			var final_cgpa: float = needs.cgpa if needs else 3.50
 			var grade_title: String = get_grade_classification(final_cgpa)
-			ProfileStore.degree_awarded = "%s (%s)" % [ProfileStore.admitted_course_title, grade_title]
-			notice = "🎓 CONVOCATION CONQUERED! Awarded %s! Unlocked Endless Postgraduate & Business Career Sandbox!" % ProfileStore.degree_awarded
+			StudentProfile.degree_awarded = "%s (%s)" % [StudentProfile.admitted_course_title, grade_title]
+			notice = "🎓 CONVOCATION CONQUERED! Awarded %s! Unlocked Endless Postgraduate & Business Career Sandbox!" % StudentProfile.degree_awarded
 		else:
 			notice = "Continuing advanced campus research & student business ventures as an honored alumnus!"
 
-	ProfileStore.save_to_disk()
+	StudentProfile.save_to_disk()
+	if SupabaseClient:
+		SupabaseClient.sync_profile_to_cloud(StudentProfile.get_profile_data())
 	TimeSystem.day = 1 # Reset days for the new semester
 	return {
-		"level": ProfileStore.current_level,
-		"semester": ProfileStore.current_semester,
+		"level": StudentProfile.current_level,
+		"semester": StudentProfile.current_semester,
 		"notice": notice,
-		"degree": ProfileStore.degree_awarded
+		"degree": StudentProfile.degree_awarded
 	}
 
 

@@ -47,6 +47,7 @@ func sign_up_student(email: String, pass_code: String, display_name: String) -> 
 		is_authenticated = true
 		student_email = email
 		auth_user_id = "local_dev_" + str(randi_range(1000, 9999))
+		_cache_session()
 		auth_state_changed.emit(true, email)
 		profile_synced.emit(true, "Offline Profile Registered Successfully!")
 		return
@@ -80,6 +81,65 @@ func _on_signup_completed(_result: int, response_code: int, _headers: PackedStri
 			profile_synced.emit(true, "Cloud Account Created!")
 			return
 	profile_synced.emit(false, "Saved to browser offline storage.")
+
+
+## Sign in an existing student
+func sign_in_student(email: String, pass_code: String) -> void:
+	if DatabaseConfig.SUPABASE_URL == "https://your-project.supabase.co":
+		# Simulated local development auth (instant offline success)
+		is_authenticated = true
+		student_email = email
+		auth_user_id = "local_dev_" + str(randi_range(1000, 9999))
+		_cache_session()
+		auth_state_changed.emit(true, email)
+		profile_synced.emit(true, "Student Logged In (Offline Save Active)")
+		return
+
+	var url: String = "%s/auth/v1/token?grant_type=password" % DatabaseConfig.SUPABASE_URL
+	var headers: PackedStringArray = [
+		"Content-Type: application/json",
+		"apikey: %s" % DatabaseConfig.SUPABASE_ANON_KEY
+	]
+	var payload: Dictionary = {
+		"email": email,
+		"password": pass_code
+	}
+
+	http_request.request_completed.connect(_on_signin_completed.bind(email), CONNECT_ONE_SHOT)
+	var err: Error = http_request.request(url, headers, HTTPClient.METHOD_POST, JSON.stringify(payload))
+	if err != OK:
+		profile_synced.emit(false, "Network error during sign in.")
+
+
+func _on_signin_completed(_result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray, email: String) -> void:
+	if response_code == 200:
+		var parsed = JSON.parse_string(body.get_string_from_utf8())
+		if parsed is Dictionary and parsed.has("access_token"):
+			auth_token = parsed["access_token"]
+			auth_user_id = parsed["user"]["id"]
+			student_email = email
+			is_authenticated = true
+			_cache_session()
+			auth_state_changed.emit(true, student_email)
+			profile_synced.emit(true, "Welcome Back! Logged into Cloud.")
+			load_profile_from_cloud()
+			return
+	profile_synced.emit(false, "Invalid email or password.")
+
+
+## Sign out
+func sign_out_student() -> void:
+	auth_token = ""
+	auth_user_id = ""
+	student_email = ""
+	is_authenticated = false
+	var local: Dictionary = DatabaseConfig.load_local_profile()
+	local.erase("auth_token")
+	local.erase("auth_user_id")
+	local.erase("student_email")
+	DatabaseConfig.save_local_profile(local)
+	auth_state_changed.emit(false, "")
+	profile_synced.emit(true, "Signed out successfully.")
 
 
 ## Push student game state to Supabase PostgreSQL cloud table
@@ -138,6 +198,69 @@ func fetch_deans_list_leaderboard() -> void:
 				leaderboard_received.emit("deans_list", data)
 	, CONNECT_ONE_SHOT)
 	http_request.request(url, headers, HTTPClient.METHOD_GET)
+
+
+## Fetch Campus Wealth Leaderboard (Richest Hustlers)
+func fetch_wealth_leaderboard() -> void:
+	if DatabaseConfig.SUPABASE_URL == "https://your-project.supabase.co":
+		var mock_wealth: Array = [
+			{"name": "Emeka Tech O.", "dept": "CSC", "wallet_balance": 185000, "title": "Lead Software Contractor"},
+			{"name": "Tolani Davies", "dept": "SMS", "wallet_balance": 142000, "title": "Madam Kikelomo Mall Partner"},
+			{"name": "Damilola B.", "dept": "ENG", "wallet_balance": 98000, "title": "Campus Shuttle Logistics"},
+			{"name": "Halima Lawal", "dept": "LAW", "wallet_balance": 87500, "title": "Chambers Legal Clerk"},
+			{"name": "Segun Alabi", "dept": "CSC", "wallet_balance": 74000, "title": "SUB Snooker Champion"},
+			{"name": "Kemi Adeleke", "dept": "NAS", "wallet_balance": 62000, "title": "Buka Food Supplies"}
+		]
+		leaderboard_received.emit("wealth", mock_wealth)
+		return
+
+	var url: String = "%s/rest/v1/student_profiles?select=student_name,department,wallet_balance&order=wallet_balance.desc&limit=10" % DatabaseConfig.SUPABASE_URL
+	var headers: PackedStringArray = [
+		"apikey: %s" % DatabaseConfig.SUPABASE_ANON_KEY
+	]
+	http_request.request_completed.connect(func(_r: int, code: int, _h: PackedStringArray, body: PackedByteArray):
+		if code == 200:
+			var data = JSON.parse_string(body.get_string_from_utf8())
+			if data is Array:
+				leaderboard_received.emit("wealth", data)
+	, CONNECT_ONE_SHOT)
+	http_request.request(url, headers, HTTPClient.METHOD_GET)
+
+
+## Load full profile from Supabase PostgreSQL
+func load_profile_from_cloud() -> void:
+	if not is_authenticated or DatabaseConfig.SUPABASE_URL == "https://your-project.supabase.co":
+		return
+
+	var url: String = "%s/rest/v1/student_profiles?id=eq.%s&select=*" % [DatabaseConfig.SUPABASE_URL, auth_user_id]
+	var headers: PackedStringArray = [
+		"apikey: %s" % DatabaseConfig.SUPABASE_ANON_KEY,
+		"Authorization: Bearer %s" % auth_token
+	]
+	http_request.request_completed.connect(_on_cloud_profile_received, CONNECT_ONE_SHOT)
+	http_request.request(url, headers, HTTPClient.METHOD_GET)
+
+
+func _on_cloud_profile_received(_r: int, code: int, _h: PackedStringArray, body: PackedByteArray) -> void:
+	if code == 200:
+		var data = JSON.parse_string(body.get_string_from_utf8())
+		if data is Array and data.size() > 0:
+			var cloud_row: Dictionary = data[0]
+			StudentProfile.load_from_disk()
+			if cloud_row.has("student_name"):
+				StudentProfile.student_name = String(cloud_row["student_name"])
+			if cloud_row.has("matric_no"):
+				StudentProfile.matric_no = String(cloud_row["matric_no"])
+			if cloud_row.has("department"):
+				StudentProfile.admitted_department = String(cloud_row["department"])
+			if cloud_row.has("cgpa"):
+				StudentProfile.cgpa = float(cloud_row["cgpa"])
+			if cloud_row.has("wallet_balance"):
+				StudentProfile.money = int(cloud_row["wallet_balance"])
+			if cloud_row.has("owned_upgrades") and cloud_row["owned_upgrades"] is Array:
+				StudentProfile.owned_upgrades = cloud_row["owned_upgrades"]
+			StudentProfile.save_to_disk()
+			profile_synced.emit(true, "Cloud Profile Loaded!")
 
 
 func _cache_session() -> void:

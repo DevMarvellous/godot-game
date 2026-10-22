@@ -19,31 +19,31 @@ content_margin_right = 12.0
 content_margin_bottom = 6.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_time"]
-font_size = 17
+font_size = 19
 font_color = Color(1, 1, 1, 1)
-outline_size = 3
+outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_schedule"]
-font_size = 15
+font_size = 17
 font_color = Color(1, 0.88, 0.35, 1)
-outline_size = 3
+outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_money"]
-font_size = 17
+font_size = 19
 font_color = Color(0.3, 0.95, 0.5, 1)
-outline_size = 3
+outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_cgpa"]
-font_size = 15
+font_size = 17
 font_color = Color(0.4, 0.85, 1.0, 1)
-outline_size = 3
+outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_stat"]
-font_size = 14
+font_size = 16
 font_color = Color(0.85, 0.9, 0.95, 1)
 
 [node name="HUD" type="CanvasLayer"]
@@ -117,7 +117,7 @@ label_settings = SubResource("LabelSettings_stat")
 
 [node name="EnergyBar" type="ProgressBar" parent="TopPanel/VBoxContainer/Row2/StatsGrid/EnergyContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 14)
+custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -136,7 +136,7 @@ label_settings = SubResource("LabelSettings_stat")
 
 [node name="HungerBar" type="ProgressBar" parent="TopPanel/VBoxContainer/Row2/StatsGrid/HungerContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 14)
+custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -155,7 +155,7 @@ label_settings = SubResource("LabelSettings_stat")
 
 [node name="FaithBar" type="ProgressBar" parent="TopPanel/VBoxContainer/Row2/StatsGrid/FaithContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 14)
+custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4

@@ -45,18 +45,18 @@ func _create_objective_pill_ui() -> void:
 	container.name = "ObjectiveContainer"
 	container.anchors_preset = Control.PRESET_TOP_LEFT
 	container.offset_left = 12.0
-	container.offset_top = 84.0
-	container.offset_right = 380.0
-	container.offset_bottom = 120.0
+	container.offset_top = 140.0
+	container.offset_right = 440.0
+	container.offset_bottom = 184.0
 	container.add_theme_constant_override(&"separation", 6)
 
 	objective_btn = Button.new()
 	objective_btn.name = "ObjectivePillBtn"
 	objective_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	objective_btn.custom_minimum_size = Vector2(250, 36)
+	objective_btn.custom_minimum_size = Vector2(280, 44)
 	objective_btn.focus_mode = Control.FOCUS_NONE
 	objective_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	objective_btn.add_theme_font_size_override(&"font_size", 12)
+	objective_btn.add_theme_font_size_override(&"font_size", 14)
 	objective_btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 	var pill_style := StyleBoxFlat.new()
@@ -70,10 +70,10 @@ func _create_objective_pill_ui() -> void:
 	pill_style.corner_radius_top_right = 10
 	pill_style.corner_radius_bottom_left = 10
 	pill_style.corner_radius_bottom_right = 10
-	pill_style.content_margin_left = 10.0
-	pill_style.content_margin_right = 10.0
-	pill_style.content_margin_top = 4.0
-	pill_style.content_margin_bottom = 4.0
+	pill_style.content_margin_left = 12.0
+	pill_style.content_margin_right = 12.0
+	pill_style.content_margin_top = 6.0
+	pill_style.content_margin_bottom = 6.0
 	objective_btn.add_theme_stylebox_override(&"normal", pill_style)
 	objective_btn.add_theme_stylebox_override(&"hover", pill_style)
 	objective_btn.add_theme_stylebox_override(&"pressed", pill_style)
@@ -88,10 +88,10 @@ func _create_objective_pill_ui() -> void:
 	tasks_toggle_btn = Button.new()
 	tasks_toggle_btn.name = "TasksToggleBtn"
 	tasks_toggle_btn.text = "📋 Tasks"
-	tasks_toggle_btn.custom_minimum_size = Vector2(74, 36)
+	tasks_toggle_btn.custom_minimum_size = Vector2(85, 44)
 	tasks_toggle_btn.focus_mode = Control.FOCUS_NONE
 	tasks_toggle_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	tasks_toggle_btn.add_theme_font_size_override(&"font_size", 12)
+	tasks_toggle_btn.add_theme_font_size_override(&"font_size", 14)
 
 	var t_style := StyleBoxFlat.new()
 	t_style.bg_color = Color(0.10, 0.14, 0.22, 0.92)

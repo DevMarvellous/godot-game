@@ -1,7 +1,7 @@
 class_name PropBuilder3D
 extends RefCounted
 
-## Central procedural 3D prop builder & Lagos Life campus data hub.
+## Central procedural 3D prop builder & My Campus Life data hub.
 ## Builds multi-part low-poly 3D meshes for all 24 CampusObject3D types (0 KB external asset weight),
 ## configures proximity label fading, and provides room-aware student NPC & objective data.
 
@@ -98,7 +98,33 @@ static func _add_cyl(parent: Node3D, top_r: float, bot_r: float, h: float, pos: 
 	return mi
 
 
-## Configures a Label3D so it only appears when the player walks near it (Lagos Life clean view)
+static func _add_steam(parent: Node3D, pos: Vector3) -> CPUParticles3D:
+	var steam := CPUParticles3D.new()
+	steam.name = "CookingSteam"
+	steam.amount = 14
+	steam.lifetime = 1.3
+	steam.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	steam.emission_sphere_radius = 0.08
+	steam.direction = Vector3.UP
+	steam.spread = 15.0
+	steam.gravity = Vector3(0, 0.45, 0)
+	steam.initial_velocity_min = 0.15
+	steam.initial_velocity_max = 0.4
+	var smat := StandardMaterial3D.new()
+	smat.albedo_color = Color(1.0, 1.0, 1.0, 0.28)
+	smat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	smat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	var s_mesh := SphereMesh.new()
+	s_mesh.radius = 0.04
+	s_mesh.height = 0.08
+	s_mesh.material = smat
+	steam.mesh = s_mesh
+	steam.position = pos
+	parent.add_child(steam)
+	return steam
+
+
+## Configures a Label3D so it only appears when the player walks near it (My Campus Life clean view)
 static func configure_proximity_label(lbl: Label3D, max_dist: float = 6.5, font_sz: int = 24) -> void:
 	if not lbl:
 		return
@@ -118,7 +144,7 @@ static func build_campus_prop(obj: Node3D, obj_type: int) -> Node3D:
 	root.name = "ProceduralProp"
 	obj.add_child(root)
 
-	# Subtle Lagos Life interactive ground ring under every usable prop
+	# Subtle interactive ground ring under every usable prop
 	var ring := MeshInstance3D.new()
 	var cyl := CylinderMesh.new()
 	cyl.top_radius = 0.72
@@ -149,6 +175,16 @@ static func build_campus_prop(obj: Node3D, obj_type: int) -> Node3D:
 			_add_box(root, Vector3(1.12, 0.22, 1.78), Vector3(0, 0.42, 0.02), CREAM_WHITE) # Mattress
 			_add_box(root, Vector3(1.14, 0.24, 1.05), Vector3(0, 0.43, 0.36), Color(0.16, 0.48, 0.78)) # Duvet
 			_add_box(root, Vector3(0.75, 0.12, 0.36), Vector3(0, 0.56, -0.62), Color(0.98, 0.98, 1.0)) # Pillow
+			# 4 Nigerian hostel mosquito net poles
+			_add_cyl(root, 0.02, 0.02, 1.35, Vector3(-0.55, 0.92, -0.88), METAL_DARK)
+			_add_cyl(root, 0.02, 0.02, 1.35, Vector3(0.55, 0.92, -0.88), METAL_DARK)
+			_add_cyl(root, 0.02, 0.02, 1.35, Vector3(-0.55, 0.92, 0.88), METAL_DARK)
+			_add_cyl(root, 0.02, 0.02, 1.35, Vector3(0.55, 0.92, 0.88), METAL_DARK)
+			# Top mosquito net canopy frame
+			_add_box(root, Vector3(1.14, 0.03, 0.03), Vector3(0, 1.58, -0.88), METAL_DARK)
+			_add_box(root, Vector3(1.14, 0.03, 0.03), Vector3(0, 1.58, 0.88), METAL_DARK)
+			_add_box(root, Vector3(0.03, 0.03, 1.78), Vector3(-0.55, 1.58, 0), METAL_DARK)
+			_add_box(root, Vector3(0.03, 0.03, 1.78), Vector3(0.55, 1.58, 0), METAL_DARK)
 		1, 11, 19: # DESK, LIBRARY_CARREL, COURSEWORK_DESK
 			_add_box(root, Vector3(1.3, 0.07, 0.75), Vector3(0, 0.74, 0), WOOD_WARM)
 			_add_box(root, Vector3(0.08, 0.72, 0.68), Vector3(-0.56, 0.36, 0), METAL_DARK, Vector3.ZERO, 0.4)
@@ -157,12 +193,28 @@ static func build_campus_prop(obj: Node3D, obj_type: int) -> Node3D:
 			_add_box(root, Vector3(0.38, 0.02, 0.26), Vector3(-0.15, 0.79, 0.05), METAL_SILVER, Vector3.ZERO, 0.6)
 			_add_box(root, Vector3(0.38, 0.24, 0.02), Vector3(-0.15, 0.90, -0.07), Color(0.18, 0.65, 0.95), Vector3(-12, 0, 0), 0.2, 0.5)
 			_add_box(root, Vector3(0.26, 0.08, 0.32), Vector3(0.34, 0.81, 0), Color(0.78, 0.22, 0.18))
-		2, 17: # CAFETERIA, HOSTEL_KITCHEN
-			_add_box(root, Vector3(1.6, 0.88, 0.75), Vector3(0, 0.44, 0), Color(0.72, 0.28, 0.16))
-			_add_box(root, Vector3(1.68, 0.06, 0.82), Vector3(0, 0.90, 0), METAL_SILVER, Vector3.ZERO, 0.65)
-			# Cooking pots / warmers
-			_add_cyl(root, 0.22, 0.20, 0.24, Vector3(-0.38, 1.04, 0), METAL_SILVER, Vector3.ZERO, 0.75)
-			_add_cyl(root, 0.22, 0.20, 0.24, Vector3(0.35, 1.04, 0), METAL_SILVER, Vector3.ZERO, 0.75)
+			# Electric pressing iron on study desk
+			_add_box(root, Vector3(0.12, 0.05, 0.20), Vector3(0.48, 0.79, 0.22), METAL_SILVER, Vector3(0, 25, 0), 0.7)
+			_add_box(root, Vector3(0.08, 0.04, 0.12), Vector3(0.48, 0.83, 0.22), Color(0.12, 0.35, 0.75), Vector3(0, 25, 0))
+		2: # CAFETERIA (Mama Put Canteen Counter & Steaming Warmers)
+			_add_box(root, Vector3(2.0, 0.90, 0.85), Vector3(0, 0.45, 0), Color(0.72, 0.28, 0.16))
+			_add_box(root, Vector3(2.08, 0.06, 0.92), Vector3(0, 0.92, 0), METAL_SILVER, Vector3.ZERO, 0.70)
+			# Glass sneeze guard
+			_add_box(root, Vector3(1.95, 0.42, 0.04), Vector3(0, 1.15, 0.40), Color(0.85, 0.95, 1.0, 0.4))
+			# Jollof and Egusi warmer pots
+			_add_cyl(root, 0.26, 0.24, 0.22, Vector3(-0.55, 1.05, 0.05), METAL_SILVER, Vector3.ZERO, 0.75)
+			_add_cyl(root, 0.26, 0.24, 0.22, Vector3(0.52, 1.05, 0.05), METAL_SILVER, Vector3.ZERO, 0.75)
+			_add_steam(root, Vector3(-0.55, 1.25, 0.05))
+			_add_steam(root, Vector3(0.52, 1.25, 0.05))
+		17: # HOSTEL_KITCHEN (Wooden Stool, Electric Coil Burner, Boiling Pot & Steam)
+			_add_box(root, Vector3(0.75, 0.55, 0.75), Vector3(0, 0.28, 0), WOOD_DARK)
+			# Electric coil hotplate base
+			_add_box(root, Vector3(0.52, 0.08, 0.52), Vector3(0, 0.60, 0), METAL_DARK, Vector3.ZERO, 0.4)
+			# Glowing heating coil
+			_add_cyl(root, 0.18, 0.18, 0.02, Vector3(0, 0.65, 0), Color(0.98, 0.32, 0.12), Vector3.ZERO, 0.2, 0.9)
+			# Small Indomie pot with steam
+			_add_cyl(root, 0.16, 0.15, 0.18, Vector3(0, 0.76, 0), METAL_SILVER, Vector3.ZERO, 0.8)
+			_add_steam(root, Vector3(0, 0.92, 0))
 		3, 12: # FELLOWSHIP, CHAPEL_WORSHIP
 			_add_box(root, Vector3(0.9, 1.05, 0.55), Vector3(0, 0.52, 0), WOOD_DARK)
 			_add_box(root, Vector3(1.05, 0.08, 0.65), Vector3(0, 1.06, 0), WOOD_WARM, Vector3(12, 0, 0))
@@ -223,13 +275,18 @@ static func build_campus_prop(obj: Node3D, obj_type: int) -> Node3D:
 		23: # MINI_FRIDGE
 			_add_box(root, Vector3(0.72, 0.98, 0.65), Vector3(0, 0.49, 0), METAL_SILVER, Vector3.ZERO, 0.55)
 			_add_box(root, Vector3(0.05, 0.42, 0.06), Vector3(0.28, 0.58, 0.34), Color(0.20, 0.78, 0.95), Vector3.ZERO, 0.6, 0.4)
+		24: # HOSTEL_BOOMBOX (Portable Bluetooth Afrobeats Speaker)
+			_add_box(root, Vector3(0.48, 0.24, 0.24), Vector3(0, 0.12, 0), Color(0.12, 0.14, 0.18), Vector3.ZERO, 0.6)
+			_add_cyl(root, 0.08, 0.08, 0.02, Vector3(-0.12, 0.12, 0.12), Color(0.85, 0.22, 0.22), Vector3(90, 0, 0)) # Red speaker grill
+			_add_cyl(root, 0.08, 0.08, 0.02, Vector3(0.12, 0.12, 0.12), Color(0.22, 0.65, 0.85), Vector3(90, 0, 0)) # Blue speaker grill
+			_add_box(root, Vector3(0.04, 0.06, 0.04), Vector3(0, 0.26, 0), Color(0.20, 0.85, 1.0), Vector3.ZERO, 0.2, 0.8) # Glowing LED
 		_:
 			_add_box(root, Vector3(0.9, 0.8, 0.9), Vector3(0, 0.4, 0), WOOD_WARM)
 
 	return root
 
 
-## Returns ambient student NPC templates so every room feels populated like Lagos Life
+## Returns ambient student NPC templates so every room feels populated in My Campus Life
 static func get_ambient_npcs_for_room(room_id: StringName) -> Array[Dictionary]:
 	match room_id:
 		&"hostel":
@@ -249,7 +306,7 @@ static func get_ambient_npcs_for_room(room_id: StringName) -> Array[Dictionary]:
 			]
 		_:
 			return [
-				{"name": "Damilola", "role": "Campus Hustler", "color": Color(0.95, 0.72, 0.15), "pos": Vector3(-3.0, 0.1, 2.5), "lines": ["Lagos campus life is all about timing—watch your Energy & CGPA!", "Tap any object once and your character walks right to it."]},
+				{"name": "Damilola", "role": "Campus Hustler", "color": Color(0.95, 0.72, 0.15), "pos": Vector3(-3.0, 0.1, 2.5), "lines": ["My Campus Life is all about timing—watch your Energy & CGPA!", "Tap any object once and your character walks right to it."]},
 				{"name": "Sadiq", "role": "SUG Exco", "color": Color(0.15, 0.68, 0.45), "pos": Vector3(3.2, 0.1, 2.2), "lines": ["Aluta continua! Check the SUB Arcade or Football Pitch to unwind.", "Use the yellow Shuttle Stop or Map button to ride the Danfo bus."]}
 			]
 
@@ -529,7 +586,7 @@ static func _inject_room_decor(room: Node3D, r_name: String) -> void:
 		# Hostel wall poster
 		_add_box(decor, Vector3(1.1, 1.5, 0.02), Vector3(-2.8, 2.2, -5.85), Color(0.96, 0.78, 0.18))
 		var poster_lbl := Label3D.new()
-		poster_lbl.text = "LAGOS LIFE 2026\nCAMPUS CARNIVAL\n& AFROBEATS NIGHT\n\"No Dulling This Semester!\""
+		poster_lbl.text = "MY CAMPUS LIFE 2026\nANNUAL CARNIVAL\n& AFROBEATS NIGHT\n\"No Dulling This Semester!\""
 		poster_lbl.font_size = 18
 		poster_lbl.outline_size = 4
 		poster_lbl.modulate = Color(0.10, 0.12, 0.15)
@@ -563,6 +620,44 @@ static func _inject_room_decor(room: Node3D, r_name: String) -> void:
 		var box_front := _add_box(decor, Vector3(14.0, 0.006, 0.12), Vector3(0, 0.008, -6.5), Color.WHITE)
 		box_front.material_override = line_mat
 
+	elif "gate" in r_name:
+		# Zebra crossing road markings on asphalt
+		var zebra_mat := StandardMaterial3D.new()
+		zebra_mat.albedo_color = Color(0.96, 0.96, 0.96, 0.92)
+		zebra_mat.roughness = 0.5
+		for z in range(-3, 4):
+			var stripe := MeshInstance3D.new()
+			var b := BoxMesh.new()
+			b.size = Vector3(0.65, 0.008, 4.2)
+			stripe.mesh = b
+			stripe.position = Vector3(float(z) * 1.25, 0.006, -6.8)
+			stripe.material_override = zebra_mat
+			decor.add_child(stripe)
+
+		# Mama Boli Charcoal smoke particles
+		var boli_smoke := CPUParticles3D.new()
+		boli_smoke.name = "BoliCharcoalSmoke"
+		boli_smoke.amount = 12
+		boli_smoke.lifetime = 1.4
+		boli_smoke.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+		boli_smoke.emission_sphere_radius = 0.12
+		boli_smoke.direction = Vector3.UP
+		boli_smoke.spread = 18.0
+		boli_smoke.gravity = Vector3(0, 0.35, 0)
+		boli_smoke.initial_velocity_min = 0.1
+		boli_smoke.initial_velocity_max = 0.3
+		var smat := StandardMaterial3D.new()
+		smat.albedo_color = Color(0.9, 0.9, 0.9, 0.22)
+		smat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		smat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		var smesh := SphereMesh.new()
+		smesh.radius = 0.05
+		smesh.height = 0.1
+		smesh.material = smat
+		boli_smoke.mesh = smesh
+		boli_smoke.position = Vector3(-8.0, 0.88, -5.5)
+		decor.add_child(boli_smoke)
+
 
 static func update_room_day_night_lighting(room: Node3D) -> void:
 	if not room:
@@ -578,7 +673,7 @@ static func update_room_day_night_lighting(room: Node3D) -> void:
 
 	var hr: int = TimeSystem.get_hour()
 	if hr >= 6 and hr < 10:
-		# Warm Lagos Morning Sun
+		# Warm Campus Morning Sun
 		dir_light.light_color = Color(1.0, 0.92, 0.76)
 		dir_light.light_energy = 1.15
 	elif hr >= 10 and hr < 17:

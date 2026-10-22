@@ -131,40 +131,42 @@ func _create_food_card(item: Dictionary, player_money: int) -> PanelContainer:
 	var panel: PanelContainer = PanelContainer.new()
 	var style: StyleBoxFlat = StyleBoxFlat.new()
 	style.bg_color = Color(0.14, 0.17, 0.22, 0.95)
-	style.corner_radius_top_left = 8
-	style.corner_radius_top_right = 8
-	style.corner_radius_bottom_right = 8
-	style.corner_radius_bottom_left = 8
-	style.content_margin_left = 12
-	style.content_margin_top = 8
-	style.content_margin_right = 12
-	style.content_margin_bottom = 8
+	style.corner_radius_top_left = 10
+	style.corner_radius_top_right = 10
+	style.corner_radius_bottom_right = 10
+	style.corner_radius_bottom_left = 10
+	style.content_margin_left = 16
+	style.content_margin_top = 12
+	style.content_margin_right = 16
+	style.content_margin_bottom = 12
 	panel.add_theme_stylebox_override(&"panel", style)
 
 	var hbox: HBoxContainer = HBoxContainer.new()
-	hbox.add_theme_constant_override(&"separation", 12)
+	hbox.add_theme_constant_override(&"separation", 14)
 	panel.add_child(hbox)
 
 	# Info column (Name, description, stats)
 	var vbox: VBoxContainer = VBoxContainer.new()
 	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.add_theme_constant_override(&"separation", 4)
 	hbox.add_child(vbox)
 
 	var title_lbl: Label = Label.new()
 	title_lbl.text = String(item["name"])
-	title_lbl.add_theme_font_size_override(&"font_size", 15)
+	title_lbl.add_theme_font_size_override(&"font_size", 17)
 	title_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.9, 0.4))
 	vbox.add_child(title_lbl)
 
 	var desc_lbl: Label = Label.new()
 	desc_lbl.text = "%s  •  (+%d Hunger, +%d Energy)" % [String(item["desc"]), int(item["hunger"]), int(item["energy"])]
-	desc_lbl.add_theme_font_size_override(&"font_size", 12)
-	desc_lbl.add_theme_color_override(&"font_color", Color(0.75, 0.8, 0.85))
+	desc_lbl.add_theme_font_size_override(&"font_size", 13)
+	desc_lbl.add_theme_color_override(&"font_color", Color(0.85, 0.88, 0.94))
+	desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vbox.add_child(desc_lbl)
 
 	# Button Column: Dine Here vs Takeaway Pack (+₦100)
 	var btn_vbox: VBoxContainer = VBoxContainer.new()
-	btn_vbox.add_theme_constant_override(&"separation", 6)
+	btn_vbox.add_theme_constant_override(&"separation", 8)
 	hbox.add_child(btn_vbox)
 
 	var cost: int = int(item["cost"])
@@ -173,7 +175,8 @@ func _create_food_card(item: Dictionary, player_money: int) -> PanelContainer:
 	# 1. Dine Here button
 	var dine_btn: Button = Button.new()
 	dine_btn.text = "🍽️ Dine Here ₦%s" % _format_number(cost)
-	dine_btn.custom_minimum_size = Vector2(130, 32)
+	dine_btn.custom_minimum_size = Vector2(145, 42)
+	dine_btn.add_theme_font_size_override(&"font_size", 13)
 	if player_money < cost:
 		dine_btn.disabled = true
 		dine_btn.text = "₦%s (Can't Afford)" % _format_number(cost)
@@ -184,7 +187,8 @@ func _create_food_card(item: Dictionary, player_money: int) -> PanelContainer:
 	# 2. Takeaway Pack button
 	var takeaway_btn: Button = Button.new()
 	takeaway_btn.text = "🥡 Takeaway ₦%s" % _format_number(takeaway_cost)
-	takeaway_btn.custom_minimum_size = Vector2(130, 32)
+	takeaway_btn.custom_minimum_size = Vector2(145, 42)
+	takeaway_btn.add_theme_font_size_override(&"font_size", 13)
 	if player_money < takeaway_cost:
 		takeaway_btn.disabled = true
 		takeaway_btn.text = "🥡 ₦%s (Can't Afford)" % _format_number(takeaway_cost)
