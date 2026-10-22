@@ -28,7 +28,8 @@ const ROOM_PATHS: Dictionary = {
 	&"garden": "res://scenes/rooms/campus_garden.tscn",
 	&"salon": "res://scenes/rooms/barbing_salon.tscn",
 	&"gate": "res://scenes/rooms/campus_gate.tscn",
-	&"senate": "res://scenes/rooms/senate_building.tscn"
+	&"senate": "res://scenes/rooms/senate_building.tscn",
+	&"convocation": "res://scenes/rooms/convocation_hall.tscn"
 }
 
 const ROOM_NAMES: Dictionary = {
@@ -50,7 +51,8 @@ const ROOM_NAMES: Dictionary = {
 	&"garden": "Campus Botanical Garden & Park",
 	&"salon": "Executive Barber & Hair Salon",
 	&"gate": "Main Campus Security Gate",
-	&"senate": "Senate Administrative Building"
+	&"senate": "Senate Administrative Building",
+	&"convocation": "Great Hall of Convocation & Alumni Arena"
 }
 
 var current_room: StringName = &"courtyard"

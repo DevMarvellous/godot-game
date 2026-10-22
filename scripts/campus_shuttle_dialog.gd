@@ -76,6 +76,12 @@ const DESTINATIONS: Array[Dictionary] = [
 		"scene": "res://scenes/rooms/campus_gate.tscn",
 		"icon": "🚖",
 		"fare": 100
+	},
+	{
+		"name": "Convocation Hall & Alumni Arena",
+		"scene": "res://scenes/rooms/convocation_hall.tscn",
+		"icon": "🎓",
+		"fare": 100
 	}
 ]
 
