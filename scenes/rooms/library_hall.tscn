@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://rm_library001"]
 
-[ext_resource type="Script" path="res://scripts/base_room.gd" id="1_room"]
+[ext_resource type="Script" path="res://scripts/library_room.gd" id="1_room"]
 [ext_resource type="PackedScene" uid="uid://b3player3d01" path="res://scenes/player_3d.tscn" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://c8hud001" path="res://scenes/hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" uid="uid://b3object3d01" path="res://scenes/campus_object_3d.tscn" id="4_obj"]
@@ -17,7 +17,8 @@ size = Vector3(22, 0.4, 20)
 size = Vector3(22, 0.4, 20)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
-albedo_color = Color(0.25, 0.22, 0.18, 1)
+albedo_color = Color(0.28, 0.22, 0.16, 1)
+roughness = 0.8
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wall_h"]
 size = Vector3(22, 4.2, 0.5)
@@ -26,7 +27,7 @@ size = Vector3(22, 4.2, 0.5)
 size = Vector3(22, 4.2, 0.5)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wall"]
-albedo_color = Color(0.85, 0.88, 0.86, 1)
+albedo_color = Color(0.88, 0.90, 0.88, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_wall_cutaway"]
 size = Vector3(22, 0.4, 0.5)
@@ -38,16 +39,31 @@ size = Vector3(0.5, 4.2, 20)
 size = Vector3(0.5, 4.2, 20)
 
 [sub_resource type="BoxMesh" id="BoxMesh_shelf"]
-size = Vector3(1.2, 3.2, 7.0)
+size = Vector3(1.2, 3.4, 6.5)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shelf"]
-albedo_color = Color(0.35, 0.22, 0.12, 1)
+albedo_color = Color(0.36, 0.22, 0.14, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_table"]
 size = Vector3(3.2, 0.8, 1.8)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wood"]
-albedo_color = Color(0.48, 0.32, 0.18, 1)
+albedo_color = Color(0.48, 0.30, 0.18, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_desk"]
+size = Vector3(2.8, 1.0, 1.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_desk"]
+albedo_color = Color(0.40, 0.25, 0.15, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_fan"]
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.08
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
+albedo_color = Color(0.2, 0.22, 0.25, 1)
+metallic = 0.7
 
 [node name="UniversityLibrary" type="Node3D"]
 script = ExtResource("1_room")
@@ -55,10 +71,10 @@ room_name = "Kashim Ibrahim University Library"
 room_id = &"library"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
-light_color = Color(1, 0.98, 0.9, 1)
-light_energy = 1.3
-omni_range = 22.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0, 0)
+light_color = Color(1, 0.98, 0.92, 1)
+light_energy = 1.35
+omni_range = 24.0
 
 [node name="Floor" type="StaticBody3D" parent="."]
 collision_layer = 4
@@ -115,48 +131,84 @@ surface_material_override/0 = SubResource("StandardMaterial3D_wall")
 
 [node name="LibraryFixtures" type="Node3D" parent="."]
 
-[node name="BookshelfLeft" type="MeshInstance3D" parent="LibraryFixtures"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 1.6, -4.5)
+[node name="BookshelfLeft1" type="MeshInstance3D" parent="LibraryFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.0, 1.7, -5.0)
 mesh = SubResource("BoxMesh_shelf")
 surface_material_override/0 = SubResource("StandardMaterial3D_shelf")
 
-[node name="BookshelfRight" type="MeshInstance3D" parent="LibraryFixtures"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 1.6, -4.5)
+[node name="BookshelfLeft2" type="MeshInstance3D" parent="LibraryFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.0, 1.7, 2.5)
 mesh = SubResource("BoxMesh_shelf")
 surface_material_override/0 = SubResource("StandardMaterial3D_shelf")
+
+[node name="BookshelfRight1" type="MeshInstance3D" parent="LibraryFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.0, 1.7, -5.0)
+mesh = SubResource("BoxMesh_shelf")
+surface_material_override/0 = SubResource("StandardMaterial3D_shelf")
+
+[node name="BookshelfRight2" type="MeshInstance3D" parent="LibraryFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.0, 1.7, 2.5)
+mesh = SubResource("BoxMesh_shelf")
+surface_material_override/0 = SubResource("StandardMaterial3D_shelf")
+
+[node name="CirculationDesk" type="MeshInstance3D" parent="LibraryFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.5, -1.0)
+mesh = SubResource("BoxMesh_desk")
+surface_material_override/0 = SubResource("StandardMaterial3D_desk")
 
 [node name="StudyTableMesh" type="MeshInstance3D" parent="LibraryFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, -2.5)
 mesh = SubResource("BoxMesh_table")
 surface_material_override/0 = SubResource("StandardMaterial3D_wood")
 
+[node name="StudyTableMesh2" type="MeshInstance3D" parent="LibraryFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 2.5)
+mesh = SubResource("BoxMesh_table")
+surface_material_override/0 = SubResource("StandardMaterial3D_wood")
+
 [node name="StudyTableLamp" type="OmniLight3D" parent="LibraryFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, -2.5)
 light_color = Color(1, 0.95, 0.75, 1)
-light_energy = 1.6
-omni_range = 4.5
+light_energy = 1.8
+omni_range = 5.0
+
+[node name="StudyTableLamp2" type="OmniLight3D" parent="LibraryFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 2.5)
+light_color = Color(1, 0.95, 0.75, 1)
+light_energy = 1.8
+omni_range = 5.0
+
+[node name="CeilingFan1" type="MeshInstance3D" parent="LibraryFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 3.8, 0)
+mesh = SubResource("CylinderMesh_fan")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="CeilingFan2" type="MeshInstance3D" parent="LibraryFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 3.8, 0)
+mesh = SubResource("CylinderMesh_fan")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
 
 [node name="LibrarySign" type="Label3D" parent="LibraryFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, -9.5)
 billboard = 1
-text = "UNIVERSITY CENTRAL LIBRARY (SILENCE)"
-font_size = 38
-outline_size = 8
+text = "🏛️ KASHIM IBRAHIM UNIVERSITY CENTRAL LIBRARY 🏛️"
+font_size = 34
+outline_size = 6
 
 [node name="SilenceSign" type="Label3D" parent="LibraryFixtures"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -9.0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, -9.0)
 billboard = 1
-text = "🤫 STRICT SILENCE! NO PHONE CALLS OR GIST!"
-font_size = 22
-outline_size = 5
+text = "🤫 STRICT SILENCE! NO PHONE CALLS OR NOISE IN READING CARRELS!"
+font_size = 20
+outline_size = 4
 modulate = Color(1, 0.35, 0.3, 1)
 
 [node name="ELibrarySign" type="Label3D" parent="LibraryFixtures"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 2.8, 1.0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 2.8, -2.5)
 billboard = 1
-text = "💻 E-LIBRARY & RESEARCH WING\n(Free Wi-Fi & Charging Sockets)"
-font_size = 20
-outline_size = 5
+text = "💻 E-LIBRARY & DIGITAL ARCHIVES\n(Free High-Speed Wi-Fi & Charging Sockets)"
+font_size = 18
+outline_size = 4
 modulate = Color(0.4, 0.85, 1, 1)
 
 [node name="WorldObjects" type="Node3D" parent="."]
@@ -179,19 +231,19 @@ object_name = "Department Project & Coursework Station"
 [node name="NPCs" type="Node3D" parent="."]
 
 [node name="MrsJanet" parent="NPCs" instance=ExtResource("8_npc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.1, -1.0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.1, -2.2)
 character_name = "Mrs. Janet"
 character_role = "Chief University Librarian"
 shirt_color = Color(0.2, 0.5, 0.7, 1)
 
 [node name="TobiScholar" parent="NPCs" instance=ExtResource("8_npc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0.1, -2.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.1, -2.5)
 character_name = "Tobi (400L)"
 character_role = "First Class CSC Scholar"
 shirt_color = Color(0.85, 0.2, 0.2, 1)
 
 [node name="Player3D" parent="." instance=ExtResource("2_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 3.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 4.0)
 
 [node name="HUD" parent="." instance=ExtResource("3_hud")]
 layer = 1
@@ -206,4 +258,3 @@ layer = 2
 [node name="SummaryMenu" parent="MenusLayer" instance=ExtResource("6_summary")]
 
 [node name="MobileControls" parent="." instance=ExtResource("7_mobile")]
-

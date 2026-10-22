@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://rm_salon001"]
 
-[ext_resource type="Script" path="res://scripts/base_room.gd" id="1_room"]
+[ext_resource type="Script" path="res://scripts/salon_room.gd" id="1_room"]
 [ext_resource type="PackedScene" uid="uid://b3player3d01" path="res://scenes/player_3d.tscn" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://c8hud001" path="res://scenes/hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" uid="uid://b3object3d01" path="res://scenes/campus_object_3d.tscn" id="4_obj"]
@@ -16,7 +16,8 @@ size = Vector3(16, 0.4, 15)
 size = Vector3(16, 0.4, 15)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
-albedo_color = Color(0.2, 0.22, 0.25, 1)
+albedo_color = Color(0.18, 0.18, 0.22, 1)
+roughness = 0.5
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wall_h"]
 size = Vector3(16, 3.8, 0.5)
@@ -25,7 +26,7 @@ size = Vector3(16, 3.8, 0.5)
 size = Vector3(16, 3.8, 0.5)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wall"]
-albedo_color = Color(0.9, 0.88, 0.82, 1)
+albedo_color = Color(0.92, 0.90, 0.86, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_wall_cutaway"]
 size = Vector3(16, 0.4, 0.5)
@@ -37,17 +38,40 @@ size = Vector3(0.5, 3.8, 15)
 size = Vector3(0.5, 3.8, 15)
 
 [sub_resource type="BoxMesh" id="BoxMesh_mirror"]
-size = Vector3(4.5, 2.0, 0.1)
+size = Vector3(6.5, 2.2, 0.08)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mirror"]
-albedo_color = Color(0.7, 0.85, 0.95, 1)
+albedo_color = Color(0.75, 0.88, 0.98, 1)
+metallic = 0.9
 roughness = 0.1
 
 [sub_resource type="BoxMesh" id="BoxMesh_barber_chair"]
 size = Vector3(0.9, 1.1, 0.9)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_chair"]
-albedo_color = Color(0.75, 0.15, 0.18, 1)
+albedo_color = Color(0.80, 0.18, 0.20, 1)
+roughness = 0.4
+
+[sub_resource type="BoxMesh" id="BoxMesh_shelf"]
+size = Vector3(6.5, 0.75, 0.6)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wood"]
+albedo_color = Color(0.35, 0.22, 0.14, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sofa"]
+size = Vector3(3.2, 0.65, 1.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sofa"]
+albedo_color = Color(0.18, 0.28, 0.45, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_fan"]
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.08
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
+albedo_color = Color(0.2, 0.22, 0.25, 1)
+metallic = 0.7
 
 [node name="BarbingSalon" type="Node3D"]
 script = ExtResource("1_room")
@@ -56,9 +80,15 @@ room_id = &"salon"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
-light_color = Color(1, 0.96, 0.9, 1)
-light_energy = 1.3
-omni_range = 16.0
+light_color = Color(1, 0.96, 0.90, 1)
+light_energy = 1.35
+omni_range = 18.0
+
+[node name="VanityLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -5.5)
+light_color = Color(1, 0.98, 0.92, 1)
+light_energy = 1.6
+omni_range = 6.0
 
 [node name="Floor" type="StaticBody3D" parent="."]
 collision_layer = 4
@@ -120,21 +150,36 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, -7.2)
 mesh = SubResource("BoxMesh_mirror")
 surface_material_override/0 = SubResource("StandardMaterial3D_mirror")
 
+[node name="BarberShelf" type="MeshInstance3D" parent="SalonDecor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, -6.8)
+mesh = SubResource("BoxMesh_shelf")
+surface_material_override/0 = SubResource("StandardMaterial3D_wood")
+
 [node name="BarberChair1" type="MeshInstance3D" parent="SalonDecor"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0.55, -5.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0.55, -5.2)
 mesh = SubResource("BoxMesh_barber_chair")
 surface_material_override/0 = SubResource("StandardMaterial3D_chair")
 
 [node name="BarberChair2" type="MeshInstance3D" parent="SalonDecor"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 0.55, -5.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 0.55, -5.2)
 mesh = SubResource("BoxMesh_barber_chair")
 surface_material_override/0 = SubResource("StandardMaterial3D_chair")
+
+[node name="WaitingSofa" type="MeshInstance3D" parent="SalonDecor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 4.5)
+mesh = SubResource("BoxMesh_sofa")
+surface_material_override/0 = SubResource("StandardMaterial3D_sofa")
+
+[node name="CeilingFan" type="MeshInstance3D" parent="SalonDecor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.4, 0)
+mesh = SubResource("CylinderMesh_fan")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
 
 [node name="SalonSign" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.4, -7.0)
 billboard = 1
-text = "EXECUTIVE BARBERSHOP & BRAIDING SALON"
-font_size = 34
+text = "💈 MASTER SUNDAY EXECUTIVE CUTS & BRAIDING SALON 💈"
+font_size = 32
 outline_size = 6
 
 [node name="StyleCatalogue" type="Label3D" parent="."]

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://rm_sub001"]
 
-[ext_resource type="Script" path="res://scripts/base_room.gd" id="1_room"]
+[ext_resource type="Script" path="res://scripts/sub_room.gd" id="1_room"]
 [ext_resource type="PackedScene" uid="uid://b3player3d01" path="res://scenes/player_3d.tscn" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://c8hud001" path="res://scenes/hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" uid="uid://b3object3d01" path="res://scenes/campus_object_3d.tscn" id="4_obj"]
@@ -16,7 +16,8 @@ size = Vector3(22, 0.4, 20)
 size = Vector3(22, 0.4, 20)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
-albedo_color = Color(0.2, 0.22, 0.26, 1)
+albedo_color = Color(0.22, 0.24, 0.28, 1)
+roughness = 0.65
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wall_h"]
 size = Vector3(22, 4.0, 0.5)
@@ -25,7 +26,7 @@ size = Vector3(22, 4.0, 0.5)
 size = Vector3(22, 4.0, 0.5)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wall"]
-albedo_color = Color(0.85, 0.85, 0.9, 1)
+albedo_color = Color(0.88, 0.88, 0.92, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_wall_cutaway"]
 size = Vector3(22, 0.4, 0.5)
@@ -67,6 +68,7 @@ height = 0.08
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
 albedo_color = Color(0.25, 0.28, 0.3, 1)
+metallic = 0.7
 
 [node name="StudentUnionBuilding" type="Node3D"]
 script = ExtResource("1_room")
@@ -75,9 +77,9 @@ room_id = &"sub"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
-light_color = Color(1, 0.95, 0.9, 1)
-light_energy = 1.3
-omni_range = 22.0
+light_color = Color(1, 0.95, 0.90, 1)
+light_energy = 1.35
+omni_range = 24.0
 
 [node name="Floor" type="StaticBody3D" parent="."]
 collision_layer = 4
@@ -147,7 +149,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_pos")
 [node name="SUBSign" type="Label3D" parent="SUBFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, -9.5)
 billboard = 1
-text = "CAMPUS MARKET & BUSINESS CENTRE (PRINTING, POS & PROVISIONS)"
+text = "🏛️ STUDENT UNION BUILDING (SUB) & BUSINESS CENTRE 🏛️"
 font_size = 32
 outline_size = 8
 
@@ -170,11 +172,16 @@ surface_material_override/0 = SubResource("StandardMaterial3D_shelf")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.0, 2.7, 0.0)
 billboard = 1
 text = "CAMPUS MINI MART & PROVISIONS"
-font_size = 24
+font_size = 22
 outline_size = 5
 
-[node name="CeilingFan" type="MeshInstance3D" parent="SUBFixtures"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6, 0)
+[node name="CeilingFan1" type="MeshInstance3D" parent="SUBFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 3.6, 0)
+mesh = SubResource("CylinderMesh_fan")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="CeilingFan2" type="MeshInstance3D" parent="SUBFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 3.6, 0)
 mesh = SubResource("CylinderMesh_fan")
 surface_material_override/0 = SubResource("StandardMaterial3D_metal")
 
@@ -234,4 +241,3 @@ layer = 2
 [node name="SummaryMenu" parent="MenusLayer" instance=ExtResource("6_summary")]
 
 [node name="MobileControls" parent="." instance=ExtResource("7_mobile")]
-

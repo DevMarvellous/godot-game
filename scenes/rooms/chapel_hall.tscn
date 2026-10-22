@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://rm_chapel001"]
 
-[ext_resource type="Script" path="res://scripts/base_room.gd" id="1_room"]
+[ext_resource type="Script" path="res://scripts/chapel_room.gd" id="1_room"]
 [ext_resource type="PackedScene" uid="uid://b3player3d01" path="res://scenes/player_3d.tscn" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://c8hud001" path="res://scenes/hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" uid="uid://b3object3d01" path="res://scenes/campus_object_3d.tscn" id="4_obj"]
@@ -16,7 +16,8 @@ size = Vector3(18, 0.4, 18)
 size = Vector3(18, 0.4, 18)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
-albedo_color = Color(0.24, 0.22, 0.25, 1)
+albedo_color = Color(0.26, 0.24, 0.28, 1)
+roughness = 0.7
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wall_h"]
 size = Vector3(18, 4.0, 0.5)
@@ -25,7 +26,7 @@ size = Vector3(18, 4.0, 0.5)
 size = Vector3(18, 4.0, 0.5)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wall"]
-albedo_color = Color(0.88, 0.88, 0.92, 1)
+albedo_color = Color(0.90, 0.90, 0.94, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_wall_cutaway"]
 size = Vector3(18, 0.4, 0.5)
@@ -43,16 +44,18 @@ size = Vector3(0.5, 3.2, 0.15)
 size = Vector3(1.8, 0.5, 0.15)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gold"]
-albedo_color = Color(0.9, 0.78, 0.25, 1)
+albedo_color = Color(0.92, 0.80, 0.28, 1)
+metallic = 0.8
+roughness = 0.25
 
 [sub_resource type="BoxMesh" id="BoxMesh_pew"]
 size = Vector3(5.5, 0.75, 0.8)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pew"]
-albedo_color = Color(0.42, 0.26, 0.14, 1)
+albedo_color = Color(0.44, 0.28, 0.16, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_pulpit"]
-size = Vector3(1.6, 1.1, 1.0)
+size = Vector3(1.8, 1.1, 1.1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_piano"]
 size = Vector3(1.8, 1.0, 1.2)
@@ -66,6 +69,15 @@ size = Vector3(1.4, 0.15, 0.3)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_keys"]
 albedo_color = Color(0.95, 0.95, 0.92, 1)
 
+[sub_resource type="CylinderMesh" id="CylinderMesh_fan"]
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.08
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
+albedo_color = Color(0.2, 0.22, 0.25, 1)
+metallic = 0.7
+
 [node name="ChapelHall" type="Node3D"]
 script = ExtResource("1_room")
 room_name = "Campus Chapel / Fellowship Auditorium"
@@ -73,9 +85,15 @@ room_id = &"chapel"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
-light_color = Color(1, 0.96, 0.85, 1)
-light_energy = 1.3
-omni_range = 18.0
+light_color = Color(1, 0.96, 0.88, 1)
+light_energy = 1.35
+omni_range = 20.0
+
+[node name="AltarGlow" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, -8.2)
+light_color = Color(1, 0.92, 0.65, 1)
+light_energy = 1.6
+omni_range = 6.0
 
 [node name="Floor" type="StaticBody3D" parent="."]
 collision_layer = 4
@@ -145,7 +163,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_gold")
 [node name="ChapelSign" type="Label3D" parent="ChapelFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, -8.5)
 billboard = 1
-text = "CAMPUS CHRISTIAN FELLOWSHIP AUDITORIUM"
+text = "✝️ CAMPUS CHRISTIAN FELLOWSHIP AUDITORIUM ✝️"
 font_size = 32
 outline_size = 6
 
@@ -217,6 +235,16 @@ font_size = 18
 outline_size = 4
 modulate = Color(1, 0.9, 0.45, 1)
 
+[node name="CeilingFan1" type="MeshInstance3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.0, 3.8, 0)
+mesh = SubResource("CylinderMesh_fan")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="CeilingFan2" type="MeshInstance3D" parent="ChapelFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0, 3.8, 0)
+mesh = SubResource("CylinderMesh_fan")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
 [node name="WorldObjects" type="Node3D" parent="."]
 
 [node name="ChapelAltar" parent="WorldObjects" instance=ExtResource("4_obj")]
@@ -256,4 +284,3 @@ layer = 2
 [node name="SummaryMenu" parent="MenusLayer" instance=ExtResource("6_summary")]
 
 [node name="MobileControls" parent="." instance=ExtResource("7_mobile")]
-
