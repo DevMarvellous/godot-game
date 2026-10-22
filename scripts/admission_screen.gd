@@ -229,6 +229,10 @@ func _ready() -> void:
 		next_button.add_theme_stylebox_override(&"hover", next_style)
 		next_button.add_theme_color_override(&"font_color", Color(0.06, 0.10, 0.14, 1.0))
 
+	if has_node("%SignInHeaderBtn"):
+		var signin_header: Button = %SignInHeaderBtn
+		signin_header.pressed.connect(_open_signin_dialog)
+
 	if name_input:
 		name_input.text_submitted.connect(func(_text: String) -> void: _on_next_pressed())
 	if email_input:
@@ -340,6 +344,84 @@ func _build_easy_typing_helpers() -> void:
 			le.add_theme_color_override(&"caret_color", Color(0.08, 0.55, 0.32, 1.0))
 			le.add_theme_font_size_override(&"font_size", 16)
 
+	# Big thumb-friendly gender toggle buttons
+	var gender_btn_row := HBoxContainer.new()
+	gender_btn_row.name = "QuickGenderRow"
+	gender_btn_row.add_theme_constant_override(&"separation", 10)
+
+	var male_btn := Button.new()
+	male_btn.name = "MaleToggleBtn"
+	male_btn.text = "👨 Male Student"
+	male_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	male_btn.custom_minimum_size = Vector2(0, 48)
+	male_btn.add_theme_font_size_override(&"font_size", 15)
+
+	var female_btn := Button.new()
+	female_btn.name = "FemaleToggleBtn"
+	female_btn.text = "👩 Female Student"
+	female_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	female_btn.custom_minimum_size = Vector2(0, 48)
+	female_btn.add_theme_font_size_override(&"font_size", 15)
+
+	var update_gender_styles := func():
+		var sel_style := StyleBoxFlat.new()
+		sel_style.bg_color = Color(0.12, 0.45, 0.30, 1.0)
+		sel_style.border_width_left = 2
+		sel_style.border_width_top = 2
+		sel_style.border_width_right = 2
+		sel_style.border_width_bottom = 2
+		sel_style.border_color = Color(1.0, 0.85, 0.30, 1.0)
+		sel_style.corner_radius_top_left = 10
+		sel_style.corner_radius_top_right = 10
+		sel_style.corner_radius_bottom_left = 10
+		sel_style.corner_radius_bottom_right = 10
+
+		var unsel_style := StyleBoxFlat.new()
+		unsel_style.bg_color = Color(0.10, 0.16, 0.24, 0.9)
+		unsel_style.border_width_left = 1
+		unsel_style.border_width_top = 1
+		unsel_style.border_width_right = 1
+		unsel_style.border_width_bottom = 1
+		unsel_style.border_color = Color(0.25, 0.35, 0.48, 0.6)
+		unsel_style.corner_radius_top_left = 10
+		unsel_style.corner_radius_top_right = 10
+		unsel_style.corner_radius_bottom_left = 10
+		unsel_style.corner_radius_bottom_right = 10
+
+		if selected_gender == "Male":
+			male_btn.add_theme_stylebox_override(&"normal", sel_style)
+			female_btn.add_theme_stylebox_override(&"normal", unsel_style)
+		else:
+			male_btn.add_theme_stylebox_override(&"normal", unsel_style)
+			female_btn.add_theme_stylebox_override(&"normal", sel_style)
+
+	male_btn.pressed.connect(func():
+		SoundManager.play_click()
+		selected_gender = "Male"
+		if gender_options:
+			gender_options.select(0)
+		update_gender_styles.call()
+		_refresh_avatar_preview(true)
+	)
+
+	female_btn.pressed.connect(func():
+		SoundManager.play_click()
+		selected_gender = "Female"
+		if gender_options:
+			gender_options.select(1)
+		update_gender_styles.call()
+		_refresh_avatar_preview(true)
+	)
+
+	gender_btn_row.add_child(male_btn)
+	gender_btn_row.add_child(female_btn)
+	update_gender_styles.call()
+
+	if gender_options:
+		gender_options.visible = false
+		biodata_panel.add_child(gender_btn_row)
+		biodata_panel.move_child(gender_btn_row, gender_options.get_index() + 1)
+
 	# Quick-tap Nigerian name chips + Native mobile keyboard button right below NameInput
 	var chip_row := HFlowContainer.new()
 	chip_row.name = "QuickNameChips"
@@ -357,8 +439,22 @@ func _build_easy_typing_helpers() -> void:
 	for label_txt in preset_names:
 		var b := Button.new()
 		b.text = label_txt
-		b.custom_minimum_size = Vector2(0, 36)
-		b.add_theme_font_size_override(&"font_size", 13)
+		b.custom_minimum_size = Vector2(0, 44)
+		b.add_theme_font_size_override(&"font_size", 14)
+		var chip_st := StyleBoxFlat.new()
+		chip_st.bg_color = Color(0.12, 0.18, 0.26, 0.95)
+		chip_st.border_width_left = 1
+		chip_st.border_width_top = 1
+		chip_st.border_width_right = 1
+		chip_st.border_width_bottom = 1
+		chip_st.border_color = Color(0.30, 0.45, 0.60, 0.7)
+		chip_st.corner_radius_top_left = 8
+		chip_st.corner_radius_top_right = 8
+		chip_st.corner_radius_bottom_left = 8
+		chip_st.corner_radius_bottom_right = 8
+		chip_st.content_margin_left = 10.0
+		chip_st.content_margin_right = 10.0
+		b.add_theme_stylebox_override(&"normal", chip_st)
 		b.pressed.connect(func():
 			SoundManager.play_click()
 			var chosen: String = RANDOM_POOL.pick_random() if label_txt.begins_with("🎲") else label_txt.split("'")[0].strip_edges() + " " + label_txt.split("'")[-1].strip_edges()
@@ -374,8 +470,8 @@ func _build_easy_typing_helpers() -> void:
 	if OS.has_feature("web"):
 		var kb_btn := Button.new()
 		kb_btn.text = "⌨️ Tap to Type Name"
-		kb_btn.custom_minimum_size = Vector2(0, 36)
-		kb_btn.add_theme_font_size_override(&"font_size", 13)
+		kb_btn.custom_minimum_size = Vector2(0, 44)
+		kb_btn.add_theme_font_size_override(&"font_size", 14)
 		kb_btn.pressed.connect(func():
 			var res = JavaScriptBridge.eval("window.prompt('Enter your Student Full Name:', '%s') || ''" % name_input.text.replace("'", ""))
 			if res is String and not String(res).strip_edges().is_empty():
@@ -418,7 +514,7 @@ func _build_easy_typing_helpers() -> void:
 
 	var signin_btn := Button.new()
 	signin_btn.text = "🔑 Sign In"
-	signin_btn.custom_minimum_size = Vector2(100, 36)
+	signin_btn.custom_minimum_size = Vector2(100, 38)
 	signin_btn.add_theme_font_size_override(&"font_size", 13)
 	signin_btn.pressed.connect(_open_signin_dialog)
 	b_hbox.add_child(signin_btn)
@@ -451,7 +547,7 @@ func _open_signin_dialog() -> void:
 
 	var backdrop := ColorRect.new()
 	backdrop.anchors_preset = Control.PRESET_FULL_RECT
-	backdrop.color = Color(0, 0, 0, 0.75)
+	backdrop.color = Color(0, 0, 0, 0.78)
 	modal.add_child(backdrop)
 
 	var center := CenterContainer.new()
@@ -459,7 +555,7 @@ func _open_signin_dialog() -> void:
 	modal.add_child(center)
 
 	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(460, 360)
+	panel.custom_minimum_size = Vector2(460, 0)
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0.08, 0.12, 0.18, 0.98)
 	style.border_width_left = 2
@@ -467,14 +563,14 @@ func _open_signin_dialog() -> void:
 	style.border_width_right = 2
 	style.border_width_bottom = 2
 	style.border_color = Color(0.35, 0.65, 0.95, 0.9)
-	style.corner_radius_top_left = 14
-	style.corner_radius_top_right = 14
-	style.corner_radius_bottom_right = 14
-	style.corner_radius_bottom_left = 14
-	style.content_margin_left = 20.0
-	style.content_margin_top = 18.0
-	style.content_margin_right = 20.0
-	style.content_margin_bottom = 18.0
+	style.corner_radius_top_left = 16
+	style.corner_radius_top_right = 16
+	style.corner_radius_bottom_right = 16
+	style.corner_radius_bottom_left = 16
+	style.content_margin_left = 22.0
+	style.content_margin_top = 20.0
+	style.content_margin_right = 22.0
+	style.content_margin_bottom = 20.0
 	panel.add_theme_stylebox_override(&"panel", style)
 	center.add_child(panel)
 
@@ -482,29 +578,83 @@ func _open_signin_dialog() -> void:
 	vbox.add_theme_constant_override(&"separation", 12)
 	panel.add_child(vbox)
 
+	# Top Bar: Title & Large 44x44 Close Button
+	var top_bar := HBoxContainer.new()
+	top_bar.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_child(top_bar)
+
 	var title_lbl := Label.new()
-	title_lbl.text = "🔑 RETURNING STUDENT SIGN IN"
+	title_lbl.text = "🏛️ STUDENT PORTAL ACCESS"
+	title_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title_lbl.add_theme_font_size_override(&"font_size", 18)
 	title_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.35))
-	vbox.add_child(title_lbl)
+	top_bar.add_child(title_lbl)
+
+	var close_x_btn := Button.new()
+	close_x_btn.text = "✕"
+	close_x_btn.custom_minimum_size = Vector2(44, 44)
+	close_x_btn.add_theme_font_size_override(&"font_size", 18)
+	var close_st := StyleBoxFlat.new()
+	close_st.bg_color = Color(0.24, 0.10, 0.12, 0.9)
+	close_st.border_width_left = 1
+	close_st.border_width_top = 1
+	close_st.border_width_right = 1
+	close_st.border_width_bottom = 1
+	close_st.border_color = Color(0.95, 0.40, 0.40, 0.8)
+	close_st.corner_radius_top_left = 8
+	close_st.corner_radius_top_right = 8
+	close_st.corner_radius_bottom_left = 8
+	close_st.corner_radius_bottom_right = 8
+	close_x_btn.add_theme_stylebox_override(&"normal", close_st)
+	close_x_btn.pressed.connect(func(): modal.visible = false)
+	top_bar.add_child(close_x_btn)
 
 	var sub_lbl := Label.new()
-	sub_lbl.text = "Enter your campus student email and password to resume your semester progress."
+	sub_lbl.text = "Sign in to resume semester progress, or register your fresher cloud account."
 	sub_lbl.add_theme_font_size_override(&"font_size", 13)
 	sub_lbl.add_theme_color_override(&"font_color", Color(0.80, 0.86, 0.94))
 	sub_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vbox.add_child(sub_lbl)
 
+	# Mode Switcher Tabs
+	var mode_tabs := HBoxContainer.new()
+	mode_tabs.add_theme_constant_override(&"separation", 8)
+	vbox.add_child(mode_tabs)
+
+	var tab_signin := Button.new()
+	tab_signin.text = "🔑 Returning Student"
+	tab_signin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tab_signin.custom_minimum_size = Vector2(0, 44)
+	tab_signin.add_theme_font_size_override(&"font_size", 14)
+	mode_tabs.add_child(tab_signin)
+
+	var tab_signup := Button.new()
+	tab_signup.text = "📝 Fresher Registration"
+	tab_signup.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tab_signup.custom_minimum_size = Vector2(0, 44)
+	tab_signup.add_theme_font_size_override(&"font_size", 14)
+	mode_tabs.add_child(tab_signup)
+
+	var is_signup_mode := false
+
+	# Input fields
+	var name_box := LineEdit.new()
+	name_box.placeholder_text = "Student Full Name (e.g. Femi Adeleke)"
+	name_box.custom_minimum_size = Vector2(0, 48)
+	name_box.add_theme_font_size_override(&"font_size", 14)
+	name_box.visible = false
+	vbox.add_child(name_box)
+
 	var email_box := LineEdit.new()
-	email_box.placeholder_text = "Student Email (e.g. femi.student@campus.edu.ng)"
-	email_box.custom_minimum_size = Vector2(0, 46)
+	email_box.placeholder_text = "Student Email (e.g. femi.adeleke@campus.edu.ng)"
+	email_box.custom_minimum_size = Vector2(0, 48)
 	email_box.add_theme_font_size_override(&"font_size", 14)
 	vbox.add_child(email_box)
 
 	var pass_box := LineEdit.new()
 	pass_box.placeholder_text = "Student Password"
 	pass_box.secret = true
-	pass_box.custom_minimum_size = Vector2(0, 46)
+	pass_box.custom_minimum_size = Vector2(0, 48)
 	pass_box.add_theme_font_size_override(&"font_size", 14)
 	vbox.add_child(pass_box)
 
@@ -515,34 +665,115 @@ func _open_signin_dialog() -> void:
 	status_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vbox.add_child(status_lbl)
 
-	var btn_row := HBoxContainer.new()
-	btn_row.add_theme_constant_override(&"separation", 10)
-	vbox.add_child(btn_row)
-
-	var cancel_btn := Button.new()
-	cancel_btn.text = "Cancel"
-	cancel_btn.custom_minimum_size = Vector2(100, 44)
-	cancel_btn.add_theme_font_size_override(&"font_size", 14)
-	cancel_btn.pressed.connect(func(): modal.visible = false)
-	btn_row.add_child(cancel_btn)
-
 	var submit_btn := Button.new()
-	submit_btn.text = "🔑 Sign In & Resume"
-	submit_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	submit_btn.custom_minimum_size = Vector2(0, 44)
-	submit_btn.add_theme_font_size_override(&"font_size", 14)
+	submit_btn.text = "🔑 Sign In & Resume Semester"
+	submit_btn.custom_minimum_size = Vector2(0, 50)
+	submit_btn.add_theme_font_size_override(&"font_size", 15)
+	var sub_btn_st := StyleBoxFlat.new()
+	sub_btn_st.bg_color = Color(0.12, 0.50, 0.32, 1.0)
+	sub_btn_st.border_width_left = 2
+	sub_btn_st.border_width_top = 2
+	sub_btn_st.border_width_right = 2
+	sub_btn_st.border_width_bottom = 2
+	sub_btn_st.border_color = Color(0.35, 0.90, 0.55, 1.0)
+	sub_btn_st.corner_radius_top_left = 10
+	sub_btn_st.corner_radius_top_right = 10
+	sub_btn_st.corner_radius_bottom_left = 10
+	sub_btn_st.corner_radius_bottom_right = 10
+	submit_btn.add_theme_stylebox_override(&"normal", sub_btn_st)
+	vbox.add_child(submit_btn)
+
+	var guest_btn := Button.new()
+	guest_btn.text = "⚡ Play as Guest / Offline (Skip Sign In)"
+	guest_btn.custom_minimum_size = Vector2(0, 44)
+	guest_btn.add_theme_font_size_override(&"font_size", 13)
+	var gst_st := StyleBoxFlat.new()
+	gst_st.bg_color = Color(0.14, 0.20, 0.30, 0.9)
+	gst_st.border_width_left = 1
+	gst_st.border_width_top = 1
+	gst_st.border_width_right = 1
+	gst_st.border_width_bottom = 1
+	gst_st.border_color = Color(0.40, 0.60, 0.85, 0.7)
+	gst_st.corner_radius_top_left = 8
+	gst_st.corner_radius_top_right = 8
+	gst_st.corner_radius_bottom_left = 8
+	gst_st.corner_radius_bottom_right = 8
+	guest_btn.add_theme_stylebox_override(&"normal", gst_st)
+	vbox.add_child(guest_btn)
+
+	var refresh_tabs := func():
+		var active_st := StyleBoxFlat.new()
+		active_st.bg_color = Color(0.12, 0.42, 0.28, 1.0)
+		active_st.border_width_bottom = 3
+		active_st.border_color = Color(1.0, 0.85, 0.30, 1.0)
+		active_st.corner_radius_top_left = 8
+		active_st.corner_radius_top_right = 8
+
+		var inactive_st := StyleBoxFlat.new()
+		inactive_st.bg_color = Color(0.10, 0.16, 0.24, 0.8)
+		inactive_st.corner_radius_top_left = 8
+		inactive_st.corner_radius_top_right = 8
+
+		if is_signup_mode:
+			tab_signup.add_theme_stylebox_override(&"normal", active_st)
+			tab_signin.add_theme_stylebox_override(&"normal", inactive_st)
+			name_box.visible = true
+			submit_btn.text = "📝 Create Cloud Student Account"
+			sub_lbl.text = "Create a cloud student profile to sync CGPA, wealth, and hostel items."
+		else:
+			tab_signin.add_theme_stylebox_override(&"normal", active_st)
+			tab_signup.add_theme_stylebox_override(&"normal", inactive_st)
+			name_box.visible = false
+			submit_btn.text = "🔑 Sign In & Resume Semester"
+			sub_lbl.text = "Enter your student email and password to resume your campus progress."
+
+	tab_signin.pressed.connect(func():
+		SoundManager.play_click()
+		is_signup_mode = false
+		status_lbl.text = ""
+		refresh_tabs.call()
+	)
+
+	tab_signup.pressed.connect(func():
+		SoundManager.play_click()
+		is_signup_mode = true
+		status_lbl.text = ""
+		refresh_tabs.call()
+	)
+	refresh_tabs.call()
+
 	submit_btn.pressed.connect(func():
 		var em: String = email_box.text.strip_edges()
 		var pw: String = pass_box.text
-		if em.is_empty() or pw.is_empty():
-			status_lbl.text = "Please enter both email and password."
-			return
-		status_lbl.add_theme_color_override(&"font_color", Color(0.35, 0.85, 1.0))
-		status_lbl.text = "Authenticating with campus server..."
-		if SupabaseClient:
-			SupabaseClient.sign_in_student(em, pw)
+		if is_signup_mode:
+			var nm: String = name_box.text.strip_edges()
+			if nm.is_empty() or em.is_empty() or pw.is_empty():
+				status_lbl.add_theme_color_override(&"font_color", Color(0.95, 0.45, 0.35))
+				status_lbl.text = "Please fill in all fields (Name, Email, Password)."
+				return
+			status_lbl.add_theme_color_override(&"font_color", Color(0.35, 0.85, 1.0))
+			status_lbl.text = "Registering cloud student profile..."
+			if SupabaseClient:
+				SupabaseClient.sign_up_student(em, pw, nm)
+		else:
+			if em.is_empty() or pw.is_empty():
+				status_lbl.add_theme_color_override(&"font_color", Color(0.95, 0.45, 0.35))
+				status_lbl.text = "Please enter both email and password."
+				return
+			status_lbl.add_theme_color_override(&"font_color", Color(0.35, 0.85, 1.0))
+			status_lbl.text = "Authenticating with campus server..."
+			if SupabaseClient:
+				SupabaseClient.sign_in_student(em, pw)
 	)
-	btn_row.add_child(submit_btn)
+
+	guest_btn.pressed.connect(func():
+		SoundManager.play_click()
+		modal.visible = false
+		if name_input and name_input.text.strip_edges().is_empty():
+			name_input.text = "Femi Adeleke"
+		if email_input and email_input.text.strip_edges().is_empty():
+			email_input.text = "femi.adeleke@campus.edu.ng"
+	)
 
 	if SupabaseClient:
 		SupabaseClient.auth_state_changed.connect(func(is_logged_in: bool, student_em: String):
@@ -550,19 +781,26 @@ func _open_signin_dialog() -> void:
 				return
 			if is_logged_in:
 				status_lbl.add_theme_color_override(&"font_color", Color(0.35, 0.95, 0.55))
-				status_lbl.text = "Logged in successfully! Loading student profile..."
+				status_lbl.text = "Authentication successful! Loading profile..."
 				await get_tree().create_timer(0.6).timeout
 				if StudentProfile.load_from_disk() and not StudentProfile.matric_no.is_empty():
 					modal.visible = false
 					RoomManager.change_room(&"courtyard")
 				else:
 					modal.visible = false
-					name_input.text = student_em.split("@")[0].capitalize()
+					if name_box.text.strip_edges() != "":
+						name_input.text = name_box.text.strip_edges()
+					else:
+						name_input.text = student_em.split("@")[0].capitalize()
 					email_input.text = student_em
 					_on_next_pressed()
 			else:
 				status_lbl.add_theme_color_override(&"font_color", Color(0.95, 0.45, 0.35))
-				status_lbl.text = "Sign in failed. Check your password or register as new student."
+				status_lbl.text = "Authentication failed. Check credentials or register as new student."
+		)
+		SupabaseClient.profile_synced.connect(func(_ok: bool, msg: String):
+			if is_instance_valid(modal) and modal.visible:
+				status_lbl.text = msg
 		)
 
 	add_child(modal)
@@ -572,6 +810,7 @@ func _setup_preview_player() -> void:
 	if not has_node("%PreviewViewport"):
 		return
 	var vp: SubViewport = %PreviewViewport
+	vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 
 	# Environment for vivid bright campus daylight from all angles
 	if not vp.has_node("PreviewEnv"):
@@ -603,27 +842,49 @@ func _setup_preview_player() -> void:
 		fill_light.light_color = Color(0.85, 0.92, 1.0, 1.0)
 		vp.add_child(fill_light)
 
+	# 3D Circular Podium for stage presence
+	if not vp.has_node("PreviewPodium"):
+		var podium := MeshInstance3D.new()
+		podium.name = "PreviewPodium"
+		var cyl := CylinderMesh.new()
+		cyl.top_radius = 0.55
+		cyl.bottom_radius = 0.60
+		cyl.height = 0.08
+		podium.mesh = cyl
+		var p_mat := StandardMaterial3D.new()
+		p_mat.albedo_color = Color(0.12, 0.22, 0.18, 1.0)
+		p_mat.metallic = 0.3
+		p_mat.roughness = 0.4
+		podium.material_override = p_mat
+		podium.position = Vector3(0, -0.04, 0)
+		vp.add_child(podium)
+
 	var pcam: Camera3D = vp.get_node_or_null("PreviewCamera") as Camera3D
 	if pcam:
-		pcam.position = Vector3(0, 0.88, 2.05)
+		pcam.position = Vector3(0, 1.02, 2.30)
 		pcam.rotation_degrees = Vector3(-4, 0, 0)
 		pcam.fov = 38.0
 		pcam.make_current()
 
-	preview_player_instance = PlayerScene.instantiate() as Player3D
-	preview_player_instance.set_physics_process(false)
-	preview_player_instance.set_process_unhandled_input(false)
+	if not is_instance_valid(preview_player_instance):
+		preview_player_instance = PlayerScene.instantiate() as Player3D
+		preview_player_instance.set_physics_process(false)
+		preview_player_instance.set_process_unhandled_input(false)
+		preview_player_instance.position = Vector3(0, 0.05, 0)
 
-	# Strip inner camera and physics before adding to viewport so it never steals current camera
-	for child_name in ["Camera3D", "CollisionShape3D", "NotifLabel", "PromptLabel"]:
-		var n = preview_player_instance.get_node_or_null(child_name)
-		if n:
-			preview_player_instance.remove_child(n)
-			n.free()
+		# Strip inner camera and physics before adding to viewport so it never steals current camera
+		for child_name in ["Camera3D", "CollisionShape3D", "NotifLabel", "PromptLabel"]:
+			var n = preview_player_instance.get_node_or_null(child_name)
+			if n:
+				preview_player_instance.remove_child(n)
+				n.free()
 
-	vp.add_child(preview_player_instance)
+		vp.add_child(preview_player_instance)
+
 	if pcam:
 		pcam.make_current()
+
+	_refresh_avatar_preview(false)
 
 
 func _process(delta: float) -> void:
@@ -1103,9 +1364,8 @@ func _update_view() -> void:
 
 	if has_node("%PreviewViewport"):
 		var vp: SubViewport = %PreviewViewport
-		vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS if (current_step == Step.AVATAR) else SubViewport.UPDATE_DISABLED
-		if current_step == Step.AVATAR:
-			_refresh_avatar_preview(false)
+		vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+		_refresh_avatar_preview(false)
 
 	_update_step_navbar()
 

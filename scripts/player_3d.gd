@@ -610,13 +610,17 @@ func apply_appearance(
 
 ## Plays a stylish 360-degree spin dressing animation with bounce & sparkle
 func play_dressing_animation(midpoint_callback: Callable = Callable()) -> void:
+	# Always execute appearance change immediately so clothing updates without any lag
+	if midpoint_callback.is_valid():
+		midpoint_callback.call()
+
 	if not visual_root or not is_inside_tree():
-		if midpoint_callback.is_valid():
-			midpoint_callback.call()
 		return
 
 	if _dress_tween and _dress_tween.is_valid():
 		_dress_tween.kill()
+		visual_root.scale = Vector3.ONE
+		is_dressing_animating = false
 
 	is_dressing_animating = true
 
@@ -628,22 +632,20 @@ func play_dressing_animation(midpoint_callback: Callable = Callable()) -> void:
 
 	# First half spin (0 to 180 degrees) with subtle wind-up crouch
 	tw.set_parallel(true)
-	tw.tween_property(visual_root, "rotation:y", start_rot + PI, 0.20).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tw.tween_property(visual_root, "scale", Vector3(0.88, 1.12, 0.88), 0.20)
+	tw.tween_property(visual_root, "rotation:y", start_rot + PI, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_property(visual_root, "scale", Vector3(0.92, 1.08, 0.92), 0.18)
 
-	# Swap clothes & audio chime at midpoint
+	# Sound chime at spin peak
 	tw.set_parallel(false)
 	tw.tween_callback(func():
-		if midpoint_callback.is_valid():
-			midpoint_callback.call()
 		if SoundManager:
 			SoundManager.play_bell()
 	)
 
 	# Second half spin (180 to 360 degrees) with celebratory bounce
 	tw.set_parallel(true)
-	tw.tween_property(visual_root, "rotation:y", full_spin_rot, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tw.tween_property(visual_root, "scale", Vector3(1.16, 1.16, 1.16), 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(visual_root, "rotation:y", full_spin_rot, 0.20).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(visual_root, "scale", Vector3(1.15, 1.15, 1.15), 0.20).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 	# Settle scale back to 1.0
 	tw.set_parallel(false)
@@ -653,6 +655,7 @@ func play_dressing_animation(midpoint_callback: Callable = Callable()) -> void:
 	tw.tween_callback(func():
 		if is_instance_valid(visual_root):
 			visual_root.rotation.y = fmod(visual_root.rotation.y, TAU)
+			visual_root.scale = Vector3.ONE
 		is_dressing_animating = false
 	)
 

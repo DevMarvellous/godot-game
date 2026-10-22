@@ -27,7 +27,7 @@ corner_radius_top_left = 18
 corner_radius_top_right = 18
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_preview"]
-bg_color = Color(0.13, 0.22, 0.32, 1)
+bg_color = Color(0.08, 0.13, 0.20, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -66,7 +66,7 @@ grow_vertical = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_bottom = 28
 
 [node name="CardCenter" type="BoxContainer" parent="SafeArea"]
 layout_mode = 2
@@ -85,7 +85,7 @@ layout_mode = 2
 theme_override_constants/separation = 6
 
 [node name="HeaderPanel" type="PanelContainer" parent="SafeArea/CardCenter/CardPanel/CardVBox"]
-custom_minimum_size = Vector2(0, 96)
+custom_minimum_size = Vector2(0, 102)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_header")
 
@@ -96,7 +96,7 @@ alignment = 1
 [node name="StepTitle" type="Label" parent="SafeArea/CardCenter/CardPanel/CardVBox/HeaderPanel/HeaderVBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 22
 text = "🏛️ STUDENT ADMISSIONS PORTAL"
 horizontal_alignment = 1
 
@@ -104,9 +104,65 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.95, 0.88, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 14
 text = "Step 1 of 5: Candidate Biodata & Registration"
 horizontal_alignment = 1
+
+[node name="SignInHeaderBtn" type="Button" parent="SafeArea/CardCenter/CardPanel/CardVBox/HeaderPanel/HeaderVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 13
+text = "🔑 Returning Student? Sign In"
+
+[node name="PreviewCard" type="PanelContainer" parent="SafeArea/CardCenter/CardPanel/CardVBox"]
+custom_minimum_size = Vector2(0, 240)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_preview")
+
+[node name="PreviewVBox" type="VBoxContainer" parent="SafeArea/CardCenter/CardPanel/CardVBox/PreviewCard"]
+layout_mode = 2
+
+[node name="PreviewViewportContainer" type="SubViewportContainer" parent="SafeArea/CardCenter/CardPanel/CardVBox/PreviewCard/PreviewVBox"]
+custom_minimum_size = Vector2(0, 205)
+layout_mode = 2
+stretch = true
+
+[node name="PreviewViewport" type="SubViewport" parent="SafeArea/CardCenter/CardPanel/CardVBox/PreviewCard/PreviewVBox/PreviewViewportContainer"]
+unique_name_in_owner = true
+own_world_3d = true
+handle_input_locally = false
+size = Vector2i(540, 205)
+render_target_update_mode = 4
+
+[node name="PreviewCamera" type="Camera3D" parent="SafeArea/CardCenter/CardPanel/CardVBox/PreviewCard/PreviewVBox/PreviewViewportContainer/PreviewViewport"]
+transform = Transform3D(1, 0, 0, 0, 0.996195, 0.087156, 0, -0.087156, 0.996195, 0, 1.02, 2.30)
+current = true
+fov = 38.0
+
+[node name="PreviewLight" type="DirectionalLight3D" parent="SafeArea/CardCenter/CardPanel/CardVBox/PreviewCard/PreviewVBox/PreviewViewportContainer/PreviewViewport"]
+transform = Transform3D(0.866025, -0.25, 0.433013, 0, 0.866025, 0.5, -0.5, -0.433013, 0.75, 2, 4, 3)
+light_energy = 1.6
+light_color = Color(1.0, 0.98, 0.92, 1)
+
+[node name="PreviewFillLight" type="DirectionalLight3D" parent="SafeArea/CardCenter/CardPanel/CardVBox/PreviewCard/PreviewVBox/PreviewViewportContainer/PreviewViewport"]
+transform = Transform3D(0.707107, 0.353553, -0.612372, 0, 0.866025, 0.5, 0.707107, -0.353553, 0.612372, -2.5, 2.0, 1.5)
+light_energy = 0.9
+light_color = Color(0.85, 0.92, 1.0, 1)
+
+[node name="PreviewRimLight" type="DirectionalLight3D" parent="SafeArea/CardCenter/CardPanel/CardVBox/PreviewCard/PreviewVBox/PreviewViewportContainer/PreviewViewport"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 2.5, -2.5)
+light_energy = 1.1
+light_color = Color(1.0, 0.88, 0.55, 1)
+
+[node name="AvatarPreviewLabel" type="Label" parent="SafeArea/CardCenter/CardPanel/CardVBox/PreviewCard/PreviewVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "✨ 3D STUDENT PREVIEW: Male Student | Warm Chestnut"
+horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="SafeArea/CardCenter/CardPanel/CardVBox"]
 layout_mode = 2
@@ -135,44 +191,44 @@ theme_override_constants/separation = 14
 [node name="InfoLabel" type="Label" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/BiodataPanel"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.78, 0.82, 0.88, 1)
-theme_override_font_sizes/font_size = 13
-text = "Welcome to Federal University of Campus Life. Please enter your JAMB candidate name and student registration details below:"
+theme_override_font_sizes/font_size = 14
+text = "Welcome to Federal University of Campus Life. Please enter your student details and pick your look below:"
 autowrap_mode = 2
 
 [node name="NameTitle" type="Label" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/BiodataPanel"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 15
 text = "Full Candidate Name:"
 
 [node name="NameInput" type="LineEdit" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/BiodataPanel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 16
 placeholder_text = "e.g. Femi Adeleke / Chidinma Okonkwo"
 
 [node name="EmailTitle" type="Label" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/BiodataPanel"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 15
 text = "Student Email Address:"
 
 [node name="EmailInput" type="LineEdit" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/BiodataPanel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 16
 placeholder_text = "e.g. femi.adeleke@campus.edu.ng"
 
 [node name="GenderTitle" type="Label" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/BiodataPanel"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 15
 text = "Gender:"
 
 [node name="GenderOptions" type="OptionButton" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/BiodataPanel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 16
 
 [node name="AvatarPanel" type="VBoxContainer" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels"]
 unique_name_in_owner = true
@@ -180,88 +236,44 @@ visible = false
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="PreviewCard" type="PanelContainer" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel"]
-custom_minimum_size = Vector2(0, 275)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_preview")
-
-[node name="PreviewVBox" type="VBoxContainer" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel/PreviewCard"]
-layout_mode = 2
-
-[node name="PreviewViewportContainer" type="SubViewportContainer" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel/PreviewCard/PreviewVBox"]
-custom_minimum_size = Vector2(0, 225)
-layout_mode = 2
-stretch = true
-
-[node name="PreviewViewport" type="SubViewport" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel/PreviewCard/PreviewVBox/PreviewViewportContainer"]
-unique_name_in_owner = true
-own_world_3d = true
-transparent_bg = true
-handle_input_locally = false
-size = Vector2i(520, 225)
-render_target_update_mode = 4
-
-[node name="PreviewCamera" type="Camera3D" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel/PreviewCard/PreviewVBox/PreviewViewportContainer/PreviewViewport"]
-transform = Transform3D(1, 0, 0, 0, 0.996195, 0.087156, 0, -0.087156, 0.996195, 0, 0.88, 2.05)
-current = true
-fov = 38.0
-
-[node name="PreviewLight" type="DirectionalLight3D" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel/PreviewCard/PreviewVBox/PreviewViewportContainer/PreviewViewport"]
-transform = Transform3D(0.866025, -0.25, 0.433013, 0, 0.866025, 0.5, -0.5, -0.433013, 0.75, 2, 4, 3)
-light_energy = 1.45
-light_color = Color(1.0, 0.97, 0.92, 1)
-
-[node name="PreviewFillLight" type="DirectionalLight3D" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel/PreviewCard/PreviewVBox/PreviewViewportContainer/PreviewViewport"]
-transform = Transform3D(0.707107, 0.353553, -0.612372, 0, 0.866025, 0.5, 0.707107, -0.353553, 0.612372, -2.5, 2.0, 1.5)
-light_energy = 0.85
-light_color = Color(0.85, 0.92, 1.0, 1)
-
-[node name="AvatarPreviewLabel" type="Label" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel/PreviewCard/PreviewVBox"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 12
-text = "👤 PREVIEW: Male Student | Warm Chestnut Tone"
-horizontal_alignment = 1
-autowrap_mode = 2
-
 [node name="SkinLabel" type="Label" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 15
 text = "Melanin Complexion:"
 
 [node name="ComplexionOptions" type="OptionButton" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 
 [node name="HairLabel" type="Label" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 15
 text = "Hairstyle & Grooming:"
 
 [node name="HairOptions" type="OptionButton" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 
 [node name="ShirtLabel" type="Label" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 15
 text = "Shirt & Wardrobe:"
 
 [node name="ShirtOptions" type="OptionButton" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 
 [node name="TrouserLabel" type="Label" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 15
 text = "Trousers / Pants:"
 
 [node name="TrouserOptions" type="OptionButton" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/AvatarPanel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 
 [node name="DeptPanel" type="VBoxContainer" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels"]
@@ -273,32 +285,32 @@ theme_override_constants/separation = 12
 [node name="DeptInfoLabel" type="Label" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/DeptPanel"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.78, 0.82, 0.88, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 14
 text = "Select your desired Degree Course below. You must take the 3-question Post-UTME screening test to earn merit placement. If your test score is low, you will be reassigned by the University Admissions Board!"
 autowrap_mode = 2
 
 [node name="FacultyLabel" type="Label" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/DeptPanel"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 15
 text = "1. Select Academic Faculty:"
 
 [node name="FacultyOptions" type="OptionButton" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/DeptPanel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 15
 
 [node name="DeptChoiceLabel" type="Label" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/DeptPanel"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 15
 text = "2. First Choice Degree Program:"
 
 [node name="DeptOptions" type="OptionButton" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/DeptPanel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 15
 
 [node name="DeptDescCard" type="PanelContainer" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/DeptPanel"]
 custom_minimum_size = Vector2(0, 96)
@@ -316,7 +328,7 @@ theme_override_constants/margin_bottom = 8
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.88, 0.90, 0.95, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 14
 text = "Faculty information..."
 autowrap_mode = 2
 
@@ -330,7 +342,7 @@ theme_override_constants/separation = 12
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.78, 0.25, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 15
 text = "Screening Question 1 of 3 (Pass Mark: 67%)"
 
 [node name="QuestionCard" type="PanelContainer" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/ScreeningPanel"]
@@ -348,7 +360,7 @@ theme_override_constants/margin_bottom = 10
 [node name="QuestionLabel" type="Label" parent="SafeArea/CardCenter/CardPanel/CardVBox/ScrollContainer/ContentMargin/StepPanels/ScreeningPanel/QuestionCard/Margin"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 16
 text = "What is the primary function of an Operating System?"
 autowrap_mode = 2
 
@@ -387,13 +399,13 @@ text = "Letter text..."
 [node name="FooterMargin" type="MarginContainer" parent="SafeArea/CardCenter/CardPanel/CardVBox"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 2
+theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_bottom = 12
 
 [node name="NextButton" type="Button" parent="SafeArea/CardCenter/CardPanel/CardVBox/FooterMargin"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 18
 text = "Next: Character Customization ➡️"
