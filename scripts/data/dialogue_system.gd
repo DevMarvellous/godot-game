@@ -614,6 +614,32 @@ const DIALOGUE_TREES: Dictionary = {
 				"money_change": 0
 			}
 		]
+	},
+	"Kemi": {
+		"greeting": "Hey there! Mind if I chew while briefing this constitutional law case? The Nigerian Legal System course is no joke!",
+		"choices": [
+			{
+				"text": "How do you manage to read such thick law textbooks in the canteen?",
+				"response": "Mama Cashout's jollof rice is brain fuel! Once I get my carbs in, I can memorize 20 legal precedents in one sitting!",
+				"cgpa_boost": 0.05,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Any tips for surviving 100L continuous assessment tests?",
+				"response": "Form a study group, never miss attendance, and make sure your lecture notes are complete before week 8!",
+				"cgpa_boost": 0.06,
+				"faith_boost": 5.0,
+				"money_change": 0
+			},
+			{
+				"text": "Enjoy your meal, learned colleague!",
+				"response": "Thanks a lot! Wishing you First Class honours this semester!",
+				"cgpa_boost": 0.02,
+				"faith_boost": 10.0,
+				"money_change": 0
+			}
+		]
 	}
 }
 
