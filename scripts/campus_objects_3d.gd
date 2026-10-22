@@ -31,7 +31,10 @@ enum ObjectType {
 	GATE_SECURITY,
 	DOOR_EXIT,
 	MINI_FRIDGE,
-	HOSTEL_BOOMBOX
+	HOSTEL_BOOMBOX,
+	NOTICEBOARD,
+	SPONSOR_STAND,
+	PHOTOCOPY_KIOSK
 }
 
 @export var object_type: ObjectType = ObjectType.BED
@@ -142,6 +145,15 @@ func update_object_display() -> void:
 		ObjectType.HOSTEL_BOOMBOX:
 			prompt_message = "[E] Toggle Afrobeats & Lofi Dorm Speaker"
 			object_name = "Bluetooth Boombox Speaker"
+		ObjectType.NOTICEBOARD:
+			prompt_message = "[E] Read Faculty Noticeboard & Timetable"
+			object_name = "Departmental Noticeboard & Timetable"
+		ObjectType.SPONSOR_STAND:
+			prompt_message = "[E] Visit MTN Pulse 5G Sponsor Booth"
+			object_name = "MTN Pulse 5G Campus Activation"
+		ObjectType.PHOTOCOPY_KIOSK:
+			prompt_message = "[E] Photocopy Handouts & Spiral Binding"
+			object_name = "Brother Austin Photocopy & Spiral Binding"
 
 	if label_3d:
 		label_3d.text = object_name
@@ -347,6 +359,41 @@ func interact(player: CharacterBody3D) -> void:
 					_show_feedback(player, "🎶 Bluetooth Boombox ON! Relaxing Afrobeats & Lofi dorm vibes! Faith +15!")
 				else:
 					_show_feedback(player, "🔇 Bluetooth Boombox paused.")
+
+		ObjectType.NOTICEBOARD:
+			StudentProfile.load_from_disk()
+			needs.modify_faith(15.0)
+			TimeSystem.advance_minutes(10)
+			if SoundManager:
+				SoundManager.play_click()
+			var lec_idx: int = Schedule.get_current_lecture_index()
+			var tip: String = "No lectures right now. Final exam revision is ongoing in the Library!"
+			if lec_idx != -1:
+				var lec = Schedule.get_lecture(lec_idx)
+				tip = "ACTIVE LECTURE: %s at Faculty Hall LT1!" % String(lec.get("name", "Lecture"))
+			_show_feedback(player, "📋 NOTICEBOARD: %s | Dean's Honour Roll posted. Faith +15!" % tip)
+
+		ObjectType.SPONSOR_STAND:
+			if AdManager:
+				AdManager.show_rewarded_ad("quad_sponsor", player)
+			else:
+				needs.modify_money(1500)
+				_show_feedback(player, "Visited MTN Pulse Booth! +₦1,500 promo airtime allowance!")
+
+		ObjectType.PHOTOCOPY_KIOSK:
+			if needs.money >= 300:
+				needs.modify_money(-300)
+				needs.modify_cgpa(0.04)
+				needs.modify_energy(-5.0)
+				TimeSystem.advance_minutes(15)
+				if SoundManager:
+					SoundManager.play_click()
+				_show_feedback(player, "Brother Austin printed & stapled your Course Handout Pack (-₦300)! Study Boost! CGPA +0.04!")
+			else:
+				needs.modify_money(1200)
+				needs.modify_energy(-15.0)
+				TimeSystem.advance_minutes(25)
+				_show_feedback(player, "Assisted Brother Austin with spiral binding! Earned ₦1,200 quick hustle cash!")
 
 
 func _show_feedback(player: CharacterBody3D, msg: String) -> void:

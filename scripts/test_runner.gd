@@ -235,6 +235,8 @@ func _ready() -> void:
 	print("[5/6] Verifying Room Scenes instancing & fan rotations...")
 	var rooms_to_test = [
 		"res://scenes/rooms/hostel_room.tscn",
+		"res://scenes/rooms/campus_gate.tscn",
+		"res://scenes/main.tscn",
 		"res://scenes/rooms/campus_mall.tscn",
 		"res://scenes/rooms/mama_put.tscn",
 		"res://scenes/rooms/lecture_hall.tscn",
@@ -245,7 +247,6 @@ func _ready() -> void:
 		"res://scenes/rooms/barbing_salon.tscn",
 		"res://scenes/rooms/campus_garden.tscn",
 		"res://scenes/rooms/sub_building.tscn",
-		"res://scenes/rooms/campus_gate.tscn",
 		"res://scenes/rooms/senate_building.tscn"
 	]
 	for r_path in rooms_to_test:

@@ -76,6 +76,22 @@ func _grant_ad_reward(reward_type: String, player: CharacterBody3D) -> void:
 		needs = target_player.get_node_or_null("NeedsManager") as NeedsManager
 
 	match reward_type:
+		"quad_sponsor":
+			if needs:
+				needs.modify_money(2000)
+				needs.modify_faith(15.0)
+			StudentProfile.money += 2000
+			StudentProfile.save_to_disk()
+			if SupabaseClient:
+				SupabaseClient.sync_profile_to_cloud(StudentProfile.get_profile_data())
+			if SoundManager:
+				SoundManager.play_coin()
+			if target_player and target_player.has_method("display_notification"):
+				target_player.display_notification("💰 MTN PULSE 5G: +₦2,000 allowance + 2GB data credited to your CampusPay!")
+			if target_player and target_player.has_method("play_celebrate_animation"):
+				target_player.play_celebrate_animation("🎉 MTN PULSE BONUS! +₦2,000")
+			rewarded_ad_completed.emit("quad_sponsor", 2000)
+
 		"urgent_2k":
 			if needs:
 				needs.modify_money(2000)

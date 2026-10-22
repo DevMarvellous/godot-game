@@ -280,6 +280,38 @@ static func build_campus_prop(obj: Node3D, obj_type: int) -> Node3D:
 			_add_cyl(root, 0.08, 0.08, 0.02, Vector3(-0.12, 0.12, 0.12), Color(0.85, 0.22, 0.22), Vector3(90, 0, 0)) # Red speaker grill
 			_add_cyl(root, 0.08, 0.08, 0.02, Vector3(0.12, 0.12, 0.12), Color(0.22, 0.65, 0.85), Vector3(90, 0, 0)) # Blue speaker grill
 			_add_box(root, Vector3(0.04, 0.06, 0.04), Vector3(0, 0.26, 0), Color(0.20, 0.85, 1.0), Vector3.ZERO, 0.2, 0.8) # Glowing LED
+		25: # NOTICEBOARD (Faculty Circulars & Examination Timetable)
+			_add_cyl(root, 0.05, 0.06, 2.2, Vector3(-1.1, 1.1, 0), WOOD_DARK)
+			_add_cyl(root, 0.05, 0.06, 2.2, Vector3(1.1, 1.1, 0), WOOD_DARK)
+			_add_box(root, Vector3(2.4, 1.3, 0.08), Vector3(0, 1.35, 0), WOOD_DARK)
+			_add_box(root, Vector3(2.25, 1.15, 0.04), Vector3(0, 1.35, 0.03), Color(0.72, 0.58, 0.38))
+			_add_box(root, Vector3(2.6, 0.06, 0.45), Vector3(0, 2.05, 0.12), METAL_DARK, Vector3(15, 0, 0))
+			_add_box(root, Vector3(0.42, 0.55, 0.02), Vector3(-0.65, 1.4, 0.06), CREAM_WHITE, Vector3(0, 0, 3))
+			_add_box(root, Vector3(0.40, 0.50, 0.02), Vector3(-0.15, 1.35, 0.06), DANFO_YELLOW, Vector3(0, 0, -2))
+			_add_box(root, Vector3(0.45, 0.58, 0.02), Vector3(0.40, 1.42, 0.06), CREAM_WHITE, Vector3(0, 0, 1))
+			_add_box(root, Vector3(0.38, 0.42, 0.02), Vector3(0.85, 1.25, 0.06), Color(0.95, 0.82, 0.82), Vector3(0, 0, -4))
+		26: # SPONSOR_STAND (MTN 5G Pulse & Indomie Campus Promo Gazebo)
+			_add_cyl(root, 0.035, 0.035, 2.2, Vector3(-1.1, 1.1, -1.1), DANFO_YELLOW, Vector3.ZERO, 0.4)
+			_add_cyl(root, 0.035, 0.035, 2.2, Vector3(1.1, 1.1, -1.1), DANFO_YELLOW, Vector3.ZERO, 0.4)
+			_add_cyl(root, 0.035, 0.035, 2.2, Vector3(-1.1, 1.1, 1.1), DANFO_YELLOW, Vector3.ZERO, 0.4)
+			_add_cyl(root, 0.035, 0.035, 2.2, Vector3(1.1, 1.1, 1.1), DANFO_YELLOW, Vector3.ZERO, 0.4)
+			_add_box(root, Vector3(2.4, 0.35, 2.4), Vector3(0, 2.3, 0), DANFO_YELLOW)
+			_add_box(root, Vector3(2.48, 0.08, 2.48), Vector3(0, 2.15, 0), Color(0.10, 0.28, 0.65))
+			_add_box(root, Vector3(1.6, 0.85, 0.55), Vector3(0, 0.42, 0.4), CREAM_WHITE)
+			_add_box(root, Vector3(1.62, 0.42, 0.02), Vector3(0, 0.45, 0.68), DANFO_YELLOW)
+			_add_box(root, Vector3(0.55, 1.6, 0.02), Vector3(1.4, 0.82, 0.5), DANFO_YELLOW, Vector3(0, -15, 0))
+			_add_box(root, Vector3(0.58, 0.06, 0.22), Vector3(1.4, 0.03, 0.5), METAL_SILVER, Vector3(0, -15, 0), 0.7)
+		27: # PHOTOCOPY_KIOSK (Brother Austin's Campus Spiral Binding & Copy Shop)
+			_add_box(root, Vector3(2.2, 1.1, 1.4), Vector3(0, 0.55, 0), WOOD_DARK)
+			_add_box(root, Vector3(2.28, 0.06, 1.48), Vector3(0, 1.12, 0), WOOD_WARM)
+			_add_box(root, Vector3(2.4, 0.06, 1.6), Vector3(0, 2.2, 0.15), Color(0.12, 0.38, 0.75), Vector3(10, 0, 0))
+			_add_cyl(root, 0.03, 0.03, 1.2, Vector3(-1.05, 1.65, 0.65), METAL_DARK)
+			_add_cyl(root, 0.03, 0.03, 1.2, Vector3(1.05, 1.65, 0.65), METAL_DARK)
+			_add_box(root, Vector3(0.68, 0.42, 0.52), Vector3(-0.52, 1.34, 0.05), Color(0.85, 0.87, 0.90), Vector3.ZERO, 0.3)
+			_add_box(root, Vector3(0.42, 0.04, 0.32), Vector3(-0.52, 1.56, 0.05), Color(0.18, 0.20, 0.24))
+			_add_box(root, Vector3(0.32, 0.18, 0.25), Vector3(0.45, 1.22, -0.15), DANFO_YELLOW)
+			_add_box(root, Vector3(0.30, 0.14, 0.22), Vector3(0.48, 1.38, -0.15), CREAM_WHITE)
+			_add_box(root, Vector3(0.42, 0.16, 0.28), Vector3(0.42, 1.21, 0.32), Color(0.12, 0.45, 0.85))
 		_:
 			_add_box(root, Vector3(0.9, 0.8, 0.9), Vector3(0, 0.4, 0), WOOD_WARM)
 
@@ -289,6 +321,13 @@ static func build_campus_prop(obj: Node3D, obj_type: int) -> Node3D:
 ## Returns ambient student NPC templates so every room feels populated in My Campus Life
 static func get_ambient_npcs_for_room(room_id: StringName) -> Array[Dictionary]:
 	match room_id:
+		&"courtyard", &"main":
+			return [
+				{"name": "Comrade Ojo", "role": "SUG President", "color": Color(0.12, 0.58, 0.25), "pos": Vector3(-5.0, 0.1, -6.5), "lines": ["Great Nigerian Students! Aluta Continua!", "Congress holds this Friday at the SUB—be there to voice your hostel concerns!", "Check the Departmental Noticeboard for your lecture schedules and dockets!"]},
+				{"name": "Sister Blessing", "role": "Fellowship Exec", "color": Color(0.68, 0.35, 0.85), "pos": Vector3(-4.0, 0.1, 3.5), "lines": ["Academic brilliance without peace of mind is incomplete!", "Join us at the Chapel for Midweek Fellowship—prayers for semester success!", "Have a blessed and productive day on campus!"]},
+				{"name": "Brother Austin", "role": "Photocopy Boss", "color": Color(0.25, 0.45, 0.75), "pos": Vector3(7.2, 0.1, -6.5), "lines": ["Handouts and past questions for all 34 departments ready!", "Fast spiral binding available—don't wait till exam morning!", "Need extra pocket money? Jump in for a 20-minute printing hustle!"]},
+				{"name": "Dr. Adebayo", "role": "Faculty Dean", "color": Color(0.75, 0.22, 0.25), "pos": Vector3(3.5, 0.1, -2.5), "lines": ["Good day, scholar. 75% lecture attendance is strictly enforced.", "Have you checked the library archives for past questions?", "Students with CGPA >= 4.50 can claim their ₦25,000 Senate scholarship!"]}
+			]
 		&"hostel":
 			return [
 				{"name": "Tunde (100L)", "role": "Hall Rep", "color": Color(0.18, 0.55, 0.85), "pos": Vector3(-2.5, 0.1, 2.5), "lines": ["NEPA just flashed light o, charge your phone fast!", "Who took my bucket by the tap?!", "Shuttle to Lecture Hall leaves every 3 minutes."]},
@@ -531,6 +570,8 @@ static func _brighten_room_surfaces(room: Node3D, r_name: String) -> void:
 			floor_mat.albedo_color = Color(0.92, 0.90, 0.84) # Senate marble
 		elif "gate" in r_name:
 			floor_mat.albedo_color = Color(0.78, 0.76, 0.72) # Campus road paving
+		elif "courtyard" in r_name or "main" in r_name:
+			floor_mat.albedo_color = Color(0.84, 0.82, 0.78) # Paved academic quad
 		else:
 			floor_mat.albedo_color = Color(0.86, 0.84, 0.80)
 		floor_node.material_override = floor_mat
@@ -657,6 +698,56 @@ static func _inject_room_decor(room: Node3D, r_name: String) -> void:
 		boli_smoke.mesh = smesh
 		boli_smoke.position = Vector3(-8.0, 0.88, -5.5)
 		decor.add_child(boli_smoke)
+
+	elif "courtyard" in r_name or "main" in r_name:
+		# Central University Quad Monument / Obelisk
+		_add_box(decor, Vector3(2.4, 0.45, 2.4), Vector3(0, 0.22, 0), Color(0.65, 0.62, 0.58))
+		_add_box(decor, Vector3(1.8, 0.35, 1.8), Vector3(0, 0.60, 0), Color(0.75, 0.72, 0.68))
+		_add_cyl(decor, 0.28, 0.45, 3.2, Vector3(0, 2.35, 0), Color(0.88, 0.86, 0.82), Vector3.ZERO, 0.3)
+		_add_cyl(decor, 0.05, 0.28, 0.75, Vector3(0, 4.30, 0), Color(0.96, 0.78, 0.15), Vector3.ZERO, 0.6, 0.3)
+
+		# Gold university monument plaque
+		var plaque_lbl := Label3D.new()
+		plaque_lbl.text = "★ MY CAMPUS LIFE UNIVERSITY ★\nCENTRAL ACADEMIC QUAD\n\"EXCELLENCE, WISDOM & ENTERPRISE\"\nEST. 1962"
+		plaque_lbl.font_size = 20
+		plaque_lbl.outline_size = 4
+		plaque_lbl.modulate = Color(0.12, 0.14, 0.18)
+		plaque_lbl.position = Vector3(0, 0.62, 0.92)
+		decor.add_child(plaque_lbl)
+
+		# 4-Direction Campus Fingerpost Sign
+		_add_cyl(decor, 0.04, 0.04, 2.6, Vector3(-1.8, 1.3, -2.5), Color(0.2, 0.22, 0.25), Vector3.ZERO, 0.4)
+		var sign_n := Label3D.new()
+		sign_n.text = "⬆ NORTH: Lecture Theatres LT1 & LT2 • Library"
+		sign_n.font_size = 18
+		sign_n.outline_size = 4
+		sign_n.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
+		sign_n.position = Vector3(-1.8, 2.6, -2.5)
+		decor.add_child(sign_n)
+
+		var sign_s := Label3D.new()
+		sign_s.text = "⬇ SOUTH: Hall 2 Hostels • Campus Security Gate"
+		sign_s.font_size = 18
+		sign_s.outline_size = 4
+		sign_s.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
+		sign_s.position = Vector3(-1.8, 2.35, -2.5)
+		decor.add_child(sign_s)
+
+		var sign_e := Label3D.new()
+		sign_e.text = "➡ EAST: Mama Put Canteen • Campus Mall"
+		sign_e.font_size = 18
+		sign_e.outline_size = 4
+		sign_e.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
+		sign_e.position = Vector3(-1.8, 2.1, -2.5)
+		decor.add_child(sign_e)
+
+		var sign_w := Label3D.new()
+		sign_w.text = "⬅ WEST: Student Union Building (SUB) • Chapel"
+		sign_w.font_size = 18
+		sign_w.outline_size = 4
+		sign_w.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
+		sign_w.position = Vector3(-1.8, 1.85, -2.5)
+		decor.add_child(sign_w)
 
 
 static func update_room_day_night_lighting(room: Node3D) -> void:
