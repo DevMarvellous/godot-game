@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://rm_senate001"]
 
-[ext_resource type="Script" path="res://scripts/base_room.gd" id="1_room"]
+[ext_resource type="Script" path="res://scripts/senate_room.gd" id="1_room"]
 [ext_resource type="PackedScene" uid="uid://b3player3d01" path="res://scenes/player_3d.tscn" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://c8hud001" path="res://scenes/hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" uid="uid://b3object3d01" path="res://scenes/campus_object_3d.tscn" id="4_obj"]
@@ -41,14 +41,38 @@ size = Vector3(0.5, 4.5, 20)
 size = Vector3(1.1, 4.5, 1.1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_stone"]
-albedo_color = Color(0.8, 0.82, 0.85, 1)
+albedo_color = Color(0.82, 0.84, 0.86, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_counter"]
 size = Vector3(9.0, 1.1, 1.5)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mahogany"]
 albedo_color = Color(0.28, 0.16, 0.1, 1)
-roughness = 0.4
+roughness = 0.35
+
+[sub_resource type="BoxMesh" id="BoxMesh_carpet"]
+size = Vector3(3.5, 0.04, 12.0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_crimson"]
+albedo_color = Color(0.62, 0.08, 0.12, 1)
+roughness = 0.8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_stanchion"]
+top_radius = 0.06
+bottom_radius = 0.16
+height = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gold"]
+albedo_color = Color(0.95, 0.8, 0.25, 1)
+metallic = 0.8
+roughness = 0.2
+
+[sub_resource type="BoxMesh" id="BoxMesh_sofa"]
+size = Vector3(2.6, 0.8, 1.0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sofa_leather"]
+albedo_color = Color(0.18, 0.28, 0.22, 1)
+roughness = 0.5
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_fan"]
 top_radius = 1.0
@@ -67,6 +91,12 @@ room_id = &"senate"
 transform = Transform3D(0.866, -0.354, 0.354, 0, 0.707, 0.707, -0.5, -0.612, 0.612, 0, 8, 0)
 light_color = Color(1, 0.98, 0.94, 1)
 light_energy = 1.1
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, -4.0)
+light_color = Color(1, 0.95, 0.85, 1)
+light_energy = 1.2
+omni_range = 14.0
 
 [node name="Floor" type="StaticBody3D" parent="."]
 collision_layer = 4
@@ -133,10 +163,55 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 2.25, -4.5)
 mesh = SubResource("BoxMesh_pillar")
 surface_material_override/0 = SubResource("StandardMaterial3D_stone")
 
+[node name="LeftFrontPillar" type="MeshInstance3D" parent="SenateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 2.25, 3.5)
+mesh = SubResource("BoxMesh_pillar")
+surface_material_override/0 = SubResource("StandardMaterial3D_stone")
+
+[node name="RightFrontPillar" type="MeshInstance3D" parent="SenateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 2.25, 3.5)
+mesh = SubResource("BoxMesh_pillar")
+surface_material_override/0 = SubResource("StandardMaterial3D_stone")
+
 [node name="RegistryCounter" type="MeshInstance3D" parent="SenateFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -6.5)
 mesh = SubResource("BoxMesh_counter")
 surface_material_override/0 = SubResource("StandardMaterial3D_mahogany")
+
+[node name="RedCarpet" type="MeshInstance3D" parent="SenateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+mesh = SubResource("BoxMesh_carpet")
+surface_material_override/0 = SubResource("StandardMaterial3D_crimson")
+
+[node name="StanchionLeft1" type="MeshInstance3D" parent="SenateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0, 0.5, -2.0)
+mesh = SubResource("CylinderMesh_stanchion")
+surface_material_override/0 = SubResource("StandardMaterial3D_gold")
+
+[node name="StanchionLeft2" type="MeshInstance3D" parent="SenateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0, 0.5, 2.0)
+mesh = SubResource("CylinderMesh_stanchion")
+surface_material_override/0 = SubResource("StandardMaterial3D_gold")
+
+[node name="StanchionRight1" type="MeshInstance3D" parent="SenateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0, 0.5, -2.0)
+mesh = SubResource("CylinderMesh_stanchion")
+surface_material_override/0 = SubResource("StandardMaterial3D_gold")
+
+[node name="StanchionRight2" type="MeshInstance3D" parent="SenateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0, 0.5, 2.0)
+mesh = SubResource("CylinderMesh_stanchion")
+surface_material_override/0 = SubResource("StandardMaterial3D_gold")
+
+[node name="WaitingSofa1" type="MeshInstance3D" parent="SenateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0.4, -1.0)
+mesh = SubResource("BoxMesh_sofa")
+surface_material_override/0 = SubResource("StandardMaterial3D_sofa_leather")
+
+[node name="WaitingSofa2" type="MeshInstance3D" parent="SenateFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0.4, 3.0)
+mesh = SubResource("BoxMesh_sofa")
+surface_material_override/0 = SubResource("StandardMaterial3D_sofa_leather")
 
 [node name="CeilingFan" type="MeshInstance3D" parent="SenateFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0, 0)
@@ -201,4 +276,3 @@ layer = 2
 [node name="SummaryMenu" parent="MenusLayer" instance=ExtResource("6_summary")]
 
 [node name="MobileControls" parent="." instance=ExtResource("7_mobile")]
-
