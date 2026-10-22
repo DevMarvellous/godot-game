@@ -84,3 +84,4 @@ func _on_player_passed_out(_reason: String) -> void:
 		if player.has_method("display_notification"):
 			player.display_notification("🍲 Mama Cashout revived you: 'Ehya! Sapa wan kill my student?! Take this hot jollof rice free of charge!'")
 		player.global_position = Vector3(0, 0.1, -3.5)
+

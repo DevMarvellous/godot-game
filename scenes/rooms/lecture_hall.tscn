@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://rm_lecture001"]
 
-[ext_resource type="Script" path="res://scripts/base_room.gd" id="1_room"]
+[ext_resource type="Script" path="res://scripts/lecture_hall_room.gd" id="1_room"]
 [ext_resource type="PackedScene" uid="uid://b3player3d01" path="res://scenes/player_3d.tscn" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://c8hud001" path="res://scenes/hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" uid="uid://b3object3d01" path="res://scenes/campus_object_3d.tscn" id="4_obj"]
@@ -18,8 +18,8 @@ size = Vector3(20, 0.4, 18)
 size = Vector3(20, 0.4, 18)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
-albedo_color = Color(0.22, 0.24, 0.26, 1)
-roughness = 0.7
+albedo_color = Color(0.24, 0.26, 0.28, 1)
+roughness = 0.65
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wall_h"]
 size = Vector3(20, 4.5, 0.5)
@@ -28,7 +28,7 @@ size = Vector3(20, 4.5, 0.5)
 size = Vector3(20, 4.5, 0.5)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wall"]
-albedo_color = Color(0.8, 0.82, 0.85, 1)
+albedo_color = Color(0.88, 0.89, 0.90, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_wall_cutaway"]
 size = Vector3(20, 0.4, 0.5)
@@ -40,28 +40,37 @@ size = Vector3(0.5, 4.5, 18)
 size = Vector3(0.5, 4.5, 18)
 
 [sub_resource type="BoxMesh" id="BoxMesh_board"]
-size = Vector3(8.0, 2.2, 0.1)
+size = Vector3(8.5, 2.4, 0.1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_board"]
-albedo_color = Color(0.12, 0.28, 0.18, 1)
+albedo_color = Color(0.10, 0.25, 0.16, 1)
+roughness = 0.5
 
 [sub_resource type="BoxMesh" id="BoxMesh_podium"]
-size = Vector3(2.5, 1.1, 1.2)
+size = Vector3(2.4, 1.1, 1.2)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wood"]
-albedo_color = Color(0.45, 0.28, 0.15, 1)
+albedo_color = Color(0.42, 0.24, 0.14, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_bench_row"]
-size = Vector3(12.0, 0.75, 1.4)
+size = Vector3(13.0, 0.75, 1.4)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bench"]
-albedo_color = Color(0.35, 0.24, 0.16, 1)
+albedo_color = Color(0.38, 0.25, 0.16, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_projector"]
 size = Vector3(0.8, 0.35, 0.6)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
-albedo_color = Color(0.2, 0.22, 0.25, 1)
+albedo_color = Color(0.20, 0.22, 0.25, 1)
+metallic = 0.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_screen"]
+size = Vector3(3.8, 2.2, 0.05)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_screen"]
+albedo_color = Color(0.96, 0.96, 0.98, 1)
+roughness = 0.2
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_fan"]
 top_radius = 1.0
@@ -69,13 +78,16 @@ bottom_radius = 1.0
 height = 0.08
 
 [sub_resource type="BoxMesh" id="BoxMesh_riser1"]
-size = Vector3(14, 0.45, 3.2)
+size = Vector3(14.5, 0.35, 2.8)
 
 [sub_resource type="BoxMesh" id="BoxMesh_riser2"]
-size = Vector3(14, 0.90, 3.2)
+size = Vector3(14.5, 0.70, 2.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_riser3"]
+size = Vector3(14.5, 1.05, 2.8)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_riser"]
-albedo_color = Color(0.26, 0.28, 0.32, 1)
+albedo_color = Color(0.28, 0.30, 0.34, 1)
 
 [node name="LectureHall" type="Node3D"]
 script = ExtResource("1_room")
@@ -83,10 +95,17 @@ room_name = "Lecture Theatre (Faculty LT 1)"
 room_id = &"lecture"
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0, 0)
-light_color = Color(1, 1, 0.95, 1)
-light_energy = 1.4
-omni_range = 20.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2, 0)
+light_color = Color(0.98, 0.98, 0.95, 1)
+light_energy = 1.45
+omni_range = 24.0
+
+[node name="StageSpotLight" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 4.0, -4.5)
+light_color = Color(1, 0.98, 0.90, 1)
+light_energy = 1.6
+spot_range = 10.0
+spot_angle = 45.0
 
 [node name="Floor" type="StaticBody3D" parent="."]
 collision_layer = 4
@@ -150,17 +169,19 @@ surface_material_override/0 = SubResource("StandardMaterial3D_board")
 
 [node name="BlackboardNotes" type="Label3D" parent="LectureFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -8.6)
-text = "100L CONTINUOUS ASSESSMENT (CA)\n• Topic: Data Structures & Binary Trees\n• Formula: f(x) = 3x² + 4x - 5, f'(x) = 6x + 4\n⚠️ LATE SUBMISSIONS ATTRACT -5 MARKS!\nAttendance = 10% of final grade."
-font_size = 20
+text = "🏛️ FACULTY LECTURE THEATRE 1 • CSC 101
+• Topic: Data Structures & Binary Trees
+• Big-O Complexity: Search = O(log n), Insert = O(log n)
+• Assignment: Implement QuickSort in GDScript
+⚠️ CA TEST NEXT WEEK: 30 MARKS! ATTENDANCE REQUIRED."
+font_size = 19
 outline_size = 4
 modulate = Color(1, 1, 0.85, 1)
 
-[node name="CampaignPoster" type="Label3D" parent="LectureFixtures"]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -9.7, 2.4, 0)
-text = "🗳️ VOTE COMRADE TUNDE\nFOR STUDENT UNION PRESIDENT 2026!\n\"BETTER HOSTEL LIGHT & AFFORDABLE MEALS!\"\n★ STUDENTS FIRST! ★"
-font_size = 18
-outline_size = 4
-modulate = Color(1, 0.85, 0.2, 1)
+[node name="ProjectorScreen" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, -8.55)
+mesh = SubResource("BoxMesh_screen")
+surface_material_override/0 = SubResource("StandardMaterial3D_screen")
 
 [node name="LecturerPodium" type="MeshInstance3D" parent="LectureFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, -6.5)
@@ -173,22 +194,32 @@ mesh = SubResource("BoxMesh_bench_row")
 surface_material_override/0 = SubResource("StandardMaterial3D_bench")
 
 [node name="RiserPlatform2" type="MeshInstance3D" parent="LectureFixtures"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.175, -0.2)
 mesh = SubResource("BoxMesh_riser1")
 surface_material_override/0 = SubResource("StandardMaterial3D_riser")
 
 [node name="BenchRow2" type="MeshInstance3D" parent="LectureFixtures"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, -0.2)
 mesh = SubResource("BoxMesh_bench_row")
 surface_material_override/0 = SubResource("StandardMaterial3D_bench")
 
 [node name="RiserPlatform3" type="MeshInstance3D" parent="LectureFixtures"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 3.6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 2.8)
 mesh = SubResource("BoxMesh_riser2")
 surface_material_override/0 = SubResource("StandardMaterial3D_riser")
 
 [node name="BenchRow3" type="MeshInstance3D" parent="LectureFixtures"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.30, 3.6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.10, 2.8)
+mesh = SubResource("BoxMesh_bench_row")
+surface_material_override/0 = SubResource("StandardMaterial3D_bench")
+
+[node name="RiserPlatform4" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.525, 5.8)
+mesh = SubResource("BoxMesh_riser3")
+surface_material_override/0 = SubResource("StandardMaterial3D_riser")
+
+[node name="BenchRow4" type="MeshInstance3D" parent="LectureFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 5.8)
 mesh = SubResource("BoxMesh_bench_row")
 surface_material_override/0 = SubResource("StandardMaterial3D_bench")
 
@@ -208,18 +239,37 @@ mesh = SubResource("CylinderMesh_fan")
 surface_material_override/0 = SubResource("StandardMaterial3D_metal")
 
 [node name="HallSign" type="Label3D" parent="LectureFixtures"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.0, -8.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.1, -8.5)
 billboard = 1
-text = "FACULTY LECTURE THEATRE 1 (LT1)"
-font_size = 34
+text = "🏛️ FACULTY LECTURE THEATRE 1 (LT1) 🏛️"
+font_size = 32
 outline_size = 6
+
+[node name="CampaignPoster" type="Label3D" parent="LectureFixtures"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -9.7, 2.4, 0)
+text = "🗳️ VOTE COMRADE TUNDE\nFOR SUG PRESIDENT 2026!\n\"24/7 LIGHT, CAMPUS WI-FI & ZERO SAPA!\"\n★ ALUTA CONTINUA! ★"
+font_size = 18
+outline_size = 4
+modulate = Color(1, 0.85, 0.2, 1)
+
+[node name="ExamRulesPoster" type="Label3D" parent="LectureFixtures"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 9.7, 2.4, 0)
+text = "⚠️ EXAMINATION CODE & DISCIPLINE\n• Exam malpractice = Instant Expulsion!\n• Maintain minimum 75% lecture attendance.\n• Dean of Student Affairs."
+font_size = 18
+outline_size = 4
+modulate = Color(0.95, 0.35, 0.30, 1)
 
 [node name="WorldObjects" type="Node3D" parent="."]
 
 [node name="StudyDesk" parent="WorldObjects" instance=ExtResource("4_obj")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, -0.2)
 object_type = 1
 object_name = "Student Lecture Desk"
+
+[node name="Noticeboard" parent="WorldObjects" instance=ExtResource("4_obj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -5.5)
+object_type = 25
+object_name = "Departmental Noticeboard"
 
 [node name="NPCs" type="Node3D" parent="."]
 
@@ -230,13 +280,19 @@ character_role = "Senior Lecturer"
 shirt_color = Color(0.75, 0.2, 0.25, 1)
 
 [node name="Emeka" parent="NPCs" instance=ExtResource("6_npc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.1, 1.0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0.1, -5.2)
 character_name = "Emeka"
 character_role = "Course Rep"
-shirt_color = Color(0.2, 0.7, 0.4, 1)
+shirt_color = Color(0.18, 0.65, 0.35, 1)
+
+[node name="Bolanle" parent="NPCs" instance=ExtResource("6_npc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.1, -3.2)
+character_name = "Bolanle"
+character_role = "Front-Row Scholar"
+shirt_color = Color(0.92, 0.78, 0.15, 1)
 
 [node name="Player3D" parent="." instance=ExtResource("2_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 4.0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 1.2)
 
 [node name="HUD" parent="." instance=ExtResource("3_hud")]
 layer = 1
@@ -253,4 +309,3 @@ layer = 2
 [node name="SummaryMenu" parent="MenusLayer" instance=ExtResource("7_summary")]
 
 [node name="MobileControls" parent="." instance=ExtResource("8_mobile")]
-

@@ -27,7 +27,8 @@ static var character_affinity: Dictionary = {
 	"Dr. Mrs. Adeyemi": 15,
 	"Driver Rasheed": 20,
 	"Officer Balogun": 15,
-	"Kemi": 20
+	"Kemi": 20,
+	"Bolanle": 25
 }
 
 static func get_affinity(character_name: String) -> int:
@@ -138,6 +139,12 @@ static func get_perk_description(character_name: String) -> String:
 			elif aff >= 50:
 				return "✓ STUDY BUDDY: Shares concise course summaries and library revision timetables."
 			return "Law Fresher: Focused 100L student studying at the canteen."
+		"Bolanle":
+			if aff >= 75:
+				return "★ FIRST CLASS PARTNER: Study collaboration (+0.15 CGPA boost on all CA tests)!"
+			elif aff >= 50:
+				return "✓ FRONT ROW SCHOLAR: Shares verified assignment solutions and formulas."
+			return "Front-Row Coursemate: Diligent student taking detailed lecture notes."
 		_:
 			return "Campus resident."
 

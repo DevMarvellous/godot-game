@@ -640,6 +640,32 @@ const DIALOGUE_TREES: Dictionary = {
 				"money_change": 0
 			}
 		]
+	},
+	"Bolanle": {
+		"greeting": "Ssshh! Dr. Adebayo is about to start derivation on the board! Did you bring your 4-figure table and scientific calculator?",
+		"choices": [
+			{
+				"text": "Yes, I have my calculator ready. Did you finish assignment 2?",
+				"response": "Yes! Question 3 was tricky, but once you apply integration by parts, the solution simplifies neatly. Here, take a look!",
+				"cgpa_boost": 0.08,
+				"faith_boost": 0.0,
+				"money_change": 0
+			},
+			{
+				"text": "Can I sit next to you in the front row to see the board clearly?",
+				"response": "Of course! Front bench is best for keeping high CGPA—no back-row distractions!",
+				"cgpa_boost": 0.05,
+				"faith_boost": 5.0,
+				"money_change": 0
+			},
+			{
+				"text": "I hope attendance sheet reaches us before Dr. Adebayo leaves.",
+				"response": "Emeka started the sheet from the front row today, so we are 100% safe!",
+				"cgpa_boost": 0.02,
+				"faith_boost": 5.0,
+				"money_change": 0
+			}
+		]
 	}
 }
 
