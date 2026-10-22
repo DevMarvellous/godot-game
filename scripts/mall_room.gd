@@ -66,3 +66,4 @@ func _on_player_passed_out(_reason: String) -> void:
 		if player.has_method("display_notification"):
 			player.display_notification("🛍️ Madam Kikelomo rushes over: 'Ehya my fine student! Sit down on this velvet couch, drink this cold malt!' (+45 Energy, +40 Hunger)")
 		player.global_position = Vector3(0, 0.1, 1.0)
+

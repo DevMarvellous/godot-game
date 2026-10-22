@@ -36,3 +36,4 @@ func _on_player_passed_out(_reason: String) -> void:
 		if player.has_method("display_notification"):
 			player.display_notification("🕊️ Sister Blessing prays with you: 'Peace be still! Receive divine strength for your exams!' Faith +50, Energy +40!")
 		player.global_position = Vector3(0, 0.1, 0)
+

@@ -60,3 +60,4 @@ func _on_player_passed_out(_reason: String) -> void:
 		if player.has_method("display_notification"):
 			player.display_notification("⚽ Coach Balogun revives you: 'Stand up, champ! Drink this cold PowerPro isotonic drink!' Restored +50 Energy!")
 		player.global_position = Vector3(0, 0.1, -1.0)
+

@@ -28,3 +28,4 @@ func _on_player_passed_out(_reason: String) -> void:
 		if player.has_method("display_notification"):
 			player.display_notification("🌿 Iya Boli revives you: 'Pikin, sit down under the tree shade! Chop this hot sweet boli and drink zobo!' Restored +45 Hunger, +40 Energy!")
 		player.global_position = Vector3(0, 0.1, 0)
+

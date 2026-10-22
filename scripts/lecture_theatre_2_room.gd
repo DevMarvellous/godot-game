@@ -69,3 +69,4 @@ func _on_player_passed_out(_reason: String) -> void:
 		if player.has_method("display_notification"):
 			player.display_notification("🏥 In-Auditorium Rescue: Mr. Marvellous & Prof. Okonjo: 'Take a breather! Drink this cold water and rest!' Restored +40 Energy!")
 		player.global_position = Vector3(0, 0.45, -2.5)
+
