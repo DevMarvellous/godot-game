@@ -34,6 +34,8 @@ const DEFAULT_SERVER_URL: String = "ws://127.0.0.1:8910"
 
 var _cloud_lobby_active: bool = false
 var _cloud_sim_timer: float = 0.0
+var _last_broadcast_time: float = 0.0
+const BROADCAST_INTERVAL: float = 0.10 # 10 Hz throttled network broadcast (optimized for lag)
 const CLOUD_PEERS: Array[Dictionary] = [
 	{"id": 901, "name": "Femi [CSC]", "shirt": Color(0.15, 0.65, 0.38), "trouser": Color(0.14, 0.18, 0.26)},
 	{"id": 902, "name": "Chidinma [LAW]", "shirt": Color(0.85, 0.28, 0.48), "trouser": Color(0.16, 0.16, 0.20)},
@@ -57,8 +59,84 @@ func _ready() -> void:
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
+	_setup_web_bridge()
 	# Auto-activate lightweight Campus Cloud Lobby so rooms always have live online peers
 	_activate_cloud_lobby()
+
+
+func _setup_web_bridge() -> void:
+	if not OS.has_feature("web"):
+		return
+	var cb_player := JavaScriptBridge.create_callback(_on_js_net_player_update)
+	var cb_remove := JavaScriptBridge.create_callback(_on_js_net_player_remove)
+	var cb_chat := JavaScriptBridge.create_callback(_on_js_net_chat)
+	var cb_emote := JavaScriptBridge.create_callback(_on_js_net_emote)
+
+	var js_win = JavaScriptBridge.get_interface("window")
+	if js_win:
+		js_win.godotReceiveNetPlayer = cb_player
+		js_win.godotRemoveNetPlayer = cb_remove
+		js_win.godotReceiveNetChat = cb_chat
+		js_win.godotReceiveNetEmote = cb_emote
+
+
+func _on_js_net_player_update(args: Array) -> void:
+	if args.size() < 2:
+		return
+	var peer_id: int = int(args[0])
+	var raw = args[1]
+	if raw == null:
+		return
+
+	var pos := Vector3(float(raw.x), float(raw.y), float(raw.z))
+	var rot_y: float = float(raw.rot_y)
+	var moving: bool = bool(raw.moving)
+	var p_name: String = String(raw.name) if "name" in raw else "Coursemate"
+	var p_room: String = String(raw.room) if "room" in raw else "courtyard"
+
+	var s_col: Color = Color(0.2, 0.6, 0.4)
+	if "shirt_col" in raw:
+		s_col = Color.from_string(String(raw.shirt_col), Color(0.2, 0.6, 0.4))
+	var t_col: Color = Color(0.15, 0.18, 0.24)
+	if "trouser_col" in raw:
+		t_col = Color.from_string(String(raw.trouser_col), Color(0.15, 0.18, 0.24))
+
+	remote_players[peer_id] = {
+		"name": p_name,
+		"room": p_room,
+		"pos": pos,
+		"rot_y": rot_y,
+		"is_moving": moving,
+		"shirt_col": s_col,
+		"trouser_col": t_col
+	}
+	current_state = NetState.CONNECTED
+	connection_status_changed.emit(true, "Campus Online (%d Students)" % remote_players.size())
+
+
+func _on_js_net_player_remove(args: Array) -> void:
+	if args.is_empty():
+		return
+	var peer_id: int = int(args[0])
+	remote_players.erase(peer_id)
+	player_left.emit(peer_id)
+
+
+func _on_js_net_chat(args: Array) -> void:
+	if args.size() < 3:
+		return
+	var sender: String = String(args[0])
+	var msg: String = String(args[1])
+	var pid: int = int(args[2])
+	chat_received.emit(sender, msg, pid)
+
+
+func _on_js_net_emote(args: Array) -> void:
+	if args.size() < 2:
+		return
+	var pid: int = int(args[0])
+	var emote: String = String(args[1])
+	emote_received.emit(pid, emote)
 
 
 func _process(delta: float) -> void:
@@ -173,6 +251,19 @@ func broadcast_transform(room_name: String, pos: Vector3, rot_y: float, is_movin
 	local_player_data["rot_y"] = rot_y
 	local_player_data["is_moving"] = is_moving
 
+	var now: float = float(Time.get_ticks_msec()) * 0.001
+	if now - _last_broadcast_time < BROADCAST_INTERVAL:
+		return
+	_last_broadcast_time = now
+
+	# 1. Web Realtime WebSocket bridge (optimized for lag)
+	if OS.has_feature("web"):
+		var js_expr: String = "if (window.campusNetBroadcastTransform) window.campusNetBroadcastTransform('%s', %f, %f, %f, %f, %s);" % [
+			room_name, pos.x, pos.y, pos.z, rot_y, "true" if is_moving else "false"
+		]
+		JavaScriptBridge.eval(js_expr)
+
+	# 2. Dedicated WebSocket Server RPC
 	if is_online() and not _cloud_lobby_active and multiplayer.has_multiplayer_peer():
 		rpc(&"_rpc_sync_transform", room_name, pos, rot_y, is_moving)
 
@@ -181,6 +272,10 @@ func broadcast_chat(message: String) -> void:
 	var sender: String = local_player_data.get("name", "Student")
 	var local_id: int = 1 if _cloud_lobby_active else multiplayer.get_unique_id()
 	chat_received.emit(sender, message, local_id)
+
+	if OS.has_feature("web"):
+		var safe_msg: String = message.replace("'", "\\'").replace('"', '\\"')
+		JavaScriptBridge.eval("if (window.campusNetBroadcastChat) window.campusNetBroadcastChat('%s');" % safe_msg)
 
 	if _cloud_lobby_active:
 		# Trigger an authentic coursemate reply after 1.4 seconds
@@ -198,6 +293,9 @@ func broadcast_chat(message: String) -> void:
 func broadcast_emote(emote_name: String) -> void:
 	var local_id: int = 1 if _cloud_lobby_active else multiplayer.get_unique_id()
 	emote_received.emit(local_id, emote_name)
+
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("if (window.campusNetBroadcastEmote) window.campusNetBroadcastEmote('%s');" % emote_name)
 
 	if _cloud_lobby_active:
 		# Coursemate reacts after 1.2 seconds!

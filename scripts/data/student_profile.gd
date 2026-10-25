@@ -212,6 +212,10 @@ static func consume_backpack_food(player: CharacterBody3D, item_id: String) -> D
 	return { "success": false }
 
 
+static func to_dictionary() -> Dictionary:
+	return get_profile_data()
+
+
 static func get_profile_data() -> Dictionary:
 	return {
 		"student_name": student_name,

@@ -7,19 +7,33 @@
 	<meta name="description" content="Authentic Nigerian University Life-Sim: Lectures, Danfo Shuttles, Mama Put, Hostel Living & Hustles!">
 	<meta name="theme-color" content="#0b5334">
 	<style>
+:root {
+	--campus-green: #0b5334;
+	--campus-gold: #f5c518;
+	--campus-dark: #080c10;
+	--card-bg: rgba(12, 22, 17, 0.95);
+	--border-col: rgba(245, 197, 24, 0.75);
+}
+
+* {
+	box-sizing: border-box;
+	-webkit-tap-highlight-color: transparent;
+}
+
 html, body, #canvas {
 	margin: 0;
 	padding: 0;
 	border: 0;
 	width: 100%;
 	height: 100%;
-	background-color: #080c10;
+	background-color: var(--campus-dark);
 	color: #fff;
 	overflow: hidden;
-	touch-action: none;
+	touch-action: manipulation;
 	font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
+/* 1. Loading Splash Screen */
 #status {
 	position: absolute;
 	top: 0; left: 0; right: 0; bottom: 0;
@@ -30,12 +44,11 @@ html, body, #canvas {
 	align-items: center;
 	z-index: 100;
 	padding: 20px;
-	box-sizing: border-box;
 }
 
 .loader-card {
-	background: rgba(14, 28, 22, 0.94);
-	border: 2px solid #f5c518;
+	background: rgba(14, 28, 22, 0.96);
+	border: 2px solid var(--campus-gold);
 	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 197, 24, 0.25);
 	border-radius: 20px;
 	padding: 28px 24px;
@@ -48,7 +61,7 @@ html, body, #canvas {
 .campus-title {
 	font-size: 24px;
 	font-weight: 800;
-	color: #f5c518;
+	color: var(--campus-gold);
 	margin: 0 0 6px 0;
 	text-shadow: 0 2px 4px rgba(0,0,0,0.6);
 	letter-spacing: 0.5px;
@@ -77,7 +90,7 @@ html, body, #canvas {
 .progress-bar-fill {
 	height: 100%;
 	width: 0%;
-	background: linear-gradient(90deg, #10b981 0%, #f5c518 100%);
+	background: linear-gradient(90deg, #10b981 0%, var(--campus-gold) 100%);
 	border-radius: 10px;
 	transition: width 0.2s ease;
 }
@@ -114,14 +127,14 @@ html, body, #canvas {
 	display: none;
 }
 
-/* Floating Fullscreen button on web */
+/* 2. Floating Controls */
 #web-fullscreen-btn {
 	position: fixed;
 	bottom: 14px;
 	right: 14px;
 	background: rgba(15, 23, 42, 0.85);
-	border: 1px solid #f5c518;
-	color: #f5c518;
+	border: 1px solid var(--campus-gold);
+	color: var(--campus-gold);
 	border-radius: 20px;
 	padding: 7px 14px;
 	font-size: 12px;
@@ -134,23 +147,450 @@ html, body, #canvas {
 	gap: 6px;
 	box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 	user-select: none;
-	-webkit-user-select: none;
 }
-#web-fullscreen-btn:hover {
-	background: #f5c518;
+
+/* 3. Native HTML Mobile Admissions Portal Overlay */
+#admissions-overlay {
+	position: fixed;
+	top: 0; left: 0; right: 0; bottom: 0;
+	z-index: 60;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+	background: rgba(0, 0, 0, 0.45);
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+#admissions-overlay.active {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.portal-sheet {
+	width: 100%;
+	max-width: 520px;
+	max-height: 84vh;
+	background: var(--card-bg);
+	border: 2px solid var(--border-col);
+	border-bottom: none;
+	border-radius: 24px 24px 0 0;
+	box-shadow: 0 -10px 40px rgba(0,0,0,0.85), 0 0 25px rgba(245, 197, 24, 0.15);
+	backdrop-filter: blur(16px);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+	transform: translate3d(0, 0, 0);
+	will-change: transform;
+}
+
+@keyframes slideUp {
+	from { transform: translateY(100%); }
+	to { transform: translateY(0); }
+}
+
+@media (min-width: 769px) {
+	#admissions-overlay {
+		align-items: center;
+		justify-content: flex-end;
+		padding-right: 40px;
+	}
+	.portal-sheet {
+		max-height: 92vh;
+		border-radius: 20px;
+		border-bottom: 2px solid var(--border-col);
+	}
+}
+
+.portal-header {
+	background: linear-gradient(180deg, rgba(16, 68, 42, 0.95) 0%, rgba(10, 36, 24, 0.95) 100%);
+	border-bottom: 2px solid var(--campus-gold);
+	padding: 14px 18px 10px 18px;
+	text-align: center;
+	flex-shrink: 0;
+}
+
+.portal-crest {
+	font-size: 20px;
+	margin-bottom: 2px;
+}
+
+.portal-h1 {
+	font-size: 17px;
+	font-weight: 800;
+	color: var(--campus-gold);
+	margin: 0;
+	letter-spacing: 0.5px;
+}
+
+.portal-h2 {
+	font-size: 11px;
+	color: #a3e6be;
+	text-transform: uppercase;
+	margin: 2px 0 8px 0;
+	font-weight: 600;
+}
+
+/* Step Bar Navigation */
+.step-bar {
+	display: flex;
+	gap: 4px;
+	justify-content: center;
+	padding: 0 4px;
+}
+
+.step-chip {
+	flex: 1;
+	font-size: 10px;
+	font-weight: 700;
+	padding: 5px 2px;
+	text-align: center;
+	border-radius: 6px;
+	background: rgba(255,255,255,0.08);
+	color: #8da498;
+	cursor: pointer;
+	border: 1px solid transparent;
+	transition: all 0.2s;
+}
+
+.step-chip.active {
+	background: var(--campus-gold);
+	color: #06180f;
+	border-color: #fff;
+	box-shadow: 0 2px 8px rgba(245, 197, 24, 0.35);
+}
+
+.step-chip.done {
+	background: #0f5c35;
+	color: #c4f1d7;
+}
+
+/* Scrollable Form Body */
+.portal-body {
+	flex: 1;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	padding: 16px 18px 24px 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.form-label {
+	font-size: 13px;
+	font-weight: 700;
+	color: #f1f5f9;
+	margin-bottom: 6px;
+	display: block;
+}
+
+.portal-input {
+	width: 100%;
+	height: 48px;
+	background: rgba(255, 255, 255, 0.08);
+	border: 1.5px solid rgba(74, 222, 128, 0.4);
+	border-radius: 10px;
+	padding: 0 14px;
+	font-size: 15px;
+	color: #fff;
+	outline: none;
+	transition: border-color 0.2s;
+}
+
+.portal-input:focus {
+	border-color: var(--campus-gold);
+	background: rgba(255, 255, 255, 0.12);
+}
+
+/* Quick Name Chips */
+.chips-wrap {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-top: 6px;
+}
+
+.chip-btn {
+	background: rgba(20, 44, 32, 0.85);
+	border: 1px solid rgba(74, 222, 128, 0.35);
+	color: #e2e8f0;
+	border-radius: 16px;
+	padding: 6px 12px;
+	font-size: 12px;
+	cursor: pointer;
+	transition: all 0.15s;
+}
+
+.chip-btn:active, .chip-btn.selected {
+	background: var(--campus-gold);
 	color: #0b2217;
+	border-color: var(--campus-gold);
+	font-weight: 700;
+}
+
+/* Gender Toggle */
+.gender-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+}
+
+.gender-btn {
+	height: 48px;
+	border-radius: 12px;
+	background: rgba(18, 36, 26, 0.8);
+	border: 1.5px solid rgba(74, 222, 128, 0.3);
+	color: #fff;
+	font-size: 14px;
+	font-weight: 700;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	transition: all 0.2s;
+}
+
+.gender-btn.selected {
+	background: #0f5c35;
+	border-color: var(--campus-gold);
+	box-shadow: 0 0 12px rgba(245, 197, 24, 0.25);
+}
+
+/* Styling Tabs & Grid */
+.drip-tabs {
+	display: flex;
+	gap: 6px;
+	border-bottom: 1px solid rgba(255,255,255,0.1);
+	padding-bottom: 8px;
+}
+
+.drip-tab-btn {
+	flex: 1;
+	background: transparent;
+	border: none;
+	color: #94a3b8;
+	font-size: 12px;
+	font-weight: 700;
+	padding: 6px 0;
+	cursor: pointer;
+	border-bottom: 2px solid transparent;
+}
+
+.drip-tab-btn.active {
+	color: var(--campus-gold);
+	border-color: var(--campus-gold);
+}
+
+.drip-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.drip-card {
+	background: rgba(18, 32, 24, 0.8);
+	border: 1.5px solid rgba(74, 222, 128, 0.25);
+	border-radius: 10px;
+	padding: 10px 14px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	transition: all 0.2s;
+}
+
+.drip-card.selected {
+	border-color: var(--campus-gold);
+	background: rgba(24, 52, 38, 0.95);
+	box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+
+.drip-info {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.drip-name {
+	font-size: 14px;
+	font-weight: 700;
+	color: #fff;
+}
+
+.drip-desc {
+	font-size: 11px;
+	color: #94a3b8;
+}
+
+.drip-swatch {
+	width: 26px;
+	height: 26px;
+	border-radius: 13px;
+	border: 2px solid rgba(255,255,255,0.8);
+	flex-shrink: 0;
+}
+
+/* Faculty & Course */
+.faculty-select {
+	width: 100%;
+	height: 48px;
+	background: rgba(18, 36, 26, 0.95);
+	border: 1.5px solid rgba(74, 222, 128, 0.4);
+	border-radius: 10px;
+	color: #fff;
+	font-size: 14px;
+	padding: 0 12px;
+	outline: none;
+}
+
+.course-card {
+	background: rgba(14, 26, 20, 0.85);
+	border: 1px solid #1e4d37;
+	border-radius: 10px;
+	padding: 12px 14px;
+	font-size: 12px;
+	color: #cbd5e1;
+	line-height: 1.5;
+}
+
+/* Quiz UI */
+.quiz-box {
+	background: rgba(14, 28, 20, 0.9);
+	border: 1px solid var(--campus-gold);
+	border-radius: 12px;
+	padding: 14px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.quiz-q {
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--campus-gold);
+}
+
+.quiz-opt {
+	background: rgba(255,255,255,0.06);
+	border: 1px solid rgba(255,255,255,0.15);
+	border-radius: 8px;
+	padding: 10px 12px;
+	font-size: 13px;
+	color: #fff;
+	cursor: pointer;
+	text-align: left;
+	transition: all 0.2s;
+}
+
+.quiz-opt:active, .quiz-opt.selected {
+	background: #0f5c35;
+	border-color: var(--campus-gold);
+	font-weight: 700;
+}
+
+/* Letter Presentation */
+.cert-box {
+	background: #fbfbf8;
+	color: #0f172a;
+	border: 3px double #0b5334;
+	border-radius: 12px;
+	padding: 18px 16px;
+	text-align: center;
+	box-shadow: inset 0 0 20px rgba(11, 83, 52, 0.1);
+}
+
+.cert-header {
+	font-size: 14px;
+	font-weight: 800;
+	color: #0b5334;
+	text-transform: uppercase;
+	margin-bottom: 2px;
+}
+
+.cert-sub {
+	font-size: 10px;
+	color: #64748b;
+	margin-bottom: 12px;
+	letter-spacing: 1px;
+}
+
+.cert-title {
+	font-size: 16px;
+	font-weight: 900;
+	color: #b45309;
+	margin-bottom: 8px;
+}
+
+.cert-matric {
+	display: inline-block;
+	background: #0b5334;
+	color: var(--campus-gold);
+	padding: 4px 12px;
+	border-radius: 6px;
+	font-weight: 800;
+	font-size: 13px;
+	letter-spacing: 1px;
+	margin: 8px 0;
+}
+
+/* Bottom Actions */
+.portal-footer {
+	padding: 12px 18px 18px 18px;
+	background: rgba(10, 20, 15, 0.95);
+	border-top: 1px solid rgba(255,255,255,0.1);
+	display: flex;
+	gap: 10px;
+	flex-shrink: 0;
+}
+
+.btn-primary {
+	flex: 2;
+	height: 52px;
+	background: linear-gradient(180deg, #fcd34d 0%, var(--campus-gold) 100%);
+	border: none;
+	border-radius: 12px;
+	font-size: 15px;
+	font-weight: 800;
+	color: #0b2217;
+	cursor: pointer;
+	box-shadow: 0 4px 14px rgba(245, 197, 24, 0.35);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	transition: transform 0.15s;
+}
+
+.btn-primary:active {
+	transform: scale(0.98);
+}
+
+.btn-secondary {
+	flex: 1;
+	height: 52px;
+	background: rgba(255,255,255,0.08);
+	border: 1px solid rgba(255,255,255,0.2);
+	border-radius: 12px;
+	font-size: 13px;
+	font-weight: 700;
+	color: #cbd5e1;
+	cursor: pointer;
 }
 	</style>
 	$GODOT_HEAD_INCLUDE
 </head>
 <body>
 	<canvas id="canvas">Your browser does not support the HTML5 canvas tag.</canvas>
-	<noscript>Your browser does not support JavaScript. Please enable JavaScript to play My Campus Life.</noscript>
+	<noscript>Please enable JavaScript to play My Campus Life.</noscript>
 
+	<!-- 1. Engine Loading Splash -->
 	<div id="status">
 		<div class="loader-card">
 			<div class="campus-title">🏛️ MY CAMPUS LIFE</div>
-			<div class="campus-sub">Student Life Simulator</div>
+			<div class="campus-sub">Official Nigerian University Simulator</div>
 
 			<div class="progress-bar-wrap">
 				<div id="loader-fill" class="progress-bar-fill"></div>
@@ -158,10 +598,114 @@ html, body, #canvas {
 			<div id="loader-percent" class="progress-text">Starting Campus Engine...</div>
 
 			<div id="campus-tip" class="tip-box">
-				💡 Tip: Catch the Danfo Shuttle (₦100) to get to 8:00 AM class on time!
+				💡 Tip: Catch the Danfo Shuttle (₦100) to reach 8:00 AM class on time!
 			</div>
 
 			<div id="status-notice"></div>
+		</div>
+	</div>
+
+	<!-- 2. Native HTML Student Admissions Portal Overlay -->
+	<div id="admissions-overlay">
+		<div class="portal-sheet">
+			<div class="portal-header">
+				<div class="portal-crest">🏛️</div>
+				<h1 class="portal-h1">FEDERAL UNIVERSITY OF CAMPUS LIFE</h1>
+				<div class="portal-h2">Student Admissions & Matriculation Portal</div>
+				<div class="step-bar">
+					<div class="step-chip active" id="chip-step-0" onclick="switchStep(0)">1. Biodata</div>
+					<div class="step-chip" id="chip-step-1" onclick="switchStep(1)">2. Drip</div>
+					<div class="step-chip" id="chip-step-2" onclick="switchStep(2)">3. Course</div>
+					<div class="step-chip" id="chip-step-3" onclick="switchStep(3)">4. Quiz</div>
+					<div class="step-chip" id="chip-step-4" onclick="switchStep(4)">5. Letter</div>
+				</div>
+			</div>
+
+			<div class="portal-body" id="portal-body">
+				<!-- Step 0: Biodata -->
+				<div id="step-0-view">
+					<label class="form-label" for="adm-name">👤 Full Student Name:</label>
+					<input class="portal-input" id="adm-name" type="text" value="Tunde Adeleke" placeholder="e.g. Femi Adeleke" autocomplete="name" />
+					<div class="chips-wrap">
+						<button type="button" class="chip-btn" onclick="applyPresetName('🎲 Lucky Dip')">🎲 Lucky Dip</button>
+						<button type="button" class="chip-btn" onclick="applyPresetName('Tunde Adeleke')">Tunde Adeleke</button>
+						<button type="button" class="chip-btn" onclick="applyPresetName('Chisom Okafor')">Chisom Okafor</button>
+						<button type="button" class="chip-btn" onclick="applyPresetName('Femi Bakare')">Femi Bakare</button>
+						<button type="button" class="chip-btn" onclick="applyPresetName('Zainab Bello')">Zainab Bello</button>
+						<button type="button" class="chip-btn" onclick="applyPresetName('Emeka Obi')">Emeka Obi</button>
+					</div>
+
+					<label class="form-label" style="margin-top: 14px;">⚧️ Gender:</label>
+					<div class="gender-grid">
+						<button type="button" class="gender-btn selected" id="gender-male-btn" onclick="selectGender('Male')">👨 Male Student</button>
+						<button type="button" class="gender-btn" id="gender-female-btn" onclick="selectGender('Female')">👩 Female Student</button>
+					</div>
+
+					<label class="form-label" for="adm-email" style="margin-top: 14px;">📧 Student Campus Email:</label>
+					<input class="portal-input" id="adm-email" type="email" value="tunde.adeleke@campus.edu.ng" placeholder="student@campus.edu.ng" autocomplete="email" />
+				</div>
+
+				<!-- Step 1: Drip & Character Styling -->
+				<div id="step-1-view" style="display: none;">
+					<div class="drip-tabs">
+						<button type="button" class="drip-tab-btn active" id="tab-outfits" onclick="switchDripCategory('outfits')">👔 Outfits</button>
+						<button type="button" class="drip-tab-btn" id="tab-hair" onclick="switchDripCategory('hair')">💈 Hair</button>
+						<button type="button" class="drip-tab-btn" id="tab-skin" onclick="switchDripCategory('skin')">🎨 Melanin</button>
+						<button type="button" class="drip-tab-btn" id="tab-trousers" onclick="switchDripCategory('trousers')">👖 Trousers</button>
+					</div>
+					<div class="drip-grid" id="drip-options-container">
+						<!-- Dynamically populated via JS -->
+					</div>
+				</div>
+
+				<!-- Step 2: Course & Faculty -->
+				<div id="step-2-view" style="display: none;">
+					<label class="form-label">🏛️ Academic Faculty:</label>
+					<select class="faculty-select" id="faculty-dropdown" onchange="onFacultyChanged()">
+						<option value="CMP_FAC">Faculty of Computing & Information Tech</option>
+						<option value="ENG_FAC">Faculty of Engineering & Technology</option>
+						<option value="LAW_FAC">Faculty of Law & Jurisprudence</option>
+						<option value="SMS_FAC">Faculty of Social & Management Sciences</option>
+						<option value="NAS_FAC">Faculty of Natural & Applied Sciences</option>
+						<option value="MED_FAC">Faculty of Basic Medical Sciences</option>
+						<option value="HUM_FAC">Faculty of Arts & Humanities</option>
+					</select>
+
+					<label class="form-label" style="margin-top: 12px;">📘 Admitted Course / Department:</label>
+					<select class="faculty-select" id="dept-dropdown" onchange="onDeptChanged()"></select>
+
+					<div class="course-card" id="course-card-info" style="margin-top: 12px;"></div>
+				</div>
+
+				<!-- Step 3: Screening Quiz -->
+				<div id="step-3-view" style="display: none;">
+					<div class="quiz-box">
+						<div id="quiz-progress-text" style="font-size: 11px; color: #a3e6be; font-weight: 700;">QUESTION 1 OF 3</div>
+						<div class="quiz-q" id="quiz-question-text">Loading question...</div>
+						<div id="quiz-options-wrap" style="display: flex; flex-direction: column; gap: 8px;"></div>
+					</div>
+				</div>
+
+				<!-- Step 4: Official Admission Letter -->
+				<div id="step-4-view" style="display: none;">
+					<div class="cert-box">
+						<div class="cert-header">FEDERAL UNIVERSITY OF CAMPUS LIFE</div>
+						<div class="cert-sub">OFFICE OF THE REGISTRAR • ADMISSIONS BOARD</div>
+						<div class="cert-title">PROVISIONAL OFFER OF ADMISSION</div>
+						<p style="font-size: 13px; margin: 4px 0;">This is to certify that candidate:</p>
+						<div style="font-size: 17px; font-weight: 800; color: #0b5334;" id="cert-student-name">TUNDE ADELEKE</div>
+						<p style="font-size: 12px; margin: 6px 0;">has been offered merit admission into the Department of:</p>
+						<div style="font-size: 14px; font-weight: 700; color: #0f172a;" id="cert-dept-name">COMPUTER SCIENCE (B.Sc.)</div>
+						<div class="cert-matric" id="cert-matric-no">MATRIC NO: 2026/CMP/0482</div>
+						<p style="font-size: 11px; color: #475569; margin-top: 8px;">Academic Session: 2026/2027 • Standard Fresher Allowance: ₦30,000</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="portal-footer">
+				<button type="button" class="btn-secondary" id="portal-back-btn" onclick="prevStep()">◀ Back</button>
+				<button type="button" class="btn-primary" id="portal-next-btn" onclick="nextStep()">Next Step ▶</button>
+			</div>
 		</div>
 	</div>
 
@@ -198,6 +742,438 @@ function toggleFullScreen() {
 	}
 }
 
+/* =======================================================
+   ADMISSIONS PORTAL STATE & DATA
+   ======================================================= */
+const ADMISSION_STATE = {
+	step: 0,
+	name: "Tunde Adeleke",
+	email: "tunde.adeleke@campus.edu.ng",
+	gender: "Male",
+	skinIdx: 1,
+	hairIdx: 0,
+	shirtIdx: 0,
+	trouserIdx: 0,
+	faculty: "CMP_FAC",
+	dept: "CSC",
+	quizIdx: 0,
+	quizScore: 100
+};
+
+const RANDOM_NAMES = [
+	"Tunde Adeleke", "Chisom Okafor", "Femi Bakare", "Zainab Bello",
+	"Emeka Obi", "Bolanle Coker", "Ibrahim Danjuma", "Ngozi Eze",
+	"Damilola Balogun", "Ayomide Williams", "Halima Lawal", "Segun Alabi"
+];
+
+const COMPLEXIONS = [
+	{ name: "Rich Cocoa", color: "#543324" },
+	{ name: "Warm Chestnut", color: "#6e4632" },
+	{ name: "Golden Honey", color: "#8a583e" },
+	{ name: "Deep Ebony", color: "#3d2419" }
+];
+
+const HAIRSTYLES = [
+	{ name: "Fresh Fade (Low Cut)", desc: "Crisp campus buzz fade" },
+	{ name: "Afro Crown", desc: "Classic natural campus afro" },
+	{ name: "Campus Braids", desc: "Neat protective styling locs" },
+	{ name: "Snapback Cap", desc: "Casual student trucker cap" },
+	{ name: "Gele / Headwrap", desc: "Traditional ceremonial wrap" }
+];
+
+const OUTFITS = [
+	{ name: "Casual Campus Fit", desc: "T-Shirt with daily denim jeans", top: "#1e824c", btm: "#273746" },
+	{ name: "Senator Native Wear", desc: "Classic embroidered Nigerian tunic", top: "#2c3e50", btm: "#2c3e50" },
+	{ name: "Corporate Lecture Suit", desc: "Crisp shirt, formal tie & slacks", top: "#f8f9fa", btm: "#1a252f" },
+	{ name: "Campus Street Hoodie", desc: "Oversized cozy lecture sweatshirt", top: "#9b59b6", btm: "#2c3e50" },
+	{ name: "Academic Matric Gown", desc: "Ceremonial University convocation robe", top: "#145a32", btm: "#f4d03f" }
+];
+
+const TROUSERS = [
+	{ name: "Dark Chinos", desc: "Lecture-ready fitted trousers", color: "#273746" },
+	{ name: "Blue Jeans", desc: "Durable campus denim pants", color: "#2980b9" },
+	{ name: "Khaki Slacks", desc: "Clean preppy college fit", color: "#b7950b" },
+	{ name: "Black Formal Pants", desc: "Polished exam hall formal wear", color: "#17202a" }
+];
+
+const FACULTY_DEPTS = {
+	"CMP_FAC": [
+		{ code: "CSC", name: "Computer Science", cutOff: 2, desc: "Software engineering, algorithms & systems." },
+		{ code: "SEN", name: "Software Engineering", cutOff: 2, desc: "Enterprise cloud, web apps & mobile architecture." },
+		{ code: "CYS", name: "Cybersecurity", cutOff: 2, desc: "Network security, cryptography & digital defense." }
+	],
+	"ENG_FAC": [
+		{ code: "MEE", name: "Mechanical Engineering", cutOff: 2, desc: "Thermodynamics, fabrication & automation." },
+		{ code: "EEE", name: "Electrical / Electronics", cutOff: 2, desc: "Power systems, circuits & telecommunications." },
+		{ code: "CVE", name: "Civil Engineering", cutOff: 2, desc: "Structures, highways & campus infrastructure." }
+	],
+	"LAW_FAC": [
+		{ code: "LAW", name: "Common & Islamic Law", cutOff: 3, desc: "Constitutional jurisprudence, moot court & litigation." }
+	],
+	"SMS_FAC": [
+		{ code: "ECO", name: "Economics", cutOff: 2, desc: "Macroeconomics, CBN monetary fiscal policy & trade." },
+		{ code: "MAC", name: "Mass Communication", cutOff: 2, desc: "Broadcasting, journalism, media & campus PR." }
+	],
+	"NAS_FAC": [
+		{ code: "MCB", name: "Microbiology", cutOff: 2, desc: "Bacteriology, virology & campus lab diagnostics." },
+		{ code: "BCH", name: "Biochemistry", cutOff: 2, desc: "Molecular biology & enzymology." }
+	],
+	"MED_FAC": [
+		{ code: "MBBS", name: "Medicine & Surgery", cutOff: 3, desc: "Clinical pathology, anatomy & patient care." },
+		{ code: "NUR", name: "Nursing Science", cutOff: 2, desc: "Patient healthcare & clinical nursing." }
+	],
+	"HUM_FAC": [
+		{ code: "ENG", name: "English & Literary Studies", cutOff: 2, desc: "African prose, Chinua Achebe & rhetoric." },
+		{ code: "CRS", name: "Christian Religious Studies", cutOff: 1, desc: "Biblical hermeneutics & theology." }
+	]
+};
+
+const QUIZ_BANK = [
+	{
+		q: "What is the primary role of the CPU in personal computing?",
+		options: ["Execute instructions & arithmetic logic", "Store diesel for backup generator", "Cool down lecture hall fans", "Broadcast FM radio"],
+		correct: 0
+	},
+	{
+		q: "Which programming language is celebrated for data science and AI?",
+		options: ["Python", "JPEG", "HTML", "MP3"],
+		correct: 0
+	},
+	{
+		q: "What does RAM stand for in computer hardware?",
+		options: ["Random Access Memory", "Rapid Audio Module", "Read Always Machine", "Remote Algorithm Matrix"],
+		correct: 0
+	}
+];
+
+let activeDripTab = "outfits";
+
+function applyPresetName(name) {
+	if (name === '🎲 Lucky Dip') {
+		name = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)];
+	}
+	document.getElementById('adm-name').value = name;
+	ADMISSION_STATE.name = name;
+	const safeEmail = name.toLowerCase().replace(/[^a-z0-9]/g, '.') + '@campus.edu.ng';
+	document.getElementById('adm-email').value = safeEmail;
+	ADMISSION_STATE.email = safeEmail;
+}
+
+function selectGender(g) {
+	ADMISSION_STATE.gender = g;
+	document.getElementById('gender-male-btn').classList.toggle('selected', g === 'Male');
+	document.getElementById('gender-female-btn').classList.toggle('selected', g === 'Female');
+	notifyGodotDripChange();
+}
+
+function switchDripCategory(cat) {
+	activeDripTab = cat;
+	['outfits', 'hair', 'skin', 'trousers'].forEach(c => {
+		const el = document.getElementById('tab-' + c);
+		if (el) el.classList.toggle('active', c === cat);
+	});
+	renderDripOptions();
+}
+
+function renderDripOptions() {
+	const wrap = document.getElementById('drip-options-container');
+	wrap.innerHTML = '';
+
+	if (activeDripTab === 'outfits') {
+		OUTFITS.forEach((item, idx) => {
+			const isSel = idx === ADMISSION_STATE.shirtIdx;
+			const card = document.createElement('div');
+			card.className = 'drip-card' + (isSel ? ' selected' : '');
+			card.onclick = () => {
+				ADMISSION_STATE.shirtIdx = idx;
+				renderDripOptions();
+				notifyGodotDripChange();
+			};
+			card.innerHTML = `
+				<div class="drip-info">
+					<div class="drip-name">${item.name} ${isSel ? '✓' : ''}</div>
+					<div class="drip-desc">${item.desc}</div>
+				</div>
+				<div class="drip-swatch" style="background: ${item.top};"></div>
+			`;
+			wrap.appendChild(card);
+		});
+	} else if (activeDripTab === 'hair') {
+		HAIRSTYLES.forEach((item, idx) => {
+			const isSel = idx === ADMISSION_STATE.hairIdx;
+			const card = document.createElement('div');
+			card.className = 'drip-card' + (isSel ? ' selected' : '');
+			card.onclick = () => {
+				ADMISSION_STATE.hairIdx = idx;
+				renderDripOptions();
+				notifyGodotDripChange();
+			};
+			card.innerHTML = `
+				<div class="drip-info">
+					<div class="drip-name">${item.name} ${isSel ? '✓' : ''}</div>
+					<div class="drip-desc">${item.desc}</div>
+				</div>
+				<div style="font-size: 20px;">💈</div>
+			`;
+			wrap.appendChild(card);
+		});
+	} else if (activeDripTab === 'skin') {
+		COMPLEXIONS.forEach((item, idx) => {
+			const isSel = idx === ADMISSION_STATE.skinIdx;
+			const card = document.createElement('div');
+			card.className = 'drip-card' + (isSel ? ' selected' : '');
+			card.onclick = () => {
+				ADMISSION_STATE.skinIdx = idx;
+				renderDripOptions();
+				notifyGodotDripChange();
+			};
+			card.innerHTML = `
+				<div class="drip-info">
+					<div class="drip-name">${item.name} ${isSel ? '✓' : ''}</div>
+					<div class="drip-desc">Rich Melanin Complexion</div>
+				</div>
+				<div class="drip-swatch" style="background: ${item.color};"></div>
+			`;
+			wrap.appendChild(card);
+		});
+	} else if (activeDripTab === 'trousers') {
+		TROUSERS.forEach((item, idx) => {
+			const isSel = idx === ADMISSION_STATE.trouserIdx;
+			const card = document.createElement('div');
+			card.className = 'drip-card' + (isSel ? ' selected' : '');
+			card.onclick = () => {
+				ADMISSION_STATE.trouserIdx = idx;
+				renderDripOptions();
+				notifyGodotDripChange();
+			};
+			card.innerHTML = `
+				<div class="drip-info">
+					<div class="drip-name">${item.name} ${isSel ? '✓' : ''}</div>
+					<div class="drip-desc">${item.desc}</div>
+				</div>
+				<div class="drip-swatch" style="background: ${item.color};"></div>
+			`;
+			wrap.appendChild(card);
+		});
+	}
+}
+
+function onFacultyChanged() {
+	const fac = document.getElementById('faculty-dropdown').value;
+	ADMISSION_STATE.faculty = fac;
+	const deptDropdown = document.getElementById('dept-dropdown');
+	deptDropdown.innerHTML = '';
+
+	const depts = FACULTY_DEPTS[fac] || [];
+	depts.forEach(d => {
+		const opt = document.createElement('option');
+		opt.value = d.code;
+		opt.textContent = `${d.name} (${d.code})`;
+		deptDropdown.appendChild(opt);
+	});
+	onDeptChanged();
+}
+
+function onDeptChanged() {
+	const fac = ADMISSION_STATE.faculty;
+	const deptCode = document.getElementById('dept-dropdown').value;
+	ADMISSION_STATE.dept = deptCode;
+	const depts = FACULTY_DEPTS[fac] || [];
+	const dept = depts.find(d => d.code === deptCode) || depts[0];
+
+	const card = document.getElementById('course-card-info');
+	if (dept && card) {
+		card.innerHTML = `
+			<strong style="color: #f5c518; font-size: 13px;">🎓 Degree: Bachelor of Science (${dept.code})</strong><br>
+			🎯 Merit Cut-off: ${dept.cutOff} / 3 Screening Score<br>
+			💡 Specialization: ${dept.desc}
+		`;
+	}
+}
+
+function renderQuiz() {
+	const qData = QUIZ_BANK[ADMISSION_STATE.quizIdx];
+	document.getElementById('quiz-progress-text').textContent = `QUESTION ${ADMISSION_STATE.quizIdx + 1} OF ${QUIZ_BANK.length}`;
+	document.getElementById('quiz-question-text').textContent = qData.q;
+
+	const wrap = document.getElementById('quiz-options-wrap');
+	wrap.innerHTML = '';
+	qData.options.forEach((opt, idx) => {
+		const btn = document.createElement('button');
+		btn.type = 'button';
+		btn.className = 'quiz-opt';
+		btn.textContent = `${String.fromCharCode(65 + idx)}. ${opt}`;
+		btn.onclick = () => {
+			if (idx === qData.correct) {
+				btn.style.background = '#10b981';
+				btn.style.borderColor = '#34d399';
+			} else {
+				btn.style.background = '#b91c1c';
+			}
+			setTimeout(() => {
+				if (ADMISSION_STATE.quizIdx < QUIZ_BANK.length - 1) {
+					ADMISSION_STATE.quizIdx++;
+					renderQuiz();
+				} else {
+					switchStep(4);
+				}
+			}, 350);
+		};
+		wrap.appendChild(btn);
+	});
+}
+
+function renderAdmissionLetter() {
+	document.getElementById('cert-student-name').textContent = ADMISSION_STATE.name.toUpperCase();
+	const fac = ADMISSION_STATE.faculty;
+	const depts = FACULTY_DEPTS[fac] || [];
+	const dept = depts.find(d => d.code === ADMISSION_STATE.dept) || { name: "Computer Science", code: "CSC" };
+	document.getElementById('cert-dept-name').textContent = `${dept.name.toUpperCase()} (B.Sc.)`;
+
+	const num = String(Math.floor(Math.random() * 899 + 100));
+	const matric = `2026/${dept.code}/${num}`;
+	document.getElementById('cert-matric-no').textContent = `MATRIC NO: ${matric}`;
+}
+
+function switchStep(newStep) {
+	// Sync inputs before leaving Step 0
+	if (ADMISSION_STATE.step === 0) {
+		const n = document.getElementById('adm-name').value.trim();
+		if (n) ADMISSION_STATE.name = n;
+		const em = document.getElementById('adm-email').value.trim();
+		if (em) ADMISSION_STATE.email = em;
+	}
+
+	ADMISSION_STATE.step = newStep;
+	for (let i = 0; i <= 4; i++) {
+		const v = document.getElementById('step-' + i + '-view');
+		if (v) v.style.display = (i === newStep) ? 'block' : 'none';
+		const chip = document.getElementById('chip-step-' + i);
+		if (chip) {
+			chip.classList.toggle('active', i === newStep);
+			chip.classList.toggle('done', i < newStep);
+		}
+	}
+
+	const backBtn = document.getElementById('portal-back-btn');
+	const nextBtn = document.getElementById('portal-next-btn');
+	backBtn.style.visibility = (newStep === 0) ? 'hidden' : 'visible';
+
+	if (newStep === 1) {
+		renderDripOptions();
+	} else if (newStep === 2) {
+		onFacultyChanged();
+	} else if (newStep === 3) {
+		ADMISSION_STATE.quizIdx = 0;
+		renderQuiz();
+	} else if (newStep === 4) {
+		renderAdmissionLetter();
+		nextBtn.textContent = '🎓 Accept & Enter Campus ➔';
+		nextBtn.style.background = 'linear-gradient(180deg, #34d399 0%, #059669 100%)';
+		nextBtn.style.color = '#fff';
+		return;
+	}
+
+	nextBtn.textContent = 'Next Step ▶';
+	nextBtn.style.background = 'linear-gradient(180deg, #fcd34d 0%, var(--campus-gold) 100%)';
+	nextBtn.style.color = '#0b2217';
+}
+
+function prevStep() {
+	if (ADMISSION_STATE.step > 0) {
+		switchStep(ADMISSION_STATE.step - 1);
+	}
+}
+
+function nextStep() {
+	if (ADMISSION_STATE.step < 4) {
+		switchStep(ADMISSION_STATE.step + 1);
+	} else {
+		finishAdmission();
+	}
+}
+
+function notifyGodotDripChange() {
+	if (window.godotOnAvatarChange) {
+		window.godotOnAvatarChange({
+			gender: ADMISSION_STATE.gender,
+			skin_idx: ADMISSION_STATE.skinIdx,
+			hair_idx: ADMISSION_STATE.hairIdx,
+			shirt_idx: ADMISSION_STATE.shirtIdx,
+			trouser_idx: ADMISSION_STATE.trouserIdx
+		});
+	}
+}
+
+function finishAdmission() {
+	const overlay = document.getElementById('admissions-overlay');
+	if (overlay) overlay.classList.remove('active');
+
+	if (window.godotOnAdmissionSubmit) {
+		window.godotOnAdmissionSubmit({
+			name: ADMISSION_STATE.name,
+			email: ADMISSION_STATE.email,
+			gender: ADMISSION_STATE.gender,
+			skin_idx: ADMISSION_STATE.skinIdx,
+			hair_idx: ADMISSION_STATE.hairIdx,
+			shirt_idx: ADMISSION_STATE.shirtIdx,
+			trouser_idx: ADMISSION_STATE.trouserIdx,
+			dept: ADMISSION_STATE.dept,
+			quiz_score: 100
+		});
+	}
+}
+
+window.onCampusStageReady = function () {
+	// Show the admissions overlay once Godot has initialized the 3D stage
+	const overlay = document.getElementById('admissions-overlay');
+	if (overlay) overlay.classList.add('active');
+	switchStep(0);
+	notifyGodotDripChange();
+};
+
+/* =======================================================
+   SUPABASE REALTIME WEBSOCKET MULTIPLAYER BRIDGE
+   ======================================================= */
+let currentRoomChannel = 'courtyard';
+let localPeerId = 'usr_' + Math.floor(Math.random() * 8999 + 1000);
+
+window.campusNetBroadcastTransform = function(room, x, y, z, rotY, moving) {
+	currentRoomChannel = room;
+	if (window.supabaseRealtimeBroadcast) {
+		window.supabaseRealtimeBroadcast({
+			event: 'pos',
+			id: localPeerId,
+			room: room,
+			x: x, y: y, z: z,
+			rot_y: rotY,
+			moving: moving,
+			name: ADMISSION_STATE.name
+		});
+	}
+};
+
+window.campusNetBroadcastChat = function(msg) {
+	if (window.supabaseRealtimeBroadcast) {
+		window.supabaseRealtimeBroadcast({
+			event: 'chat',
+			id: localPeerId,
+			sender: ADMISSION_STATE.name,
+			message: msg
+		});
+	}
+};
+
+window.campusNetBroadcastEmote = function(emote) {
+	if (window.supabaseRealtimeBroadcast) {
+		window.supabaseRealtimeBroadcast({
+			event: 'emote',
+			id: localPeerId,
+			emote: emote
+		});
+	}
+};
+
 (function () {
 	const statusOverlay = document.getElementById('status');
 	const fillBar = document.getElementById('loader-fill');
@@ -227,6 +1203,13 @@ function toggleFullScreen() {
 		},
 	}).then(() => {
 		if (statusOverlay) statusOverlay.style.display = 'none';
+		// If stage didn't trigger callback within 500ms, open portal automatically
+		setTimeout(() => {
+			const overlay = document.getElementById('admissions-overlay');
+			if (overlay && !overlay.classList.contains('active')) {
+				window.onCampusStageReady();
+			}
+		}, 600);
 	}).catch((err) => {
 		console.error(err);
 		setStatusNotice(err && err.message ? err.message : String(err));
@@ -244,4 +1227,3 @@ if ('serviceWorker' in navigator) {
 	</script>
 </body>
 </html>
-

@@ -268,6 +268,15 @@ func _ready() -> void:
 	adm.queue_free()
 	print("  -> Admission Screen 3D Viewport OK")
 
+	print("[6b/6] Verifying Main Viewport Admission Stage...")
+	var stage_scene = load("res://scenes/admission_stage.tscn")
+	var stage_inst = stage_scene.instantiate()
+	add_child(stage_inst)
+	stage_inst.set_avatar_drip("Male", 1, 0, 0, 0)
+	stage_inst._process(0.016)
+	stage_inst.queue_free()
+	print("  -> Admission Stage Main Viewport OK")
+
 	print("========================================================")
 	print("   ALL 6 TEST PHASES PASSED WITH ZERO CRASHES OR ERRORS!")
 	print("========================================================\n")
