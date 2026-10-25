@@ -120,16 +120,16 @@ func _create_objective_pill_ui() -> void:
 func _create_tasks_sheet_ui() -> void:
 	tasks_sheet = PanelContainer.new()
 	tasks_sheet.name = "TasksSheet"
-	tasks_sheet.custom_minimum_size = Vector2(360, 440)
+	tasks_sheet.custom_minimum_size = Vector2(520, 580)
 	tasks_sheet.anchors_preset = Control.PRESET_CENTER
 	tasks_sheet.anchor_left = 0.5
 	tasks_sheet.anchor_top = 0.5
 	tasks_sheet.anchor_right = 0.5
 	tasks_sheet.anchor_bottom = 0.5
-	tasks_sheet.offset_left = -180.0
-	tasks_sheet.offset_top = -220.0
-	tasks_sheet.offset_right = 180.0
-	tasks_sheet.offset_bottom = 220.0
+	tasks_sheet.offset_left = -260.0
+	tasks_sheet.offset_top = -290.0
+	tasks_sheet.offset_right = 260.0
+	tasks_sheet.offset_bottom = 290.0
 	tasks_sheet.visible = false
 
 	var sheet_style := StyleBoxFlat.new()
@@ -155,14 +155,14 @@ func _create_tasks_sheet_ui() -> void:
 
 	var title_lbl := Label.new()
 	title_lbl.text = "📋 SEMESTER MISSIONS & TASKS"
-	title_lbl.add_theme_font_size_override(&"font_size", 16)
+	title_lbl.add_theme_font_size_override(&"font_size", 18)
 	title_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.25))
 	title_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	outer_vbox.add_child(title_lbl)
 
 	var sub_lbl := Label.new()
 	sub_lbl.text = "Complete campus milestones for cash, CGPA boosts & honor roll!"
-	sub_lbl.add_theme_font_size_override(&"font_size", 11)
+	sub_lbl.add_theme_font_size_override(&"font_size", 13)
 	sub_lbl.add_theme_color_override(&"font_color", Color(0.75, 0.85, 0.95))
 	sub_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	outer_vbox.add_child(sub_lbl)
@@ -180,8 +180,8 @@ func _create_tasks_sheet_ui() -> void:
 
 	var close_btn := Button.new()
 	close_btn.text = "✖ Close Missions"
-	close_btn.custom_minimum_size = Vector2(0, 36)
-	close_btn.add_theme_font_size_override(&"font_size", 12)
+	close_btn.custom_minimum_size = Vector2(0, 48)
+	close_btn.add_theme_font_size_override(&"font_size", 15)
 	close_btn.focus_mode = Control.FOCUS_NONE
 	close_btn.pressed.connect(func():
 		if SoundManager: SoundManager.play_click()
@@ -253,7 +253,7 @@ func _populate_tasks_sheet() -> void:
 		var text_lbl := Label.new()
 		text_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		text_lbl.add_theme_font_size_override(&"font_size", 12)
+		text_lbl.add_theme_font_size_override(&"font_size", 14)
 
 		if is_done:
 			text_lbl.text = "✓ %s" % String(q.get("text", ""))

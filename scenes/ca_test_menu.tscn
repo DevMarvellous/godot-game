@@ -72,7 +72,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="ModalPanel" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(390, 440)
+custom_minimum_size = Vector2(530, 620)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
 
@@ -102,7 +102,7 @@ text = "CSC 101: CONTINUOUS ASSESSMENT (30 MARKS)"
 
 [node name="CloseBtn" type="Button" parent="CenterContainer/ModalPanel/VBox/Header"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 size_flags_vertical = 0
 text = "✕"
@@ -136,21 +136,21 @@ theme_override_constants/separation = 10
 
 [node name="HintBtn" type="Button" parent="CenterContainer/ModalPanel/VBox/DilemmaHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
 theme_override_font_sizes/font_size = 14
-text = "💡 Study Hint (From Course Handout)"
+text = "💡 Study Hint (From Handout)"
 
 [node name="ExpoBtn" type="Button" parent="CenterContainer/ModalPanel/VBox/DilemmaHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 0.8, 0.3, 1)
 theme_override_font_sizes/font_size = 14
-text = "🤫 Sneak Out 'Expo' (+12 Marks, 35% Risk!)"
+text = "🤫 Sneak Expo (+12 Marks, Risk!)"
 
 [node name="HintLabel" type="Label" parent="CenterContainer/ModalPanel/VBox"]
 unique_name_in_owner = true
@@ -179,7 +179,8 @@ autowrap_mode = 2
 
 [node name="NextBtn" type="Button" parent="CenterContainer/ModalPanel/VBox/FeedbackPanel/FeedbackVBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
+theme_override_font_sizes/font_size = 15
 text = "Next Question ➔"
 

@@ -53,12 +53,11 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -195.0
-offset_top = -220.0
-offset_right = 195.0
-offset_bottom = 220.0
+offset_left = -265.0
+offset_top = -280.0
+offset_right = 265.0
+offset_bottom = 280.0
 grow_horizontal = 2
-grow_vertical = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
@@ -76,7 +75,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.85, 0.95, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 14
 text = "Departmental Continuous Assessment (30 Marks)"
 horizontal_alignment = 1
 
@@ -84,7 +83,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 16
 text = "Project Title..."
 horizontal_alignment = 1
 autowrap_mode = 2
@@ -95,12 +94,12 @@ theme_override_constants/separation = 6
 
 [node name="ProgLabel" type="Label" parent="ModalPanel/VBox/ProgressSection"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 13
 text = "Coursework Completion Progress:"
 
 [node name="ProgressBar" type="ProgressBar" parent="ModalPanel/VBox/ProgressSection"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 24)
+custom_minimum_size = Vector2(0, 26)
 layout_mode = 2
 max_value = 100.0
 
@@ -108,7 +107,7 @@ max_value = 100.0
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 14
 text = "Active Milestone: 1. Literature Review & Problem Statement"
 autowrap_mode = 2
 
@@ -116,21 +115,21 @@ autowrap_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.9, 1, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 14
 text = "Work on research chapters to secure your 30 continuous assessment marks!"
 horizontal_alignment = 1
 autowrap_mode = 2
 
 [node name="WorkBtn" type="Button" parent="ModalPanel/VBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "💻 Work on Coursework (45 mins, 15% Energy)"
 
 [node name="CloseBtn" type="Button" parent="ModalPanel/VBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 42)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Close Project Desk"
