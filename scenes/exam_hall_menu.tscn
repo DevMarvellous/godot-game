@@ -93,7 +93,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MainPanel" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(390, 460)
+custom_minimum_size = Vector2(530, 620)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_frame")
 
@@ -112,20 +112,21 @@ size_flags_horizontal = 3
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 18
 text = "🏛️ SEMESTER FINAL EXAMINATION (100 MARKS)"
 
 [node name="CandidateDocketLabel" type="Label" parent="CenterContainer/MainPanel/VBox/HeaderHBox/TitleBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.90, 0.95, 1)
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 13
 text = "Candidate: Emeka | Matric: 24/CSC/1042"
 
 [node name="CloseBtn" type="Button" parent="CenterContainer/MainPanel/VBox/HeaderHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(34, 34)
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
+theme_override_font_sizes/font_size = 18
 text = "✕"
 
 [node name="DocketPanel" type="PanelContainer" parent="CenterContainer/MainPanel/VBox"]
@@ -217,9 +218,9 @@ theme_override_constants/separation = 8
 
 [node name="ExpoStealthBtn" type="Button" parent="CenterContainer/MainPanel/VBox/ExamPaperPanel/VBoxPaper"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "🤫 Sneak Expo Formula Sheet (+10 Marks, Invigilator Risk)"
 
 [node name="ResultsPanel" type="PanelContainer" parent="CenterContainer/MainPanel/VBox"]
@@ -238,13 +239,13 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.95, 1, 0.95, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 13
 text = "Official results docket text..."
 autowrap_mode = 2
 
 [node name="AdvanceSemesterBtn" type="Button" parent="CenterContainer/MainPanel/VBox/ResultsPanel/VBoxResults"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 15
 text = "🎓 Progress to Next Semester / Promote Level ➔"

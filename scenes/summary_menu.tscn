@@ -73,7 +73,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="ModalPanel" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(390, 380)
+custom_minimum_size = Vector2(530, 520)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
 
@@ -107,21 +107,25 @@ columns = 2
 [node name="AttendedLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/StatsGrid"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 text = "Classes Attended: 0"
 
 [node name="MissedLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/StatsGrid"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 text = "Classes Missed: 0"
 
 [node name="FaithLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/StatsGrid"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 text = "Faith & Devotion: 70%"
 
 [node name="WalletLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/StatsGrid"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 text = "Wallet Balance: ₦5,000"
 
 [node name="CommentBox" type="PanelContainer" parent="CenterContainer/ModalPanel/VBox"]
@@ -130,7 +134,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
 [node name="CommentLabel" type="Label" parent="CenterContainer/ModalPanel/VBox/CommentBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(400, 0)
+custom_minimum_size = Vector2(460, 0)
 layout_mode = 2
 text = "Good day on campus. Rest well tonight for tomorrow's classes."
 label_settings = SubResource("LabelSettings_comment")
@@ -142,8 +146,9 @@ layout_mode = 2
 
 [node name="ActionButton" type="Button" parent="CenterContainer/ModalPanel/VBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(220, 42)
+custom_minimum_size = Vector2(250, 52)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 16
 text = "Start Day 2"
 

@@ -113,13 +113,15 @@ func _create_item_card(item: Dictionary) -> PanelContainer:
 	if item_type == "food":
 		var eat_btn: Button = Button.new()
 		eat_btn.text = "🍽️ Eat"
-		eat_btn.custom_minimum_size = Vector2(90, 32)
+		eat_btn.custom_minimum_size = Vector2(105, 46)
+		eat_btn.add_theme_font_size_override(&"font_size", 14)
 		eat_btn.pressed.connect(_on_eat_pressed.bind(String(item.get("id", ""))))
 		btn_col.add_child(eat_btn)
 
 	var discard_btn: Button = Button.new()
 	discard_btn.text = "🗑️ Drop"
-	discard_btn.custom_minimum_size = Vector2(90, 32)
+	discard_btn.custom_minimum_size = Vector2(105, 46)
+	discard_btn.add_theme_font_size_override(&"font_size", 14)
 	discard_btn.pressed.connect(_on_discard_pressed.bind(String(item.get("id", "")), item_name))
 	btn_col.add_child(discard_btn)
 

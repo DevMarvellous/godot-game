@@ -168,14 +168,16 @@ func _create_study_card(opt: Dictionary, player_energy: float) -> PanelContainer
 
 	var desc_lbl: Label = Label.new()
 	desc_lbl.text = "%s  •  (+%.2f CGPA, %dm, -%d Energy)" % [String(opt["desc"]), float(opt["cgpa_gain"]), int(opt["time_minutes"]), int(opt["energy_cost"])]
-	desc_lbl.add_theme_font_size_override(&"font_size", 12)
+	desc_lbl.add_theme_font_size_override(&"font_size", 13)
 	desc_lbl.add_theme_color_override(&"font_color", Color(0.75, 0.8, 0.85))
+	desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vbox.add_child(desc_lbl)
 
 	var btn: Button = Button.new()
 	var energy_needed: float = float(opt["energy_cost"])
 	btn.text = "Study"
-	btn.custom_minimum_size = Vector2(95, 36)
+	btn.custom_minimum_size = Vector2(110, 48)
+	btn.add_theme_font_size_override(&"font_size", 14)
 
 	if player_energy < energy_needed:
 		btn.disabled = true

@@ -72,7 +72,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="ModalPanel" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(390, 440)
+custom_minimum_size = Vector2(530, 620)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
 
@@ -100,7 +100,7 @@ label_settings = SubResource("LabelSettings_sub")
 
 [node name="CloseButton" type="Button" parent="CenterContainer/ModalPanel/VBox/HeaderHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 size_flags_vertical = 0
 text = "✕"
@@ -124,12 +124,12 @@ text = "CLASS IN SESSION: GST 101 Lecture"
 
 [node name="LectureBtn" type="Button" parent="CenterContainer/ModalPanel/VBox/LectureBox/LectureHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(170, 36)
+custom_minimum_size = Vector2(200, 48)
 layout_mode = 2
 text = "Attend Class (CGPA +0.15)"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer/ModalPanel/VBox"]
-custom_minimum_size = Vector2(0, 240)
+custom_minimum_size = Vector2(0, 380)
 layout_mode = 2
 size_flags_vertical = 3
 

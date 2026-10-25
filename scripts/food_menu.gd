@@ -175,8 +175,8 @@ func _create_food_card(item: Dictionary, player_money: int) -> PanelContainer:
 	# 1. Dine Here button
 	var dine_btn: Button = Button.new()
 	dine_btn.text = "🍽️ Dine Here ₦%s" % _format_number(cost)
-	dine_btn.custom_minimum_size = Vector2(145, 42)
-	dine_btn.add_theme_font_size_override(&"font_size", 13)
+	dine_btn.custom_minimum_size = Vector2(150, 48)
+	dine_btn.add_theme_font_size_override(&"font_size", 14)
 	if player_money < cost:
 		dine_btn.disabled = true
 		dine_btn.text = "₦%s (Can't Afford)" % _format_number(cost)
@@ -187,8 +187,8 @@ func _create_food_card(item: Dictionary, player_money: int) -> PanelContainer:
 	# 2. Takeaway Pack button
 	var takeaway_btn: Button = Button.new()
 	takeaway_btn.text = "🥡 Takeaway ₦%s" % _format_number(takeaway_cost)
-	takeaway_btn.custom_minimum_size = Vector2(145, 42)
-	takeaway_btn.add_theme_font_size_override(&"font_size", 13)
+	takeaway_btn.custom_minimum_size = Vector2(150, 48)
+	takeaway_btn.add_theme_font_size_override(&"font_size", 14)
 	if player_money < takeaway_cost:
 		takeaway_btn.disabled = true
 		takeaway_btn.text = "🥡 ₦%s (Can't Afford)" % _format_number(takeaway_cost)

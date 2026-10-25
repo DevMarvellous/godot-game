@@ -72,7 +72,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="ModalPanel" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(380, 420)
+custom_minimum_size = Vector2(530, 580)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
 
@@ -109,7 +109,7 @@ text = "Affinity: 20/100 • Casual Acquaintance"
 
 [node name="CloseBtn" type="Button" parent="CenterContainer/ModalPanel/VBox/Header"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 size_flags_vertical = 0
 text = "✕"
@@ -157,7 +157,8 @@ autowrap_mode = 2
 
 [node name="FinishBtn" type="Button" parent="CenterContainer/ModalPanel/VBox/ResponsePanel/VBox2"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "Continue ➔"
 

@@ -131,3 +131,4 @@ func _on_player_passed_out(_reason: String) -> void:
 		if player.has_method("display_notification"):
 			player.display_notification("👪 Proud Mama & Papa rush over: 'Ehya our graduate! Fan him with this program booklet, drink this cold malt and eat meat pie!' (+50 Energy, +50 Hunger)")
 		player.global_position = Vector3(0, 0.1, 2.0)
+
