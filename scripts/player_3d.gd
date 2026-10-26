@@ -58,23 +58,55 @@ var _active_emote_tween: Tween = null
 var _dress_tween: Tween = null
 var _screen_fade_rect: ColorRect = null
 
-# Smooth My Campus Life camera offset & interpolation (Elevated 3/4 Isometric)
-var cam_target_offset: Vector3 = Vector3(0, 2.85, 2.65)
+# Smooth My Campus Life 3D Perspective camera system
+var cam_target_offset: Vector3 = Vector3(0, 1.95, 2.45)
+var cam_target_pitch_deg: float = -16.0
+var cam_target_fov: float = 60.0
 
-# Dynamic Camera Zoom (mouse wheel on desktop, toggle button on mobile)
+# Dynamic Camera Zoom & 3D Perspective Modes (mouse wheel on desktop, [V]/[Z] or View button)
 var cam_zoom_factor: float = 1.0
 const CAM_ZOOM_MIN: float = 0.55 # Close-up avatar view
 const CAM_ZOOM_MAX: float = 1.6  # Wide room overview
 const CAM_ZOOM_STEP: float = 0.12
-const CAM_BASE_OFFSET: Vector3 = Vector3(0, 2.85, 2.65)
-const CAM_ZOOM_PRESETS: Array[float] = [0.65, 1.0, 1.4] # Close / Medium / Wide
-var cam_zoom_preset_idx: int = 1
+const CAM_BASE_OFFSET: Vector3 = Vector3(0, 1.95, 2.45)
+const CAM_ZOOM_PRESETS: Array[float] = [1.0, 0.68, 1.25, 1.55]
+const CAM_VIEW_MODES: Array[Dictionary] = [
+	{
+		"name": "3D Perspective",
+		"offset": Vector3(0, 1.95, 2.45),
+		"pitch": -16.0,
+		"fov": 60.0
+	},
+	{
+		"name": "Close-Up Drip",
+		"offset": Vector3(0, 1.45, 1.65),
+		"pitch": -9.0,
+		"fov": 54.0
+	},
+	{
+		"name": "Classic 3/4",
+		"offset": Vector3(0, 2.85, 2.65),
+		"pitch": -35.0,
+		"fov": 55.0
+	},
+	{
+		"name": "Wide Overview",
+		"offset": Vector3(0, 3.85, 3.55),
+		"pitch": -40.0,
+		"fov": 58.0
+	}
+]
+var cam_zoom_preset_idx: int = 0
+var clout_badge_label: Label3D = null
 
 
 func _ready() -> void:
+	_apply_camera_preset(cam_zoom_preset_idx, true)
 	if camera_node:
 		camera_node.top_level = true
 		camera_node.global_position = global_position + cam_target_offset
+		camera_node.rotation_degrees.x = cam_target_pitch_deg
+		camera_node.fov = cam_target_fov
 	if prompt_label:
 		prompt_label.visible = false
 	if notif_label:
@@ -87,7 +119,11 @@ func _ready() -> void:
 		chat_timer.timeout.connect(_on_chat_timeout)
 	if NetworkManager:
 		NetworkManager.chat_received.connect(_on_chat_received)
+	_create_clout_badge()
+	if needs_manager:
+		needs_manager.stat_changed.connect(func(_s, _c, _m): update_clout_badge())
 	_load_default_appearance()
+	update_clout_badge()
 
 
 var mobile_input_vector: Vector2 = Vector2.ZERO
@@ -103,16 +139,18 @@ func set_mobile_movement(vec: Vector2) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	# Mouse wheel camera zoom (desktop)
+	# Mouse wheel camera zoom & perspective pitch (desktop)
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			cam_zoom_factor = clampf(cam_zoom_factor - CAM_ZOOM_STEP, CAM_ZOOM_MIN, CAM_ZOOM_MAX)
 			cam_target_offset = CAM_BASE_OFFSET * cam_zoom_factor
+			cam_target_pitch_deg = lerpf(-8.0, -38.0, inverse_lerp(CAM_ZOOM_MIN, CAM_ZOOM_MAX, cam_zoom_factor))
 			get_viewport().set_input_as_handled()
 			return
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			cam_zoom_factor = clampf(cam_zoom_factor + CAM_ZOOM_STEP, CAM_ZOOM_MIN, CAM_ZOOM_MAX)
 			cam_target_offset = CAM_BASE_OFFSET * cam_zoom_factor
+			cam_target_pitch_deg = lerpf(-8.0, -38.0, inverse_lerp(CAM_ZOOM_MIN, CAM_ZOOM_MAX, cam_zoom_factor))
 			get_viewport().set_input_as_handled()
 			return
 
@@ -188,16 +226,81 @@ func _find_nearest_interactable(world_pos: Vector3, max_radius: float) -> Intera
 				if d_npc < best_dist:
 					best_dist = d_npc
 					best = area
+	var net_node: Node = scene_root.get_node_or_null("NetworkPlayers")
+	if net_node:
+		for peer_node in net_node.get_children():
+			var peer_area: Interactable3D = peer_node.get_node_or_null("PeerInteractArea") as Interactable3D
+			if peer_area:
+				var d_peer: float = Vector2(world_pos.x - peer_node.global_position.x, world_pos.z - peer_node.global_position.z).length()
+				if d_peer < best_dist:
+					best_dist = d_peer
+					best = peer_area
 	return best
 
 
-## Toggle camera zoom through Close / Medium / Wide presets (mobile button)
+func _apply_camera_preset(idx: int, instant: bool = false) -> String:
+	cam_zoom_preset_idx = clampi(idx, 0, CAM_VIEW_MODES.size() - 1)
+	var mode: Dictionary = CAM_VIEW_MODES[cam_zoom_preset_idx]
+	cam_target_offset = mode.get("offset", Vector3(0, 1.95, 2.45))
+	cam_target_pitch_deg = float(mode.get("pitch", -16.0))
+	cam_target_fov = float(mode.get("fov", 60.0))
+	cam_zoom_factor = CAM_ZOOM_PRESETS[cam_zoom_preset_idx] if cam_zoom_preset_idx < CAM_ZOOM_PRESETS.size() else 1.0
+	if instant and camera_node:
+		camera_node.global_position = global_position + cam_target_offset
+		camera_node.rotation_degrees.x = cam_target_pitch_deg
+		camera_node.fov = cam_target_fov
+	return String(mode.get("name", "3D Perspective"))
+
+
+## Cycle camera view modes: 3D Perspective / Close-Up Drip / Classic 3/4 / Wide Overview
 func cycle_camera_zoom() -> String:
-	cam_zoom_preset_idx = (cam_zoom_preset_idx + 1) % CAM_ZOOM_PRESETS.size()
-	cam_zoom_factor = CAM_ZOOM_PRESETS[cam_zoom_preset_idx]
-	cam_target_offset = CAM_BASE_OFFSET * cam_zoom_factor
-	var labels: Array[String] = ["Close", "Medium", "Wide"]
-	return labels[cam_zoom_preset_idx]
+	cam_zoom_preset_idx = (cam_zoom_preset_idx + 1) % CAM_VIEW_MODES.size()
+	var mode_name: String = _apply_camera_preset(cam_zoom_preset_idx, false)
+	display_notification("🎥 View: %s" % mode_name)
+	return mode_name
+
+
+func get_current_camera_view_name() -> String:
+	var mode: Dictionary = CAM_VIEW_MODES[clampi(cam_zoom_preset_idx, 0, CAM_VIEW_MODES.size() - 1)]
+	return String(mode.get("name", "3D Perspective"))
+
+
+func _create_clout_badge() -> void:
+	if clout_badge_label:
+		return
+	clout_badge_label = Label3D.new()
+	clout_badge_label.name = "CloutBadgeLabel"
+	clout_badge_label.position = Vector3(0, 1.98, 0)
+	clout_badge_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	clout_badge_label.font_size = 34
+	clout_badge_label.outline_size = 8
+	clout_badge_label.modulate = Color(1.0, 0.90, 0.45, 0.95)
+	add_child(clout_badge_label)
+
+
+func get_clout_title() -> String:
+	var cgpa_val: float = needs_manager.cgpa if needs_manager else 3.5
+	var cash_val: int = needs_manager.money if needs_manager else 5000
+	var has_gen: bool = StudentProfile.owned_upgrades.has("generator")
+	var has_laptop: bool = StudentProfile.owned_upgrades.has("laptop")
+	if cash_val >= 25000 and cgpa_val >= 4.5:
+		return "👑 Campus Legend"
+	elif cash_val >= 15000 or has_gen:
+		return "💎 Campus Big Boy"
+	elif cgpa_val >= 4.5:
+		return "🏆 First Class Scholar"
+	elif has_laptop:
+		return "💻 Campus Tech Bro"
+	elif cgpa_val >= 3.8:
+		return "📚 Dean's List"
+	return "🎒 100L Fresher"
+
+
+func update_clout_badge() -> void:
+	if not clout_badge_label:
+		return
+	var s_name: String = StudentProfile.student_name if StudentProfile.student_name != "" else "Student"
+	clout_badge_label.text = "%s • %s" % [s_name, get_clout_title()]
 
 
 func _create_nav_beacon() -> void:
@@ -430,10 +533,12 @@ func _physics_process(delta: float) -> void:
 				var current_room: String = String(get_tree().current_scene.name) if get_tree().current_scene else "room"
 				NetworkManager.broadcast_transform(current_room, global_position, visual_root.rotation.y, is_moving_now)
 
-	# Smooth My Campus Life camera follow (damped lerp)
+	# Smooth My Campus Life 3D Perspective camera follow (damped lerp of position, pitch & FOV)
 	if camera_node:
 		var desired_cam_pos: Vector3 = global_position + cam_target_offset
 		camera_node.global_position = camera_node.global_position.lerp(desired_cam_pos, 7.5 * delta)
+		camera_node.rotation_degrees.x = lerpf(camera_node.rotation_degrees.x, cam_target_pitch_deg, 7.5 * delta)
+		camera_node.fov = lerpf(camera_node.fov, cam_target_fov, 7.5 * delta)
 
 	# Interaction trigger
 	if Input.is_action_just_pressed("interact"):

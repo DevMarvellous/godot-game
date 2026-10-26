@@ -22,6 +22,7 @@ var toast_tween: Tween = null
 var objective_btn: Button = null
 var tasks_toggle_btn: Button = null
 var tasks_sheet: PanelContainer = null
+var clout_status_btn: Button = null
 var _cached_energy: float = 100.0
 var _cached_hunger: float = 100.0
 var _cached_money: int = 5000
@@ -113,6 +114,41 @@ func _create_objective_pill_ui() -> void:
 	container.add_child(tasks_toggle_btn)
 
 	add_child(container)
+
+	# Clout & Multiplayer Online Status Pill beneath Objective Pill
+	clout_status_btn = Button.new()
+	clout_status_btn.name = "CloutStatusBtn"
+	clout_status_btn.anchors_preset = Control.PRESET_TOP_LEFT
+	clout_status_btn.offset_left = 12.0
+	clout_status_btn.offset_top = 188.0
+	clout_status_btn.offset_right = 345.0
+	clout_status_btn.offset_bottom = 216.0
+	clout_status_btn.focus_mode = Control.FOCUS_NONE
+	clout_status_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	clout_status_btn.add_theme_font_size_override(&"font_size", 12)
+	clout_status_btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+
+	var c_style := StyleBoxFlat.new()
+	c_style.bg_color = Color(0.06, 0.11, 0.17, 0.88)
+	c_style.border_width_left = 3
+	c_style.border_width_top = 1
+	c_style.border_width_right = 1
+	c_style.border_width_bottom = 1
+	c_style.border_color = Color(0.25, 0.85, 0.65, 0.85)
+	c_style.corner_radius_top_left = 8
+	c_style.corner_radius_top_right = 8
+	c_style.corner_radius_bottom_left = 8
+	c_style.corner_radius_bottom_right = 8
+	c_style.content_margin_left = 10.0
+	c_style.content_margin_right = 10.0
+	c_style.content_margin_top = 3.0
+	c_style.content_margin_bottom = 3.0
+	clout_status_btn.add_theme_stylebox_override(&"normal", c_style)
+	clout_status_btn.add_theme_stylebox_override(&"hover", c_style)
+	clout_status_btn.add_theme_stylebox_override(&"pressed", c_style)
+	clout_status_btn.pressed.connect(_toggle_tasks_sheet)
+	add_child(clout_status_btn)
+
 	_refresh_objective_pill()
 	_create_tasks_sheet_ui()
 
@@ -202,6 +238,22 @@ func _toggle_tasks_sheet() -> void:
 		_populate_tasks_sheet()
 
 
+func compute_clout_rank() -> String:
+	var has_gen: bool = StudentProfile.owned_upgrades.has("generator")
+	var has_laptop: bool = StudentProfile.owned_upgrades.has("laptop")
+	if _cached_money >= 25000 and _cached_cgpa >= 4.5:
+		return "👑 Campus Legend"
+	elif _cached_money >= 15000 or has_gen:
+		return "💎 Campus Big Boy"
+	elif _cached_cgpa >= 4.5:
+		return "🏆 First Class Scholar"
+	elif has_laptop:
+		return "💻 Campus Tech Bro"
+	elif _cached_cgpa >= 3.8:
+		return "📚 Dean's List"
+	return "🎒 100L Fresher"
+
+
 func _populate_tasks_sheet() -> void:
 	if not tasks_sheet:
 		return
@@ -214,6 +266,76 @@ func _populate_tasks_sheet() -> void:
 
 	var cur_step: int = PropBuilder3D.onboarding_quest_step
 	var all_quests = PropBuilder3D.ONBOARDING_QUESTS
+
+	# 1. Story Arc Chapter Header
+	var story_panel := PanelContainer.new()
+	var s_style := StyleBoxFlat.new()
+	s_style.bg_color = Color(0.11, 0.16, 0.25, 0.96)
+	s_style.border_width_left = 3
+	s_style.border_width_top = 1
+	s_style.border_width_right = 1
+	s_style.border_width_bottom = 1
+	s_style.border_color = Color(1.0, 0.82, 0.24, 0.95)
+	s_style.corner_radius_top_left = 10
+	s_style.corner_radius_top_right = 10
+	s_style.corner_radius_bottom_left = 10
+	s_style.corner_radius_bottom_right = 10
+	s_style.content_margin_left = 12.0
+	s_style.content_margin_right = 12.0
+	s_style.content_margin_top = 8.0
+	s_style.content_margin_bottom = 8.0
+	story_panel.add_theme_stylebox_override(&"panel", s_style)
+
+	var story_vbox := VBoxContainer.new()
+	story_vbox.add_theme_constant_override(&"separation", 4)
+	var chapter_title := "📖 CHAPTER 1: 100L FRESHER SURVIVAL"
+	var chapter_desc := "Settle into Hall 1, attend Dr. Adebayo's CSC 101 lectures, eat hot Jollof at Mama Put, and survive NEPA blackouts!"
+	if cur_step >= all_quests.size() and _cached_cgpa >= 4.4:
+		chapter_title = "👑 CHAPTER 3: CAMPUS CLOUT & FIRST CLASS CONVOY"
+		chapter_desc = "You're dominating academics and campus street credibility! Keep your CGPA above 4.50 and stack ₦25,000+ for Convocation Legend status."
+	elif cur_step >= 5:
+		chapter_title = "💻 CHAPTER 2: TECH HUSTLE, POP QUIZZES & SUG NIGHTS"
+		chapter_desc = "Balance tough mid-semester tests with freelance gigs, SUB snooker tournaments, and evening chillouts at Love Garden."
+
+	var ch_lbl := Label.new()
+	ch_lbl.text = "%s  •  Rank: %s" % [chapter_title, compute_clout_rank()]
+	ch_lbl.add_theme_font_size_override(&"font_size", 13)
+	ch_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.88, 0.32))
+	story_vbox.add_child(ch_lbl)
+
+	var ch_sub := Label.new()
+	ch_sub.text = chapter_desc
+	ch_sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	ch_sub.add_theme_font_size_override(&"font_size", 12)
+	ch_sub.add_theme_color_override(&"font_color", Color(0.82, 0.90, 0.98))
+	story_vbox.add_child(ch_sub)
+	story_panel.add_child(story_vbox)
+	list_vbox.add_child(story_panel)
+
+	# 2. Fun Campus Loops Quick-Jump Row
+	var fun_row := HBoxContainer.new()
+	fun_row.add_theme_constant_override(&"separation", 6)
+	var fun_spots: Array[Dictionary] = [
+		{"label": "⚽ Stadium Penalty", "dest": &"stadium"},
+		{"label": "🎱 SUB Snooker", "dest": &"sub"},
+		{"label": "🍗 Mama Put", "dest": &"mama_put"},
+		{"label": "💃 Love Garden", "dest": &"garden"}
+	]
+	for spot in fun_spots:
+		var f_btn := Button.new()
+		f_btn.text = String(spot["label"])
+		f_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		f_btn.custom_minimum_size = Vector2(0, 32)
+		f_btn.add_theme_font_size_override(&"font_size", 11)
+		f_btn.focus_mode = Control.FOCUS_NONE
+		var dest_id: StringName = spot["dest"]
+		f_btn.pressed.connect(func():
+			if SoundManager: SoundManager.play_click()
+			tasks_sheet.visible = false
+			objective_clicked.emit(dest_id)
+		)
+		fun_row.add_child(f_btn)
+	list_vbox.add_child(fun_row)
 
 	for i in range(all_quests.size()):
 		var q: Dictionary = all_quests[i]
@@ -291,6 +413,12 @@ func _refresh_objective_pill() -> void:
 	objective_btn.text = "%s  [TAP]" % String(info.get("text", "🎯 Explore Campus"))
 	objective_btn.add_theme_color_override(&"font_color", info.get("color", Color.WHITE))
 	_current_obj_dest = info.get("dest", &"sub")
+	if clout_status_btn:
+		var online_cnt: int = 1
+		if NetworkManager and NetworkManager.has_method("get_online_players"):
+			online_cnt = maxi(1, NetworkManager.get_online_players().size())
+		clout_status_btn.text = "%s  •  🟢 %d Online  •  📖 Story" % [compute_clout_rank(), online_cnt]
+		clout_status_btn.add_theme_color_override(&"font_color", Color(0.85, 0.96, 0.90))
 	if tasks_sheet and tasks_sheet.visible:
 		_populate_tasks_sheet()
 

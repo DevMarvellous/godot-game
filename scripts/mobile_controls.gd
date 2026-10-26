@@ -20,6 +20,7 @@ signal backpack_requested
 
 var emote_btn: Button = null
 var emote_sheet: PanelContainer = null
+var desktop_hint_bar: PanelContainer = null
 var bound_player: Player3D = null
 
 
@@ -35,10 +36,14 @@ func _ready() -> void:
 	if chat_btn:
 		chat_btn.pressed.connect(_on_chat_pressed)
 	if zoom_btn:
+		zoom_btn.text = "🎥 3D View [V]"
 		zoom_btn.pressed.connect(_on_zoom_pressed)
 	if transit_sheet:
 		transit_sheet.visible = false
 	_create_emote_ui()
+	_create_desktop_ui_bar()
+	get_viewport().size_changed.connect(_adapt_desktop_vs_mobile_ui)
+	_adapt_desktop_vs_mobile_ui()
 
 	# Wire transit quick-travel buttons
 	_wire_transit_btn(%HostelBtn, &"hostel")
@@ -103,7 +108,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_E:
 				_on_interact_pressed()
 				get_viewport().set_input_as_handled()
-			KEY_Z:
+			KEY_Z, KEY_V:
 				_on_zoom_pressed()
 				get_viewport().set_input_as_handled()
 			KEY_B:
@@ -122,6 +127,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_joystick_moved(vec: Vector2) -> void:
+	if joystick and vec != Vector2.ZERO:
+		joystick.modulate.a = 1.0
 	if bound_player:
 		bound_player.set_mobile_movement(vec)
 
@@ -164,7 +171,61 @@ func _on_zoom_pressed() -> void:
 	if bound_player and bound_player.has_method("cycle_camera_zoom"):
 		var label: String = bound_player.cycle_camera_zoom()
 		if zoom_btn:
-			zoom_btn.text = "🔍 %s" % label
+			zoom_btn.text = "🎥 %s [V]" % label
+
+
+func _create_desktop_ui_bar() -> void:
+	var touch_zone: Control = get_node_or_null("TouchZone") as Control
+	if not touch_zone:
+		return
+	desktop_hint_bar = PanelContainer.new()
+	desktop_hint_bar.name = "DesktopHintBar"
+	desktop_hint_bar.anchors_preset = Control.PRESET_CENTER_BOTTOM
+	desktop_hint_bar.anchor_left = 0.5
+	desktop_hint_bar.anchor_right = 0.5
+	desktop_hint_bar.anchor_top = 1.0
+	desktop_hint_bar.anchor_bottom = 1.0
+	desktop_hint_bar.offset_left = -350.0
+	desktop_hint_bar.offset_right = 350.0
+	desktop_hint_bar.offset_top = -34.0
+	desktop_hint_bar.offset_bottom = -6.0
+	desktop_hint_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var bar_style := StyleBoxFlat.new()
+	bar_style.bg_color = Color(0.05, 0.09, 0.14, 0.82)
+	bar_style.border_width_top = 1
+	bar_style.border_width_bottom = 1
+	bar_style.border_width_left = 1
+	bar_style.border_width_right = 1
+	bar_style.border_color = Color(1.0, 0.82, 0.24, 0.45)
+	bar_style.corner_radius_top_left = 12
+	bar_style.corner_radius_top_right = 12
+	bar_style.corner_radius_bottom_left = 12
+	bar_style.corner_radius_bottom_right = 12
+	bar_style.content_margin_left = 14.0
+	bar_style.content_margin_right = 14.0
+	bar_style.content_margin_top = 4.0
+	bar_style.content_margin_bottom = 4.0
+	desktop_hint_bar.add_theme_stylebox_override(&"panel", bar_style)
+
+	var hint_lbl := Label.new()
+	hint_lbl.text = "⌨️ [WASD / Click] Move  •  [E] Interact  •  [V / Scroll] 3D Perspective  •  [P] Phone  •  [C] Chat  •  [M] Map  •  [G] Emote"
+	hint_lbl.add_theme_font_size_override(&"font_size", 11)
+	hint_lbl.add_theme_color_override(&"font_color", Color(0.88, 0.94, 1.0, 0.92))
+	hint_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	desktop_hint_bar.add_child(hint_lbl)
+	touch_zone.add_child(desktop_hint_bar)
+
+
+func _adapt_desktop_vs_mobile_ui() -> void:
+	if not is_inside_tree():
+		return
+	var vp_size: Vector2 = get_viewport().get_visible_rect().size
+	var is_desktop_landscape: bool = vp_size.x >= 900.0 and vp_size.x > vp_size.y * 1.15
+	if desktop_hint_bar:
+		desktop_hint_bar.visible = is_desktop_landscape
+	if joystick:
+		joystick.modulate.a = 0.42 if is_desktop_landscape else 0.95
 
 
 func _on_transit_dest_pressed(dest: StringName) -> void:
