@@ -868,6 +868,8 @@ func _process_network_puppets() -> void:
 						p_data.get("trouser_col", Color(0.15, 0.18, 0.24)),
 						Color(0.08, 0.08, 0.08)
 					)
+				if puppet.has_signal("peer_interacted"):
+					puppet.peer_interacted.connect(_on_network_puppet_interacted)
 				remote_player_nodes[peer_id] = puppet
 			var puppet_node: NetworkPlayer = remote_player_nodes[peer_id]
 			var pos: Vector3 = p_data.get("pos", Vector3.ZERO)
@@ -901,3 +903,157 @@ func _on_network_peer_emote(peer_id: int, emote_name: String) -> void:
 		var puppet_node: NetworkPlayer = remote_player_nodes[peer_id]
 		if is_instance_valid(puppet_node) and puppet_node.has_method("play_emote"):
 			puppet_node.play_emote(emote_name)
+
+
+func _on_network_puppet_interacted(puppet: NetworkPlayer, p: CharacterBody3D) -> void:
+	if not menus_layer or not is_instance_valid(puppet):
+		return
+	if SoundManager:
+		SoundManager.play_click()
+
+	if menus_layer.has_node("NetworkPeerModal"):
+		menus_layer.get_node("NetworkPeerModal").queue_free()
+
+	var modal := Control.new()
+	modal.name = "NetworkPeerModal"
+	modal.set_anchors_preset(Control.PRESET_FULL_RECT)
+
+	var backdrop := ColorRect.new()
+	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	backdrop.color = Color(0, 0, 0, 0.72)
+	modal.add_child(backdrop)
+
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	modal.add_child(center)
+
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(480, 0)
+	var st := StyleBoxFlat.new()
+	st.bg_color = Color(0.08, 0.14, 0.20, 0.98)
+	st.border_width_left = 3
+	st.border_width_top = 3
+	st.border_width_right = 3
+	st.border_width_bottom = 3
+	st.border_color = Color(0.25, 0.90, 0.55, 0.95)
+	st.corner_radius_top_left = 18
+	st.corner_radius_top_right = 18
+	st.corner_radius_bottom_left = 18
+	st.corner_radius_bottom_right = 18
+	st.content_margin_left = 22.0
+	st.content_margin_top = 18.0
+	st.content_margin_right = 22.0
+	st.content_margin_bottom = 20.0
+	panel.add_theme_stylebox_override(&"panel", st)
+	center.add_child(panel)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override(&"separation", 10)
+	panel.add_child(vbox)
+
+	# Header Row
+	var top_row := HBoxContainer.new()
+	vbox.add_child(top_row)
+
+	var title_lbl := Label.new()
+	title_lbl.text = "🟢 ONLINE COURSEMATE: %s" % puppet.student_name.to_upper()
+	title_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title_lbl.add_theme_font_size_override(&"font_size", 17)
+	title_lbl.add_theme_color_override(&"font_color", Color(0.35, 0.98, 0.62))
+	top_row.add_child(title_lbl)
+
+	var close_btn := Button.new()
+	close_btn.text = "✕"
+	close_btn.custom_minimum_size = Vector2(46, 46)
+	close_btn.add_theme_font_size_override(&"font_size", 18)
+	close_btn.pressed.connect(func():
+		modal.queue_free()
+		_on_menu_closed()
+	)
+	top_row.add_child(close_btn)
+
+	# Student ID Info Card
+	var id_lbl := Label.new()
+	id_lbl.text = "🪪 Status: Live Connected Student • %s\n🎓 Level: 100L Undergraduate • Honours Candidate" % room_name
+	id_lbl.add_theme_font_size_override(&"font_size", 13)
+	id_lbl.add_theme_color_override(&"font_color", Color(0.82, 0.90, 0.98))
+	vbox.add_child(id_lbl)
+
+	var make_action_btn := func(txt: String, bg_col: Color, callback: Callable) -> Button:
+		var b := Button.new()
+		b.text = txt
+		b.custom_minimum_size = Vector2(0, 48)
+		b.add_theme_font_size_override(&"font_size", 15)
+		var bst := StyleBoxFlat.new()
+		bst.bg_color = bg_col
+		bst.border_width_left = 1
+		bst.border_width_top = 1
+		bst.border_width_right = 1
+		bst.border_width_bottom = 1
+		bst.border_color = Color(1.0, 0.88, 0.35, 0.65)
+		bst.corner_radius_top_left = 10
+		bst.corner_radius_top_right = 10
+		bst.corner_radius_bottom_left = 10
+		bst.corner_radius_bottom_right = 10
+		b.add_theme_stylebox_override(&"normal", bst)
+		b.pressed.connect(callback)
+		return b
+
+	# 1. Greet & Banter
+	vbox.add_child(make_action_btn.call("👋 Greet & Campus Banter (+8% Fun)", Color(0.12, 0.38, 0.26, 0.95), func():
+		if p and p.has_node("NeedsManager"):
+			p.get_node("NeedsManager").modify_fun(8.0)
+		if NetworkManager:
+			NetworkManager.broadcast_emote("wave")
+			NetworkManager.broadcast_chat("How far %s! Good to see you!" % puppet.student_name)
+		if is_instance_valid(puppet):
+			puppet.play_emote("wave")
+			puppet.show_chat("My guy! How semester dey go? 👋")
+		if p and p.has_method("spawn_floating_stat"):
+			p.spawn_floating_stat("👋 +8% Fun (Coursemate Banter)", Color(0.35, 0.95, 0.6))
+		modal.queue_free()
+		_on_menu_closed()
+	))
+
+	# 2. Afrobeat Dance Party
+	vbox.add_child(make_action_btn.call("🔥 Afrobeat Dance Party: Gbese! (+15% Fun)", Color(0.48, 0.22, 0.10, 0.95), func():
+		if p and p.has_node("NeedsManager"):
+			p.get_node("NeedsManager").modify_fun(15.0)
+		if p and p.has_method("play_shaku_emote"):
+			p.play_shaku_emote()
+		if NetworkManager:
+			NetworkManager.broadcast_emote("shaku")
+		if is_instance_valid(puppet):
+			puppet.play_emote("shaku")
+			puppet.show_chat("Oya gbese! Gbe body e! 🔥💃")
+		if p and p.has_method("spawn_floating_stat"):
+			p.spawn_floating_stat("🔥 +15% Fun (Dance Vibez!)", Color(1.0, 0.78, 0.22))
+		modal.queue_free()
+		_on_menu_closed()
+	))
+
+	# 3. Quick Study Group
+	vbox.add_child(make_action_btn.call("📚 Share Past Questions & Notes (+12% Academic, -8% Energy)", Color(0.14, 0.26, 0.45, 0.95), func():
+		if p and p.has_node("NeedsManager"):
+			var nm = p.get_node("NeedsManager")
+			nm.modify_academic(12.0)
+			nm.modify_energy(-8.0)
+		if is_instance_valid(puppet):
+			puppet.play_emote("study")
+			puppet.show_chat("Check this GST past question, e dey always come out! 📚")
+		if p and p.has_method("spawn_floating_stat"):
+			p.spawn_floating_stat("📚 +12% Academic (Peer Study Group)", Color(0.4, 0.85, 1.0))
+		modal.queue_free()
+		_on_menu_closed()
+	))
+
+	# 4. Challenge to Snooker at SUB
+	vbox.add_child(make_action_btn.call("🎱 Challenge to 9-Ball Snooker at SUB Arcade", Color(0.28, 0.14, 0.38, 0.95), func():
+		if is_instance_valid(puppet):
+			puppet.show_chat("Oya let's go SUB Snooker table! Ready to lose? 🎱")
+		modal.queue_free()
+		_on_menu_closed()
+		_on_fixture_menu_requested(&"snooker", p)
+	))
+
+	menus_layer.add_child(modal)

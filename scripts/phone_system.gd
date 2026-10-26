@@ -955,7 +955,154 @@ func _render_results_app() -> void:
 	)
 	cl_vbox.add_child(deans_btn)
 
+	var wealth_btn: Button = _create_styled_button("💰 View CampusPay Wealth Leaderboard (Top Hustlers)", Color(0.14, 0.36, 0.24, 0.9), 34)
+	wealth_btn.pressed.connect(func():
+		_open_wealth_leaderboard_view()
+	)
+	cl_vbox.add_child(wealth_btn)
+
+	var lobby_btn: Button = _create_styled_button("🌐 Live Online Multiplayer Lobby & Room Radar", Color(0.24, 0.16, 0.42, 0.95), 34)
+	lobby_btn.pressed.connect(func():
+		_open_multiplayer_lobby_view()
+	)
+	cl_vbox.add_child(lobby_btn)
+
 	dynamic_app_container.add_child(cloud_card)
+
+
+func _open_wealth_leaderboard_view() -> void:
+	app_title.text = "💰 WEALTH LEADERBOARD"
+	for c in dynamic_app_container.get_children():
+		c.queue_free()
+
+	var banner := _create_card(Color(0.06, 0.18, 0.12, 0.95), Color(0.25, 0.90, 0.55, 0.9), 14)
+	var b_box := VBoxContainer.new()
+	banner.add_child(b_box)
+
+	var t_lbl := Label.new()
+	t_lbl.text = "CAMPUSPAY RICHEST STUDENT HUSTLERS"
+	t_lbl.add_theme_font_size_override("font_size", 13)
+	t_lbl.add_theme_color_override("font_color", Color(0.35, 0.98, 0.62))
+	b_box.add_child(t_lbl)
+
+	var sub := Label.new()
+	sub.text = "Top Verified Student Entrepreneurs & Freelancers Across Campus"
+	sub.add_theme_font_size_override("font_size", 11)
+	sub.add_theme_color_override("font_color", Color(0.85, 0.90, 0.95))
+	b_box.add_child(sub)
+	dynamic_app_container.add_child(banner)
+
+	const TOP_HUSTLERS: Array[Dictionary] = [
+		{"rank": "1st", "name": "Emeka Tech O.", "dept": "CSC", "bal": 185000, "role": "💻 Lead Software Contractor"},
+		{"rank": "2nd", "name": "Tolani Davies", "dept": "SMS", "bal": 142000, "role": "🛍️ Campus Mall Fashion Partner"},
+		{"rank": "3rd", "name": "Damilola B.", "dept": "ENG", "bal": 98000, "role": "🚐 Shuttle Fleet Logistics"},
+		{"rank": "4th", "name": "Halima Lawal", "dept": "LAW", "bal": 87500, "role": "⚖️ Chambers Research Clerk"},
+		{"rank": "5th", "name": "Segun Alabi", "dept": "CSC", "bal": 74000, "role": "🎱 SUB 9-Ball Snooker Pro"},
+		{"rank": "6th", "name": "Kemi Adeleke", "dept": "NAS", "bal": 62000, "role": "🍲 Buka Catering Supplier"}
+	]
+
+	for h_data in TOP_HUSTLERS:
+		var s_card := _create_card(Color(0.08, 0.12, 0.16, 0.9), Color(0.20, 0.45, 0.35, 0.7), 10)
+		var h := HBoxContainer.new()
+		s_card.add_child(h)
+
+		var rank_lbl := Label.new()
+		rank_lbl.text = h_data["rank"]
+		rank_lbl.custom_minimum_size = Vector2(36, 0)
+		rank_lbl.add_theme_font_size_override("font_size", 13)
+		rank_lbl.add_theme_color_override("font_color", Color(1.0, 0.85, 0.25))
+		h.add_child(rank_lbl)
+
+		var name_box := VBoxContainer.new()
+		name_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var n_lbl := Label.new()
+		n_lbl.text = "%s (%s)" % [h_data["name"], h_data["dept"]]
+		n_lbl.add_theme_font_size_override("font_size", 12)
+		name_box.add_child(n_lbl)
+
+		var b_lbl := Label.new()
+		b_lbl.text = h_data["role"]
+		b_lbl.add_theme_font_size_override("font_size", 10)
+		b_lbl.add_theme_color_override("font_color", Color(0.65, 0.85, 1.0))
+		name_box.add_child(b_lbl)
+		h.add_child(name_box)
+
+		var bal_lbl := Label.new()
+		bal_lbl.text = "₦%s" % _format_number(int(h_data["bal"]))
+		bal_lbl.add_theme_font_size_override("font_size", 13)
+		bal_lbl.add_theme_color_override("font_color", Color(0.35, 0.95, 0.55))
+		h.add_child(bal_lbl)
+
+		dynamic_app_container.add_child(s_card)
+
+	var back_btn_w := _create_styled_button("◀ Back to Academic & Cloud Portal", Color(0.18, 0.25, 0.35, 0.95), 36)
+	back_btn_w.pressed.connect(func():
+		_render_results_app()
+	)
+	dynamic_app_container.add_child(back_btn_w)
+
+
+func _open_multiplayer_lobby_view() -> void:
+	app_title.text = "🌐 LIVE ONLINE LOBBY"
+	for c in dynamic_app_container.get_children():
+		c.queue_free()
+
+	var peer_count: int = NetworkManager.remote_players.size() if NetworkManager else 3
+	var status_card := _create_card(Color(0.08, 0.16, 0.24, 0.95), Color(0.35, 0.85, 1.0, 0.9), 14)
+	var s_box := VBoxContainer.new()
+	status_card.add_child(s_box)
+
+	var st_title := Label.new()
+	st_title.text = "🟢 CAMPUS REALTIME SERVER: ONLINE (%d PEERS)" % (peer_count + 1)
+	st_title.add_theme_font_size_override("font_size", 13)
+	st_title.add_theme_color_override("font_color", Color(0.35, 0.98, 0.62))
+	s_box.add_child(st_title)
+
+	var st_sub := Label.new()
+	st_sub.text = "Walk up to any online student in 3D and tap them to Wave, Dance Gbese, or Study Together!"
+	st_sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	st_sub.add_theme_font_size_override("font_size", 11)
+	st_sub.add_theme_color_override("font_color", Color(0.85, 0.90, 0.95))
+	s_box.add_child(st_sub)
+	dynamic_app_container.add_child(status_card)
+
+	if NetworkManager:
+		for pid in NetworkManager.remote_players.keys():
+			var pdata: Dictionary = NetworkManager.remote_players[pid]
+			var p_card := _create_card(Color(0.08, 0.11, 0.16, 0.9), Color(0.25, 0.40, 0.55, 0.7), 10)
+			var h := HBoxContainer.new()
+			p_card.add_child(h)
+
+			var info_v := VBoxContainer.new()
+			info_v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			var nl := Label.new()
+			nl.text = "🟢 %s" % String(pdata.get("name", "Student"))
+			nl.add_theme_font_size_override("font_size", 12)
+			info_v.add_child(nl)
+
+			var rl := Label.new()
+			rl.text = "📍 Location: %s" % String(pdata.get("room", "Courtyard"))
+			rl.add_theme_font_size_override("font_size", 10)
+			rl.add_theme_color_override("font_color", Color(0.65, 0.85, 1.0))
+			info_v.add_child(rl)
+			h.add_child(info_v)
+
+			var wave_b := Button.new()
+			wave_b.text = "👋 Ping"
+			wave_b.custom_minimum_size = Vector2(68, 30)
+			wave_b.add_theme_font_size_override("font_size", 11)
+			wave_b.pressed.connect(func():
+				NetworkManager.broadcast_chat("How far %s! Where you dey?" % String(pdata.get("name", "guy")))
+				_pulse_dynamic_island("💬 Ping Sent!", Color(0.35, 0.95, 0.6))
+			)
+			h.add_child(wave_b)
+			dynamic_app_container.add_child(p_card)
+
+	var back_btn_l := _create_styled_button("◀ Back to Academic & Cloud Portal", Color(0.18, 0.25, 0.35, 0.95), 36)
+	back_btn_l.pressed.connect(func():
+		_render_results_app()
+	)
+	dynamic_app_container.add_child(back_btn_l)
 
 
 func _open_deans_list_view() -> void:

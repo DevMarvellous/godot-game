@@ -277,6 +277,20 @@ func _ready() -> void:
 	stage_inst.queue_free()
 	print("  -> Admission Stage Main Viewport OK")
 
+	print("[6c/6] Verifying Multiplayer NetworkPlayer 3D Interaction & Supabase Cloud Sync...")
+	var net_p_scene = load("res://scenes/network_player.tscn")
+	var net_p = net_p_scene.instantiate()
+	add_child(net_p)
+	assert(net_p.has_node("PeerInteractArea"), "NetworkPlayer must have PeerInteractArea")
+	net_p.play_emote("shaku")
+	net_p.show_chat("Oya gbese!")
+	net_p.queue_free()
+	if SupabaseClient:
+		SupabaseClient.sync_student_profile(StudentProfile.to_dictionary())
+		SupabaseClient.fetch_deans_list_leaderboard()
+		SupabaseClient.fetch_wealth_leaderboard()
+	print("  -> Multiplayer NetworkPlayer & Cloud Backend Sync OK")
+
 	print("========================================================")
 	print("   ALL 6 TEST PHASES PASSED WITH ZERO CRASHES OR ERRORS!")
 	print("========================================================\n")

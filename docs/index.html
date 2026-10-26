@@ -712,11 +712,26 @@ html, body, #canvas {
 		</div>
 	</div>
 
+	<!-- 3. Native HTML Mobile Chat Input Drawer -->
+	<div id="native-chat-overlay" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:75; background:rgba(0,0,0,0.65); display:none; align-items:flex-start; justify-content:center; padding-top:12vh; backdrop-filter:blur(6px);">
+		<div style="background:rgba(12,24,18,0.98); border:2px solid #f5c518; border-radius:18px; width:92%; max-width:440px; padding:18px; box-shadow:0 12px 40px rgba(0,0,0,0.85);">
+			<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+				<strong style="color:#f5c518; font-size:15px;">💬 Campus Live Multiplayer Chat</strong>
+				<button type="button" onclick="closeNativeCampusChat()" style="background:transparent; border:none; color:#cbd5e1; font-size:18px; cursor:pointer;">✕</button>
+			</div>
+			<input id="native-chat-input" class="portal-input" type="text" maxlength="100" placeholder="Type message to coursemates..." autocomplete="off" onkeydown="if(event.key==='Enter') submitNativeCampusChat();" />
+			<div style="display:flex; gap:8px; margin-top:12px;">
+				<button type="button" class="btn-secondary" style="height:44px;" onclick="closeNativeCampusChat()">Cancel</button>
+				<button type="button" class="btn-primary" style="height:44px;" onclick="submitNativeCampusChat()">Send Message 💬</button>
+			</div>
+		</div>
+	</div>
+
 	<button id="web-fullscreen-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
 
 	<script src="index.js"></script>
 	<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":941176,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":951672,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -1136,10 +1151,98 @@ window.onCampusStageReady = function () {
 };
 
 /* =======================================================
-   SUPABASE REALTIME WEBSOCKET MULTIPLAYER BRIDGE
+   NATIVE HTML MOBILE CHAT INPUT DRAWER
    ======================================================= */
-let currentRoomChannel = 'courtyard';
-let localPeerId = 'usr_' + Math.floor(Math.random() * 8999 + 1000);
+window.openNativeCampusChat = function() {
+	const modal = document.getElementById('native-chat-overlay');
+	const inp = document.getElementById('native-chat-input');
+	if (modal && inp) {
+		modal.style.display = 'flex';
+		inp.value = '';
+		setTimeout(() => inp.focus(), 50);
+	}
+};
+
+window.closeNativeCampusChat = function() {
+	const modal = document.getElementById('native-chat-overlay');
+	if (modal) modal.style.display = 'none';
+};
+
+window.submitNativeCampusChat = function() {
+	const inp = document.getElementById('native-chat-input');
+	const msg = inp ? inp.value.trim() : '';
+	window.closeNativeCampusChat();
+	if (msg && window.godotSendLocalChat) {
+		window.godotSendLocalChat(msg);
+	}
+};
+
+/* =======================================================
+   SUPABASE REALTIME WEBSOCKET & MULTI-TAB MULTIPLAYER HUB
+   ======================================================= */
+let currentRoomChannel = 'Courtyard';
+let localPeerNumericId = Math.floor(Math.random() * 7999 + 1000);
+let localPeerId = 'usr_' + localPeerNumericId;
+const peerLastSeen = {};
+
+// 1. Multi-tab & Local Network Zero-Latency BroadcastChannel
+let campusBroadcastChannel = null;
+try {
+	if ('BroadcastChannel' in window) {
+		campusBroadcastChannel = new BroadcastChannel('my_campus_life_multiplayer_v1');
+		campusBroadcastChannel.onmessage = (ev) => {
+			if (ev && ev.data) handleIncomingRealtimePacket(ev.data);
+		};
+	}
+} catch (e) {}
+
+function handleIncomingRealtimePacket(pkt) {
+	if (!pkt || pkt.num_id === localPeerNumericId) return;
+	const pid = pkt.num_id || 2001;
+	peerLastSeen[pid] = Date.now();
+
+	if (pkt.event === 'pos' && window.godotReceiveNetPlayer) {
+		window.godotReceiveNetPlayer(pid, {
+			name: pkt.name || 'Coursemate',
+			room: pkt.room || 'Courtyard',
+			x: pkt.x || 0,
+			y: pkt.y || 0.1,
+			z: pkt.z || 0,
+			rot_y: pkt.rot_y || 0,
+			moving: !!pkt.moving,
+			shirt_col: pkt.shirt_col || '#1e824c',
+			trouser_col: pkt.trouser_col || '#273746'
+		});
+	} else if (pkt.event === 'chat' && window.godotReceiveNetChat) {
+		window.godotReceiveNetChat(pkt.sender || 'Coursemate', pkt.message || '', pid);
+	} else if (pkt.event === 'emote' && window.godotReceiveNetEmote) {
+		window.godotReceiveNetEmote(pid, pkt.emote || 'wave');
+	}
+}
+
+// Cleanup stale peers every 5 seconds
+setInterval(() => {
+	const now = Date.now();
+	Object.keys(peerLastSeen).forEach(pidStr => {
+		const pid = parseInt(pidStr, 10);
+		if (now - peerLastSeen[pid] > 15000) {
+			delete peerLastSeen[pid];
+			if (window.godotRemoveNetPlayer) window.godotRemoveNetPlayer(pid);
+		}
+	});
+}, 5000);
+
+window.supabaseRealtimeBroadcast = function(payload) {
+	payload.num_id = localPeerNumericId;
+	const outfit = OUTFITS[ADMISSION_STATE.shirtIdx] || OUTFITS[0];
+	const trouser = TROUSERS[ADMISSION_STATE.trouserIdx] || TROUSERS[0];
+	payload.shirt_col = outfit.top;
+	payload.trouser_col = trouser.color;
+
+	if (campusBroadcastChannel) {
+		try { campusBroadcastChannel.postMessage(payload); } catch (e) {}
+	}
+};
 
 window.campusNetBroadcastTransform = function(room, x, y, z, rotY, moving) {
 	currentRoomChannel = room;
@@ -1151,7 +1254,7 @@ window.campusNetBroadcastTransform = function(room, x, y, z, rotY, moving) {
 			x: x, y: y, z: z,
 			rot_y: rotY,
 			moving: moving,
-			name: ADMISSION_STATE.name
+			name: `${ADMISSION_STATE.name} [${ADMISSION_STATE.dept}]`
 		});
 	}
 };

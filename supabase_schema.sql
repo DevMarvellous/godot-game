@@ -1,69 +1,80 @@
 -- ============================================================================
--- MY CAMPUS LIFE - SUPABASE POSTGRESQL CLOUD DATABASE SCHEMA
+-- MY CAMPUS LIFE - SUPABASE POSTGRESQL & REALTIME CLOUD SCHEMA
+-- Run this script in your Supabase SQL Editor to initialize the backend.
 -- ============================================================================
--- Free Tier Compatible: Up to 50,000 monthly active users (GoTrue Auth + PostgreSQL)
--- Execute this script in your Supabase Dashboard: SQL Editor -> New Query -> Run
 
--- 1. Create Student Profiles Table
+-- 1. Student Profiles Table (Cloud Saves, Dean's List & Wealth Leaderboards)
 CREATE TABLE IF NOT EXISTS public.student_profiles (
-    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-    student_name TEXT NOT NULL,
-    matric_no TEXT UNIQUE NOT NULL,
-    department TEXT NOT NULL,
-    faculty TEXT NOT NULL,
-    gender TEXT DEFAULT 'Male',
-    level INT DEFAULT 100,
-    semester INT DEFAULT 1,
-    cgpa NUMERIC(3,2) DEFAULT 3.50,
-    wallet_balance INT DEFAULT 5000,
-    complexion_idx INT DEFAULT 0,
-    hairstyle_idx INT DEFAULT 0,
-    shirt_idx INT DEFAULT 0,
-    trouser_idx INT DEFAULT 0,
-    owned_upgrades JSONB DEFAULT '[]'::jsonb,
-    backpack_items JSONB DEFAULT '[]'::jsonb,
-    created_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
-    updated_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    student_name TEXT NOT NULL DEFAULT 'Tunde Adeleke',
+    student_email TEXT UNIQUE,
+    gender TEXT NOT NULL DEFAULT 'Male',
+    matric_no TEXT NOT NULL DEFAULT '2026/CSC/101',
+    department TEXT NOT NULL DEFAULT 'CSC',
+    admitted_course_title TEXT NOT NULL DEFAULT 'Computer Science',
+    admitted_faculty TEXT NOT NULL DEFAULT 'Science & Computing',
+    cgpa NUMERIC(3, 2) NOT NULL DEFAULT 3.50,
+    wallet_balance INTEGER NOT NULL DEFAULT 5000,
+    current_level INTEGER NOT NULL DEFAULT 100,
+    current_semester INTEGER NOT NULL DEFAULT 1,
+    complexion_index INTEGER NOT NULL DEFAULT 1,
+    hair_index INTEGER NOT NULL DEFAULT 0,
+    shirt_index INTEGER NOT NULL DEFAULT 0,
+    trouser_index INTEGER NOT NULL DEFAULT 0,
+    owned_upgrades JSONB NOT NULL DEFAULT '[]'::jsonb,
+    backpack_items JSONB NOT NULL DEFAULT '[]'::jsonb,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 2. Performance Indexes for Dean's List and Wealth Leaderboards
-CREATE INDEX IF NOT EXISTS idx_student_profiles_cgpa ON public.student_profiles(cgpa DESC);
-CREATE INDEX IF NOT EXISTS idx_student_profiles_wallet ON public.student_profiles(wallet_balance DESC);
-CREATE INDEX IF NOT EXISTS idx_student_profiles_dept ON public.student_profiles(department);
+-- Indexes for fast Global Leaderboards
+CREATE INDEX IF NOT EXISTS idx_student_profiles_cgpa ON public.student_profiles (cgpa DESC);
+CREATE INDEX IF NOT EXISTS idx_student_profiles_wallet ON public.student_profiles (wallet_balance DESC);
 
--- 3. Enable Row-Level Security (RLS)
+-- 2. Live Room Presence Table (Multiplayer Room Tracking)
+CREATE TABLE IF NOT EXISTS public.room_presence (
+    peer_id TEXT PRIMARY KEY,
+    student_name TEXT NOT NULL,
+    department TEXT NOT NULL DEFAULT 'CSC',
+    room_name TEXT NOT NULL DEFAULT 'Courtyard',
+    pos_x REAL NOT NULL DEFAULT 0.0,
+    pos_y REAL NOT NULL DEFAULT 0.1,
+    pos_z REAL NOT NULL DEFAULT 0.0,
+    rot_y REAL NOT NULL DEFAULT 0.0,
+    is_moving BOOLEAN NOT NULL DEFAULT FALSE,
+    shirt_col TEXT NOT NULL DEFAULT '#1e824c',
+    trouser_col TEXT NOT NULL DEFAULT '#273746',
+    last_seen TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 3. Campus Realtime Chat Log
+CREATE TABLE IF NOT EXISTS public.campus_chat_messages (
+    id BIGSERIAL PRIMARY KEY,
+    peer_id TEXT NOT NULL,
+    sender_name TEXT NOT NULL,
+    room_name TEXT NOT NULL DEFAULT 'Courtyard',
+    message TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 4. Row-Level Security (RLS) Policies
 ALTER TABLE public.student_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.room_presence ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.campus_chat_messages ENABLE ROW LEVEL SECURITY;
 
--- 4. RLS Policies:
--- Allow anyone to read profiles (needed for global Dean's List and Wealth leaderboards)
-CREATE POLICY "Public read profiles for leaderboards"
-    ON public.student_profiles
-    FOR SELECT
-    USING (true);
+-- Allow anyone to read leaderboards & room presence
+CREATE POLICY "Public read student profiles" ON public.student_profiles
+    FOR SELECT USING (true);
 
--- Allow authenticated students to insert their own profile upon admission
-CREATE POLICY "Students can insert own profile"
-    ON public.student_profiles
-    FOR INSERT
-    WITH CHECK (auth.uid() = id);
+CREATE POLICY "Authenticated upsert own profile" ON public.student_profiles
+    FOR ALL USING (auth.uid() = user_id OR user_id IS NULL);
 
--- Allow authenticated students to update their own profile during cloud sync
-CREATE POLICY "Students can update own profile"
-    ON public.student_profiles
-    FOR UPDATE
-    USING (auth.uid() = id);
+CREATE POLICY "Public access room presence" ON public.room_presence
+    FOR ALL USING (true);
 
--- 5. Auto-update timestamp trigger
-CREATE OR REPLACE FUNCTION public.handle_student_updated_at()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = TIMEZONE('utc'::text, NOW());
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+CREATE POLICY "Public access campus chat" ON public.campus_chat_messages
+    FOR ALL USING (true);
 
-DROP TRIGGER IF EXISTS on_student_profiles_updated ON public.student_profiles;
-CREATE TRIGGER on_student_profiles_updated
-    BEFORE UPDATE ON public.student_profiles
-    FOR EACH ROW
-    EXECUTE FUNCTION public.handle_student_updated_at();
+-- 5. Enable Supabase Realtime Broadcast & Presence on tables
+ALTER PUBLICATION supabase_realtime ADD TABLE public.room_presence;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.campus_chat_messages;

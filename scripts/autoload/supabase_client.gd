@@ -143,6 +143,10 @@ func sign_out_student() -> void:
 
 
 ## Push student game state to Supabase PostgreSQL cloud table
+func sync_student_profile(profile: Dictionary) -> void:
+	sync_profile_to_cloud(profile)
+
+
 func sync_profile_to_cloud(profile: Dictionary) -> void:
 	# Always persist locally first (zero data loss guarantee)
 	DatabaseConfig.save_local_profile(profile)

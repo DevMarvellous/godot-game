@@ -5,6 +5,8 @@ extends CharacterBody3D
 ## Smoothly interpolates position & rotation to eliminate jitter over WebSockets.
 ## Displays student name, matric tag, and real-time 3D speech bubble for chat.
 
+signal peer_interacted(puppet: NetworkPlayer, local_player: CharacterBody3D)
+
 @export var student_name: String = "Coursemate"
 @export var peer_id: int = 0
 
@@ -34,11 +36,29 @@ var _active_emote_tween: Tween = null
 func _ready() -> void:
 	target_position = global_position
 	if name_label:
-		name_label.text = "%s\n[Online]" % student_name
+		name_label.text = "%s\n🟢 [Online]" % student_name
 	if chat_bubble:
 		chat_bubble.visible = false
 	if chat_timer:
 		chat_timer.timeout.connect(_on_chat_timeout)
+	_setup_peer_interactable()
+
+
+func _setup_peer_interactable() -> void:
+	var interact_area := Interactable3D.new()
+	interact_area.name = "PeerInteractArea"
+	interact_area.object_name = student_name
+	interact_area.prompt_message = "[E] Link Up with %s" % student_name
+	var col := CollisionShape3D.new()
+	var sph := SphereShape3D.new()
+	sph.radius = 1.15
+	col.shape = sph
+	col.position = Vector3(0, 1.0, 0)
+	interact_area.add_child(col)
+	interact_area.interacted.connect(func(p: CharacterBody3D):
+		peer_interacted.emit(self, p)
+	)
+	add_child(interact_area)
 
 
 func update_network_transform(new_pos: Vector3, new_rot_y: float, moving: bool) -> void:
