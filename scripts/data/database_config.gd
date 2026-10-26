@@ -9,9 +9,49 @@ extends RefCounted
 const SAVE_PATH: String = "user://campus_student_save.json"
 
 # Supabase Free Tier Cloud Configuration (Free tier: 50,000 MAU, 500MB DB)
-# In production, replace with your project URL and anonymous public key
+# Can be set here OR pasted live in the web portal's "☁️ Cloud DB" settings without rebuilding!
 const SUPABASE_URL: String = "https://your-project.supabase.co"
 const SUPABASE_ANON_KEY: String = "public-anon-key-placeholder"
+
+static var custom_supabase_url: String = ""
+static var custom_supabase_key: String = ""
+
+static func get_supabase_url() -> String:
+	if custom_supabase_url.strip_edges() != "":
+		return custom_supabase_url.strip_edges().trim_suffix("/")
+	if OS.has_feature("web"):
+		var js_url = JavaScriptBridge.eval("window.getCampusSupabaseUrl ? window.getCampusSupabaseUrl() : ''")
+		if js_url is String and String(js_url).strip_edges() != "":
+			return String(js_url).strip_edges().trim_suffix("/")
+	var local: Dictionary = load_local_profile()
+	if local.has("supabase_url") and String(local["supabase_url"]).strip_edges() != "":
+		return String(local["supabase_url"]).strip_edges().trim_suffix("/")
+	return SUPABASE_URL
+
+static func get_supabase_anon_key() -> String:
+	if custom_supabase_key.strip_edges() != "":
+		return custom_supabase_key.strip_edges()
+	if OS.has_feature("web"):
+		var js_key = JavaScriptBridge.eval("window.getCampusSupabaseKey ? window.getCampusSupabaseKey() : ''")
+		if js_key is String and String(js_key).strip_edges() != "":
+			return String(js_key).strip_edges()
+	var local: Dictionary = load_local_profile()
+	if local.has("supabase_anon_key") and String(local["supabase_anon_key"]).strip_edges() != "":
+		return String(local["supabase_anon_key"]).strip_edges()
+	return SUPABASE_ANON_KEY
+
+static func set_cloud_credentials(url: String, anon_key: String) -> void:
+	custom_supabase_url = url.strip_edges().trim_suffix("/")
+	custom_supabase_key = anon_key.strip_edges()
+	var local: Dictionary = load_local_profile()
+	local["supabase_url"] = custom_supabase_url
+	local["supabase_anon_key"] = custom_supabase_key
+	save_local_profile(local)
+
+static func is_cloud_configured() -> bool:
+	var u: String = get_supabase_url()
+	var k: String = get_supabase_anon_key()
+	return u != "" and u != "https://your-project.supabase.co" and k != "" and k != "public-anon-key-placeholder"
 
 # Free tier limits documentation:
 const CLOUD_TIER_INFO: Dictionary = {

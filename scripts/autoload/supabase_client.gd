@@ -42,7 +42,7 @@ func _load_cached_session() -> void:
 
 ## Register student with campus cloud database
 func sign_up_student(email: String, pass_code: String, display_name: String) -> void:
-	if DatabaseConfig.SUPABASE_URL == "https://your-project.supabase.co":
+	if not DatabaseConfig.is_cloud_configured():
 		# Simulated local development auth (instant offline success)
 		is_authenticated = true
 		student_email = email
@@ -52,10 +52,10 @@ func sign_up_student(email: String, pass_code: String, display_name: String) -> 
 		profile_synced.emit(true, "Offline Profile Registered Successfully!")
 		return
 
-	var url: String = "%s/auth/v1/signup" % DatabaseConfig.SUPABASE_URL
+	var url: String = "%s/auth/v1/signup" % DatabaseConfig.get_supabase_url()
 	var headers: PackedStringArray = [
 		"Content-Type: application/json",
-		"apikey: %s" % DatabaseConfig.SUPABASE_ANON_KEY
+		"apikey: %s" % DatabaseConfig.get_supabase_anon_key()
 	]
 	var payload: Dictionary = {
 		"email": email,
@@ -85,7 +85,7 @@ func _on_signup_completed(_result: int, response_code: int, _headers: PackedStri
 
 ## Sign in an existing student
 func sign_in_student(email: String, pass_code: String) -> void:
-	if DatabaseConfig.SUPABASE_URL == "https://your-project.supabase.co":
+	if not DatabaseConfig.is_cloud_configured():
 		# Simulated local development auth (instant offline success)
 		is_authenticated = true
 		student_email = email
@@ -95,10 +95,10 @@ func sign_in_student(email: String, pass_code: String) -> void:
 		profile_synced.emit(true, "Student Logged In (Offline Save Active)")
 		return
 
-	var url: String = "%s/auth/v1/token?grant_type=password" % DatabaseConfig.SUPABASE_URL
+	var url: String = "%s/auth/v1/token?grant_type=password" % DatabaseConfig.get_supabase_url()
 	var headers: PackedStringArray = [
 		"Content-Type: application/json",
-		"apikey: %s" % DatabaseConfig.SUPABASE_ANON_KEY
+		"apikey: %s" % DatabaseConfig.get_supabase_anon_key()
 	]
 	var payload: Dictionary = {
 		"email": email,
@@ -151,15 +151,18 @@ func sync_profile_to_cloud(profile: Dictionary) -> void:
 	# Always persist locally first (zero data loss guarantee)
 	DatabaseConfig.save_local_profile(profile)
 
-	if not is_authenticated or DatabaseConfig.SUPABASE_URL == "https://your-project.supabase.co":
+	if not DatabaseConfig.is_cloud_configured():
 		profile_synced.emit(true, "Progress Saved to Browser Storage (Offline)")
 		return
 
-	var url: String = "%s/rest/v1/student_profiles" % DatabaseConfig.SUPABASE_URL
+	var s_url: String = DatabaseConfig.get_supabase_url()
+	var s_key: String = DatabaseConfig.get_supabase_anon_key()
+	var bearer_tok: String = auth_token if auth_token != "" else s_key
+	var url: String = "%s/rest/v1/student_profiles?on_conflict=matric_no" % s_url
 	var headers: PackedStringArray = [
 		"Content-Type: application/json",
-		"apikey: %s" % DatabaseConfig.SUPABASE_ANON_KEY,
-		"Authorization: Bearer %s" % auth_token,
+		"apikey: %s" % s_key,
+		"Authorization: Bearer %s" % bearer_tok,
 		"Prefer: resolution=merge-duplicates"
 	]
 
@@ -176,7 +179,7 @@ func _on_sync_completed(_result: int, response_code: int, _headers: PackedString
 
 ## Fetch Global Dean's List Leaderboard (Top 10 Highest CGPA)
 func fetch_deans_list_leaderboard() -> void:
-	if DatabaseConfig.SUPABASE_URL == "https://your-project.supabase.co":
+	if not DatabaseConfig.is_cloud_configured():
 		# Simulated authentic Nigerian campus Dean's List
 		var mock_deans_list: Array = [
 			{"name": "Chidinma Okonjo", "dept": "MEE", "cgpa": 4.95, "title": "First Class Honours (Engineering)"},
@@ -191,9 +194,9 @@ func fetch_deans_list_leaderboard() -> void:
 		leaderboard_received.emit("deans_list", mock_deans_list)
 		return
 
-	var url: String = "%s/rest/v1/student_profiles?select=student_name,department,cgpa&order=cgpa.desc&limit=10" % DatabaseConfig.SUPABASE_URL
+	var url: String = "%s/rest/v1/student_profiles?select=student_name,department,cgpa&order=cgpa.desc&limit=10" % DatabaseConfig.get_supabase_url()
 	var headers: PackedStringArray = [
-		"apikey: %s" % DatabaseConfig.SUPABASE_ANON_KEY
+		"apikey: %s" % DatabaseConfig.get_supabase_anon_key()
 	]
 	http_request.request_completed.connect(func(_r: int, code: int, _h: PackedStringArray, body: PackedByteArray):
 		if code == 200:
@@ -206,7 +209,7 @@ func fetch_deans_list_leaderboard() -> void:
 
 ## Fetch Campus Wealth Leaderboard (Richest Hustlers)
 func fetch_wealth_leaderboard() -> void:
-	if DatabaseConfig.SUPABASE_URL == "https://your-project.supabase.co":
+	if not DatabaseConfig.is_cloud_configured():
 		var mock_wealth: Array = [
 			{"name": "Emeka Tech O.", "dept": "CSC", "wallet_balance": 185000, "title": "Lead Software Contractor"},
 			{"name": "Tolani Davies", "dept": "SMS", "wallet_balance": 142000, "title": "Madam Kikelomo Mall Partner"},
@@ -218,9 +221,9 @@ func fetch_wealth_leaderboard() -> void:
 		leaderboard_received.emit("wealth", mock_wealth)
 		return
 
-	var url: String = "%s/rest/v1/student_profiles?select=student_name,department,wallet_balance&order=wallet_balance.desc&limit=10" % DatabaseConfig.SUPABASE_URL
+	var url: String = "%s/rest/v1/student_profiles?select=student_name,department,wallet_balance&order=wallet_balance.desc&limit=10" % DatabaseConfig.get_supabase_url()
 	var headers: PackedStringArray = [
-		"apikey: %s" % DatabaseConfig.SUPABASE_ANON_KEY
+		"apikey: %s" % DatabaseConfig.get_supabase_anon_key()
 	]
 	http_request.request_completed.connect(func(_r: int, code: int, _h: PackedStringArray, body: PackedByteArray):
 		if code == 200:
@@ -233,12 +236,12 @@ func fetch_wealth_leaderboard() -> void:
 
 ## Load full profile from Supabase PostgreSQL
 func load_profile_from_cloud() -> void:
-	if not is_authenticated or DatabaseConfig.SUPABASE_URL == "https://your-project.supabase.co":
+	if not is_authenticated or not DatabaseConfig.is_cloud_configured():
 		return
 
-	var url: String = "%s/rest/v1/student_profiles?id=eq.%s&select=*" % [DatabaseConfig.SUPABASE_URL, auth_user_id]
+	var url: String = "%s/rest/v1/student_profiles?id=eq.%s&select=*" % [DatabaseConfig.get_supabase_url(), auth_user_id]
 	var headers: PackedStringArray = [
-		"apikey: %s" % DatabaseConfig.SUPABASE_ANON_KEY,
+		"apikey: %s" % DatabaseConfig.get_supabase_anon_key(),
 		"Authorization: Bearer %s" % auth_token
 	]
 	http_request.request_completed.connect(_on_cloud_profile_received, CONNECT_ONE_SHOT)
