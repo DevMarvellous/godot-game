@@ -98,6 +98,9 @@ const CAM_VIEW_MODES: Array[Dictionary] = [
 ]
 var cam_zoom_preset_idx: int = 0
 var clout_badge_label: Label3D = null
+var _base_torso_scale: Vector3 = Vector3.ONE
+var _earring_l: MeshInstance3D = null
+var _earring_r: MeshInstance3D = null
 
 
 func _ready() -> void:
@@ -507,7 +510,11 @@ func _physics_process(delta: float) -> void:
 			torso_mesh.rotation.x = move_toward(torso_mesh.rotation.x, 0.0, 4.0 * delta)
 			torso_mesh.rotation.y = move_toward(torso_mesh.rotation.y, 0.0, 4.0 * delta)
 			torso_mesh.rotation.z = move_toward(torso_mesh.rotation.z, hip_shift, 2.0 * delta)
-			torso_mesh.scale = Vector3(1.0 - breathe * 0.35, 1.0 + breathe, 1.0 - breathe * 0.35)
+			torso_mesh.scale = Vector3(
+				_base_torso_scale.x * (1.0 - breathe * 0.35),
+				_base_torso_scale.y * (1.0 + breathe),
+				_base_torso_scale.z * (1.0 - breathe * 0.35)
+			)
 
 			head_mesh.position.y = move_toward(head_mesh.position.y, 1.45 + breathe * 0.35, 0.8 * delta)
 			head_mesh.rotation.x = move_toward(head_mesh.rotation.x, 0.0, 4.0 * delta)
@@ -711,6 +718,46 @@ func apply_appearance(
 		left_leg.set_surface_override_material(0, leg_mat)
 	if right_leg:
 		right_leg.set_surface_override_material(0, leg_mat)
+
+	# 5. Distinct Male vs Female Silhouette, Skirt/Peplum Flare & Gold Stud Earrings
+	var is_female: bool = (StudentProfile.gender.to_lower() == "female")
+	_base_torso_scale = Vector3(0.86, 0.97, 0.90) if is_female else Vector3(1.04, 1.0, 1.0)
+	if torso_mesh:
+		torso_mesh.scale = _base_torso_scale
+	if left_arm and right_arm:
+		left_arm.position.x = -0.30 if is_female else -0.35
+		right_arm.position.x = 0.30 if is_female else 0.35
+	if gown_flare and is_female and outfit_type != "gown":
+		gown_flare.visible = true
+		gown_flare.scale = Vector3(0.86, 0.65, 0.86)
+		var skirt_mat: StandardMaterial3D = StandardMaterial3D.new()
+		skirt_mat.albedo_color = shirt_color if outfit_type == "senator" else trouser_color
+		skirt_mat.roughness = 0.65
+		gown_flare.set_surface_override_material(0, skirt_mat)
+	elif gown_flare and outfit_type == "gown":
+		gown_flare.scale = Vector3.ONE
+
+	if head_mesh and not is_instance_valid(_earring_l):
+		var ear_sphere := SphereMesh.new()
+		ear_sphere.radius = 0.032
+		ear_sphere.height = 0.064
+		var gold_mat := StandardMaterial3D.new()
+		gold_mat.albedo_color = Color(1.0, 0.84, 0.22)
+		gold_mat.metallic = 0.8
+		gold_mat.roughness = 0.2
+		_earring_l = MeshInstance3D.new()
+		_earring_l.mesh = ear_sphere
+		_earring_l.position = Vector3(-0.24, -0.04, 0.02)
+		_earring_l.set_surface_override_material(0, gold_mat)
+		head_mesh.add_child(_earring_l)
+		_earring_r = MeshInstance3D.new()
+		_earring_r.mesh = ear_sphere
+		_earring_r.position = Vector3(0.24, -0.04, 0.02)
+		_earring_r.set_surface_override_material(0, gold_mat)
+		head_mesh.add_child(_earring_r)
+	if is_instance_valid(_earring_l) and is_instance_valid(_earring_r):
+		_earring_l.visible = is_female
+		_earring_r.visible = is_female
 
 
 ## Plays a stylish 360-degree spin dressing animation with bounce & sparkle

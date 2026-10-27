@@ -35,6 +35,10 @@ const DEFAULT_SERVER_URL: String = "ws://127.0.0.1:8910"
 var _cloud_lobby_active: bool = false
 var _cloud_sim_timer: float = 0.0
 var _last_broadcast_time: float = 0.0
+var _js_cb_player: Variant = null
+var _js_cb_remove: Variant = null
+var _js_cb_chat: Variant = null
+var _js_cb_emote: Variant = null
 const BROADCAST_INTERVAL: float = 0.10 # 10 Hz throttled network broadcast (optimized for lag)
 const CLOUD_PEERS: Array[Dictionary] = [
 	{"id": 901, "name": "Femi [CSC]", "shirt": Color(0.15, 0.65, 0.38), "trouser": Color(0.14, 0.18, 0.26)},
@@ -67,17 +71,17 @@ func _ready() -> void:
 func _setup_web_bridge() -> void:
 	if not OS.has_feature("web"):
 		return
-	var cb_player := JavaScriptBridge.create_callback(_on_js_net_player_update)
-	var cb_remove := JavaScriptBridge.create_callback(_on_js_net_player_remove)
-	var cb_chat := JavaScriptBridge.create_callback(_on_js_net_chat)
-	var cb_emote := JavaScriptBridge.create_callback(_on_js_net_emote)
+	_js_cb_player = JavaScriptBridge.create_callback(_on_js_net_player_update)
+	_js_cb_remove = JavaScriptBridge.create_callback(_on_js_net_player_remove)
+	_js_cb_chat = JavaScriptBridge.create_callback(_on_js_net_chat)
+	_js_cb_emote = JavaScriptBridge.create_callback(_on_js_net_emote)
 
 	var js_win = JavaScriptBridge.get_interface("window")
 	if js_win:
-		js_win.godotReceiveNetPlayer = cb_player
-		js_win.godotRemoveNetPlayer = cb_remove
-		js_win.godotReceiveNetChat = cb_chat
-		js_win.godotReceiveNetEmote = cb_emote
+		js_win.godotReceiveNetPlayer = _js_cb_player
+		js_win.godotRemoveNetPlayer = _js_cb_remove
+		js_win.godotReceiveNetChat = _js_cb_chat
+		js_win.godotReceiveNetEmote = _js_cb_emote
 
 
 func _on_js_net_player_update(args: Array) -> void:

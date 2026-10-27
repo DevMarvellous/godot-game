@@ -26,6 +26,8 @@ const QUICK_SLANGS: Array[String] = [
 @onready var send_btn: Button = %SendBtn
 @onready var close_btn: Button = %CloseBtn
 
+var _js_cb_chat: Variant = null
+
 
 func _ready() -> void:
 	visible = false
@@ -45,15 +47,16 @@ func _ready() -> void:
 func _setup_web_chat_bridge() -> void:
 	if not OS.has_feature("web"):
 		return
-	var cb := JavaScriptBridge.create_callback(func(args: Array):
+	_js_cb_chat = JavaScriptBridge.create_callback(func(args: Array):
 		if args.size() > 0:
 			var msg: String = String(args[0]).strip_edges()
+			msg = msg.replace("<", "").replace(">", "").substr(0, 100)
 			if not msg.is_empty():
 				_send(msg)
 	)
 	var js_win = JavaScriptBridge.get_interface("window")
 	if js_win:
-		js_win.godotSendLocalChat = cb
+		js_win.godotSendLocalChat = _js_cb_chat
 
 
 func _open_web_native_chat() -> void:

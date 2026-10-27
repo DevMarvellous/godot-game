@@ -27,6 +27,8 @@ var selected_dept: String = "CSC"
 var _turntable_rotation: float = 0.0
 var _is_spinning: bool = false
 var _spin_timer: float = 0.0
+var _js_cb_drip: Variant = null
+var _js_cb_submit: Variant = null
 
 
 func _ready() -> void:
@@ -96,6 +98,7 @@ func apply_appearance_from_selections(animate_spin: bool = true) -> void:
 
 	var apply_fn := func():
 		if is_instance_valid(preview_player):
+			ProfileStore.gender = selected_gender
 			preview_player.apply_appearance(
 				skin_col, top_col, btm_col, hair_col,
 				hair_mesh_type, outfit_mesh_type
@@ -170,14 +173,14 @@ func _setup_js_bridge() -> void:
 	if not OS.has_feature("web"):
 		return
 
-	# Bind callbacks to window object
-	var cb_drip := JavaScriptBridge.create_callback(_on_js_avatar_change)
-	var cb_submit := JavaScriptBridge.create_callback(_on_js_admission_submit)
+	# Store callbacks in member variables so Godot RefCounted doesn't free them!
+	_js_cb_drip = JavaScriptBridge.create_callback(_on_js_avatar_change)
+	_js_cb_submit = JavaScriptBridge.create_callback(_on_js_admission_submit)
 
 	var js_window = JavaScriptBridge.get_interface("window")
 	if js_window:
-		js_window.godotOnAvatarChange = cb_drip
-		js_window.godotOnAdmissionSubmit = cb_submit
+		js_window.godotOnAvatarChange = _js_cb_drip
+		js_window.godotOnAdmissionSubmit = _js_cb_submit
 
 
 func _on_js_avatar_change(args: Array) -> void:

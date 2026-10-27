@@ -131,9 +131,115 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_adjust_responsive_phone_layout)
 	_adjust_responsive_phone_layout()
 
+	_style_circular_app_logos()
 	_init_chat_seed_data()
 	_init_gist_seed_data()
 	apply_wallpaper(0)
+
+
+func _style_circular_app_logos() -> void:
+	var app_configs: Array[Dictionary] = [
+		{"node": "%IDCardAppBtn", "icon": "🪪", "title": "ID Pass", "bg": Color(0.14, 0.38, 0.82, 0.96), "border": Color(0.45, 0.72, 1.0, 0.95)},
+		{"node": "%TimetableAppBtn", "icon": "📅", "title": "Classes", "bg": Color(0.85, 0.26, 0.22, 0.96), "border": Color(1.0, 0.62, 0.55, 0.95)},
+		{"node": "%ResultsAppBtn", "icon": "📊", "title": "CGPA", "bg": Color(0.82, 0.54, 0.08, 0.96), "border": Color(1.0, 0.85, 0.35, 0.95)},
+		{"node": "%ChatAppBtn", "icon": "💬", "title": "Chat", "bg": Color(0.08, 0.64, 0.38, 0.96), "border": Color(0.42, 0.95, 0.68, 0.95)},
+		{"node": "%BankAppBtn", "icon": "💳", "title": "CampusPay", "bg": Color(0.06, 0.56, 0.52, 0.96), "border": Color(0.35, 0.95, 0.88, 0.95)},
+		{"node": "%HustleAppBtn", "icon": "💼", "title": "Hustles", "bg": Color(0.48, 0.22, 0.78, 0.96), "border": Color(0.78, 0.55, 1.0, 0.95)},
+		{"node": "%GistAppBtn", "icon": "🐦", "title": "CampusGist", "bg": Color(0.10, 0.55, 0.88, 0.96), "border": Color(0.50, 0.82, 1.0, 0.95)},
+		{"node": "%BackpackAppBtn", "icon": "🎒", "title": "Backpack", "bg": Color(0.78, 0.34, 0.16, 0.96), "border": Color(1.0, 0.68, 0.45, 0.95)},
+		{"node": "%SettingsAppBtn", "icon": "⚙️", "title": "Cloud OS", "bg": Color(0.22, 0.28, 0.38, 0.96), "border": Color(0.62, 0.72, 0.88, 0.95)}
+	]
+	if app_grid:
+		app_grid.add_theme_constant_override(&"h_separation", 14)
+		app_grid.add_theme_constant_override(&"v_separation", 10)
+
+	for cfg in app_configs:
+		var node_path: String = String(cfg["node"])
+		if not has_node(node_path):
+			continue
+		var btn: Button = get_node(node_path) as Button
+		if not btn:
+			continue
+
+		var cell_vbox := VBoxContainer.new()
+		cell_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cell_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+		cell_vbox.add_theme_constant_override(&"separation", 4)
+
+		var parent_grid: Node = btn.get_parent()
+		var idx: int = btn.get_index()
+		parent_grid.remove_child(btn)
+		parent_grid.add_child(cell_vbox)
+		parent_grid.move_child(cell_vbox, idx)
+
+		btn.text = String(cfg["icon"])
+		btn.custom_minimum_size = Vector2(58, 58)
+		btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		btn.add_theme_font_size_override(&"font_size", 24)
+		btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		btn.focus_mode = Control.FOCUS_NONE
+
+		var c_style := StyleBoxFlat.new()
+		c_style.bg_color = cfg["bg"]
+		c_style.border_width_left = 2
+		c_style.border_width_top = 2
+		c_style.border_width_right = 2
+		c_style.border_width_bottom = 2
+		c_style.border_color = cfg["border"]
+		c_style.corner_radius_top_left = 29
+		c_style.corner_radius_top_right = 29
+		c_style.corner_radius_bottom_left = 29
+		c_style.corner_radius_bottom_right = 29
+		c_style.shadow_color = Color(0, 0, 0, 0.42)
+		c_style.shadow_size = 6
+
+		var h_style: StyleBoxFlat = c_style.duplicate() as StyleBoxFlat
+		h_style.bg_color = Color(cfg["bg"]).lightened(0.14)
+		h_style.border_color = Color.WHITE
+
+		btn.add_theme_stylebox_override(&"normal", c_style)
+		btn.add_theme_stylebox_override(&"hover", h_style)
+		btn.add_theme_stylebox_override(&"pressed", h_style)
+		cell_vbox.add_child(btn)
+
+		var lbl := Label.new()
+		lbl.text = String(cfg["title"])
+		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lbl.add_theme_font_size_override(&"font_size", 11)
+		lbl.add_theme_color_override(&"font_color", Color(0.92, 0.96, 1.0, 0.96))
+		cell_vbox.add_child(lbl)
+
+	# Style Dock Buttons as Circular Logos too
+	var dock_configs: Array[Dictionary] = [
+		{"node": "%DockChatBtn", "bg": Color(0.08, 0.64, 0.38, 0.95), "border": Color(0.42, 0.95, 0.68, 0.9)},
+		{"node": "%DockBankBtn", "bg": Color(0.06, 0.56, 0.52, 0.95), "border": Color(0.35, 0.95, 0.88, 0.9)},
+		{"node": "%DockTimetableBtn", "bg": Color(0.85, 0.26, 0.22, 0.95), "border": Color(1.0, 0.62, 0.55, 0.9)},
+		{"node": "%DockSettingsBtn", "bg": Color(0.22, 0.28, 0.38, 0.95), "border": Color(0.62, 0.72, 0.88, 0.9)}
+	]
+	for dcfg in dock_configs:
+		var dpath: String = String(dcfg["node"])
+		if not has_node(dpath):
+			continue
+		var dbtn: Button = get_node(dpath) as Button
+		if not dbtn:
+			continue
+		dbtn.custom_minimum_size = Vector2(46, 46)
+		dbtn.focus_mode = Control.FOCUS_NONE
+		dbtn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		var d_style := StyleBoxFlat.new()
+		d_style.bg_color = dcfg["bg"]
+		d_style.border_width_left = 2
+		d_style.border_width_top = 2
+		d_style.border_width_right = 2
+		d_style.border_width_bottom = 2
+		d_style.border_color = dcfg["border"]
+		d_style.corner_radius_top_left = 23
+		d_style.corner_radius_top_right = 23
+		d_style.corner_radius_bottom_left = 23
+		d_style.corner_radius_bottom_right = 23
+		dbtn.add_theme_stylebox_override(&"normal", d_style)
+		dbtn.add_theme_stylebox_override(&"hover", d_style)
+		dbtn.add_theme_stylebox_override(&"pressed", d_style)
 
 
 func _on_backdrop_gui_input(event: InputEvent) -> void:
