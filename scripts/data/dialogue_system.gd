@@ -666,6 +666,51 @@ const DIALOGUE_TREES: Dictionary = {
 				"money_change": 0
 			}
 		]
+	},
+	"Tech Bro Segun": {
+		"greeting": "Welcome to Silicon Lagoon Tech Hub! We're shipping a Yaba-to-Campus Fintech MVP before Friday's Hackathon. You code Python, GDScript, or React?",
+		"choices": [
+			{
+				"text": "Let me help debug the payment webhook for the Hackathon MVP!",
+				"response": "Omo, you spotted the race condition in 2 minutes! Take this ₦3,500 bug bounty payout and +0.08 CGPA!",
+				"cgpa_boost": 0.08,
+				"faith_boost": 5.0,
+				"money_change": 3500
+			},
+			{
+				"text": "How can I balance tech side-hustles with First Class CGPA?",
+				"response": "Never skip morning lectures! Use the AI Research Pod here for 1 hour after class, ship clean code, and get 7 hours of sleep.",
+				"cgpa_boost": 0.07,
+				"faith_boost": 8.0,
+				"money_change": 0
+			},
+			{
+				"text": "Can I use the free Starlink Wi-Fi and VR Lounge to unwind?",
+				"response": "100%! High-speed solar fiber is always up in the Hub even when NEPA takes light in the hostel.",
+				"cgpa_boost": 0.03,
+				"faith_boost": 10.0,
+				"money_change": 0
+			}
+		]
+	},
+	"Nurse Amaka": {
+		"greeting": "Welcome to the Campus Medical & Mental Wellness Clinic! Have you been drinking enough water and sleeping well, or surviving on Indomie and night class?",
+		"choices": [
+			{
+				"text": "Nurse Amaka, I've been feeling exhausted from back-to-back lectures.",
+				"response": "Sit down my dear! Take this free Vitamin B-Complex, Lucozade Boost, and 15 minutes of rest on the clinic cot. Your health comes first!",
+				"cgpa_boost": 0.04,
+				"faith_boost": 18.0,
+				"money_change": 0
+			},
+			{
+				"text": "I'm feeling anxious about semester exams and CGPA targets.",
+				"response": "Breathe in deeply! You are prepared and capable. Take one step at a time—peace of mind improves memory retention by 40%!",
+				"cgpa_boost": 0.06,
+				"faith_boost": 25.0,
+				"money_change": 0
+			}
+		]
 	}
 }
 

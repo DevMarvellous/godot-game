@@ -29,7 +29,8 @@ const ROOM_PATHS: Dictionary = {
 	&"salon": "res://scenes/rooms/barbing_salon.tscn",
 	&"gate": "res://scenes/rooms/campus_gate.tscn",
 	&"senate": "res://scenes/rooms/senate_building.tscn",
-	&"convocation": "res://scenes/rooms/convocation_hall.tscn"
+	&"convocation": "res://scenes/rooms/convocation_hall.tscn",
+	&"tech_hub": "res://scenes/rooms/tech_hub.tscn"
 }
 
 const ROOM_NAMES: Dictionary = {
@@ -52,7 +53,8 @@ const ROOM_NAMES: Dictionary = {
 	&"salon": "Executive Barber & Hair Salon",
 	&"gate": "Main Campus Security Gate",
 	&"senate": "Senate Administrative Building",
-	&"convocation": "Great Hall of Convocation & Alumni Arena"
+	&"convocation": "Great Hall of Convocation & Alumni Arena",
+	&"tech_hub": "Silicon Lagoon Tech Hub & Wellness Clinic"
 }
 
 var current_room: StringName = &"courtyard"

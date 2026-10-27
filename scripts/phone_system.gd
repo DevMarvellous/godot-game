@@ -279,6 +279,13 @@ func open_phone(p: CharacterBody3D) -> void:
 	_update_phone_status_bar()
 	visible = true
 	_show_home_screen()
+	if phone_frame:
+		phone_frame.pivot_offset = phone_frame.size * 0.5
+		phone_frame.scale = Vector2(0.92, 0.92)
+		phone_frame.modulate.a = 0.0
+		var tw: Tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tw.tween_property(phone_frame, "scale", Vector2.ONE, 0.22)
+		tw.tween_property(phone_frame, "modulate:a", 1.0, 0.16)
 
 
 func close_phone() -> void:
@@ -386,6 +393,9 @@ func _open_app(app_id: String) -> void:
 		home_dock.visible = false
 	if app_content:
 		app_content.visible = true
+		app_content.modulate.a = 0.0
+		var app_tw: Tween = create_tween()
+		app_tw.tween_property(app_content, "modulate:a", 1.0, 0.14)
 	if back_btn:
 		back_btn.visible = true
 	if action_btn:
@@ -1643,6 +1653,7 @@ func _render_id_card_app() -> void:
 
 	var fields: Array[Dictionary] = [
 		{"label": "NAME", "val": StudentProfile.student_name.to_upper()},
+		{"label": "HANDLE", "val": "@" + StudentProfile.username if not StudentProfile.username.is_empty() else "@fresher_01"},
 		{"label": "MATRIC NO", "val": StudentProfile.matric_no},
 		{"label": "DEPARTMENT", "val": StudentProfile.admitted_department},
 		{"label": "PROGRAM", "val": StudentProfile.admitted_course_title},
@@ -1729,10 +1740,14 @@ func _render_settings_app() -> void:
 	info_card.add_child(i_vbox)
 
 	var info_text: Label = Label.new()
-	info_text.text = """📶 DATA SAVER: Active (Instant Zero-Data ServiceWorker Cache)
+	var motd_txt: String = str(SupabaseClient.live_config.get("motd", "Welcome to My Campus Life!")) if SupabaseClient else "Welcome to My Campus Life!"
+	var cloud_mode: String = "🟢 Live Supabase Cloud" if (SupabaseClient and SupabaseClient.is_configured()) else "🟡 Local Browser Cloud (Link in Top-Right)"
+	info_text.text = """☁️ CLOUD DB: %s
+📢 LIVE MOTD: %s
 🔊 CAMPUS AUDIO: Procedural In-Memory Synthesizer
-📱 RESOLUTION: Adaptive Mobile Aspect Ratio (GL Compatibility)
-💾 LOCAL CLOUD SAVES: IndexedDB Browser Storage ($0 Serverless)"""
+📱 RESOLUTION: Adaptive Mobile & Desktop Layout
+🔄 LIVE CONFIG: Editable via live_game_config.json / Supabase""" % [cloud_mode, motd_txt]
+	info_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	info_text.add_theme_font_size_override("font_size", 11)
 	info_text.add_theme_color_override("font_color", Color(0.7, 0.8, 0.9))
 	i_vbox.add_child(info_text)

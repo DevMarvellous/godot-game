@@ -1,43 +1,16 @@
-const CACHE_NAME = 'my-campus-life-v1';
-
-self.addEventListener('install', (event) => {
-	self.skipWaiting();
-});
+// My Campus Life - legacy service worker KILL SWITCH.
+// Older builds registered this worker with a fixed cache-first strategy that pinned stale
+// game files (players never received updates). Godot's own versioned worker
+// (index.service.worker.js) now handles offline caching correctly, so this worker
+// deletes its old cache and unregisters itself for anyone who still has it installed.
+self.addEventListener('install', () => self.skipWaiting());
 
 self.addEventListener('activate', (event) => {
-	event.waitUntil(
-		caches.keys().then((keys) => {
-			return Promise.all(
-				keys.map((key) => {
-					if (key !== CACHE_NAME) {
-						return caches.delete(key);
-					}
-				})
-			);
-		}).then(() => self.clients.claim())
-	);
+	event.waitUntil((async () => {
+		const keys = await caches.keys();
+		await Promise.all(keys.filter((k) => k.startsWith('my-campus-life-')).map((k) => caches.delete(k)));
+		await self.registration.unregister();
+		const clients = await self.clients.matchAll({ type: 'window' });
+		clients.forEach((client) => client.navigate(client.url));
+	})());
 });
-
-self.addEventListener('fetch', (event) => {
-	const url = event.request.url;
-	// Cache-First for heavy assets: wasm, pck, js, png, svg
-	if (url.includes('.wasm') || url.includes('.pck') || url.includes('.js') || url.includes('.png') || url.includes('.svg')) {
-		event.respondWith(
-			caches.match(event.request).then((cachedResponse) => {
-				if (cachedResponse) {
-					return cachedResponse;
-				}
-				return fetch(event.request).then((networkResponse) => {
-					if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-						const responseToCache = networkResponse.clone();
-						caches.open(CACHE_NAME).then((cache) => {
-							cache.put(event.request, responseToCache);
-						});
-					}
-					return networkResponse;
-				});
-			})
-		);
-	}
-});
-

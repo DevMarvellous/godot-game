@@ -82,6 +82,12 @@ const DESTINATIONS: Array[Dictionary] = [
 		"scene": "res://scenes/rooms/convocation_hall.tscn",
 		"icon": "🎓",
 		"fare": 100
+	},
+	{
+		"name": "Silicon Lagoon Tech Hub & Wellness Clinic",
+		"scene": "res://scenes/rooms/tech_hub.tscn",
+		"icon": "💻",
+		"fare": 100
 	}
 ]
 

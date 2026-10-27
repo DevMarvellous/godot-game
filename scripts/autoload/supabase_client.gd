@@ -11,6 +11,7 @@ extends Node
 signal auth_state_changed(is_logged_in: bool, student_email: String)
 signal profile_synced(success: bool, msg: String)
 signal leaderboard_received(leaderboard_type: String, entries: Array)
+signal live_config_received(config_data: Dictionary)
 
 const DatabaseConfig = preload("res://scripts/data/database_config.gd")
 
@@ -18,6 +19,18 @@ var is_authenticated: bool = false
 var auth_token: String = ""
 var auth_user_id: String = ""
 var student_email: String = ""
+var live_config: Dictionary = {
+	"announcement": {
+		"title": "🚀 SILICON LAGOON TECH HUB & CLINIC OPEN!",
+		"body": "Visit the new Campus Tech Hub & Wellness Clinic via the Map [M] or Danfo Shuttle!"
+	},
+	"economy": {
+		"gig_payout_multiplier": 1.0,
+		"food_price_multiplier": 1.0,
+		"fresher_allowance": 30000,
+		"scholarship_reward": 25000
+	}
+}
 
 # HTTP Request node for async REST calls
 var http_request: HTTPRequest = null
@@ -28,6 +41,7 @@ func _ready() -> void:
 	http_request = HTTPRequest.new()
 	add_child(http_request)
 	_load_cached_session()
+	call_deferred("fetch_live_game_config")
 
 
 func _load_cached_session() -> void:
@@ -166,8 +180,43 @@ func sync_profile_to_cloud(profile: Dictionary) -> void:
 		"Prefer: resolution=merge-duplicates"
 	]
 
+	var cloud_payload: Dictionary = StudentProfile.get_cloud_row_payload()
 	http_request.request_completed.connect(_on_sync_completed, CONNECT_ONE_SHOT)
-	http_request.request(url, headers, HTTPClient.METHOD_POST, JSON.stringify(profile))
+	http_request.request(url, headers, HTTPClient.METHOD_POST, JSON.stringify(cloud_payload))
+
+
+## Fetch Backend Live Game Config (Editable from Supabase game_live_config table or live_game_config.json)
+func fetch_live_game_config() -> void:
+	if OS.has_feature("web"):
+		var raw_js = JavaScriptBridge.eval("window.MY_CAMPUS_LIVE_CONFIG ? JSON.stringify(window.MY_CAMPUS_LIVE_CONFIG) : ''")
+		if raw_js is String and String(raw_js) != "":
+			var parsed_js = JSON.parse_string(String(raw_js))
+			if parsed_js is Dictionary:
+				for k in parsed_js.keys():
+					live_config[k] = parsed_js[k]
+				live_config_received.emit(live_config)
+
+	if not DatabaseConfig.is_cloud_configured():
+		live_config_received.emit(live_config)
+		return
+
+	var cfg_req := HTTPRequest.new()
+	add_child(cfg_req)
+	var url: String = "%s/rest/v1/game_live_config?select=config_key,config_value" % DatabaseConfig.get_supabase_url()
+	var headers: PackedStringArray = [
+		"apikey: %s" % DatabaseConfig.get_supabase_anon_key()
+	]
+	cfg_req.request_completed.connect(func(_r: int, code: int, _h: PackedStringArray, body: PackedByteArray):
+		if code == 200:
+			var rows = JSON.parse_string(body.get_string_from_utf8())
+			if rows is Array:
+				for row in rows:
+					if row is Dictionary and row.has("config_key") and row.has("config_value"):
+						live_config[String(row["config_key"])] = row["config_value"]
+				live_config_received.emit(live_config)
+		cfg_req.queue_free()
+	)
+	cfg_req.request(url, headers, HTTPClient.METHOD_GET)
 
 
 func _on_sync_completed(_result: int, response_code: int, _headers: PackedStringArray, _body: PackedByteArray) -> void:

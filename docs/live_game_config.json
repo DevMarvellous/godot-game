@@ -1,0 +1,34 @@
+{
+  "version": "2026.10.27",
+  "announcement": {
+    "title": "🚀 SILICON LAGOON TECH HUB & CLINIC OPEN!",
+    "body": "Visit the new Campus Tech Hub & Wellness Clinic via the Map [M] or Danfo Shuttle! Compete in hackathons & recharge 24/7."
+  },
+  "economy": {
+    "gig_payout_multiplier": 1.0,
+    "food_price_multiplier": 1.0,
+    "fresher_allowance": 30000,
+    "scholarship_reward": 25000
+  },
+  "extra_gigs": [
+    {
+      "id": "ai_prompt_tutor",
+      "title": "💻 AI & Python Lab Peer Tutor",
+      "location": "Tech Hub",
+      "payout": 3800,
+      "energy_cost": 18,
+      "cgpa_boost": 0.06,
+      "desc": "Coach 100L students on Python data structures at Silicon Lagoon Tech Hub."
+    }
+  ],
+  "extra_dishes": [
+    {
+      "id": "shawarma_coldbrew",
+      "name": "🌯 Tech Bro Chicken Shawarma & Cold Brew",
+      "price": 1200,
+      "hunger_restore": 55,
+      "energy_restore": 28,
+      "description": "Double-sausage spicy campus shawarma paired with chilled iced coffee."
+    }
+  ]
+}

@@ -6,6 +6,7 @@ extends RefCounted
 ## admission test evaluation result, admitted course, faculty, matric number, and email.
 
 static var student_name: String = "Femi"
+static var username: String = "@femi_csc"
 static var student_email: String = "femi.student@campus.edu.ng"
 static var gender: String = "Male"
 static var complexion_index: int = 1 # 0: Rich Cocoa, 1: Warm Chestnut, 2: Golden Bronze, 3: Honey Almond
@@ -216,8 +217,36 @@ static func to_dictionary() -> Dictionary:
 	return get_profile_data()
 
 
-static func get_profile_data() -> Dictionary:
+static func get_cloud_row_payload() -> Dictionary:
+	cgpa = clampf(cgpa, 0.0, 5.0)
+	money = clampi(money, 0, 100000000)
 	return {
+		"username": username if username != "" else "@" + student_name.to_lower().replace(" ", "_"),
+		"student_name": student_name.substr(0, 36),
+		"student_email": student_email,
+		"gender": "Female" if gender.to_lower() == "female" else "Male",
+		"matric_no": matric_no,
+		"department": admitted_department,
+		"admitted_course_title": admitted_course_title,
+		"admitted_faculty": admitted_faculty,
+		"cgpa": snappedf(cgpa, 0.01),
+		"wallet_balance": money,
+		"current_level": current_level,
+		"current_semester": current_semester,
+		"complexion_index": clampi(complexion_index, 0, 10),
+		"hair_index": clampi(hair_index, 0, 20),
+		"shirt_index": clampi(shirt_index, 0, 20),
+		"trouser_index": clampi(trouser_index, 0, 20),
+		"owned_upgrades": owned_upgrades,
+		"backpack_items": backpack_items
+	}
+
+
+static func get_profile_data() -> Dictionary:
+	cgpa = clampf(cgpa, 0.0, 5.0)
+	money = clampi(money, 0, 100000000)
+	return {
+		"username": username,
 		"student_name": student_name,
 		"student_email": student_email,
 		"gender": gender,
@@ -239,6 +268,7 @@ static func get_profile_data() -> Dictionary:
 		"spawn_badge": spawn_badge,
 		"cgpa": cgpa,
 		"money": money,
+		"wallet_balance": money,
 		"owned_upgrades": owned_upgrades,
 		"merit_scholarship_claimed": merit_scholarship_claimed,
 		"backpack_items": backpack_items,

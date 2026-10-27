@@ -64,6 +64,8 @@ func _ready() -> void:
 		_wire_transit_btn(%GateBtn, &"gate")
 	if has_node("%SenateBtn"):
 		_wire_transit_btn(%SenateBtn, &"senate")
+	if has_node("%TechHubBtn"):
+		_wire_transit_btn(%TechHubBtn, &"tech_hub")
 	_wire_transit_btn(%ATMBtn, &"atm")
 	_wire_transit_btn(%CloseMapBtn, &"close")
 
@@ -145,6 +147,8 @@ func _toggle_transit_sheet() -> void:
 		SoundManager.play_click()
 	if transit_sheet:
 		transit_sheet.visible = not transit_sheet.visible
+		if transit_sheet.visible and emote_sheet:
+			emote_sheet.visible = false
 
 
 func _on_phone_pressed() -> void:
@@ -331,7 +335,9 @@ func _create_emote_ui() -> void:
 
 	var emote_options: Array[Dictionary] = [
 		{"id": "shaku", "label": "💃 Legwork / Shaku", "color": Color(0.95, 0.65, 0.15)},
+		{"id": "zanku", "label": "🔥 Zanku / Gbese!", "color": Color(1.0, 0.35, 0.25)},
 		{"id": "wave", "label": "👋 Wave Coursemate", "color": Color(0.3, 0.75, 1.0)},
+		{"id": "selfie", "label": "🤳 Drip Check / Pose", "color": Color(0.95, 0.45, 0.85)},
 		{"id": "sit", "label": "🪑 Sit & Rest (+Energy)", "color": Color(0.4, 0.85, 0.5)},
 		{"id": "study", "label": "📚 Focused Study", "color": Color(0.65, 0.55, 1.0)},
 		{"id": "celebrate", "label": "🎉 Victory Cheer", "color": Color(1.0, 0.45, 0.65)},

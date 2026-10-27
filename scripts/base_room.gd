@@ -499,7 +499,22 @@ func _connect_interactive_fixtures() -> void:
 				child.dialogue_requested.connect(_on_npc_dialogue_requested)
 
 
+func _close_all_active_modals(except_node: Node = null) -> void:
+	if menus_layer:
+		for child in menus_layer.get_children():
+			if child != except_node and child is CanvasItem and child.visible:
+				child.visible = false
+	if hud and "tasks_sheet" in hud and is_instance_valid(hud.tasks_sheet):
+		hud.tasks_sheet.visible = false
+	if mobile_controls:
+		if "transit_sheet" in mobile_controls and is_instance_valid(mobile_controls.transit_sheet):
+			mobile_controls.transit_sheet.visible = false
+		if "emote_sheet" in mobile_controls and is_instance_valid(mobile_controls.emote_sheet):
+			mobile_controls.emote_sheet.visible = false
+
+
 func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> void:
+	_close_all_active_modals()
 	if is_warden_panic_active and (menu_type == &"wardrobe" or menu_type == &"study"):
 		_resolve_warden_success()
 
@@ -668,6 +683,7 @@ func _open_final_exam(p: CharacterBody3D) -> void:
 
 
 func _on_npc_dialogue_requested(npc: NPC3D, p: CharacterBody3D) -> void:
+	_close_all_active_modals()
 	PropBuilder3D.advance_quest_if_matching(1, p if p else player)
 	if hud and hud.has_method("_refresh_objective_pill"):
 		hud._refresh_objective_pill()
@@ -683,6 +699,10 @@ func _on_npc_dialogue_requested(npc: NPC3D, p: CharacterBody3D) -> void:
 
 func _on_phone_requested() -> void:
 	if phone_menu and player:
+		if phone_menu.visible:
+			phone_menu.close_phone()
+			return
+		_close_all_active_modals(phone_menu)
 		player.set_physics_process(false)
 		player.velocity = Vector3.ZERO
 		phone_menu.open_phone(player)
@@ -690,6 +710,10 @@ func _on_phone_requested() -> void:
 
 func _on_chat_requested() -> void:
 	if chat_menu and player:
+		if chat_menu.visible:
+			chat_menu.close_chat()
+			return
+		_close_all_active_modals(chat_menu)
 		player.set_physics_process(false)
 		player.velocity = Vector3.ZERO
 		chat_menu.open_chat()
@@ -723,6 +747,10 @@ func _on_transit_requested(dest: StringName) -> void:
 			_go_to_scene("res://scenes/rooms/campus_gate.tscn")
 		&"senate":
 			_go_to_scene("res://scenes/rooms/senate_building.tscn")
+		&"tech_hub":
+			_go_to_scene("res://scenes/rooms/tech_hub.tscn")
+		&"convocation":
+			_go_to_scene("res://scenes/rooms/convocation_hall.tscn")
 		&"atm":
 			_go_to_scene("res://scenes/main.tscn")
 

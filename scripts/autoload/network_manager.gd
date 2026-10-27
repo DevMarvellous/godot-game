@@ -92,11 +92,20 @@ func _on_js_net_player_update(args: Array) -> void:
 	if raw == null:
 		return
 
-	var pos := Vector3(float(raw.x), float(raw.y), float(raw.z))
+	# A real human peer has arrived over the network: retire the simulated AI buddies
+	if _cloud_lobby_active:
+		_retire_ai_buddies()
+
+	# Defensive validation: clamp coordinates & trim strings from untrusted network packets
+	var pos := Vector3(
+		clampf(float(raw.x), -60.0, 60.0),
+		clampf(float(raw.y), -2.0, 10.0),
+		clampf(float(raw.z), -60.0, 60.0)
+	)
 	var rot_y: float = float(raw.rot_y)
 	var moving: bool = bool(raw.moving)
-	var p_name: String = String(raw.name) if "name" in raw else "Coursemate"
-	var p_room: String = String(raw.room) if "room" in raw else "courtyard"
+	var p_name: String = _sanitize_text(String(raw.name) if "name" in raw else "Coursemate", 32)
+	var p_room: String = _sanitize_text(String(raw.room) if "room" in raw else "courtyard", 40)
 
 	var s_col: Color = Color(0.2, 0.6, 0.4)
 	if "shirt_col" in raw:
@@ -129,9 +138,11 @@ func _on_js_net_player_remove(args: Array) -> void:
 func _on_js_net_chat(args: Array) -> void:
 	if args.size() < 3:
 		return
-	var sender: String = String(args[0])
-	var msg: String = String(args[1])
+	var sender: String = _sanitize_text(String(args[0]), 32)
+	var msg: String = _sanitize_text(String(args[1]), 120)
 	var pid: int = int(args[2])
+	if msg.is_empty():
+		return
 	chat_received.emit(sender, msg, pid)
 
 
@@ -139,8 +150,51 @@ func _on_js_net_emote(args: Array) -> void:
 	if args.size() < 2:
 		return
 	var pid: int = int(args[0])
-	var emote: String = String(args[1])
+	var emote: String = _sanitize_text(String(args[1]), 16)
 	emote_received.emit(pid, emote)
+
+
+## Strip control characters, BBCode/HTML brackets and clamp length for any untrusted text.
+static func _sanitize_text(text: String, max_len: int) -> String:
+	var cleaned: String = ""
+	for ch in text:
+		var code: int = ch.unicode_at(0)
+		if code < 32 or ch == "<" or ch == ">" or ch == "[" or ch == "]":
+			continue
+		cleaned += ch
+	return cleaned.strip_edges().substr(0, max_len)
+
+
+## Safely call a window.* JS function with arguments encoded as JSON (no string-splicing injection).
+static func _js_call(fn_name: String, call_args: Array) -> void:
+	if not OS.has_feature("web"):
+		return
+	var encoded: Array[String] = []
+	for a in call_args:
+		encoded.append(JSON.stringify(a))
+	JavaScriptBridge.eval("if (window.%s) window.%s(%s);" % [fn_name, fn_name, ", ".join(encoded)])
+
+
+func _retire_ai_buddies() -> void:
+	_cloud_lobby_active = false
+	for cp in CLOUD_PEERS:
+		var pid: int = int(cp["id"])
+		if remote_players.has(pid):
+			remote_players.erase(pid)
+			player_left.emit(pid)
+
+
+## Real + AI buddy players currently known (used by HUD & phone lobby).
+func get_online_players() -> Dictionary:
+	return remote_players
+
+
+func get_real_player_count() -> int:
+	var count: int = 0
+	for pid in remote_players.keys():
+		if not bool(remote_players[pid].get("is_ai", false)):
+			count += 1
+	return count
 
 
 func _process(delta: float) -> void:
@@ -168,20 +222,21 @@ func _process(delta: float) -> void:
 		var rot_y: float = atan2(-dir.x, -dir.z) if dir.length_squared() > 0.0005 else float(remote_players.get(pid, {}).get("rot_y", 0.0))
 
 		remote_players[pid] = {
-			"name": cp["name"],
+			"name": "🤖 " + String(cp["name"]),
 			"room": peer_room,
 			"pos": next_pos,
 			"rot_y": rot_y,
 			"is_moving": moving and dir.length() > 0.02,
 			"shirt_col": cp["shirt"],
-			"trouser_col": cp["trouser"]
+			"trouser_col": cp["trouser"],
+			"is_ai": true
 		}
 
 
 func _activate_cloud_lobby() -> void:
 	_cloud_lobby_active = true
 	current_state = NetState.CONNECTED
-	connection_status_changed.emit(true, "Campus Cloud Lobby (3 Online)")
+	connection_status_changed.emit(true, "Campus Lobby (AI buddies until real students join)")
 
 
 func _sync_with_profile() -> void:
@@ -260,26 +315,39 @@ func broadcast_transform(room_name: String, pos: Vector3, rot_y: float, is_movin
 		return
 	_last_broadcast_time = now
 
-	# 1. Web Realtime WebSocket bridge (optimized for lag)
+	# 1. Web Realtime WebSocket bridge (optimized for lag, JSON-encoded args)
 	if OS.has_feature("web"):
-		var js_expr: String = "if (window.campusNetBroadcastTransform) window.campusNetBroadcastTransform('%s', %f, %f, %f, %f, %s);" % [
-			room_name, pos.x, pos.y, pos.z, rot_y, "true" if is_moving else "false"
-		]
-		JavaScriptBridge.eval(js_expr)
+		_js_call("campusNetBroadcastTransform", [
+			room_name, snappedf(pos.x, 0.01), snappedf(pos.y, 0.01), snappedf(pos.z, 0.01),
+			snappedf(rot_y, 0.01), is_moving
+		])
 
 	# 2. Dedicated WebSocket Server RPC
 	if is_online() and not _cloud_lobby_active and multiplayer.has_multiplayer_peer():
 		rpc(&"_rpc_sync_transform", room_name, pos, rot_y, is_moving)
 
 
+var _chat_timestamps: Array[float] = []
+const CHAT_RATE_LIMIT: int = 5        # max messages...
+const CHAT_RATE_WINDOW: float = 10.0  # ...per 10 seconds (anti-spam)
+
+
 func broadcast_chat(message: String) -> void:
+	message = _sanitize_text(message, 120)
+	if message.is_empty():
+		return
+	var now_s: float = float(Time.get_ticks_msec()) * 0.001
+	_chat_timestamps = _chat_timestamps.filter(func(t: float) -> bool: return now_s - t < CHAT_RATE_WINDOW)
+	if _chat_timestamps.size() >= CHAT_RATE_LIMIT:
+		chat_received.emit("📢 Campus System", "Slow down! Wait a few seconds before sending more messages.", -1)
+		return
+	_chat_timestamps.append(now_s)
+
 	var sender: String = local_player_data.get("name", "Student")
 	var local_id: int = 1 if _cloud_lobby_active else multiplayer.get_unique_id()
 	chat_received.emit(sender, message, local_id)
 
-	if OS.has_feature("web"):
-		var safe_msg: String = message.replace("'", "\\'").replace('"', '\\"')
-		JavaScriptBridge.eval("if (window.campusNetBroadcastChat) window.campusNetBroadcastChat('%s');" % safe_msg)
+	_js_call("campusNetBroadcastChat", [message])
 
 	if _cloud_lobby_active:
 		# Trigger an authentic coursemate reply after 1.4 seconds
@@ -299,7 +367,7 @@ func broadcast_emote(emote_name: String) -> void:
 	emote_received.emit(local_id, emote_name)
 
 	if OS.has_feature("web"):
-		JavaScriptBridge.eval("if (window.campusNetBroadcastEmote) window.campusNetBroadcastEmote('%s');" % emote_name)
+		_js_call("campusNetBroadcastEmote", [_sanitize_text(emote_name, 16)])
 
 	if _cloud_lobby_active:
 		# Coursemate reacts after 1.2 seconds!
@@ -349,7 +417,7 @@ func _rpc_sync_transform(room_name: String, pos: Vector3, rot_y: float, is_movin
 @rpc("any_peer", "reliable")
 func _rpc_sync_chat(sender_name: String, message: String) -> void:
 	var sender_id: int = multiplayer.get_remote_sender_id()
-	chat_received.emit(sender_name, message, sender_id)
+	chat_received.emit(_sanitize_text(sender_name, 32), _sanitize_text(message, 120), sender_id)
 
 
 func _on_peer_connected(id: int) -> void:

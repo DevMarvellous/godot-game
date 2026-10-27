@@ -248,7 +248,8 @@ func _ready() -> void:
 		"res://scenes/rooms/campus_garden.tscn",
 		"res://scenes/rooms/sub_building.tscn",
 		"res://scenes/rooms/senate_building.tscn",
-		"res://scenes/rooms/convocation_hall.tscn"
+		"res://scenes/rooms/convocation_hall.tscn",
+		"res://scenes/rooms/tech_hub.tscn"
 	]
 	for r_path in rooms_to_test:
 		var scene = load(r_path)
@@ -273,9 +274,10 @@ func _ready() -> void:
 	var stage_inst = stage_scene.instantiate()
 	add_child(stage_inst)
 	stage_inst.set_avatar_drip("Male", 1, 0, 0, 0)
+	stage_inst.set_avatar_drip("Female", 3, 2, 1, 2)
 	stage_inst._process(0.016)
 	stage_inst.queue_free()
-	print("  -> Admission Stage Main Viewport OK")
+	print("  -> Admission Stage Main Viewport (Male & Female silhouettes) OK")
 
 	print("[6c/6] Verifying Multiplayer NetworkPlayer 3D Interaction & Supabase Cloud Sync...")
 	var net_p_scene = load("res://scenes/network_player.tscn")
@@ -286,7 +288,8 @@ func _ready() -> void:
 	net_p.show_chat("Oya gbese!")
 	net_p.queue_free()
 	if SupabaseClient:
-		SupabaseClient.sync_student_profile(StudentProfile.to_dictionary())
+		SupabaseClient.sync_student_profile(StudentProfile.get_cloud_row_payload())
+		SupabaseClient.fetch_live_game_config()
 		SupabaseClient.fetch_deans_list_leaderboard()
 		SupabaseClient.fetch_wealth_leaderboard()
 	print("  -> Multiplayer NetworkPlayer & Cloud Backend Sync OK")

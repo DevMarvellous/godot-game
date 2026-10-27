@@ -302,6 +302,11 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "✂ Barber & Salon (Keke ₦100)"
 
+[node name="TechHubBtn" type="Button" parent="TouchZone/TransitSheet/OuterVBox/Scroll/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "💻 Silicon Lagoon Tech Hub & Clinic (Keke ₦100)"
+
 [node name="ATMBtn" type="Button" parent="TouchZone/TransitSheet/OuterVBox/Scroll/VBox"]
 unique_name_in_owner = true
 layout_mode = 2

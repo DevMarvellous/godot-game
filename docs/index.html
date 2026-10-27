@@ -626,27 +626,62 @@ html, body, #canvas {
 			</div>
 
 			<div class="portal-body" id="portal-body">
-				<!-- Step 0: Biodata -->
+				<!-- Instant Live Avatar Dressing Display (Visible on Step 0 & Step 1) -->
+				<div id="live-avatar-stage" style="background: linear-gradient(180deg, rgba(16, 42, 30, 0.95) 0%, rgba(9, 20, 15, 0.98) 100%); border: 1.5px solid rgba(245, 197, 24, 0.45); border-radius: 16px; padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; box-shadow: inset 0 0 24px rgba(0,0,0,0.6);">
+					<div id="avatar-svg-box" style="width: 112px; height: 148px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 65%, rgba(245, 197, 24, 0.18), transparent 70%); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
+						<!-- Populated dynamically by renderLiveAvatarSVG() -->
+					</div>
+					<div style="flex: 1; min-width: 0;">
+						<div style="font-size: 11px; color: #34d399; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase;">✨ LIVE STUDENT DRESSING PREVIEW</div>
+						<div id="avatar-summary-name" style="font-size: 15px; font-weight: 800; color: #f8fafc; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Tunde Adeleke (@tunde)</div>
+						<div id="avatar-summary-drip" style="font-size: 12px; color: #fcd34d; font-weight: 700; margin-top: 3px;">👨 Male • Casual Campus Fit</div>
+						<div id="avatar-summary-sub" style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Fresh Fade • Warm Chestnut • Dark Chinos</div>
+						<div style="display: flex; gap: 6px; margin-top: 8px;">
+							<button type="button" class="chip-btn" style="padding: 4px 10px; font-size: 11px;" onclick="randomizeDrip()">🎲 Random Drip</button>
+							<button type="button" class="chip-btn" style="padding: 4px 10px; font-size: 11px;" onclick="switchStep(ADMISSION_STATE.step === 1 ? 0 : 1)" id="quick-drip-toggle-btn">👕 Change Clothes</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- Step 0: Biodata & Login -->
 				<div id="step-0-view">
-					<label class="form-label" for="adm-name">👤 Full Student Name:</label>
-					<input class="portal-input" id="adm-name" type="text" value="Tunde Adeleke" placeholder="e.g. Femi Adeleke" autocomplete="name" />
-					<div class="chips-wrap">
-						<button type="button" class="chip-btn" onclick="applyPresetName('🎲 Lucky Dip')">🎲 Lucky Dip</button>
-						<button type="button" class="chip-btn" onclick="applyPresetName('Tunde Adeleke')">Tunde Adeleke</button>
-						<button type="button" class="chip-btn" onclick="applyPresetName('Chisom Okafor')">Chisom Okafor</button>
-						<button type="button" class="chip-btn" onclick="applyPresetName('Femi Bakare')">Femi Bakare</button>
-						<button type="button" class="chip-btn" onclick="applyPresetName('Zainab Bello')">Zainab Bello</button>
-						<button type="button" class="chip-btn" onclick="applyPresetName('Emeka Obi')">Emeka Obi</button>
+					<div style="display: flex; gap: 6px; margin-bottom: 12px;">
+						<button type="button" class="drip-tab-btn active" id="auth-mode-register" onclick="setAuthMode('register')">🎓 New Student</button>
+						<button type="button" class="drip-tab-btn" id="auth-mode-login" onclick="setAuthMode('login')">🔐 Returning Login</button>
 					</div>
 
-					<label class="form-label" style="margin-top: 14px;">⚧️ Gender:</label>
-					<div class="gender-grid">
-						<button type="button" class="gender-btn selected" id="gender-male-btn" onclick="selectGender('Male')">👨 Male Student</button>
-						<button type="button" class="gender-btn" id="gender-female-btn" onclick="selectGender('Female')">👩 Female Student</button>
+					<div id="register-fields-wrap">
+						<label class="form-label" for="adm-name">👤 Full Student Name:</label>
+						<input class="portal-input" id="adm-name" type="text" maxlength="32" value="Tunde Adeleke" placeholder="e.g. Femi Adeleke" autocomplete="name" oninput="onBiodataInput()" />
+						<div class="chips-wrap">
+							<button type="button" class="chip-btn" onclick="applyPresetName('🎲 Lucky Dip')">🎲 Lucky Dip</button>
+							<button type="button" class="chip-btn" onclick="applyPresetName('Tunde Adeleke')">Tunde Adeleke</button>
+							<button type="button" class="chip-btn" onclick="applyPresetName('Chisom Okafor')">Chisom Okafor</button>
+							<button type="button" class="chip-btn" onclick="applyPresetName('Zainab Bello')">Zainab Bello</button>
+							<button type="button" class="chip-btn" onclick="applyPresetName('Emeka Obi')">Emeka Obi</button>
+						</div>
+
+						<label class="form-label" style="margin-top: 12px;">⚧️ Gender (Changes Body &amp; Style):</label>
+						<div class="gender-grid">
+							<button type="button" class="gender-btn selected" id="gender-male-btn" onclick="selectGender('Male')">👨 Male Student</button>
+							<button type="button" class="gender-btn" id="gender-female-btn" onclick="selectGender('Female')">👩 Female Student</button>
+						</div>
 					</div>
 
-					<label class="form-label" for="adm-email" style="margin-top: 14px;">📧 Student Campus Email:</label>
-					<input class="portal-input" id="adm-email" type="email" value="tunde.adeleke@campus.edu.ng" placeholder="student@campus.edu.ng" autocomplete="email" />
+					<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
+						<div>
+							<label class="form-label" for="adm-username">🏷️ Campus @Username:</label>
+							<input class="portal-input" id="adm-username" type="text" maxlength="20" value="@tunde_csc" placeholder="@username" autocomplete="username" oninput="onBiodataInput()" />
+						</div>
+						<div>
+							<label class="form-label" for="adm-pin">🔒 4-Digit Student PIN:</label>
+							<input class="portal-input" id="adm-pin" type="password" maxlength="8" value="2026" placeholder="••••" autocomplete="current-password" />
+						</div>
+					</div>
+
+					<label class="form-label" for="adm-email" style="margin-top: 10px;">📧 Student Campus Email:</label>
+					<input class="portal-input" id="adm-email" type="email" maxlength="48" value="tunde.adeleke@campus.edu.ng" placeholder="student@campus.edu.ng" autocomplete="email" oninput="onBiodataInput()" />
+					<div id="auth-status-note" style="font-size: 11px; color: #34d399; margin-top: 6px; min-height: 16px;"></div>
 				</div>
 
 				<!-- Step 1: Drip & Character Styling -->
@@ -755,7 +790,7 @@ html, body, #canvas {
 
 	<script src="index.js"></script>
 	<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":962632,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":988452,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -789,7 +824,10 @@ function toggleFullScreen() {
    ======================================================= */
 const ADMISSION_STATE = {
 	step: 0,
+	authMode: "register",
 	name: "Tunde Adeleke",
+	username: "@tunde_csc",
+	pin: "2026",
 	email: "tunde.adeleke@campus.edu.ng",
 	gender: "Male",
 	skinIdx: 1,
@@ -801,6 +839,11 @@ const ADMISSION_STATE = {
 	quizIdx: 0,
 	quizScore: 100
 };
+
+function sanitizeCampusInput(str, maxLen) {
+	if (!str) return '';
+	return String(str).replace(/[<>'"`\\]/g, '').trim().slice(0, maxLen || 64);
+}
 
 const RANDOM_NAMES = [
 	"Tunde Adeleke", "Chisom Okafor", "Femi Bakare", "Zainab Bello",
@@ -889,22 +932,238 @@ const QUIZ_BANK = [
 ];
 
 let activeDripTab = "outfits";
+const FEMALE_NAMES = ["Chisom Okafor", "Zainab Bello", "Bolanle Coker", "Ngozi Eze", "Halima Lawal"];
+
+function renderLiveAvatarSVG() {
+	const box = document.getElementById('avatar-svg-box');
+	if (!box) return;
+	const isFemale = ADMISSION_STATE.gender === 'Female';
+	const skin = (COMPLEXIONS[ADMISSION_STATE.skinIdx] || COMPLEXIONS[1]).color;
+	const outfit = OUTFITS[ADMISSION_STATE.shirtIdx] || OUTFITS[0];
+	const trouser = TROUSERS[ADMISSION_STATE.trouserIdx] || TROUSERS[0];
+	const hair = HAIRSTYLES[ADMISSION_STATE.hairIdx] || HAIRSTYLES[0];
+	const topCol = outfit.top;
+	const btmCol = trouser.color;
+
+	// Hair SVG layer
+	let hairSvg = '';
+	if (ADMISSION_STATE.hairIdx === 0) {
+		// Fresh Fade
+		hairSvg = `<path d="M36 28 C36 16, 64 16, 64 28 L64 31 L36 31 Z" fill="#141414"/>`;
+	} else if (ADMISSION_STATE.hairIdx === 1) {
+		// Afro Crown
+		hairSvg = `<circle cx="50" cy="25" r="19" fill="#141414"/>`;
+	} else if (ADMISSION_STATE.hairIdx === 2) {
+		// Campus Braids (hanging shoulder locs)
+		hairSvg = `
+			<path d="M33 28 C33 14, 67 14, 67 28 Z" fill="#181210"/>
+			<rect x="32" y="26" width="6" height="28" rx="3" fill="#181210"/>
+			<rect x="62" y="26" width="6" height="28" rx="3" fill="#181210"/>
+			<rect x="36" y="28" width="4" height="24" rx="2" fill="#241a16"/>
+			<rect x="60" y="28" width="4" height="24" rx="2" fill="#241a16"/>
+		`;
+	} else if (ADMISSION_STATE.hairIdx === 3) {
+		// Snapback Cap
+		hairSvg = `
+			<path d="M35 28 C35 15, 65 15, 65 28 Z" fill="#dc2626"/>
+			<rect x="34" y="25" width="38" height="5" rx="2.5" fill="#991b1b"/>
+		`;
+	} else {
+		// Gele / Royal Headwrap
+		hairSvg = `
+			<path d="M28 30 C26 12, 74 12, 72 30 C66 34, 34 34, 28 30 Z" fill="#eab308"/>
+			<path d="M32 25 C42 16, 58 16, 68 25" stroke="#fef08a" stroke-width="2" fill="none"/>
+		`;
+	}
+
+	// Outfit & Gender Silhouette SVG layer
+	let bodySvg = '';
+	if (isFemale) {
+		// Female hourglass torso + flared skirt/peplum + sleeves
+		const skirtCol = (ADMISSION_STATE.shirtIdx === 1 || ADMISSION_STATE.shirtIdx === 4) ? topCol : btmCol;
+		bodySvg = `
+			<!-- Arms -->
+			<rect x="24" y="54" width="8" height="28" rx="4" fill="${skin}"/>
+			<rect x="68" y="54" width="8" height="28" rx="4" fill="${skin}"/>
+			<!-- Female Fitted Sleeve Caps -->
+			<path d="M23 52 Q28 48 33 54 L32 66 L24 66 Z" fill="${topCol}"/>
+			<path d="M77 52 Q72 48 67 54 L68 66 L76 66 Z" fill="${topCol}"/>
+			<!-- Female Hourglass Top -->
+			<path d="M32 50 L68 50 L62 72 L67 84 L33 84 L38 72 Z" fill="${topCol}"/>
+			<!-- Female Flared Skirt / Wrapper -->
+			<path d="M34 83 L66 83 L73 114 L27 114 Z" fill="${skirtCol}"/>
+			<!-- Legs -->
+			<rect x="38" y="112" width="8" height="20" rx="3" fill="${skin}"/>
+			<rect x="54" y="112" width="8" height="20" rx="3" fill="${skin}"/>
+		`;
+	} else {
+		// Male broad-shouldered torso + tailored trousers
+		const tunicHeight = (ADMISSION_STATE.shirtIdx === 1 || ADMISSION_STATE.shirtIdx === 4) ? 46 : 36;
+		bodySvg = `
+			<!-- Arms -->
+			<rect x="20" y="52" width="10" height="32" rx="5" fill="${skin}"/>
+			<rect x="70" y="52" width="10" height="32" rx="5" fill="${skin}"/>
+			<!-- Male Broad Sleeves -->
+			<rect x="19" y="50" width="12" height="18" rx="4" fill="${topCol}"/>
+			<rect x="69" y="50" width="12" height="18" rx="4" fill="${topCol}"/>
+			<!-- Male Trousers -->
+			<rect x="33" y="84" width="15" height="44" rx="4" fill="${btmCol}"/>
+			<rect x="52" y="84" width="15" height="44" rx="4" fill="${btmCol}"/>
+			<!-- Male Torso / Tunic -->
+			<rect x="29" y="50" width="42" height="${tunicHeight}" rx="6" fill="${topCol}"/>
+		`;
+	}
+
+	// Outfit Collar / Tie / Senator Embroidery / Matric Gown details
+	let detailSvg = '';
+	if (ADMISSION_STATE.shirtIdx === 1) {
+		// Senator gold chest embroidery
+		detailSvg = `
+			<path d="M50 50 L50 68 M43 56 L57 56 M45 62 L55 62" stroke="#f5c518" stroke-width="2.2" stroke-linecap="round"/>
+		`;
+	} else if (ADMISSION_STATE.shirtIdx === 2) {
+		// Corporate tie & collar
+		detailSvg = `
+			<polygon points="45,50 55,50 50,58" fill="#ffffff"/>
+			<polygon points="48,55 52,55 53,74 50,78 47,74" fill="#dc2626"/>
+		`;
+	} else if (ADMISSION_STATE.shirtIdx === 3) {
+		// Hoodie drawstrings & pocket
+		detailSvg = `
+			<line x1="46" y1="51" x2="46" y2="63" stroke="#f8fafc" stroke-width="1.8"/>
+			<line x1="54" y1="51" x2="54" y2="63" stroke="#f8fafc" stroke-width="1.8"/>
+		`;
+	} else if (ADMISSION_STATE.shirtIdx === 4) {
+		// Academic Matriculation Gown gold stole
+		detailSvg = `
+			<path d="M38 50 L50 74 L62 50" stroke="#f5c518" stroke-width="4" fill="none"/>
+		`;
+	}
+
+	// Facial differences (Female eyelashes, rose lips & gold earrings vs Male brows & fade contour)
+	const faceDetails = isFemale ? `
+		<!-- Gold Stud Earrings -->
+		<circle cx="34" cy="37" r="2.3" fill="#f5c518"/>
+		<circle cx="66" cy="37" r="2.3" fill="#f5c518"/>
+		<!-- Female Eyes + Lashes -->
+		<circle cx="44" cy="34" r="2" fill="#111"/>
+		<circle cx="56" cy="34" r="2" fill="#111"/>
+		<path d="M41 32 Q44 30 47 32 M53 32 Q56 30 59 32" stroke="#111" stroke-width="1.4" fill="none"/>
+		<!-- Rose Glossy Lips -->
+		<path d="M45 42 Q50 45 55 42" stroke="#e11d48" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+	` : `
+		<!-- Male Eyes & Brows -->
+		<rect x="41" y="30" width="6" height="1.8" rx="0.9" fill="#111"/>
+		<rect x="53" y="30" width="6" height="1.8" rx="0.9" fill="#111"/>
+		<circle cx="44" cy="34" r="2" fill="#111"/>
+		<circle cx="56" cy="34" r="2" fill="#111"/>
+		<!-- Confident Smile & Goatee Hint -->
+		<path d="M45 41 Q50 44 55 41" stroke="#111" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+	`;
+
+	box.innerHTML = `
+		<svg viewBox="0 0 100 142" width="104" height="142" xmlns="http://www.w3.org/2000/svg">
+			<!-- Podium Base -->
+			<ellipse cx="50" cy="133" rx="34" ry="6" fill="rgba(245, 197, 24, 0.28)" stroke="#f5c518" stroke-width="1.2"/>
+			${bodySvg}
+			${detailSvg}
+			<!-- Sneakers / Shoes -->
+			<rect x="${isFemale ? 36 : 32}" y="126" width="12" height="6" rx="3" fill="#f8fafc"/>
+			<rect x="${isFemale ? 52 : 52}" y="126" width="12" height="6" rx="3" fill="#f8fafc"/>
+			<!-- Neck & Head -->
+			<rect x="45" y="43" width="10" height="9" rx="3" fill="${skin}"/>
+			<circle cx="50" cy="34" r="14" fill="${skin}"/>
+			${faceDetails}
+			${hairSvg}
+		</svg>
+	`;
+
+	const sumName = document.getElementById('avatar-summary-name');
+	const sumDrip = document.getElementById('avatar-summary-drip');
+	const sumSub = document.getElementById('avatar-summary-sub');
+	const skinObj = COMPLEXIONS[ADMISSION_STATE.skinIdx] || COMPLEXIONS[1];
+	if (sumName) sumName.textContent = `${ADMISSION_STATE.name} (${ADMISSION_STATE.username})`;
+	if (sumDrip) sumDrip.textContent = `${isFemale ? '👩 Female' : '👨 Male'} • ${outfit.name}`;
+	if (sumSub) sumSub.textContent = `${hair.name} • ${skinObj.name} • ${trouser.name}`;
+}
+
+function randomizeDrip() {
+	ADMISSION_STATE.skinIdx = Math.floor(Math.random() * COMPLEXIONS.length);
+	ADMISSION_STATE.hairIdx = Math.floor(Math.random() * HAIRSTYLES.length);
+	ADMISSION_STATE.shirtIdx = Math.floor(Math.random() * OUTFITS.length);
+	ADMISSION_STATE.trouserIdx = Math.floor(Math.random() * TROUSERS.length);
+	renderDripOptions();
+	renderLiveAvatarSVG();
+	notifyGodotDripChange();
+}
+
+function setAuthMode(mode) {
+	ADMISSION_STATE.authMode = mode;
+	const regBtn = document.getElementById('auth-mode-register');
+	const logBtn = document.getElementById('auth-mode-login');
+	const regWrap = document.getElementById('register-fields-wrap');
+	const nextBtn = document.getElementById('portal-next-btn');
+	const note = document.getElementById('auth-status-note');
+	if (regBtn) regBtn.classList.toggle('active', mode === 'register');
+	if (logBtn) logBtn.classList.toggle('active', mode === 'login');
+	if (regWrap) regWrap.style.display = (mode === 'login') ? 'none' : 'block';
+	if (note) {
+		note.textContent = (mode === 'login')
+			? '🔐 Enter your Campus @Username or Email + PIN to restore your profile.'
+			: '';
+	}
+	if (nextBtn && ADMISSION_STATE.step === 0) {
+		nextBtn.textContent = (mode === 'login') ? '🔐 Login & Enter Campus ➔' : 'Next Step ▶';
+	}
+}
+
+function onBiodataInput() {
+	const nEl = document.getElementById('adm-name');
+	const uEl = document.getElementById('adm-username');
+	const eEl = document.getElementById('adm-email');
+	if (nEl) ADMISSION_STATE.name = sanitizeCampusInput(nEl.value, 32) || 'Student';
+	if (uEl) {
+		let u = sanitizeCampusInput(uEl.value, 20).replace(/\s+/g, '_').toLowerCase();
+		if (u && !u.startsWith('@')) u = '@' + u;
+		ADMISSION_STATE.username = u || '@student';
+	}
+	if (eEl) ADMISSION_STATE.email = sanitizeCampusInput(eEl.value, 48);
+	renderLiveAvatarSVG();
+}
 
 function applyPresetName(name) {
 	if (name === '🎲 Lucky Dip') {
 		name = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)];
 	}
+	name = sanitizeCampusInput(name, 32);
 	document.getElementById('adm-name').value = name;
 	ADMISSION_STATE.name = name;
+	const handle = '@' + name.split(' ')[0].toLowerCase().replace(/[^a-z0-9]/g, '') + '_26';
+	const uEl = document.getElementById('adm-username');
+	if (uEl) uEl.value = handle;
+	ADMISSION_STATE.username = handle;
 	const safeEmail = name.toLowerCase().replace(/[^a-z0-9]/g, '.') + '@campus.edu.ng';
 	document.getElementById('adm-email').value = safeEmail;
 	ADMISSION_STATE.email = safeEmail;
+
+	if (FEMALE_NAMES.includes(name)) {
+		ADMISSION_STATE.hairIdx = 2; // Campus Braids default for female preset
+		selectGender('Female');
+	} else {
+		selectGender('Male');
+	}
+	renderLiveAvatarSVG();
 }
 
 function selectGender(g) {
 	ADMISSION_STATE.gender = g;
 	document.getElementById('gender-male-btn').classList.toggle('selected', g === 'Male');
 	document.getElementById('gender-female-btn').classList.toggle('selected', g === 'Female');
+	if (g === 'Female' && ADMISSION_STATE.hairIdx === 0) {
+		ADMISSION_STATE.hairIdx = 2; // Default to Braids when switching to Female from Low Cut
+	}
+	renderDripOptions();
+	renderLiveAvatarSVG();
 	notifyGodotDripChange();
 }
 
@@ -929,6 +1188,7 @@ function renderDripOptions() {
 			card.onclick = () => {
 				ADMISSION_STATE.shirtIdx = idx;
 				renderDripOptions();
+				renderLiveAvatarSVG();
 				notifyGodotDripChange();
 			};
 			card.innerHTML = `
@@ -948,6 +1208,7 @@ function renderDripOptions() {
 			card.onclick = () => {
 				ADMISSION_STATE.hairIdx = idx;
 				renderDripOptions();
+				renderLiveAvatarSVG();
 				notifyGodotDripChange();
 			};
 			card.innerHTML = `
@@ -967,6 +1228,7 @@ function renderDripOptions() {
 			card.onclick = () => {
 				ADMISSION_STATE.skinIdx = idx;
 				renderDripOptions();
+				renderLiveAvatarSVG();
 				notifyGodotDripChange();
 			};
 			card.innerHTML = `
@@ -986,6 +1248,7 @@ function renderDripOptions() {
 			card.onclick = () => {
 				ADMISSION_STATE.trouserIdx = idx;
 				renderDripOptions();
+				renderLiveAvatarSVG();
 				notifyGodotDripChange();
 			};
 			card.innerHTML = `
@@ -1080,10 +1343,7 @@ function renderAdmissionLetter() {
 function switchStep(newStep) {
 	// Sync inputs before leaving Step 0
 	if (ADMISSION_STATE.step === 0) {
-		const n = document.getElementById('adm-name').value.trim();
-		if (n) ADMISSION_STATE.name = n;
-		const em = document.getElementById('adm-email').value.trim();
-		if (em) ADMISSION_STATE.email = em;
+		onBiodataInput();
 	}
 
 	ADMISSION_STATE.step = newStep;
@@ -1096,6 +1356,17 @@ function switchStep(newStep) {
 			chip.classList.toggle('done', i < newStep);
 		}
 	}
+
+	const liveStage = document.getElementById('live-avatar-stage');
+	if (liveStage) {
+		liveStage.style.display = (newStep <= 1) ? 'flex' : 'none';
+	}
+	const qBtn = document.getElementById('quick-drip-toggle-btn');
+	if (qBtn) {
+		qBtn.textContent = (newStep === 1) ? '👤 Biodata' : '👕 Change Clothes';
+	}
+
+	renderLiveAvatarSVG();
 
 	const backBtn = document.getElementById('portal-back-btn');
 	const nextBtn = document.getElementById('portal-next-btn');
@@ -1116,7 +1387,9 @@ function switchStep(newStep) {
 		return;
 	}
 
-	nextBtn.textContent = 'Next Step ▶';
+	nextBtn.textContent = (newStep === 0 && ADMISSION_STATE.authMode === 'login')
+		? '🔐 Login & Enter Campus ➔'
+		: 'Next Step ▶';
 	nextBtn.style.background = 'linear-gradient(180deg, #fcd34d 0%, var(--campus-gold) 100%)';
 	nextBtn.style.color = '#0b2217';
 }
@@ -1128,6 +1401,46 @@ function prevStep() {
 }
 
 function nextStep() {
+	if (ADMISSION_STATE.step === 0 && ADMISSION_STATE.authMode === 'login') {
+		onBiodataInput();
+		const note = document.getElementById('auth-status-note');
+		const sbUrl = window.getCampusSupabaseUrl ? window.getCampusSupabaseUrl() : '';
+		const sbKey = window.getCampusSupabaseKey ? window.getCampusSupabaseKey() : '';
+		if (sbUrl && sbKey) {
+			if (note) note.textContent = '🔄 Looking up student profile in Supabase Cloud...';
+			const qUrl = `${sbUrl}/rest/v1/student_profiles?or=(username.eq.${encodeURIComponent(ADMISSION_STATE.username)},student_email.eq.${encodeURIComponent(ADMISSION_STATE.email)})&limit=1`;
+			fetch(qUrl, { headers: { 'apikey': sbKey } })
+				.then(r => r.ok ? r.json() : [])
+				.then(rows => {
+					if (Array.isArray(rows) && rows.length > 0) {
+						const row = rows[0];
+						ADMISSION_STATE.name = row.student_name || ADMISSION_STATE.name;
+						ADMISSION_STATE.username = row.username || ADMISSION_STATE.username;
+						ADMISSION_STATE.email = row.student_email || ADMISSION_STATE.email;
+						ADMISSION_STATE.gender = row.gender || ADMISSION_STATE.gender;
+						ADMISSION_STATE.skinIdx = row.complexion_index ?? ADMISSION_STATE.skinIdx;
+						ADMISSION_STATE.hairIdx = row.hair_index ?? ADMISSION_STATE.hairIdx;
+						ADMISSION_STATE.shirtIdx = row.shirt_index ?? ADMISSION_STATE.shirtIdx;
+						ADMISSION_STATE.trouserIdx = row.trouser_index ?? ADMISSION_STATE.trouserIdx;
+						ADMISSION_STATE.dept = row.department || ADMISSION_STATE.dept;
+					}
+					finishAdmission();
+				})
+				.catch(() => finishAdmission());
+			return;
+		}
+		try {
+			const savedRaw = localStorage.getItem('my_campus_saved_account');
+			if (savedRaw) {
+				const saved = JSON.parse(savedRaw);
+				if (saved && saved.name) {
+					Object.assign(ADMISSION_STATE, saved);
+				}
+			}
+		} catch (e) {}
+		finishAdmission();
+		return;
+	}
 	if (ADMISSION_STATE.step < 4) {
 		switchStep(ADMISSION_STATE.step + 1);
 	} else {
@@ -1136,6 +1449,7 @@ function nextStep() {
 }
 
 function notifyGodotDripChange() {
+	renderLiveAvatarSVG();
 	if (window.godotOnAvatarChange) {
 		window.godotOnAvatarChange({
 			gender: ADMISSION_STATE.gender,
@@ -1148,12 +1462,18 @@ function notifyGodotDripChange() {
 }
 
 function finishAdmission() {
+	onBiodataInput();
+	try {
+		localStorage.setItem('my_campus_saved_account', JSON.stringify(ADMISSION_STATE));
+	} catch (e) {}
+
 	const overlay = document.getElementById('admissions-overlay');
 	if (overlay) overlay.classList.remove('active');
 
 	if (window.godotOnAdmissionSubmit) {
 		window.godotOnAdmissionSubmit({
 			name: ADMISSION_STATE.name,
+			username: ADMISSION_STATE.username,
 			email: ADMISSION_STATE.email,
 			gender: ADMISSION_STATE.gender,
 			skin_idx: ADMISSION_STATE.skinIdx,
@@ -1170,9 +1490,17 @@ window.onCampusStageReady = function () {
 	// Show the admissions overlay once Godot has initialized the 3D stage
 	const overlay = document.getElementById('admissions-overlay');
 	if (overlay) overlay.classList.add('active');
-	switchStep(0);
+	renderLiveAvatarSVG();
+	switchStep(ADMISSION_STATE.step || 0);
 	notifyGodotDripChange();
 };
+// Render the live avatar mannequin immediately on DOM ready for 0ms perceived latency
+setTimeout(() => renderLiveAvatarSVG(), 50);
+// Load live backend JSON configuration (editable without rebuilding Godot)
+fetch('./live_game_config.json', { cache: 'no-store' })
+	.then(r => r.ok ? r.json() : null)
+	.then(cfg => { if (cfg) window.MY_CAMPUS_LIVE_CONFIG = cfg; })
+	.catch(() => {});
 
 /* =======================================================
    NATIVE HTML MOBILE CHAT INPUT DRAWER
@@ -1485,12 +1813,15 @@ window.campusNetBroadcastEmote = function(emote) {
 }());
 	</script>
 	<script>
+// Remove the legacy cache-first worker (it pinned stale builds). Godot's versioned
+// index.service.worker.js (from GODOT_CONFIG) now provides offline caching + clean updates.
 if ('serviceWorker' in navigator) {
-	window.addEventListener('load', () => {
-		navigator.serviceWorker.register('./sw.js').catch((err) => {
-			console.log('SW registration note:', err);
+	navigator.serviceWorker.getRegistrations().then((regs) => {
+		regs.forEach((reg) => {
+			const sw = reg.active || reg.waiting || reg.installing;
+			if (sw && sw.scriptURL && sw.scriptURL.endsWith('/sw.js')) reg.unregister();
 		});
-	});
+	}).catch(() => {});
 }
 	</script>
 </body>

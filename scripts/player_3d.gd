@@ -1220,6 +1220,13 @@ func play_emote(emote_name: String) -> void:
 	match emote_name.to_lower():
 		"shaku", "dance", "gbese":
 			play_shaku_dance_animation()
+		"zanku":
+			play_shaku_dance_animation()
+			spawn_floating_stat("🔥 Zanku Legwork! +Fun", Color(1.0, 0.55, 0.2))
+		"selfie":
+			play_dressing_animation()
+			spawn_floating_stat("🤳 Drip Check 100%!", Color(0.95, 0.55, 0.95))
+			if NetworkManager: NetworkManager.broadcast_emote("celebrate")
 		"wave":
 			play_wave_animation()
 		"sit":

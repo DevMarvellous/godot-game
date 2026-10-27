@@ -129,6 +129,7 @@ func finalize_admission(profile_data: Dictionary) -> void:
 		s_name = "Tunde Adeleke"
 
 	var s_email: String = String(profile_data.get("email", "student@campus.edu.ng")).strip_edges()
+	var s_username: String = String(profile_data.get("username", "")).strip_edges()
 	var s_gender: String = String(profile_data.get("gender", selected_gender))
 	var s_skin: int = int(profile_data.get("skin_idx", selected_complexion))
 	var s_hair: int = int(profile_data.get("hair_idx", selected_hair))
@@ -136,6 +137,10 @@ func finalize_admission(profile_data: Dictionary) -> void:
 	var s_trouser: int = int(profile_data.get("trouser_idx", selected_trouser))
 	var s_dept: String = String(profile_data.get("dept", selected_dept))
 	var s_score: int = int(profile_data.get("quiz_score", 100))
+
+	if s_username.is_empty():
+		s_username = "@" + s_name.split(" ")[0].to_lower() + "_26"
+	ProfileStore.username = s_username
 
 	# Save to persistent ProfileStore
 	ProfileStore.apply_admission(
@@ -209,6 +214,7 @@ func _on_js_admission_submit(args: Array) -> void:
 
 	var data: Dictionary = {
 		"name": String(raw.name) if "name" in raw else "Tunde Adeleke",
+		"username": String(raw.username) if "username" in raw else "@tunde_csc",
 		"email": String(raw.email) if "email" in raw else "student@campus.edu.ng",
 		"gender": String(raw.gender) if "gender" in raw else selected_gender,
 		"skin_idx": int(raw.skin_idx) if "skin_idx" in raw else selected_complexion,

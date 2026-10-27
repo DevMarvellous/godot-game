@@ -1400,6 +1400,32 @@ function prevStep() {
 function nextStep() {
 	if (ADMISSION_STATE.step === 0 && ADMISSION_STATE.authMode === 'login') {
 		onBiodataInput();
+		const note = document.getElementById('auth-status-note');
+		const sbUrl = window.getCampusSupabaseUrl ? window.getCampusSupabaseUrl() : '';
+		const sbKey = window.getCampusSupabaseKey ? window.getCampusSupabaseKey() : '';
+		if (sbUrl && sbKey) {
+			if (note) note.textContent = '🔄 Looking up student profile in Supabase Cloud...';
+			const qUrl = `${sbUrl}/rest/v1/student_profiles?or=(username.eq.${encodeURIComponent(ADMISSION_STATE.username)},student_email.eq.${encodeURIComponent(ADMISSION_STATE.email)})&limit=1`;
+			fetch(qUrl, { headers: { 'apikey': sbKey } })
+				.then(r => r.ok ? r.json() : [])
+				.then(rows => {
+					if (Array.isArray(rows) && rows.length > 0) {
+						const row = rows[0];
+						ADMISSION_STATE.name = row.student_name || ADMISSION_STATE.name;
+						ADMISSION_STATE.username = row.username || ADMISSION_STATE.username;
+						ADMISSION_STATE.email = row.student_email || ADMISSION_STATE.email;
+						ADMISSION_STATE.gender = row.gender || ADMISSION_STATE.gender;
+						ADMISSION_STATE.skinIdx = row.complexion_index ?? ADMISSION_STATE.skinIdx;
+						ADMISSION_STATE.hairIdx = row.hair_index ?? ADMISSION_STATE.hairIdx;
+						ADMISSION_STATE.shirtIdx = row.shirt_index ?? ADMISSION_STATE.shirtIdx;
+						ADMISSION_STATE.trouserIdx = row.trouser_index ?? ADMISSION_STATE.trouserIdx;
+						ADMISSION_STATE.dept = row.department || ADMISSION_STATE.dept;
+					}
+					finishAdmission();
+				})
+				.catch(() => finishAdmission());
+			return;
+		}
 		try {
 			const savedRaw = localStorage.getItem('my_campus_saved_account');
 			if (savedRaw) {
@@ -1467,6 +1493,11 @@ window.onCampusStageReady = function () {
 };
 // Render the live avatar mannequin immediately on DOM ready for 0ms perceived latency
 setTimeout(() => renderLiveAvatarSVG(), 50);
+// Load live backend JSON configuration (editable without rebuilding Godot)
+fetch('./live_game_config.json', { cache: 'no-store' })
+	.then(r => r.ok ? r.json() : null)
+	.then(cfg => { if (cfg) window.MY_CAMPUS_LIVE_CONFIG = cfg; })
+	.catch(() => {});
 
 /* =======================================================
    NATIVE HTML MOBILE CHAT INPUT DRAWER
@@ -1779,12 +1810,15 @@ window.campusNetBroadcastEmote = function(emote) {
 }());
 	</script>
 	<script>
+// Remove the legacy cache-first worker (it pinned stale builds). Godot's versioned
+// index.service.worker.js (from GODOT_CONFIG) now provides offline caching + clean updates.
 if ('serviceWorker' in navigator) {
-	window.addEventListener('load', () => {
-		navigator.serviceWorker.register('./sw.js').catch((err) => {
-			console.log('SW registration note:', err);
+	navigator.serviceWorker.getRegistrations().then((regs) => {
+		regs.forEach((reg) => {
+			const sw = reg.active || reg.waiting || reg.installing;
+			if (sw && sw.scriptURL && sw.scriptURL.endsWith('/sw.js')) reg.unregister();
 		});
-	});
+	}).catch(() => {});
 }
 	</script>
 </body>
