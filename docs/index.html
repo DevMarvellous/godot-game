@@ -649,6 +649,10 @@ html, body, #canvas {
 
 				<!-- Step 0: Biodata & Login -->
 				<div id="step-0-view">
+					<div id="quick-resume-banner" style="display: none; background: linear-gradient(90deg, rgba(16, 185, 129, 0.22), rgba(245, 197, 24, 0.22)); border: 1.5px solid #34d399; border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; align-items: center; justify-content: space-between; gap: 8px;">
+						<div style="font-size: 12px; color: #ecfdf5; font-weight: 700;" id="quick-resume-label">Welcome back!</div>
+						<button type="button" onclick="quickResumeSavedStudent()" style="background: #10b981; color: #052e16; border: none; border-radius: 8px; padding: 7px 12px; font-size: 12px; font-weight: 800; cursor: pointer; white-space: nowrap;">⚡ Enter Campus ➔</button>
+					</div>
 					<div style="display: flex; gap: 6px; margin-bottom: 12px;">
 						<button type="button" class="drip-tab-btn active" id="auth-mode-register" onclick="setAuthMode('register')">🎓 New Student</button>
 						<button type="button" class="drip-tab-btn" id="auth-mode-login" onclick="setAuthMode('login')">🔐 Returning Login</button>
@@ -823,7 +827,7 @@ html, body, #canvas {
 	}, true);
 })();
 
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":990116,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":994196,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -1482,8 +1486,44 @@ function nextStep() {
 }
 
 let _isEngineStageReady = false;
+let _hasSubmittedAdmission = false;
 let _pendingAdmissionPayload = null;
 let _isPeekingStage = false;
+
+function checkSavedStudentBanner() {
+	try {
+		const raw = localStorage.getItem('my_campus_saved_account');
+		if (!raw) return;
+		const saved = JSON.parse(raw);
+		if (saved && saved.name) {
+			const banner = document.getElementById('quick-resume-banner');
+			const lbl = document.getElementById('quick-resume-label');
+			if (banner && lbl) {
+				lbl.textContent = `🎓 Resume as ${saved.name} (${saved.dept || 'CSC'})`;
+				banner.style.display = 'flex';
+			}
+		}
+	} catch (e) {}
+}
+
+function quickResumeSavedStudent() {
+	try {
+		const raw = localStorage.getItem('my_campus_saved_account');
+		if (raw) {
+			const saved = JSON.parse(raw);
+			if (saved && saved.name) {
+				Object.assign(ADMISSION_STATE, saved);
+				const nEl = document.getElementById('adm-name');
+				const uEl = document.getElementById('adm-username');
+				const eEl = document.getElementById('adm-email');
+				if (nEl) nEl.value = ADMISSION_STATE.name;
+				if (uEl) uEl.value = ADMISSION_STATE.username || '@student';
+				if (eEl) eEl.value = ADMISSION_STATE.email || 'student@campus.edu.ng';
+			}
+		}
+	} catch (e) {}
+	finishAdmission();
+}
 
 function togglePeekStage() {
 	const sheet = document.querySelector('.portal-sheet');
@@ -1515,6 +1555,8 @@ function notifyGodotDripChange() {
 }
 
 function finishAdmission() {
+	if (_hasSubmittedAdmission && !_pendingAdmissionPayload) return;
+	_hasSubmittedAdmission = true;
 	onBiodataInput();
 	try {
 		localStorage.setItem('my_campus_saved_account', JSON.stringify(ADMISSION_STATE));
@@ -1534,9 +1576,15 @@ function finishAdmission() {
 	});
 
 	const overlay = document.getElementById('admissions-overlay');
-	if (overlay) overlay.classList.remove('active');
+	if (overlay) {
+		overlay.classList.remove('active');
+		overlay.style.display = 'none';
+	}
+	const cloudBtn = document.getElementById('web-cloud-db-btn');
+	if (cloudBtn) cloudBtn.style.display = 'none';
 
 	if (window.godotOnAdmissionSubmit) {
+		_pendingAdmissionPayload = null;
 		window.godotOnAdmissionSubmit(payloadStr);
 		const c = document.getElementById('canvas');
 		if (c) c.focus();
@@ -1559,15 +1607,20 @@ window.onCampusStageReady = function () {
 	const statusOverlay = document.getElementById('status');
 	if (statusOverlay) statusOverlay.style.display = 'none';
 
-	// If user already completed admission while engine was streaming, enter campus immediately!
-	if (_pendingAdmissionPayload && window.godotOnAdmissionSubmit) {
-		const p = _pendingAdmissionPayload;
-		_pendingAdmissionPayload = null;
+	// If user already completed admission while engine was streaming, enter campus immediately & NEVER re-open overlay!
+	if (_hasSubmittedAdmission) {
 		const overlay = document.getElementById('admissions-overlay');
-		if (overlay) overlay.classList.remove('active');
-		window.godotOnAdmissionSubmit(p);
-		const c = document.getElementById('canvas');
-		if (c) c.focus();
+		if (overlay) {
+			overlay.classList.remove('active');
+			overlay.style.display = 'none';
+		}
+		if (_pendingAdmissionPayload && window.godotOnAdmissionSubmit) {
+			const p = _pendingAdmissionPayload;
+			_pendingAdmissionPayload = null;
+			window.godotOnAdmissionSubmit(p);
+			const c = document.getElementById('canvas');
+			if (c) c.focus();
+		}
 		return;
 	}
 
@@ -1578,6 +1631,7 @@ window.onCampusStageReady = function () {
 };
 // Initialize the portal & live SVG mannequin immediately on DOM ready (0ms perceived load time!)
 setTimeout(() => {
+	checkSavedStudentBanner();
 	renderLiveAvatarSVG();
 	switchStep(0);
 }, 20);

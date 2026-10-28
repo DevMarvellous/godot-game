@@ -13,8 +13,8 @@ signal event_triggered(event_id: StringName, event_title: String, event_descript
 signal power_state_changed(has_power: bool)
 
 var has_electricity: bool = true
-var event_cooldown_minutes: int = 45
-var last_event_time_minutes: int = 0
+var event_cooldown_minutes: int = 240
+var last_event_time_minutes: int = 60
 
 const EVENTS: Array[Dictionary] = [
 	{
@@ -84,8 +84,8 @@ func _on_minute_passed() -> void:
 	if current_total_minutes - last_event_time_minutes < event_cooldown_minutes:
 		return
 
-	# Roll 6% chance each in-game hour
-	if randf() < 0.08:
+	# Gentle chance after cooldown so events feel special and never spam the player
+	if randf() < 0.025:
 		_trigger_random_event(current_total_minutes)
 
 

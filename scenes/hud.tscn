@@ -80,6 +80,8 @@ size_flags_horizontal = 3
 text = "Next: GST 101 at 09:00"
 label_settings = SubResource("LabelSettings_schedule")
 horizontal_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
 
 [node name="MoneyLabel" type="Label" parent="TopPanel/VBoxContainer/Row1"]
 unique_name_in_owner = true
@@ -112,12 +114,12 @@ theme_override_constants/separation = 4
 
 [node name="Label" type="Label" parent="TopPanel/VBoxContainer/Row2/StatsGrid/EnergyContainer"]
 layout_mode = 2
-text = "⚡"
+text = "ENG"
 label_settings = SubResource("LabelSettings_stat")
 
 [node name="EnergyBar" type="ProgressBar" parent="TopPanel/VBoxContainer/Row2/StatsGrid/EnergyContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 18)
+custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -131,12 +133,12 @@ theme_override_constants/separation = 4
 
 [node name="Label" type="Label" parent="TopPanel/VBoxContainer/Row2/StatsGrid/HungerContainer"]
 layout_mode = 2
-text = "🍲"
+text = "FOOD"
 label_settings = SubResource("LabelSettings_stat")
 
 [node name="HungerBar" type="ProgressBar" parent="TopPanel/VBoxContainer/Row2/StatsGrid/HungerContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 18)
+custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -150,12 +152,12 @@ theme_override_constants/separation = 4
 
 [node name="Label" type="Label" parent="TopPanel/VBoxContainer/Row2/StatsGrid/FaithContainer"]
 layout_mode = 2
-text = "🙏"
+text = "FAITH"
 label_settings = SubResource("LabelSettings_stat")
 
 [node name="FaithBar" type="ProgressBar" parent="TopPanel/VBoxContainer/Row2/StatsGrid/FaithContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 18)
+custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4

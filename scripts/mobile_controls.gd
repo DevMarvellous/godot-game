@@ -36,7 +36,7 @@ func _ready() -> void:
 	if chat_btn:
 		chat_btn.pressed.connect(_on_chat_pressed)
 	if zoom_btn:
-		zoom_btn.text = "🎥 3D View [V]"
+		zoom_btn.text = "▲ Top View"
 		zoom_btn.pressed.connect(_on_zoom_pressed)
 	if transit_sheet:
 		transit_sheet.visible = false
@@ -175,7 +175,7 @@ func _on_zoom_pressed() -> void:
 	if bound_player and bound_player.has_method("cycle_camera_zoom"):
 		var label: String = bound_player.cycle_camera_zoom()
 		if zoom_btn:
-			zoom_btn.text = "🎥 %s [V]" % label
+			zoom_btn.text = "▲ %s" % label
 
 
 func _create_desktop_ui_bar() -> void:
@@ -230,6 +230,16 @@ func _adapt_desktop_vs_mobile_ui() -> void:
 		desktop_hint_bar.visible = is_desktop_landscape
 	if joystick:
 		joystick.modulate.a = 0.42 if is_desktop_landscape else 0.95
+	var buttons_row: HBoxContainer = get_node_or_null("TouchZone/ButtonsRow") as HBoxContainer
+	if buttons_row:
+		# On narrow portrait screens (< 700px), stack ButtonsRow cleanly below ObjectiveContainer (y=132..168)
+		# On wide screens (>= 700px), place side-by-side at y=92..128
+		if vp_size.x < 700.0:
+			buttons_row.offset_top = 132.0
+			buttons_row.offset_bottom = 168.0
+		else:
+			buttons_row.offset_top = 92.0
+			buttons_row.offset_bottom = 128.0
 
 
 func _on_transit_dest_pressed(dest: StringName) -> void:
@@ -246,11 +256,11 @@ func _create_emote_ui() -> void:
 	if buttons_row:
 		emote_btn = Button.new()
 		emote_btn.name = "EmoteButton"
-		emote_btn.text = "💃 Emote"
-		emote_btn.custom_minimum_size = Vector2(76, 40)
+		emote_btn.text = "★ Emote"
+		emote_btn.custom_minimum_size = Vector2(66, 36)
 		emote_btn.focus_mode = Control.FOCUS_NONE
 		emote_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-		emote_btn.add_theme_font_size_override(&"font_size", 13)
+		emote_btn.add_theme_font_size_override(&"font_size", 12)
 
 		var btn_style := StyleBoxFlat.new()
 		btn_style.bg_color = Color(0.1, 0.14, 0.2, 0.85)
@@ -272,7 +282,7 @@ func _create_emote_ui() -> void:
 		emote_btn.pressed.connect(_toggle_emote_sheet)
 		buttons_row.add_child(emote_btn)
 		buttons_row.move_child(emote_btn, 0)
-		buttons_row.offset_left = -420.0
+		buttons_row.offset_left = -368.0
 
 	var touch_zone: Control = get_node_or_null("TouchZone") as Control
 	if not touch_zone:

@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/campus_objects_3d.gd" id="1_campus_obj3d"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_trigger"]
-size = Vector3(3.2, 2.5, 3.2)
+size = Vector3(2.0, 2.2, 2.0)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_solid"]
 size = Vector3(2.0, 1.2, 2.0)

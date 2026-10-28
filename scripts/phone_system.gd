@@ -139,15 +139,15 @@ func _ready() -> void:
 
 func _style_circular_app_logos() -> void:
 	var app_configs: Array[Dictionary] = [
-		{"node": "%IDCardAppBtn", "icon": "🪪", "title": "ID Pass", "bg": Color(0.14, 0.38, 0.82, 0.96), "border": Color(0.45, 0.72, 1.0, 0.95)},
-		{"node": "%TimetableAppBtn", "icon": "📅", "title": "Classes", "bg": Color(0.85, 0.26, 0.22, 0.96), "border": Color(1.0, 0.62, 0.55, 0.95)},
-		{"node": "%ResultsAppBtn", "icon": "📊", "title": "CGPA", "bg": Color(0.82, 0.54, 0.08, 0.96), "border": Color(1.0, 0.85, 0.35, 0.95)},
-		{"node": "%ChatAppBtn", "icon": "💬", "title": "Chat", "bg": Color(0.08, 0.64, 0.38, 0.96), "border": Color(0.42, 0.95, 0.68, 0.95)},
-		{"node": "%BankAppBtn", "icon": "💳", "title": "CampusPay", "bg": Color(0.06, 0.56, 0.52, 0.96), "border": Color(0.35, 0.95, 0.88, 0.95)},
-		{"node": "%HustleAppBtn", "icon": "💼", "title": "Hustles", "bg": Color(0.48, 0.22, 0.78, 0.96), "border": Color(0.78, 0.55, 1.0, 0.95)},
-		{"node": "%GistAppBtn", "icon": "🐦", "title": "CampusGist", "bg": Color(0.10, 0.55, 0.88, 0.96), "border": Color(0.50, 0.82, 1.0, 0.95)},
-		{"node": "%BackpackAppBtn", "icon": "🎒", "title": "Backpack", "bg": Color(0.78, 0.34, 0.16, 0.96), "border": Color(1.0, 0.68, 0.45, 0.95)},
-		{"node": "%SettingsAppBtn", "icon": "⚙️", "title": "Cloud OS", "bg": Color(0.22, 0.28, 0.38, 0.96), "border": Color(0.62, 0.72, 0.88, 0.95)}
+		{"node": "%IDCardAppBtn", "icon": "ID", "title": "ID Pass", "bg": Color(0.14, 0.38, 0.82, 0.96), "border": Color(0.45, 0.72, 1.0, 0.95)},
+		{"node": "%TimetableAppBtn", "icon": "24", "title": "Classes", "bg": Color(0.85, 0.26, 0.22, 0.96), "border": Color(1.0, 0.62, 0.55, 0.95)},
+		{"node": "%ResultsAppBtn", "icon": "A+", "title": "CGPA", "bg": Color(0.82, 0.54, 0.08, 0.96), "border": Color(1.0, 0.85, 0.35, 0.95)},
+		{"node": "%ChatAppBtn", "icon": "MSG", "title": "Chat", "bg": Color(0.08, 0.64, 0.38, 0.96), "border": Color(0.42, 0.95, 0.68, 0.95)},
+		{"node": "%BankAppBtn", "icon": "₦", "title": "CampusPay", "bg": Color(0.06, 0.56, 0.52, 0.96), "border": Color(0.35, 0.95, 0.88, 0.95)},
+		{"node": "%HustleAppBtn", "icon": "GIG", "title": "Hustles", "bg": Color(0.48, 0.22, 0.78, 0.96), "border": Color(0.78, 0.55, 1.0, 0.95)},
+		{"node": "%GistAppBtn", "icon": "@", "title": "CampusGist", "bg": Color(0.10, 0.55, 0.88, 0.96), "border": Color(0.50, 0.82, 1.0, 0.95)},
+		{"node": "%BackpackAppBtn", "icon": "BAG", "title": "Backpack", "bg": Color(0.78, 0.34, 0.16, 0.96), "border": Color(1.0, 0.68, 0.45, 0.95)},
+		{"node": "%SettingsAppBtn", "icon": "OS", "title": "Cloud OS", "bg": Color(0.22, 0.28, 0.38, 0.96), "border": Color(0.62, 0.72, 0.88, 0.95)}
 	]
 	if app_grid:
 		app_grid.add_theme_constant_override(&"h_separation", 14)
@@ -172,10 +172,12 @@ func _style_circular_app_logos() -> void:
 		parent_grid.add_child(cell_vbox)
 		parent_grid.move_child(cell_vbox, idx)
 
-		btn.text = String(cfg["icon"])
+		var icon_txt: String = String(cfg["icon"])
+		btn.text = icon_txt
 		btn.custom_minimum_size = Vector2(58, 58)
 		btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		btn.add_theme_font_size_override(&"font_size", 24)
+		btn.add_theme_font_size_override(&"font_size", 22 if icon_txt.length() <= 2 else 15)
+		btn.add_theme_color_override(&"font_color", Color.WHITE)
 		btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		btn.focus_mode = Control.FOCUS_NONE
 
@@ -211,10 +213,10 @@ func _style_circular_app_logos() -> void:
 
 	# Style Dock Buttons as Circular Logos too
 	var dock_configs: Array[Dictionary] = [
-		{"node": "%DockChatBtn", "bg": Color(0.08, 0.64, 0.38, 0.95), "border": Color(0.42, 0.95, 0.68, 0.9)},
-		{"node": "%DockBankBtn", "bg": Color(0.06, 0.56, 0.52, 0.95), "border": Color(0.35, 0.95, 0.88, 0.9)},
-		{"node": "%DockTimetableBtn", "bg": Color(0.85, 0.26, 0.22, 0.95), "border": Color(1.0, 0.62, 0.55, 0.9)},
-		{"node": "%DockSettingsBtn", "bg": Color(0.22, 0.28, 0.38, 0.95), "border": Color(0.62, 0.72, 0.88, 0.9)}
+		{"node": "%DockChatBtn", "icon": "MSG", "bg": Color(0.08, 0.64, 0.38, 0.95), "border": Color(0.42, 0.95, 0.68, 0.9)},
+		{"node": "%DockBankBtn", "icon": "₦", "bg": Color(0.06, 0.56, 0.52, 0.95), "border": Color(0.35, 0.95, 0.88, 0.9)},
+		{"node": "%DockTimetableBtn", "icon": "24", "bg": Color(0.85, 0.26, 0.22, 0.95), "border": Color(1.0, 0.62, 0.55, 0.9)},
+		{"node": "%DockSettingsBtn", "icon": "OS", "bg": Color(0.22, 0.28, 0.38, 0.95), "border": Color(0.62, 0.72, 0.88, 0.9)}
 	]
 	for dcfg in dock_configs:
 		var dpath: String = String(dcfg["node"])
@@ -223,6 +225,9 @@ func _style_circular_app_logos() -> void:
 		var dbtn: Button = get_node(dpath) as Button
 		if not dbtn:
 			continue
+		dbtn.text = String(dcfg["icon"])
+		dbtn.add_theme_font_size_override(&"font_size", 14)
+		dbtn.add_theme_color_override(&"font_color", Color.WHITE)
 		dbtn.custom_minimum_size = Vector2(46, 46)
 		dbtn.focus_mode = Control.FOCUS_NONE
 		dbtn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND

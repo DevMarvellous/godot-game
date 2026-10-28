@@ -212,6 +212,9 @@ var preview_player_instance: Player3D = null
 
 
 func _ready() -> void:
+	if OS.has_feature("web") and get_parent() and get_parent().name == "NativeUIFallback":
+		visible = false
+		return
 	if next_button:
 		next_button.pressed.connect(_on_next_pressed)
 		var next_style := StyleBoxFlat.new()

@@ -46,18 +46,20 @@ func _create_objective_pill_ui() -> void:
 	container.name = "ObjectiveContainer"
 	container.anchors_preset = Control.PRESET_TOP_LEFT
 	container.offset_left = 12.0
-	container.offset_top = 140.0
-	container.offset_right = 440.0
-	container.offset_bottom = 184.0
+	container.offset_top = 92.0
+	container.offset_right = 328.0
+	container.offset_bottom = 128.0
 	container.add_theme_constant_override(&"separation", 6)
 
 	objective_btn = Button.new()
 	objective_btn.name = "ObjectivePillBtn"
 	objective_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	objective_btn.custom_minimum_size = Vector2(280, 44)
+	objective_btn.custom_minimum_size = Vector2(180, 36)
+	objective_btn.clip_text = true
+	objective_btn.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	objective_btn.focus_mode = Control.FOCUS_NONE
 	objective_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	objective_btn.add_theme_font_size_override(&"font_size", 14)
+	objective_btn.add_theme_font_size_override(&"font_size", 12)
 	objective_btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 	var pill_style := StyleBoxFlat.new()
@@ -88,11 +90,11 @@ func _create_objective_pill_ui() -> void:
 
 	tasks_toggle_btn = Button.new()
 	tasks_toggle_btn.name = "TasksToggleBtn"
-	tasks_toggle_btn.text = "📋 Tasks"
-	tasks_toggle_btn.custom_minimum_size = Vector2(85, 44)
+	tasks_toggle_btn.text = "★ Tasks"
+	tasks_toggle_btn.custom_minimum_size = Vector2(74, 36)
 	tasks_toggle_btn.focus_mode = Control.FOCUS_NONE
 	tasks_toggle_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	tasks_toggle_btn.add_theme_font_size_override(&"font_size", 14)
+	tasks_toggle_btn.add_theme_font_size_override(&"font_size", 12)
 
 	var t_style := StyleBoxFlat.new()
 	t_style.bg_color = Color(0.10, 0.14, 0.22, 0.92)
@@ -147,6 +149,7 @@ func _create_objective_pill_ui() -> void:
 	clout_status_btn.add_theme_stylebox_override(&"hover", c_style)
 	clout_status_btn.add_theme_stylebox_override(&"pressed", c_style)
 	clout_status_btn.pressed.connect(_toggle_tasks_sheet)
+	clout_status_btn.visible = false
 	add_child(clout_status_btn)
 
 	_refresh_objective_pill()

@@ -58,23 +58,35 @@ var _active_emote_tween: Tween = null
 var _dress_tween: Tween = null
 var _screen_fade_rect: ColorRect = null
 
-# Smooth My Campus Life 3D Perspective camera system
-var cam_target_offset: Vector3 = Vector3(0, 1.95, 2.45)
-var cam_target_pitch_deg: float = -16.0
-var cam_target_fov: float = 60.0
+# Smooth My Campus Life Top-Down / 3D Perspective camera system
+var cam_target_offset: Vector3 = Vector3(0, 4.8, 3.8)
+var cam_target_pitch_deg: float = -46.0
+var cam_target_fov: float = 58.0
 
 # Dynamic Camera Zoom & 3D Perspective Modes (mouse wheel on desktop, [V]/[Z] or View button)
 var cam_zoom_factor: float = 1.0
 const CAM_ZOOM_MIN: float = 0.55 # Close-up avatar view
 const CAM_ZOOM_MAX: float = 1.6  # Wide room overview
 const CAM_ZOOM_STEP: float = 0.12
-const CAM_BASE_OFFSET: Vector3 = Vector3(0, 1.95, 2.45)
-const CAM_ZOOM_PRESETS: Array[float] = [1.0, 0.68, 1.25, 1.55]
+const CAM_BASE_OFFSET: Vector3 = Vector3(0, 4.8, 3.8)
+const CAM_ZOOM_PRESETS: Array[float] = [1.0, 0.78, 0.62, 0.48]
 const CAM_VIEW_MODES: Array[Dictionary] = [
 	{
+		"name": "Top View",
+		"offset": Vector3(0, 4.8, 3.8),
+		"pitch": -46.0,
+		"fov": 58.0
+	},
+	{
+		"name": "Classic 3/4",
+		"offset": Vector3(0, 3.3, 3.0),
+		"pitch": -36.0,
+		"fov": 56.0
+	},
+	{
 		"name": "3D Perspective",
-		"offset": Vector3(0, 1.95, 2.45),
-		"pitch": -16.0,
+		"offset": Vector3(0, 2.1, 2.6),
+		"pitch": -18.0,
 		"fov": 60.0
 	},
 	{
@@ -82,18 +94,6 @@ const CAM_VIEW_MODES: Array[Dictionary] = [
 		"offset": Vector3(0, 1.45, 1.65),
 		"pitch": -9.0,
 		"fov": 54.0
-	},
-	{
-		"name": "Classic 3/4",
-		"offset": Vector3(0, 2.85, 2.65),
-		"pitch": -35.0,
-		"fov": 55.0
-	},
-	{
-		"name": "Wide Overview",
-		"offset": Vector3(0, 3.85, 3.55),
-		"pitch": -40.0,
-		"fov": 58.0
 	}
 ]
 var cam_zoom_preset_idx: int = 0
@@ -157,7 +157,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 
-	# Tap / Click anywhere to walk or 1-tap auto-interact (My Campus Life tap navigation)
+	# Tap / Click on ground to walk smoothly (never auto-pops menus on single click!)
+	# Only double-clicking directly on an object auto-interacts; otherwise use [E] or the USE button.
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var cam: Camera3D = get_viewport().get_camera_3d()
 		if cam:
@@ -165,30 +166,26 @@ func _unhandled_input(event: InputEvent) -> void:
 			var to: Vector3 = from + cam.project_ray_normal(event.position) * 100.0
 			var space_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
 
-			# 1. Check if player directly tapped an Interactable3D (Layer 2 Area3D)
-			var area_query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(from, to, 2)
-			area_query.collide_with_areas = true
-			area_query.collide_with_bodies = false
-			var area_hit: Dictionary = space_state.intersect_ray(area_query)
-			if area_hit.has("collider") and area_hit.collider is Interactable3D:
-				var tapped_obj: Interactable3D = area_hit.collider as Interactable3D
-				_walk_to_and_interact(tapped_obj)
-				return
+			# 1. Only auto-interact if the player explicitly DOUBLE-CLICKED an Interactable3D
+			if event.double_click:
+				var area_query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(from, to, 2)
+				area_query.collide_with_areas = true
+				area_query.collide_with_bodies = false
+				var area_hit: Dictionary = space_state.intersect_ray(area_query)
+				if area_hit.has("collider") and area_hit.collider is Interactable3D:
+					var tapped_obj: Interactable3D = area_hit.collider as Interactable3D
+					_walk_to_and_interact(tapped_obj)
+					return
 
-			# 2. Otherwise raycast to Ground (Layer 4)
+			# 2. Single click / tap: strictly walk to the ground point without hijacking into a menu!
 			var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(from, to, 4)
 			var result: Dictionary = space_state.intersect_ray(query)
 			if result.has("position"):
 				var hit_pos: Vector3 = result.position
-				# Check if tap is right next to an Interactable3D in the room
-				var near_obj: Interactable3D = _find_nearest_interactable(hit_pos, 1.85)
-				if near_obj:
-					_walk_to_and_interact(near_obj)
-				else:
-					pending_interactable = null
-					nav_target_pos = Vector3(hit_pos.x, global_position.y, hit_pos.z)
-					has_nav_target = true
-					_show_nav_beacon(hit_pos)
+				pending_interactable = null
+				nav_target_pos = Vector3(hit_pos.x, global_position.y, hit_pos.z)
+				has_nav_target = true
+				_show_nav_beacon(hit_pos)
 
 
 func _walk_to_and_interact(target: Interactable3D) -> void:

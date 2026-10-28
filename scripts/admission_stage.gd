@@ -45,11 +45,13 @@ func _ready() -> void:
 				preview_player.remove_child(n)
 				n.free()
 
-	# If running on Web, hide in-engine fallback UI so the native HTML Admissions Portal takes over
+	# If running on Web, completely remove the in-engine fallback UI so there is NEVER double onboarding!
 	var native_ui: CanvasLayer = get_node_or_null("NativeUIFallback") as CanvasLayer
 	if native_ui:
 		if OS.has_feature("web"):
 			native_ui.visible = false
+			remove_child(native_ui)
+			native_ui.queue_free()
 		else:
 			native_ui.visible = true
 			var screen = native_ui.get_node_or_null("AdmissionScreen")
