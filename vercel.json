@@ -1,7 +1,6 @@
 {
   "version": 2,
   "name": "my-campus-life",
-  "public": true,
   "buildCommand": "node -e \"const{SUPABASE_URL:u,SUPABASE_ANON_KEY:k}=process.env;if(u&&k)require('fs').writeFileSync('docs/cloud_config.js','window.MY_CAMPUS_CLOUD_CONFIG='+JSON.stringify({SUPABASE_URL:u,SUPABASE_ANON_KEY:k}))\"",
   "outputDirectory": "docs",
   "headers": [
