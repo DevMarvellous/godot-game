@@ -35,7 +35,7 @@ We operate with **$0 budget for backends/databases** (only domain budget). Here 
 To keep the game easily editable, understandable, and upgradable without breaking code, everything is strictly isolated into clear folders:
 
 ```
-godot-game/
+mycampuslife/
 ├── scenes/
 │   ├── rooms/                  # Isolated hub environments (only 1 loaded at a time)
 │   │   ├── hostel_room.tscn    # Moremi Hall / Hall 2 (Bed, Wardrobe, Desk, Water Jerrycan)

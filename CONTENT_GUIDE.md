@@ -14,7 +14,7 @@ You have **two ways** to connect your live Supabase PostgreSQL + Realtime Multip
 3. Click **Save & Connect Live** — both the HTML Multiplayer WebSocket (`MCL_NET`) and the Godot 4 engine (`DatabaseConfig` / `SupabaseClient`) immediately connect to your cloud database!
 
 ### Option B: Permanent For All Players on Vercel (`docs/cloud_config.js`)
-Edit [`docs/cloud_config.js`](file:///C:/Users/1LUV/Documents/godot-game/docs/cloud_config.js) and paste your project credentials:
+Edit [`docs/cloud_config.js`](file:///C:/Users/1LUV/Documents/mycampuslife/docs/cloud_config.js) and paste your project credentials:
 ```javascript
 window.MCL_CLOUD_CONFIG = {
   SUPABASE_URL: "https://your-project-id.supabase.co",
@@ -46,7 +46,7 @@ At startup, the game fetches live configuration from two sources in priority ord
 ## 3. 🗄️ Setting Up the Database Schema (`supabase_schema.sql`)
 
 1. Open your free [Supabase Dashboard](https://supabase.com/dashboard) → **SQL Editor**.
-2. Copy and paste the entire contents of [`supabase_schema.sql`](file:///C:/Users/1LUV/Documents/godot-game/supabase_schema.sql) and click **Run**.
+2. Copy and paste the entire contents of [`supabase_schema.sql`](file:///C:/Users/1LUV/Documents/mycampuslife/supabase_schema.sql) and click **Run**.
 3. This creates:
    - `public.students` (with `@username`, `matric_no`, `cgpa`, `wallet_balance`, `appearance`, `inventory`, and anti-cheat `CHECK` constraints)
    - `public.campus_chat_logs` (global & room chat persistence)
