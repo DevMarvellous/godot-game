@@ -59,7 +59,18 @@ CREATE TABLE IF NOT EXISTS public.campus_chat_messages (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 4. Backend Live Game Config Table (Edit Game Content/Economy Without Rebuilding!)
+-- 4. Peer-to-Peer CampusPay Money Transfers Table
+CREATE TABLE IF NOT EXISTS public.campus_transfers (
+    id BIGSERIAL PRIMARY KEY,
+    sender_username TEXT NOT NULL,
+    sender_name TEXT NOT NULL,
+    recipient_username TEXT NOT NULL,
+    amount INTEGER NOT NULL CHECK (amount >= 100 AND amount <= 1000000),
+    note TEXT NOT NULL DEFAULT 'CampusPay P2P Transfer',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 5. Backend Live Game Config Table (Edit Game Content/Economy Without Rebuilding!)
 CREATE TABLE IF NOT EXISTS public.game_live_config (
     config_key TEXT PRIMARY KEY,
     config_value JSONB NOT NULL DEFAULT '{}'::jsonb,
@@ -73,20 +84,23 @@ VALUES
     ('economy', '{"gig_payout_multiplier": 1.0, "food_price_multiplier": 1.0, "fresher_allowance": 30000, "scholarship_reward": 25000}'::jsonb, 'Global economy balance multipliers editable in real time')
 ON CONFLICT (config_key) DO NOTHING;
 
--- 5. Row-Level Security (RLS) Policies
+-- 6. Row-Level Security (RLS) Policies
 ALTER TABLE public.student_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.room_presence ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.campus_chat_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.campus_transfers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.game_live_config ENABLE ROW LEVEL SECURITY;
 
--- Public read policies
+-- Public read/write policies
 CREATE POLICY "Public read student profiles" ON public.student_profiles FOR SELECT USING (true);
 CREATE POLICY "Authenticated or anon upsert own profile" ON public.student_profiles FOR ALL USING (auth.uid() = user_id OR user_id IS NULL);
 CREATE POLICY "Public access room presence" ON public.room_presence FOR ALL USING (true);
 CREATE POLICY "Public access campus chat" ON public.campus_chat_messages FOR ALL USING (true);
+CREATE POLICY "Public access campus transfers" ON public.campus_transfers FOR ALL USING (true);
 CREATE POLICY "Public read live game config" ON public.game_live_config FOR SELECT USING (true);
 
--- 6. Enable Supabase Realtime Broadcast & Presence on tables
+-- 7. Enable Supabase Realtime Broadcast & Presence on tables
 ALTER PUBLICATION supabase_realtime ADD TABLE public.room_presence;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.campus_chat_messages;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.campus_transfers;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.game_live_config;

@@ -321,6 +321,23 @@ func _ready() -> void:
 	assert(cleaned_sample.contains("₦5,000"), "Supported Naira symbol must be preserved")
 	print("  -> Top View Camera, Emoji-to-Symbol Sanitizer & Clout Progression OK")
 
+	print("[6e/6] Verifying CampusPay P2P Money Transfer & Returning Cloud Profile Restore...")
+	StudentProfile.restore_returning_profile({
+		"wallet_balance": 85000,
+		"cgpa": 4.72,
+		"matric_no": "CSC/2026/777",
+		"current_level": 200,
+		"owned_upgrades": ["generator", "laptop"]
+	})
+	assert(StudentProfile.money == 85000, "Returning cloud profile must restore exact wallet_balance")
+	assert(absf(StudentProfile.cgpa - 4.72) < 0.01, "Returning cloud profile must restore exact CGPA")
+	assert(StudentProfile.current_level == 200, "Returning cloud profile must restore current_level")
+	assert(StudentProfile.owned_upgrades.has("generator"), "Returning cloud profile must restore owned_upgrades")
+	if NetworkManager:
+		NetworkManager.broadcast_money_transfer("Femi [CSC]", 1000, "Test CampusPay Transfer")
+		NetworkManager._on_js_net_transfer(["Chidinma [LAW]", 2500, "Test Credit"])
+	print("  -> CampusPay P2P Money Transfer & Returning Cloud Profile Restore OK")
+
 	print("========================================================")
 	print("   ALL 6 TEST PHASES PASSED WITH ZERO CRASHES OR ERRORS!")
 	print("========================================================\n")

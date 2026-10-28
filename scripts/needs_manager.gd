@@ -29,8 +29,13 @@ var is_handling_passout: bool = false
 
 func _ready() -> void:
 	const ProfileStore = preload("res://scripts/data/student_profile.gd")
-	if ProfileStore.load_from_disk() and ProfileStore.spawn_allowance > 0:
-		money = ProfileStore.spawn_allowance
+	if ProfileStore.load_from_disk():
+		if ProfileStore.money > 0:
+			money = ProfileStore.money
+		elif ProfileStore.spawn_allowance > 0:
+			money = ProfileStore.spawn_allowance
+		if ProfileStore.cgpa > 0.0:
+			cgpa = ProfileStore.cgpa
 
 	TimeSystem.minute_passed.connect(_on_minute_passed)
 	Schedule.lecture_missed.connect(_on_lecture_missed)
@@ -111,6 +116,9 @@ func modify_faith(amount: float) -> void:
 func modify_cgpa(amount: float) -> void:
 	cgpa = clampf(cgpa + amount, 0.0, max_cgpa)
 	stat_changed.emit(&"cgpa", cgpa, max_cgpa)
+	const ProfileStore = preload("res://scripts/data/student_profile.gd")
+	ProfileStore.cgpa = cgpa
+	ProfileStore.save_to_disk()
 
 
 func modify_money(amount: int) -> bool:
@@ -118,4 +126,16 @@ func modify_money(amount: int) -> bool:
 		return false # Cannot afford
 	money += amount
 	stat_changed.emit(&"money", float(money), 0.0)
+	const ProfileStore = preload("res://scripts/data/student_profile.gd")
+	ProfileStore.money = money
+	ProfileStore.save_to_disk()
 	return true
+
+
+func modify_fun(amount: float) -> void:
+	modify_faith(amount * 0.5)
+	modify_energy(amount * 0.25)
+
+
+func modify_academic(amount: float) -> void:
+	modify_cgpa(amount * 0.005)

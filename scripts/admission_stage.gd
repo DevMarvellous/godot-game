@@ -166,6 +166,8 @@ func finalize_admission(profile_data: Dictionary) -> void:
 		s_skin, s_hair, s_shirt, s_trouser,
 		s_dept, s_score
 	)
+	if bool(profile_data.get("is_returning", false)) or profile_data.has("wallet_balance"):
+		ProfileStore.restore_returning_profile(profile_data)
 
 	# Update NetworkManager with local student identity
 	if NetworkManager:
@@ -258,8 +260,19 @@ func _on_js_admission_submit(args: Array) -> void:
 		"shirt_idx": int(d.get("shirt_idx", selected_shirt)),
 		"trouser_idx": int(d.get("trouser_idx", selected_trouser)),
 		"dept": String(d.get("dept", selected_dept)),
-		"quiz_score": int(d.get("quiz_score", 100))
+		"quiz_score": int(d.get("quiz_score", 100)),
+		"is_returning": bool(d.get("is_returning", false))
 	}
+	if d.has("wallet_balance"):
+		data["wallet_balance"] = int(d.get("wallet_balance", 30000))
+	if d.has("cgpa"):
+		data["cgpa"] = float(d.get("cgpa", 3.50))
+	if d.has("matric_no"):
+		data["matric_no"] = String(d.get("matric_no", ""))
+	if d.has("current_level"):
+		data["current_level"] = int(d.get("current_level", 100))
+	if d.has("owned_upgrades"):
+		data["owned_upgrades"] = d.get("owned_upgrades")
 	finalize_admission(data)
 
 

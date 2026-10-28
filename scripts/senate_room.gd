@@ -34,6 +34,19 @@ func _on_clearance_desk_interacted() -> void:
 	const ProfileStore = preload("res://scripts/data/student_profile.gd")
 	var student_name: String = ProfileStore.student_name if not ProfileStore.student_name.is_empty() else "Student"
 
+	if not ProfileStore.is_department_confirmed:
+		ProfileStore.is_department_confirmed = true
+		if needs:
+			needs.modify_money(5000)
+			needs.modify_faith(25.0)
+			needs.modify_academic(15.0)
+		ProfileStore.save_to_disk()
+		if SoundManager:
+			SoundManager.play_cheer()
+		if player.has_method("display_notification"):
+			player.display_notification("🎓 DEPARTMENTAL SCREENING PASSED! Confirmed in %s (%s) + ₦5,000 Merit Grant!" % [ProfileStore.admitted_course_title, ProfileStore.admitted_department])
+		return
+
 	if cgpa >= 4.50:
 		if needs:
 			needs.modify_money(10000)

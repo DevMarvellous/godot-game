@@ -33,6 +33,7 @@ static var spawn_badge: String = "🎒"
 # Persistent Hostel Room Upgrades & Achievements
 static var owned_upgrades: Array[String] = []
 static var merit_scholarship_claimed: bool = false
+static var is_department_confirmed: bool = false
 static var cgpa: float = 3.50
 static var money: int = 5000
 
@@ -271,11 +272,28 @@ static func get_profile_data() -> Dictionary:
 		"wallet_balance": money,
 		"owned_upgrades": owned_upgrades,
 		"merit_scholarship_claimed": merit_scholarship_claimed,
+		"is_department_confirmed": is_department_confirmed,
 		"backpack_items": backpack_items,
 		"current_level": current_level,
 		"current_semester": current_semester,
 		"degree_awarded": degree_awarded
 	}
+
+
+static func restore_returning_profile(d: Dictionary) -> void:
+	if d.has("wallet_balance"):
+		money = clampi(int(d.get("wallet_balance", money)), 0, 100000000)
+	if d.has("cgpa"):
+		cgpa = clampf(float(d.get("cgpa", cgpa)), 0.0, 5.0)
+	if d.has("matric_no") and String(d.get("matric_no", "")) != "":
+		matric_no = String(d.get("matric_no"))
+	if d.has("current_level"):
+		current_level = int(d.get("current_level", 100))
+	if d.has("owned_upgrades") and d.get("owned_upgrades") is Array:
+		owned_upgrades.clear()
+		for up in d.get("owned_upgrades"):
+			owned_upgrades.append(String(up))
+	save_to_disk()
 
 
 static func save_to_disk() -> void:
@@ -284,6 +302,10 @@ static func save_to_disk() -> void:
 		var json_str: String = JSON.stringify(get_profile_data(), "\t")
 		file.store_string(json_str)
 		file.close()
+	if OS.has_feature("web"):
+		var win = JavaScriptBridge.get_interface("window")
+		if win and win.campusCloudSyncProfile:
+			win.campusCloudSyncProfile(JSON.stringify(get_cloud_row_payload()))
 
 
 static func load_from_disk() -> bool:

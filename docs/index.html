@@ -843,7 +843,7 @@ html, body, #canvas {
 	}, true);
 })();
 
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":996804,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":1003220,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -1350,26 +1350,31 @@ function onDeptChanged() {
 	}
 }
 
+function applyCloudRowToAdmissionState(row) {
+	if (!row) return;
+	ADMISSION_STATE.name = row.student_name || ADMISSION_STATE.name;
+	ADMISSION_STATE.username = row.username || ADMISSION_STATE.username;
+	ADMISSION_STATE.email = row.student_email || ADMISSION_STATE.email;
+	ADMISSION_STATE.gender = row.gender || ADMISSION_STATE.gender;
+	ADMISSION_STATE.skinIdx = row.complexion_index ?? ADMISSION_STATE.skinIdx;
+	ADMISSION_STATE.hairIdx = row.hair_index ?? ADMISSION_STATE.hairIdx;
+	ADMISSION_STATE.shirtIdx = row.shirt_index ?? ADMISSION_STATE.shirtIdx;
+	ADMISSION_STATE.trouserIdx = row.trouser_index ?? ADMISSION_STATE.trouserIdx;
+	ADMISSION_STATE.dept = row.department || ADMISSION_STATE.dept;
+	ADMISSION_STATE.isReturning = true;
+	if (typeof row.wallet_balance === 'number') ADMISSION_STATE.walletBalance = row.wallet_balance;
+	if (typeof row.cgpa === 'number' || typeof row.cgpa === 'string') ADMISSION_STATE.cgpa = parseFloat(row.cgpa);
+	if (row.matric_no) ADMISSION_STATE.matricNo = row.matric_no;
+	if (row.current_level) ADMISSION_STATE.currentLevel = row.current_level;
+	if (Array.isArray(row.owned_upgrades)) ADMISSION_STATE.ownedUpgrades = row.owned_upgrades;
+}
+
 function signInWithGoogle() {
 	onBiodataInput();
 	const sbUrl = window.getCampusSupabaseUrl ? window.getCampusSupabaseUrl() : '';
 	const sbKey = window.getCampusSupabaseKey ? window.getCampusSupabaseKey() : '';
 	const statusChip = document.getElementById('google-auth-status');
 
-	if (sbUrl && sbKey) {
-		try {
-			localStorage.setItem('my_campus_oauth_draft', JSON.stringify(ADMISSION_STATE));
-		} catch (e) {}
-		if (statusChip) {
-			statusChip.style.display = 'block';
-			statusChip.textContent = '🔄 Redirecting to Google Sign-In via Supabase Auth...';
-		}
-		const redirectTo = window.location.origin + window.location.pathname;
-		window.location.href = `${sbUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectTo)}`;
-		return;
-	}
-
-	// Instant Google Identity flow when Supabase URL hasn't been linked yet (or local preview)
 	let gEmail = ADMISSION_STATE.email;
 	if (!gEmail || gEmail === 'student@campus.edu.ng') {
 		const cleanUser = (ADMISSION_STATE.username || '@tunde').replace(/^@/, '').toLowerCase() || 'student';
@@ -1378,6 +1383,44 @@ function signInWithGoogle() {
 	ADMISSION_STATE.email = gEmail;
 	const eEl = document.getElementById('adm-email');
 	if (eEl) eEl.value = gEmail;
+
+	if (sbUrl && sbKey) {
+		try {
+			localStorage.setItem('my_campus_oauth_draft', JSON.stringify(ADMISSION_STATE));
+		} catch (e) {}
+		if (statusChip) {
+			statusChip.style.display = 'block';
+			statusChip.textContent = '🔄 Connecting to Google & Campus Cloud...';
+		}
+		// Smart-check whether Google OAuth provider is enabled on this Supabase project first!
+		fetch(`${sbUrl}/auth/v1/settings`, { headers: { 'apikey': sbKey } })
+			.then(r => r.ok ? r.json() : null)
+			.then(settings => {
+				if (settings && settings.external && settings.external.google) {
+					const redirectTo = window.location.origin + window.location.pathname;
+					window.location.href = `${sbUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectTo)}`;
+					return;
+				}
+				// Seamless Supabase Cloud Profile Lookup if Google Cloud Console Client ID isn't configured yet
+				const qUrl = `${sbUrl}/rest/v1/student_profiles?or=(username.eq.${encodeURIComponent(ADMISSION_STATE.username)},student_email.eq.${encodeURIComponent(gEmail)})&limit=1`;
+				return fetch(qUrl, { headers: { 'apikey': sbKey } })
+					.then(r => r.ok ? r.json() : [])
+					.then(rows => {
+						if (Array.isArray(rows) && rows.length > 0) {
+							applyCloudRowToAdmissionState(rows[0]);
+							finishAdmission();
+						} else {
+							if (statusChip) {
+								statusChip.style.display = 'block';
+								statusChip.innerHTML = `✅ Signed in as <strong>${gEmail}</strong> — pick your outfit & department!`;
+							}
+							switchStep(1);
+						}
+					});
+			})
+			.catch(() => switchStep(1));
+		return;
+	}
 
 	if (statusChip) {
 		statusChip.style.display = 'block';
@@ -1391,6 +1434,7 @@ function signInWithGoogle() {
 				const saved = JSON.parse(savedRaw);
 				if (saved && saved.name) {
 					Object.assign(ADMISSION_STATE, saved);
+					ADMISSION_STATE.isReturning = true;
 					finishAdmission();
 					return;
 				}
@@ -1466,15 +1510,7 @@ function handleGoogleOAuthRedirect() {
 			.then(r => r.ok ? r.json() : [])
 			.then(rows => {
 				if (Array.isArray(rows) && rows.length > 0) {
-					const row = rows[0];
-					ADMISSION_STATE.name = row.student_name || ADMISSION_STATE.name;
-					ADMISSION_STATE.username = row.username || ADMISSION_STATE.username;
-					ADMISSION_STATE.gender = row.gender || ADMISSION_STATE.gender;
-					ADMISSION_STATE.skinIdx = row.complexion_index ?? ADMISSION_STATE.skinIdx;
-					ADMISSION_STATE.hairIdx = row.hair_index ?? ADMISSION_STATE.hairIdx;
-					ADMISSION_STATE.shirtIdx = row.shirt_index ?? ADMISSION_STATE.shirtIdx;
-					ADMISSION_STATE.trouserIdx = row.trouser_index ?? ADMISSION_STATE.trouserIdx;
-					ADMISSION_STATE.dept = row.department || ADMISSION_STATE.dept;
+					applyCloudRowToAdmissionState(rows[0]);
 					finishAdmission();
 				} else {
 					// New Google user -> take them straight to Step 1 (Dress-Up & Preferred Department)!
@@ -1553,16 +1589,7 @@ function nextStep() {
 				.then(r => r.ok ? r.json() : [])
 				.then(rows => {
 					if (Array.isArray(rows) && rows.length > 0) {
-						const row = rows[0];
-						ADMISSION_STATE.name = row.student_name || ADMISSION_STATE.name;
-						ADMISSION_STATE.username = row.username || ADMISSION_STATE.username;
-						ADMISSION_STATE.email = row.student_email || ADMISSION_STATE.email;
-						ADMISSION_STATE.gender = row.gender || ADMISSION_STATE.gender;
-						ADMISSION_STATE.skinIdx = row.complexion_index ?? ADMISSION_STATE.skinIdx;
-						ADMISSION_STATE.hairIdx = row.hair_index ?? ADMISSION_STATE.hairIdx;
-						ADMISSION_STATE.shirtIdx = row.shirt_index ?? ADMISSION_STATE.shirtIdx;
-						ADMISSION_STATE.trouserIdx = row.trouser_index ?? ADMISSION_STATE.trouserIdx;
-						ADMISSION_STATE.dept = row.department || ADMISSION_STATE.dept;
+						applyCloudRowToAdmissionState(rows[0]);
 					}
 					finishAdmission();
 				})
@@ -1575,6 +1602,7 @@ function nextStep() {
 				const saved = JSON.parse(savedRaw);
 				if (saved && saved.name) {
 					Object.assign(ADMISSION_STATE, saved);
+					ADMISSION_STATE.isReturning = true;
 				}
 			}
 		} catch (e) {}
@@ -1616,6 +1644,7 @@ function quickResumeSavedStudent() {
 			const saved = JSON.parse(raw);
 			if (saved && saved.name) {
 				Object.assign(ADMISSION_STATE, saved);
+				ADMISSION_STATE.isReturning = true;
 				const nEl = document.getElementById('adm-name');
 				const uEl = document.getElementById('adm-username');
 				const eEl = document.getElementById('adm-email');
@@ -1665,7 +1694,7 @@ function finishAdmission() {
 		localStorage.setItem('my_campus_saved_account', JSON.stringify(ADMISSION_STATE));
 	} catch (e) {}
 
-	const payloadStr = JSON.stringify({
+	const payloadObj = {
 		name: ADMISSION_STATE.name,
 		username: ADMISSION_STATE.username,
 		email: ADMISSION_STATE.email,
@@ -1675,8 +1704,15 @@ function finishAdmission() {
 		shirt_idx: ADMISSION_STATE.shirtIdx,
 		trouser_idx: ADMISSION_STATE.trouserIdx,
 		dept: ADMISSION_STATE.dept,
-		quiz_score: 100
-	});
+		quiz_score: 100,
+		is_returning: !!ADMISSION_STATE.isReturning
+	};
+	if (typeof ADMISSION_STATE.walletBalance === 'number') payloadObj.wallet_balance = ADMISSION_STATE.walletBalance;
+	if (typeof ADMISSION_STATE.cgpa === 'number') payloadObj.cgpa = ADMISSION_STATE.cgpa;
+	if (ADMISSION_STATE.matricNo) payloadObj.matric_no = ADMISSION_STATE.matricNo;
+	if (ADMISSION_STATE.currentLevel) payloadObj.current_level = ADMISSION_STATE.currentLevel;
+	if (Array.isArray(ADMISSION_STATE.ownedUpgrades)) payloadObj.owned_upgrades = ADMISSION_STATE.ownedUpgrades;
+	const payloadStr = JSON.stringify(payloadObj);
 
 	const overlay = document.getElementById('admissions-overlay');
 	if (overlay) {
@@ -2003,6 +2039,13 @@ function handleIncomingRealtimePacket(pkt) {
 		window.godotReceiveNetChat(pkt.sender || 'Coursemate', pkt.message || '', pid);
 	} else if (pkt.event === 'emote' && window.godotReceiveNetEmote) {
 		window.godotReceiveNetEmote(pid, pkt.emote || 'wave');
+	} else if (pkt.event === 'transfer' && window.godotReceiveNetTransfer) {
+		const myName = (ADMISSION_STATE.name || '').toLowerCase();
+		const myUser = (ADMISSION_STATE.username || '').toLowerCase();
+		const tgt = String(pkt.target || '').toLowerCase();
+		if (!tgt || tgt === 'all' || (myName && tgt.indexOf(myName) !== -1) || (myUser && tgt.indexOf(myUser) !== -1)) {
+			window.godotReceiveNetTransfer(pkt.sender || 'Coursemate', pkt.amount || 1000, pkt.note || 'CampusPay Transfer');
+		}
 	}
 }
 
@@ -2075,6 +2118,94 @@ window.campusNetBroadcastEmote = function(emote) {
 		});
 	}
 };
+
+window.campusNetBroadcastTransfer = function(targetName, amount, note) {
+	if (window.supabaseRealtimeBroadcast) {
+		window.supabaseRealtimeBroadcast({
+			event: 'transfer',
+			id: localPeerId,
+			sender: ADMISSION_STATE.name,
+			target: targetName,
+			amount: amount,
+			note: note || 'CampusPay Transfer'
+		});
+	}
+	const sbUrl = window.getCampusSupabaseUrl ? window.getCampusSupabaseUrl() : '';
+	const sbKey = window.getCampusSupabaseKey ? window.getCampusSupabaseKey() : '';
+	if (sbUrl && sbKey) {
+		fetch(`${sbUrl}/rest/v1/campus_transfers`, {
+			method: 'POST',
+			headers: {
+				'apikey': sbKey,
+				'Authorization': `Bearer ${sbKey}`,
+				'Content-Type': 'application/json',
+				'Prefer': 'return=minimal'
+			},
+			body: JSON.stringify({
+				sender_username: ADMISSION_STATE.username || '@student',
+				sender_name: ADMISSION_STATE.name || 'Student',
+				recipient_username: String(targetName || 'Coursemate'),
+				amount: parseInt(amount, 10) || 1000,
+				note: String(note || 'CampusPay P2P Transfer')
+			})
+		}).catch(() => {});
+	}
+};
+
+let _cloudSyncTimer = null;
+window.campusCloudSyncProfile = function(jsonStr) {
+	try {
+		const row = (typeof jsonStr === 'string') ? JSON.parse(jsonStr) : jsonStr;
+		if (!row) return;
+		ADMISSION_STATE.walletBalance = row.wallet_balance;
+		ADMISSION_STATE.cgpa = row.cgpa;
+		ADMISSION_STATE.matricNo = row.matric_no;
+		ADMISSION_STATE.currentLevel = row.current_level;
+		ADMISSION_STATE.ownedUpgrades = row.owned_upgrades;
+		ADMISSION_STATE.isReturning = true;
+		localStorage.setItem('my_campus_saved_account', JSON.stringify(ADMISSION_STATE));
+
+		if (_cloudSyncTimer) clearTimeout(_cloudSyncTimer);
+		_cloudSyncTimer = setTimeout(() => {
+			const sbUrl = window.getCampusSupabaseUrl ? window.getCampusSupabaseUrl() : '';
+			const sbKey = window.getCampusSupabaseKey ? window.getCampusSupabaseKey() : '';
+			if (!sbUrl || !sbKey) return;
+			fetch(`${sbUrl}/rest/v1/student_profiles?on_conflict=username`, {
+				method: 'POST',
+				headers: {
+					'apikey': sbKey,
+					'Authorization': `Bearer ${sbKey}`,
+					'Content-Type': 'application/json',
+					'Prefer': 'resolution=merge-duplicates,return=minimal'
+				},
+				body: JSON.stringify(row)
+			}).catch(() => {});
+		}, 1500);
+	} catch (e) {}
+};
+
+// Also fetch live backend config from Supabase public.game_live_config table when linked
+setTimeout(() => {
+	const sbUrl = window.getCampusSupabaseUrl ? window.getCampusSupabaseUrl() : '';
+	const sbKey = window.getCampusSupabaseKey ? window.getCampusSupabaseKey() : '';
+	if (sbUrl && sbKey) {
+		fetch(`${sbUrl}/rest/v1/game_live_config?select=config_key,config_value`, {
+			headers: { 'apikey': sbKey }
+		})
+		.then(r => r.ok ? r.json() : [])
+		.then(rows => {
+			if (Array.isArray(rows) && rows.length > 0) {
+				window.MY_CAMPUS_LIVE_CONFIG = window.MY_CAMPUS_LIVE_CONFIG || {};
+				rows.forEach(item => {
+					if (item && item.config_key) {
+						window.MY_CAMPUS_LIVE_CONFIG[item.config_key] = item.config_value;
+					}
+				});
+			}
+		})
+		.catch(() => {});
+	}
+}, 400);
 
 (function () {
 	const statusOverlay = document.getElementById('status');

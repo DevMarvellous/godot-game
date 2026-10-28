@@ -177,6 +177,8 @@ func _polish_room_decor_and_ambient_npcs() -> void:
 			NetworkManager.chat_received.connect(_on_network_peer_chat)
 		if not NetworkManager.emote_received.is_connected(_on_network_peer_emote):
 			NetworkManager.emote_received.connect(_on_network_peer_emote)
+		if not NetworkManager.money_transfer_received.is_connected(_on_network_money_transfer_received):
+			NetworkManager.money_transfer_received.connect(_on_network_money_transfer_received)
 
 	# 0. Architectural floor grid & dynamic Day/Night campus sun lighting
 	PropBuilder3D.enhance_room_atmosphere(self)
@@ -933,6 +935,21 @@ func _on_network_peer_emote(peer_id: int, emote_name: String) -> void:
 			puppet_node.play_emote(emote_name)
 
 
+func _on_network_money_transfer_received(sender_name: String, amount: int, note: String) -> void:
+	if not player:
+		return
+	var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
+	if needs:
+		needs.modify_money(amount)
+		needs.modify_fun(10.0)
+	if SoundManager:
+		SoundManager.play_cheer()
+	if player.has_method("spawn_floating_stat"):
+		player.spawn_floating_stat("+₦%d from %s!" % [amount, sender_name], Color(0.25, 0.98, 0.55))
+	if player.has_method("display_notification"):
+		player.display_notification("💸 CREDIT ALERT! Received +₦%d from %s (%s) via CampusPay!" % [amount, sender_name, note])
+
+
 func _on_network_puppet_interacted(puppet: NetworkPlayer, p: CharacterBody3D) -> void:
 	if not menus_layer or not is_instance_valid(puppet):
 		return
@@ -1082,6 +1099,29 @@ func _on_network_puppet_interacted(puppet: NetworkPlayer, p: CharacterBody3D) ->
 		modal.queue_free()
 		_on_menu_closed()
 		_on_fixture_menu_requested(&"snooker", p)
+	))
+
+	# 5. CampusPay P2P Money Transfer (Dash ₦1,000)
+	vbox.add_child(make_action_btn.call("💸 Dash ₦1,000 via CampusPay (+12 Faith & Big Boy Clout)", Color(0.08, 0.42, 0.25, 0.95), func():
+		var nm: NeedsManager = p.get_node_or_null("NeedsManager") as NeedsManager if p else null
+		if not nm or nm.money < 1000:
+			if p and p.has_method("display_notification"):
+				p.display_notification("⚠️ Insufficient Wallet Balance! You need at least ₦1,000 to transfer.")
+			return
+		nm.modify_money(-1000)
+		nm.modify_faith(12.0)
+		nm.modify_fun(10.0)
+		if SoundManager:
+			SoundManager.play_cheer()
+		if NetworkManager:
+			NetworkManager.broadcast_money_transfer(puppet.student_name, 1000, "Coursemate Dash")
+		if is_instance_valid(puppet):
+			puppet.play_emote("celebrate")
+			puppet.show_chat("Omo! Alert of +₦1,000 don enter! Respect Boss! 🙌💸")
+		if p and p.has_method("display_notification"):
+			p.display_notification("💸 Transferred ₦1,000 to %s via CampusPay! (+12 Faith)" % puppet.student_name)
+		modal.queue_free()
+		_on_menu_closed()
 	))
 
 	menus_layer.add_child(modal)

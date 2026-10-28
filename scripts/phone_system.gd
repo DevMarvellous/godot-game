@@ -579,6 +579,44 @@ func _render_bank_app() -> void:
 	)
 	dynamic_app_container.add_child(food_btn)
 
+	# Peer-to-Peer CampusPay Transfer to Online Coursemates
+	var p2p_title: Label = Label.new()
+	p2p_title.text = "💸 P2P TRANSFER TO ONLINE COURSEMATE:"
+	p2p_title.add_theme_font_size_override("font_size", 12)
+	p2p_title.add_theme_color_override("font_color", Color(0.35, 0.95, 0.65))
+	dynamic_app_container.add_child(p2p_title)
+
+	var peers_dict: Dictionary = NetworkManager.get_online_players() if NetworkManager else {}
+	var peer_names: Array[String] = []
+	for pid in peers_dict.keys():
+		var pname: String = String(peers_dict[pid].get("name", "Coursemate")).replace("🤖 ", "")
+		if not peer_names.has(pname):
+			peer_names.append(pname)
+	if peer_names.is_empty():
+		peer_names = ["Femi [CSC]", "Chidinma [LAW]", "Tobi [MEE]"]
+
+	for target_peer in peer_names.slice(0, 3):
+		var p2p_btn: Button = _create_styled_button("💸 Send ₦1,000 to %s (+12 Faith)" % target_peer, Color(0.08, 0.38, 0.24, 0.95))
+		p2p_btn.pressed.connect(func():
+			if not current_player:
+				return
+			var needs: NeedsManager = current_player.get_node_or_null("NeedsManager") as NeedsManager
+			if not needs or needs.money < 1000:
+				_pulse_dynamic_island("⚠️ Low Funds", Color(1.0, 0.4, 0.4))
+				return
+			needs.modify_money(-1000)
+			needs.modify_faith(12.0)
+			if SoundManager:
+				SoundManager.play_cheer()
+			if NetworkManager:
+				NetworkManager.broadcast_money_transfer(target_peer, 1000, "CampusPay P2P")
+			_pulse_dynamic_island("Sent ₦1k 💸", Color(0.35, 0.98, 0.6))
+			if current_player.has_method("display_notification"):
+				current_player.display_notification("💸 CampusPay: Sent ₦1,000 to %s! (+12 Faith)" % target_peer)
+			_open_app("bank")
+		)
+		dynamic_app_container.add_child(p2p_btn)
+
 	# Recent Transaction History
 	var tx_title: Label = Label.new()
 	tx_title.text = "📜 RECENT TRANSACTIONS:"

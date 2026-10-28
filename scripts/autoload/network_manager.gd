@@ -9,6 +9,7 @@ signal player_joined(peer_id: int, player_data: Dictionary)
 signal player_left(peer_id: int)
 signal chat_received(sender_name: String, message: String, peer_id: int)
 signal emote_received(peer_id: int, emote_name: String)
+signal money_transfer_received(sender_name: String, amount: int, note: String)
 signal connection_status_changed(is_connected: bool, info: String)
 
 enum NetState { OFFLINE, CONNECTING, CONNECTED, SERVER }
@@ -39,6 +40,7 @@ var _js_cb_player: Variant = null
 var _js_cb_remove: Variant = null
 var _js_cb_chat: Variant = null
 var _js_cb_emote: Variant = null
+var _js_cb_transfer: Variant = null
 const BROADCAST_INTERVAL: float = 0.10 # 10 Hz throttled network broadcast (optimized for lag)
 const CLOUD_PEERS: Array[Dictionary] = [
 	{"id": 901, "name": "Femi [CSC]", "shirt": Color(0.15, 0.65, 0.38), "trouser": Color(0.14, 0.18, 0.26)},
@@ -75,6 +77,7 @@ func _setup_web_bridge() -> void:
 	_js_cb_remove = JavaScriptBridge.create_callback(_on_js_net_player_remove)
 	_js_cb_chat = JavaScriptBridge.create_callback(_on_js_net_chat)
 	_js_cb_emote = JavaScriptBridge.create_callback(_on_js_net_emote)
+	_js_cb_transfer = JavaScriptBridge.create_callback(_on_js_net_transfer)
 
 	var js_win = JavaScriptBridge.get_interface("window")
 	if js_win:
@@ -82,6 +85,7 @@ func _setup_web_bridge() -> void:
 		js_win.godotRemoveNetPlayer = _js_cb_remove
 		js_win.godotReceiveNetChat = _js_cb_chat
 		js_win.godotReceiveNetEmote = _js_cb_emote
+		js_win.godotReceiveNetTransfer = _js_cb_transfer
 
 
 func _parse_net_payload(raw: Variant) -> Dictionary:
@@ -166,6 +170,36 @@ func _on_js_net_emote(args: Array) -> void:
 	var pid: int = int(args[0])
 	var emote: String = _sanitize_text(String(args[1]), 16)
 	emote_received.emit(pid, emote)
+
+
+func _on_js_net_transfer(args: Array) -> void:
+	if args.size() < 2:
+		return
+	var sender: String = _sanitize_text(String(args[0]), 36)
+	var amt: int = clampi(int(args[1]), 100, 1000000)
+	var note: String = _sanitize_text(String(args[2]), 60) if args.size() >= 3 else "CampusPay Transfer"
+	money_transfer_received.emit(sender, amt, note)
+
+
+func broadcast_money_transfer(target_name: String, amount: int, note: String = "CampusPay Transfer") -> void:
+	var clean_target: String = _sanitize_text(target_name, 36)
+	var clean_amt: int = clampi(amount, 100, 1000000)
+	var clean_note: String = _sanitize_text(note, 60)
+	if OS.has_feature("web"):
+		_js_call("campusNetBroadcastTransfer", [clean_target, clean_amt, clean_note])
+	if _cloud_lobby_active and not CLOUD_PEERS.is_empty():
+		get_tree().create_timer(1.1).timeout.connect(func():
+			if not _cloud_lobby_active or CLOUD_PEERS.is_empty():
+				return
+			var peer: Dictionary = CLOUD_PEERS[0]
+			for cp in CLOUD_PEERS:
+				if clean_target.to_lower() in String(cp["name"]).to_lower():
+					peer = cp
+					break
+			var pid: int = int(peer["id"])
+			emote_received.emit(pid, "celebrate")
+			chat_received.emit(String(peer["name"]), "Omo! Alert don enter! +₦%d received via CampusPay! Respect! 🙌💸" % clean_amt, pid)
+		)
 
 
 ## Strip control characters, BBCode/HTML brackets and clamp length for any untrusted text.
