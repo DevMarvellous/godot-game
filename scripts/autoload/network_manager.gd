@@ -84,12 +84,30 @@ func _setup_web_bridge() -> void:
 		js_win.godotReceiveNetEmote = _js_cb_emote
 
 
+func _parse_net_payload(raw: Variant) -> Dictionary:
+	if raw is Dictionary:
+		return raw
+	if raw is String:
+		var parsed = JSON.parse_string(raw)
+		if parsed is Dictionary:
+			return parsed
+	if OS.has_feature("web") and raw != null:
+		var js_json = JavaScriptBridge.get_interface("JSON")
+		if js_json:
+			var s = js_json.stringify(raw)
+			if s is String:
+				var parsed2 = JSON.parse_string(s)
+				if parsed2 is Dictionary:
+					return parsed2
+	return {}
+
+
 func _on_js_net_player_update(args: Array) -> void:
 	if args.size() < 2:
 		return
 	var peer_id: int = int(args[0])
-	var raw = args[1]
-	if raw == null:
+	var d: Dictionary = _parse_net_payload(args[1])
+	if d.is_empty():
 		return
 
 	# A real human peer has arrived over the network: retire the simulated AI buddies
@@ -98,21 +116,17 @@ func _on_js_net_player_update(args: Array) -> void:
 
 	# Defensive validation: clamp coordinates & trim strings from untrusted network packets
 	var pos := Vector3(
-		clampf(float(raw.x), -60.0, 60.0),
-		clampf(float(raw.y), -2.0, 10.0),
-		clampf(float(raw.z), -60.0, 60.0)
+		clampf(float(d.get("x", 0.0)), -60.0, 60.0),
+		clampf(float(d.get("y", 0.1)), -2.0, 10.0),
+		clampf(float(d.get("z", 0.0)), -60.0, 60.0)
 	)
-	var rot_y: float = float(raw.rot_y)
-	var moving: bool = bool(raw.moving)
-	var p_name: String = _sanitize_text(String(raw.name) if "name" in raw else "Coursemate", 32)
-	var p_room: String = _sanitize_text(String(raw.room) if "room" in raw else "courtyard", 40)
+	var rot_y: float = float(d.get("rot_y", 0.0))
+	var moving: bool = bool(d.get("moving", false))
+	var p_name: String = _sanitize_text(String(d.get("name", "Coursemate")), 32)
+	var p_room: String = _sanitize_text(String(d.get("room", "courtyard")), 40)
 
-	var s_col: Color = Color(0.2, 0.6, 0.4)
-	if "shirt_col" in raw:
-		s_col = Color.from_string(String(raw.shirt_col), Color(0.2, 0.6, 0.4))
-	var t_col: Color = Color(0.15, 0.18, 0.24)
-	if "trouser_col" in raw:
-		t_col = Color.from_string(String(raw.trouser_col), Color(0.15, 0.18, 0.24))
+	var s_col: Color = Color.from_string(String(d.get("shirt_col", "#1e824c")), Color(0.2, 0.6, 0.4))
+	var t_col: Color = Color.from_string(String(d.get("trouser_col", "#273746")), Color(0.15, 0.18, 0.24))
 
 	remote_players[peer_id] = {
 		"name": p_name,

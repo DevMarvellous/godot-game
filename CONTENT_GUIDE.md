@@ -75,3 +75,4 @@ At startup, the game fetches live configuration from two sources in priority ord
 | `senate` | `res://scenes/rooms/senate_building.tscn` | University Senate & Registry Building |
 | `convocation` | `res://scenes/rooms/convocation_hall.tscn` | Great Hall of Convocation & Alumni Arena |
 | `tech_hub` | `res://scenes/rooms/tech_hub.tscn` | **NEW:** Silicon Lagoon Tech Hub & Campus Wellness Clinic |
+

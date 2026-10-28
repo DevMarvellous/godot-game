@@ -58,10 +58,26 @@ func _ready() -> void:
 
 	_setup_js_bridge()
 	apply_appearance_from_selections(false)
+	get_viewport().size_changed.connect(_adapt_stage_camera_for_viewport)
+	_adapt_stage_camera_for_viewport()
 
 	# If on Web, notify the HTML shell that Godot engine has loaded and the 3D stage is ready!
 	if OS.has_feature("web"):
 		_notify_web_stage_ready()
+
+
+func _adapt_stage_camera_for_viewport() -> void:
+	if not is_inside_tree() or not is_instance_valid(stage_camera):
+		return
+	var vp: Vector2 = get_viewport().get_visible_rect().size
+	if vp.x > vp.y * 1.1:
+		# Desktop / landscape: shift camera target right so the 3D podium stands on the LEFT half of the screen
+		stage_camera.position = Vector3(0.95, 1.45, 3.35)
+		stage_camera.rotation_degrees = Vector3(-6.0, 4.0, 0.0)
+	else:
+		# Mobile portrait: aim camera slightly lower so the 3D student stands in the top visible area above the sheet
+		stage_camera.position = Vector3(0.0, 0.85, 3.65)
+		stage_camera.rotation_degrees = Vector3(6.0, 0.0, 0.0)
 
 
 func _process(delta: float) -> void:
@@ -188,19 +204,37 @@ func _setup_js_bridge() -> void:
 		js_window.godotOnAdmissionSubmit = _js_cb_submit
 
 
+func _parse_js_payload(raw: Variant) -> Dictionary:
+	if raw is Dictionary:
+		return raw
+	if raw is String:
+		var parsed = JSON.parse_string(raw)
+		if parsed is Dictionary:
+			return parsed
+	# Fallback: convert JavaScriptObject via JSON.stringify in JS
+	if OS.has_feature("web") and raw != null:
+		var js_json = JavaScriptBridge.get_interface("JSON")
+		if js_json:
+			var str_val = js_json.stringify(raw)
+			if str_val is String:
+				var parsed2 = JSON.parse_string(str_val)
+				if parsed2 is Dictionary:
+					return parsed2
+	return {}
+
+
 func _on_js_avatar_change(args: Array) -> void:
 	if args.is_empty():
 		return
-	var raw = args[0]
-	if raw == null:
+	var d: Dictionary = _parse_js_payload(args[0])
+	if d.is_empty():
 		return
 
-	# Parse JavaScript object properties
-	var g: String = String(raw.gender) if "gender" in raw else selected_gender
-	var skin: int = int(raw.skin_idx) if "skin_idx" in raw else selected_complexion
-	var hair: int = int(raw.hair_idx) if "hair_idx" in raw else selected_hair
-	var shirt: int = int(raw.shirt_idx) if "shirt_idx" in raw else selected_shirt
-	var trouser: int = int(raw.trouser_idx) if "trouser_idx" in raw else selected_trouser
+	var g: String = String(d.get("gender", selected_gender))
+	var skin: int = int(d.get("skin_idx", selected_complexion))
+	var hair: int = int(d.get("hair_idx", selected_hair))
+	var shirt: int = int(d.get("shirt_idx", selected_shirt))
+	var trouser: int = int(d.get("trouser_idx", selected_trouser))
 
 	set_avatar_drip(g, skin, hair, shirt, trouser)
 
@@ -208,21 +242,21 @@ func _on_js_avatar_change(args: Array) -> void:
 func _on_js_admission_submit(args: Array) -> void:
 	if args.is_empty():
 		return
-	var raw = args[0]
-	if raw == null:
+	var d: Dictionary = _parse_js_payload(args[0])
+	if d.is_empty():
 		return
 
 	var data: Dictionary = {
-		"name": String(raw.name) if "name" in raw else "Tunde Adeleke",
-		"username": String(raw.username) if "username" in raw else "@tunde_csc",
-		"email": String(raw.email) if "email" in raw else "student@campus.edu.ng",
-		"gender": String(raw.gender) if "gender" in raw else selected_gender,
-		"skin_idx": int(raw.skin_idx) if "skin_idx" in raw else selected_complexion,
-		"hair_idx": int(raw.hair_idx) if "hair_idx" in raw else selected_hair,
-		"shirt_idx": int(raw.shirt_idx) if "shirt_idx" in raw else selected_shirt,
-		"trouser_idx": int(raw.trouser_idx) if "trouser_idx" in raw else selected_trouser,
-		"dept": String(raw.dept) if "dept" in raw else selected_dept,
-		"quiz_score": int(raw.quiz_score) if "quiz_score" in raw else 100
+		"name": String(d.get("name", "Tunde Adeleke")),
+		"username": String(d.get("username", "@tunde_csc")),
+		"email": String(d.get("email", "student@campus.edu.ng")),
+		"gender": String(d.get("gender", selected_gender)),
+		"skin_idx": int(d.get("skin_idx", selected_complexion)),
+		"hair_idx": int(d.get("hair_idx", selected_hair)),
+		"shirt_idx": int(d.get("shirt_idx", selected_shirt)),
+		"trouser_idx": int(d.get("trouser_idx", selected_trouser)),
+		"dept": String(d.get("dept", selected_dept)),
+		"quiz_score": int(d.get("quiz_score", 100))
 	}
 	finalize_admission(data)
 

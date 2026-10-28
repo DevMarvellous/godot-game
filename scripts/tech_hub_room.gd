@@ -36,3 +36,4 @@ func _on_player_passed_out(_reason: String) -> void:
 		if player.has_method("display_notification"):
 			player.display_notification("🏥 Nurse Amaka treats you at the Campus Clinic: 'Take this Lucozade Boost & Vitamin C! Don't burn out coding all night!' (+65 Energy, +55 Hunger)")
 		player.global_position = Vector3(5.5, 0.1, 1.5)
+

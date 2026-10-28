@@ -587,8 +587,8 @@ html, body, #canvas {
 	<canvas id="canvas">Your browser does not support the HTML5 canvas tag.</canvas>
 	<noscript>Please enable JavaScript to play My Campus Life.</noscript>
 
-	<!-- 1. Engine Loading Splash -->
-	<div id="status">
+	<!-- 1. Engine Loading Splash (Only shown if user finishes onboarding before 3D engine finishes streaming) -->
+	<div id="status" style="display: none;">
 		<div class="loader-card">
 			<div class="campus-title">🏛️ MY CAMPUS LIFE</div>
 			<div class="campus-sub">Official Nigerian University Simulator</div>
@@ -606,11 +606,15 @@ html, body, #canvas {
 		</div>
 	</div>
 
-	<!-- 2. Native HTML Student Admissions Portal Overlay -->
-	<div id="admissions-overlay">
+	<!-- 2. Native HTML Student Admissions Portal Overlay (Opens Instantly at 0.0s!) -->
+	<div id="admissions-overlay" class="active">
 		<div class="portal-sheet">
 			<div class="portal-header">
-				<div class="portal-crest">🏛️</div>
+				<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
+					<span id="engine-stream-pill" style="font-size:10px; font-weight:700; color:#fcd34d; background:rgba(0,0,0,0.35); border:1px solid rgba(245,197,24,0.4); border-radius:10px; padding:2px 8px;">⚡ Streaming 3D Engine...</span>
+					<span class="portal-crest" style="margin:0;">🏛️</span>
+					<button type="button" onclick="togglePeekStage()" id="peek-stage-btn" style="font-size:10px; font-weight:700; color:#a3e6be; background:rgba(0,0,0,0.35); border:1px solid rgba(163,230,190,0.4); border-radius:10px; padding:2px 8px; cursor:pointer;">👁️ 3D Stage</button>
+				</div>
 				<h1 class="portal-h1">FEDERAL UNIVERSITY OF CAMPUS LIFE</h1>
 				<div class="portal-h2">Student Admissions & Matriculation Portal</div>
 				<div class="step-bar">
@@ -787,6 +791,35 @@ html, body, #canvas {
 
 	<script src="$GODOT_URL"></script>
 	<script>
+/* =======================================================
+   CAPTURE-PHASE HTML INPUT SHIELD (Registered BEFORE Godot Engine)
+   Prevents Godot's Emscripten canvas from stealing focus or blocking
+   WASD / Space / Backspace / Enter keys when typing in HTML inputs!
+   ======================================================= */
+(function installHtmlInputShield() {
+	function isHtmlFormElement(el) {
+		if (!el || !el.tagName) return false;
+		const tag = el.tagName.toUpperCase();
+		return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+	}
+	['keydown', 'keyup', 'keypress'].forEach((evtType) => {
+		window.addEventListener(evtType, (e) => {
+			if (isHtmlFormElement(document.activeElement) || isHtmlFormElement(e.target)) {
+				e.stopImmediatePropagation();
+			}
+		}, true);
+	});
+	// Ensure clicking an HTML input keeps focus on that input, never the WebGL canvas
+	document.addEventListener('pointerdown', (e) => {
+		if (isHtmlFormElement(e.target)) {
+			e.stopPropagation();
+			setTimeout(() => {
+				if (document.activeElement !== e.target) e.target.focus();
+			}, 0);
+		}
+	}, true);
+})();
+
 const GODOT_CONFIG = $GODOT_CONFIG;
 const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
 const engine = new Engine(GODOT_CONFIG);
@@ -1445,16 +1478,36 @@ function nextStep() {
 	}
 }
 
+let _isEngineStageReady = false;
+let _pendingAdmissionPayload = null;
+let _isPeekingStage = false;
+
+function togglePeekStage() {
+	const sheet = document.querySelector('.portal-sheet');
+	const btn = document.getElementById('peek-stage-btn');
+	if (!sheet) return;
+	_isPeekingStage = !_isPeekingStage;
+	if (_isPeekingStage) {
+		sheet.style.maxHeight = '26vh';
+		sheet.style.opacity = '0.88';
+		if (btn) btn.textContent = '🔼 Expand Portal';
+	} else {
+		sheet.style.maxHeight = '';
+		sheet.style.opacity = '1';
+		if (btn) btn.textContent = '👁️ 3D Stage';
+	}
+}
+
 function notifyGodotDripChange() {
 	renderLiveAvatarSVG();
 	if (window.godotOnAvatarChange) {
-		window.godotOnAvatarChange({
+		window.godotOnAvatarChange(JSON.stringify({
 			gender: ADMISSION_STATE.gender,
 			skin_idx: ADMISSION_STATE.skinIdx,
 			hair_idx: ADMISSION_STATE.hairIdx,
 			shirt_idx: ADMISSION_STATE.shirtIdx,
 			trouser_idx: ADMISSION_STATE.trouserIdx
-		});
+		}));
 	}
 }
 
@@ -1464,35 +1517,67 @@ function finishAdmission() {
 		localStorage.setItem('my_campus_saved_account', JSON.stringify(ADMISSION_STATE));
 	} catch (e) {}
 
+	const payloadStr = JSON.stringify({
+		name: ADMISSION_STATE.name,
+		username: ADMISSION_STATE.username,
+		email: ADMISSION_STATE.email,
+		gender: ADMISSION_STATE.gender,
+		skin_idx: ADMISSION_STATE.skinIdx,
+		hair_idx: ADMISSION_STATE.hairIdx,
+		shirt_idx: ADMISSION_STATE.shirtIdx,
+		trouser_idx: ADMISSION_STATE.trouserIdx,
+		dept: ADMISSION_STATE.dept,
+		quiz_score: 100
+	});
+
 	const overlay = document.getElementById('admissions-overlay');
 	if (overlay) overlay.classList.remove('active');
 
 	if (window.godotOnAdmissionSubmit) {
-		window.godotOnAdmissionSubmit({
-			name: ADMISSION_STATE.name,
-			username: ADMISSION_STATE.username,
-			email: ADMISSION_STATE.email,
-			gender: ADMISSION_STATE.gender,
-			skin_idx: ADMISSION_STATE.skinIdx,
-			hair_idx: ADMISSION_STATE.hairIdx,
-			shirt_idx: ADMISSION_STATE.shirtIdx,
-			trouser_idx: ADMISSION_STATE.trouserIdx,
-			dept: ADMISSION_STATE.dept,
-			quiz_score: 100
-		});
+		window.godotOnAdmissionSubmit(payloadStr);
+		const c = document.getElementById('canvas');
+		if (c) c.focus();
+	} else {
+		// Engine is still finishing its background download — show progress card for the remaining seconds
+		_pendingAdmissionPayload = payloadStr;
+		const statusOverlay = document.getElementById('status');
+		if (statusOverlay) statusOverlay.style.display = 'flex';
 	}
 }
 
 window.onCampusStageReady = function () {
-	// Show the admissions overlay once Godot has initialized the 3D stage
+	_isEngineStageReady = true;
+	const pill = document.getElementById('engine-stream-pill');
+	if (pill) {
+		pill.textContent = '🟢 3D Engine Ready';
+		pill.style.color = '#34d399';
+		pill.style.borderColor = 'rgba(52,211,153,0.55)';
+	}
+	const statusOverlay = document.getElementById('status');
+	if (statusOverlay) statusOverlay.style.display = 'none';
+
+	// If user already completed admission while engine was streaming, enter campus immediately!
+	if (_pendingAdmissionPayload && window.godotOnAdmissionSubmit) {
+		const p = _pendingAdmissionPayload;
+		_pendingAdmissionPayload = null;
+		const overlay = document.getElementById('admissions-overlay');
+		if (overlay) overlay.classList.remove('active');
+		window.godotOnAdmissionSubmit(p);
+		const c = document.getElementById('canvas');
+		if (c) c.focus();
+		return;
+	}
+
 	const overlay = document.getElementById('admissions-overlay');
 	if (overlay) overlay.classList.add('active');
 	renderLiveAvatarSVG();
-	switchStep(ADMISSION_STATE.step || 0);
 	notifyGodotDripChange();
 };
-// Render the live avatar mannequin immediately on DOM ready for 0ms perceived latency
-setTimeout(() => renderLiveAvatarSVG(), 50);
+// Initialize the portal & live SVG mannequin immediately on DOM ready (0ms perceived load time!)
+setTimeout(() => {
+	renderLiveAvatarSVG();
+	switchStep(0);
+}, 20);
 // Load live backend JSON configuration (editable without rebuilding Godot)
 fetch('./live_game_config.json', { cache: 'no-store' })
 	.then(r => r.ok ? r.json() : null)
@@ -1679,7 +1764,7 @@ function handleIncomingRealtimePacket(pkt) {
 	peerLastSeen[pid] = Date.now();
 
 	if (pkt.event === 'pos' && window.godotReceiveNetPlayer) {
-		window.godotReceiveNetPlayer(pid, {
+		window.godotReceiveNetPlayer(pid, JSON.stringify({
 			name: pkt.name || 'Coursemate',
 			room: pkt.room || 'Courtyard',
 			x: pkt.x || 0,
@@ -1689,7 +1774,7 @@ function handleIncomingRealtimePacket(pkt) {
 			moving: !!pkt.moving,
 			shirt_col: pkt.shirt_col || '#1e824c',
 			trouser_col: pkt.trouser_col || '#273746'
-		});
+		}));
 	} else if (pkt.event === 'chat' && window.godotReceiveNetChat) {
 		window.godotReceiveNetChat(pkt.sender || 'Coursemate', pkt.message || '', pid);
 	} else if (pkt.event === 'emote' && window.godotReceiveNetEmote) {
@@ -1784,27 +1869,30 @@ window.campusNetBroadcastEmote = function(emote) {
 		statusNotice.style.display = 'block';
 	}
 
+	const streamPill = document.getElementById('engine-stream-pill');
+
 	engine.startGame({
 		'onProgress': function (current, total) {
 			if (current > 0 && total > 0) {
 				const pct = Math.min(100, Math.floor((current / total) * 100));
 				if (fillBar) fillBar.style.width = pct + '%';
 				if (percentText) percentText.textContent = `Loading Campus Assets (${pct}%)...`;
+				if (streamPill && !_isEngineStageReady) streamPill.textContent = `⚡ 3D Engine (${pct}%)`;
 			} else {
 				if (percentText) percentText.textContent = 'Entering Federal University Campus...';
 			}
 		},
 	}).then(() => {
-		if (statusOverlay) statusOverlay.style.display = 'none';
-		// If stage didn't trigger callback within 500ms, open portal automatically
+		if (statusOverlay && !_pendingAdmissionPayload) statusOverlay.style.display = 'none';
+		// If stage didn't trigger callback within 500ms, mark ready automatically
 		setTimeout(() => {
-			const overlay = document.getElementById('admissions-overlay');
-			if (overlay && !overlay.classList.contains('active')) {
+			if (!_isEngineStageReady) {
 				window.onCampusStageReady();
 			}
 		}, 600);
 	}).catch((err) => {
 		console.error(err);
+		if (statusOverlay) statusOverlay.style.display = 'flex';
 		setStatusNotice(err && err.message ? err.message : String(err));
 	});
 }());

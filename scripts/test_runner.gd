@@ -275,9 +275,19 @@ func _ready() -> void:
 	add_child(stage_inst)
 	stage_inst.set_avatar_drip("Male", 1, 0, 0, 0)
 	stage_inst.set_avatar_drip("Female", 3, 2, 1, 2)
+	stage_inst._on_js_avatar_change([JSON.stringify({
+		"gender": "Female",
+		"skin_idx": 2,
+		"hair_idx": 4,
+		"shirt_idx": 1,
+		"trouser_idx": 2
+	})])
+	assert(stage_inst.selected_gender == "Female", "JS bridge must update gender to Female!")
+	assert(stage_inst.selected_shirt == 1, "JS bridge must update shirt_idx to 1!")
+	assert(stage_inst.selected_hair == 4, "JS bridge must update hair_idx to 4!")
 	stage_inst._process(0.016)
 	stage_inst.queue_free()
-	print("  -> Admission Stage Main Viewport (Male & Female silhouettes) OK")
+	print("  -> Admission Stage Main Viewport (Male & Female silhouettes + JS JSON Bridge) OK")
 
 	print("[6c/6] Verifying Multiplayer NetworkPlayer 3D Interaction & Supabase Cloud Sync...")
 	var net_p_scene = load("res://scenes/network_player.tscn")
