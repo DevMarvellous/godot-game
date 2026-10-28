@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS public.student_profiles (
     trouser_index INTEGER NOT NULL DEFAULT 0 CHECK (trouser_index >= 0 AND trouser_index <= 20),
     owned_upgrades JSONB NOT NULL DEFAULT '[]'::jsonb,
     backpack_items JSONB NOT NULL DEFAULT '[]'::jsonb,
+    secret_token TEXT DEFAULT '',
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -104,3 +105,71 @@ ALTER PUBLICATION supabase_realtime ADD TABLE public.room_presence;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.campus_chat_messages;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.campus_transfers;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.game_live_config;
+
+-- 8. Atomic Server-Side Money Transfer RPC (Anti-Cheat & Double-Spending Prevention)
+CREATE OR REPLACE FUNCTION public.execute_campus_transfer(
+    p_sender_username TEXT,
+    p_recipient_username TEXT,
+    p_amount INTEGER,
+    p_note TEXT DEFAULT 'CampusPay Transfer'
+) RETURNS JSONB LANGUAGE plpgsql SECURITY DEFINER AS $$
+DECLARE
+    v_sender RECORD;
+    v_recipient RECORD;
+    v_new_sender_bal INTEGER;
+    v_new_recipient_bal INTEGER;
+BEGIN
+    IF p_amount < 100 OR p_amount > 1000000 THEN
+        RETURN jsonb_build_object('success', false, 'error', 'Transfer amount must be between ₦100 and ₦1,000,000');
+    END IF;
+
+    IF lower(p_sender_username) = lower(p_recipient_username) THEN
+        RETURN jsonb_build_object('success', false, 'error', 'Cannot transfer money to yourself');
+    END IF;
+
+    -- Fetch and lock sender
+    SELECT * INTO v_sender FROM public.student_profiles
+    WHERE lower(username) = lower(p_sender_username)
+    FOR UPDATE;
+
+    IF NOT FOUND THEN
+        RETURN jsonb_build_object('success', false, 'error', 'Sender account not found in Campus Registry');
+    END IF;
+
+    IF v_sender.wallet_balance < p_amount THEN
+        RETURN jsonb_build_object('success', false, 'error', 'Insufficient funds in CampusPay wallet');
+    END IF;
+
+    -- Fetch and lock recipient
+    SELECT * INTO v_recipient FROM public.student_profiles
+    WHERE lower(username) = lower(p_recipient_username)
+    FOR UPDATE;
+
+    IF NOT FOUND THEN
+        RETURN jsonb_build_object('success', false, 'error', 'Recipient not found on campus');
+    END IF;
+
+    -- Perform atomic transfer
+    v_new_sender_bal := v_sender.wallet_balance - p_amount;
+    v_new_recipient_bal := v_recipient.wallet_balance + p_amount;
+
+    UPDATE public.student_profiles
+    SET wallet_balance = v_new_sender_bal, updated_at = NOW()
+    WHERE id = v_sender.id;
+
+    UPDATE public.student_profiles
+    SET wallet_balance = v_new_recipient_bal, updated_at = NOW()
+    WHERE id = v_recipient.id;
+
+    -- Log transaction
+    INSERT INTO public.campus_transfers (sender_username, sender_name, recipient_username, amount, note)
+    VALUES (v_sender.username, v_sender.student_name, v_recipient.username, p_amount, p_note);
+
+    RETURN jsonb_build_object(
+        'success', true,
+        'sender_balance', v_new_sender_bal,
+        'recipient_balance', v_new_recipient_bal,
+        'amount', p_amount
+    );
+END;
+$$;

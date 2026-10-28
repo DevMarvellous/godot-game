@@ -63,13 +63,12 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_adapt_stage_camera_for_viewport)
 	_adapt_stage_camera_for_viewport()
 
-	# If on Web, hide the 3D podium so there is ONLY ONE model (the crisp HTML 2D Studio),
-	# pre-load the Campus Courtyard in the background for instant 0ms entry, and notify HTML shell!
+	# If on Web, hide the 3D podium so there is ONLY ONE model (the crisp HTML 2D Studio)
+	# and notify HTML shell immediately!
 	if OS.has_feature("web"):
 		if is_instance_valid(stage_podium):
 			stage_podium.visible = false
 		set_process(false)
-		ResourceLoader.load_threaded_request("res://scenes/main.tscn")
 		_notify_web_stage_ready()
 
 
@@ -192,23 +191,15 @@ func finalize_admission(profile_data: Dictionary) -> void:
 	if SoundManager:
 		SoundManager.play_bell()
 
-	# NOTE: RoomManager.current_room defaults to "courtyard", so change_room(&"courtyard")
-	# would early-return and leave the player stuck on the empty admission stage.
-	# Always force the scene change explicitly, using the pre-loaded scene when ready.
 	var main_path: String = "res://scenes/main.tscn"
-	var packed: PackedScene = null
-	if ResourceLoader.load_threaded_get_status(main_path) != ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
-		packed = ResourceLoader.load_threaded_get(main_path) as PackedScene
-	if packed == null:
-		packed = load(main_path) as PackedScene
 	if RoomManager:
-		RoomManager.current_room = &"courtyard"
 		RoomManager.is_transitioning = false
-	var err: Error = get_tree().change_scene_to_packed(packed) if packed else get_tree().change_scene_to_file(main_path)
-	if err != OK:
-		push_error("Failed to enter campus courtyard (Error %d)" % err)
-	elif RoomManager:
-		RoomManager.room_loaded.emit(&"courtyard")
+		RoomManager.current_room = &"admission"
+		RoomManager.change_room(&"courtyard", false)
+	else:
+		var err: Error = get_tree().change_scene_to_file(main_path)
+		if err != OK:
+			push_error("Failed to enter campus courtyard (Error %d)" % err)
 
 
 ## Bridge between JavaScript HTML overlay and Godot GDScript

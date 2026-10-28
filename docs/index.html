@@ -34,6 +34,25 @@
 	<meta name="twitter:image:alt" content="My Campus Life — Official Game Banner">
 
 	<meta name="theme-color" content="#064e3b">
+	<script>
+	// Aggressively unregister all stale Service Workers and purge browser caches on page load
+	(function() {
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.getRegistrations().then(function(regs) {
+				for (var i = 0; i < regs.length; i++) {
+					regs[i].unregister();
+				}
+			}).catch(function() {});
+		}
+		if ('caches' in window) {
+			caches.keys().then(function(names) {
+				for (var i = 0; i < names.length; i++) {
+					caches.delete(names[i]);
+				}
+			}).catch(function() {});
+		}
+	})();
+	</script>
 	<style>
 :root {
 	--campus-green: #0b5334;
@@ -589,7 +608,6 @@ html, body, #canvas {
 	<script src="./cloud_config.js"></script>
 	<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
-<link rel="manifest" href="index.manifest.json">
 
 </head>
 <body>
@@ -946,7 +964,7 @@ html, body, #canvas {
 	}, true);
 })();
 
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":4669636,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":4669444,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -2422,14 +2440,17 @@ setTimeout(() => {
 }());
 	</script>
 	<script>
-// Remove the legacy cache-first worker (it pinned stale builds). Godot's versioned
-// index.service.worker.js (from GODOT_CONFIG) now provides offline caching + clean updates.
+// Aggressively remove all legacy service workers and clear cache storage
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.getRegistrations().then((regs) => {
 		regs.forEach((reg) => {
-			const sw = reg.active || reg.waiting || reg.installing;
-			if (sw && sw.scriptURL && sw.scriptURL.endsWith('/sw.js')) reg.unregister();
+			reg.unregister();
 		});
+	}).catch(() => {});
+}
+if ('caches' in window) {
+	caches.keys().then((keys) => {
+		keys.forEach((k) => caches.delete(k));
 	}).catch(() => {});
 }
 	</script>

@@ -57,7 +57,7 @@ const ROOM_NAMES: Dictionary = {
 	&"tech_hub": "Silicon Lagoon Tech Hub & Wellness Clinic"
 }
 
-var current_room: StringName = &"courtyard"
+var current_room: StringName = &"admission"
 var is_transitioning: bool = false
 var _sanitize_timer: float = 0.0
 
@@ -168,13 +168,13 @@ func _clean_single_node(node: Node) -> void:
 
 
 func change_room(target_room: StringName, play_drive: bool = true) -> void:
-	if is_transitioning or not ROOM_PATHS.has(target_room):
-		return
-
-	if current_room == target_room:
+	if not ROOM_PATHS.has(target_room):
 		return
 
 	var target_path: String = ROOM_PATHS[target_room]
+	if current_room == target_room and get_tree().current_scene and get_tree().current_scene.scene_file_path == target_path:
+		return
+
 	var dest_name: String = ROOM_NAMES.get(target_room, String(target_room).capitalize())
 	change_room_to_path(target_path, dest_name, target_room, play_drive)
 

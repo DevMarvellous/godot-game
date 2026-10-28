@@ -1,16 +1,19 @@
-// My Campus Life - legacy service worker KILL SWITCH.
-// Older builds registered this worker with a fixed cache-first strategy that pinned stale
-// game files (players never received updates). Godot's own versioned worker
-// (index.service.worker.js) now handles offline caching correctly, so this worker
-// deletes its old cache and unregisters itself for anyone who still has it installed.
-self.addEventListener('install', () => self.skipWaiting());
+// Self-destructing service worker: Purges all stale caches and unregisters permanently
+self.addEventListener('install', (event) => {
+	self.skipWaiting();
+});
 
 self.addEventListener('activate', (event) => {
-	event.waitUntil((async () => {
-		const keys = await caches.keys();
-		await Promise.all(keys.filter((k) => k.startsWith('my-campus-life-')).map((k) => caches.delete(k)));
-		await self.registration.unregister();
-		const clients = await self.clients.matchAll({ type: 'window' });
-		clients.forEach((client) => client.navigate(client.url));
-	})());
+	event.waitUntil(
+		caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
+			.then(() => self.registration.unregister())
+			.then(() => self.clients.matchAll())
+			.then((clients) => {
+				clients.forEach((client) => {
+					if (client.url && 'navigate' in client) {
+						client.navigate(client.url);
+					}
+				});
+			})
+	);
 });
