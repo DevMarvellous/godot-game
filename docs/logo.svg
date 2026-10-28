@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradients -->
+    <radialGradient id="bgGlow" cx="50%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#14532d" />
+      <stop offset="55%" stop-color="#064e3b" />
+      <stop offset="100%" stop-color="#022c22" />
+    </radialGradient>
+    <linearGradient id="goldRim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="35%" stop-color="#eab308" />
+      <stop offset="70%" stop-color="#ca8a04" />
+      <stop offset="100%" stop-color="#854d0e" />
+    </linearGradient>
+
+    <!-- 3D Metallic Gold Shading -->
+    <linearGradient id="metallicGold" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="25%" stop-color="#fde047" />
+      <stop offset="50%" stop-color="#eab308" />
+      <stop offset="85%" stop-color="#ca8a04" />
+      <stop offset="100%" stop-color="#713f12" />
+    </linearGradient>
+
+    <!-- Mortarboard Shading -->
+    <linearGradient id="capTopGrad" x1="10%" y1="20%" x2="90%" y2="80%">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="50%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="capUnderGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+
+    <!-- Drop Shadows & Glows -->
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#000000" flood-opacity="0.65" />
+    </filter>
+    <filter id="goldGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Squircle Base Frame -->
+  <rect x="16" y="16" width="480" height="480" rx="108" fill="url(#bgGlow)" stroke="url(#goldRim)" stroke-width="8" filter="url(#softShadow)" />
+
+  <!-- Inner Subtle Accent Ring -->
+  <rect x="28" y="28" width="456" height="456" rx="96" fill="none" stroke="rgba(254, 240, 138, 0.18)" stroke-width="2" />
+
+  <!-- Dynamic Campus Energy Rays -->
+  <g opacity="0.08" stroke="#fde047" stroke-width="2">
+    <line x1="256" y1="256" x2="60" y2="60" />
+    <line x1="256" y1="256" x2="452" y2="60" />
+    <line x1="256" y1="256" x2="100" y2="400" />
+    <line x1="256" y1="256" x2="412" y2="400" />
+  </g>
+
+  <!-- Academic Gold Laurel Leaves (Flanking the Base) -->
+  <g fill="url(#metallicGold)" opacity="0.9">
+    <!-- Left Laurel -->
+    <path d="M120 330 C120 360, 140 400, 195 420 C185 405, 180 380, 185 360 C165 375, 140 370, 130 350 Z" />
+    <path d="M105 285 C100 315, 115 345, 145 360 C140 345, 140 325, 150 310 C130 320, 115 310, 110 295 Z" />
+    <path d="M110 235 C105 260, 115 285, 140 295 C140 280, 145 265, 155 255 C135 260, 120 250, 115 240 Z" />
+
+    <!-- Right Laurel -->
+    <path d="M392 330 C392 360, 372 400, 317 420 C327 405, 332 380, 327 360 C347 375, 372 370, 382 350 Z" />
+    <path d="M407 285 C412 315, 397 345, 367 360 C372 345, 372 325, 362 310 C382 320, 397 310, 402 295 Z" />
+    <path d="M402 235 C407 260, 397 285, 372 295 C372 280, 367 265, 357 255 C377 260, 392 250, 397 240 Z" />
+  </g>
+
+  <!-- 3D Graduation Mortarboard Cap -->
+  <g filter="url(#softShadow)">
+    <!-- Skull Cap Base Underneath -->
+    <path d="M190 200 Q256 240 322 200 L322 230 Q256 270 190 230 Z" fill="url(#capUnderGrad)" stroke="#090d16" stroke-width="2" />
+
+    <!-- Mortarboard Diamond Rhombus (Top Plane) -->
+    <polygon points="256,105 396,165 256,225 116,165" fill="url(#capTopGrad)" stroke="#475569" stroke-width="2.5" />
+
+    <!-- Inner Rhombus Specular Bevel -->
+    <polygon points="256,112 386,165 256,218 126,165" fill="none" stroke="rgba(255, 255, 255, 0.18)" stroke-width="1.5" />
+
+    <!-- Golden Center Button -->
+    <ellipse cx="256" cy="165" rx="14" ry="9" fill="url(#metallicGold)" stroke="#78350f" stroke-width="1.5" />
+
+    <!-- Flowing Golden Silk Tassel -->
+    <path d="M256 165 C220 170, 175 195, 168 235 L164 275" fill="none" stroke="url(#goldRim)" stroke-width="5" stroke-linecap="round" />
+    <!-- Tassel Brush/Fringe -->
+    <path d="M164 275 L156 315 Q164 322 172 315 L166 275 Z" fill="url(#metallicGold)" stroke="#92400e" stroke-width="1" />
+    <!-- Tassel Ring Band -->
+    <rect x="160" y="282" width="9" height="4" rx="2" fill="#fef08a" />
+  </g>
+
+  <!-- Gleaming 3D Metallic Gold NAIRA (₦) Sign (Campus Hustle & Clout) -->
+  <g filter="url(#goldGlow)" transform="translate(256, 305)">
+    <!-- 3D Extrusion Shadow -->
+    <g fill="#713f12" transform="translate(3, 4)">
+      <!-- Left Stem -->
+      <rect x="-56" y="-60" width="22" height="110" rx="6" />
+      <!-- Right Stem -->
+      <rect x="34" y="-60" width="22" height="110" rx="6" />
+      <!-- Diagonal Cross Stroke -->
+      <polygon points="-46,-50 -30,-50 46,38 30,38" />
+      <!-- Double Horizontal Currency Bars -->
+      <rect x="-70" y="-22" width="140" height="14" rx="4" />
+      <rect x="-70" y="8" width="140" height="14" rx="4" />
+    </g>
+
+    <!-- Front Metallic Gold Face -->
+    <g fill="url(#metallicGold)" stroke="#fef08a" stroke-width="1.5">
+      <!-- Left Stem -->
+      <rect x="-56" y="-60" width="22" height="110" rx="6" />
+      <!-- Right Stem -->
+      <rect x="34" y="-60" width="22" height="110" rx="6" />
+      <!-- Diagonal Cross Stroke -->
+      <polygon points="-48,-50 -32,-50 48,38 32,38" />
+      <!-- Double Horizontal Currency Bars -->
+      <rect x="-70" y="-22" width="140" height="14" rx="4" />
+      <rect x="-70" y="8" width="140" height="14" rx="4" />
+    </g>
+
+    <!-- Electric Energy Spark / Clout Star on the Upper Corner -->
+    <polygon points="56,-65 62,-50 78,-48 64,-36 68,-20 54,-30 40,-20 44,-36 30,-48 46,-50" fill="#fef08a" filter="url(#goldGlow)" />
+  </g>
+
+  <!-- Sleek Ribbon Plaque for Game Title -->
+  <g filter="url(#softShadow)" transform="translate(0, 422)">
+    <!-- Ribbon Shadow/Back Wings -->
+    <path d="M75 18 L110 -2 L110 38 Z" fill="#713f12" />
+    <path d="M437 18 L402 -2 L402 38 Z" fill="#713f12" />
+
+    <!-- Main Ribbon Banner Body -->
+    <rect x="90" y="2" width="332" height="46" rx="10" fill="#092618" stroke="url(#goldRim)" stroke-width="3" />
+
+    <!-- Title Typography: MY CAMPUS LIFE -->
+    <text x="256" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Impact', sans-serif" font-size="25" font-weight="900" letter-spacing="3" text-anchor="middle" fill="url(#metallicGold)">
+      MY CAMPUS LIFE
+    </text>
+  </g>
+</svg>
+
