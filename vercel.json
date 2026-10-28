@@ -28,7 +28,19 @@
       ]
     },
     {
-      "source": "/(index\\.html|cloud_config\\.js|content/(.*)\\.json|sw\\.js|index\\.service\\.worker\\.js)",
+      "source": "/(.*)\\.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/(.*)\\.json",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/cloud_config.js",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
       ]
