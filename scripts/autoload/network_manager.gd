@@ -43,9 +43,9 @@ var _js_cb_emote: Variant = null
 var _js_cb_transfer: Variant = null
 const BROADCAST_INTERVAL: float = 0.10 # 10 Hz throttled network broadcast (optimized for lag)
 const CLOUD_PEERS: Array[Dictionary] = [
-	{"id": 901, "name": "Femi [CSC]", "shirt": Color(0.15, 0.65, 0.38), "trouser": Color(0.14, 0.18, 0.26)},
-	{"id": 902, "name": "Chidinma [LAW]", "shirt": Color(0.85, 0.28, 0.48), "trouser": Color(0.16, 0.16, 0.20)},
-	{"id": 903, "name": "Tobi [MEE]", "shirt": Color(0.95, 0.68, 0.14), "trouser": Color(0.18, 0.22, 0.28)}
+	{"id": 901, "name": "Femi [CSC]", "gender": "Male", "skin_idx": 1, "hair_idx": 1, "shirt_idx": 0, "trouser_idx": 0, "clout_rank": "💻 Tech Bro", "shirt": Color(0.15, 0.65, 0.38), "trouser": Color(0.14, 0.18, 0.26)},
+	{"id": 902, "name": "Chidinma [LAW]", "gender": "Female", "skin_idx": 2, "hair_idx": 4, "shirt_idx": 2, "trouser_idx": 1, "clout_rank": "📚 Dean's List", "shirt": Color(0.85, 0.28, 0.48), "trouser": Color(0.16, 0.16, 0.20)},
+	{"id": 903, "name": "Tobi [MEE]", "gender": "Male", "skin_idx": 0, "hair_idx": 3, "shirt_idx": 3, "trouser_idx": 2, "clout_rank": "💎 Big Boy", "shirt": Color(0.95, 0.68, 0.14), "trouser": Color(0.18, 0.22, 0.28)}
 ]
 const CLOUD_REPLIES: Array[String] = [
 	"How far! You dey go lecture now?",
@@ -139,7 +139,14 @@ func _on_js_net_player_update(args: Array) -> void:
 		"rot_y": rot_y,
 		"is_moving": moving,
 		"shirt_col": s_col,
-		"trouser_col": t_col
+		"trouser_col": t_col,
+		"gender": _sanitize_text(String(d.get("gender", "Male")), 10),
+		"skin_idx": clampi(int(d.get("skin_idx", 1)), 0, 10),
+		"hair_idx": clampi(int(d.get("hair_idx", 0)), 0, 20),
+		"shirt_idx": clampi(int(d.get("shirt_idx", 0)), 0, 20),
+		"trouser_idx": clampi(int(d.get("trouser_idx", 0)), 0, 20),
+		"clout_rank": _sanitize_text(String(d.get("clout_rank", "100L Fresher")), 28),
+		"is_ai": false
 	}
 	current_state = NetState.CONNECTED
 	connection_status_changed.emit(true, "Campus Online (%d Students)" % remote_players.size())
@@ -151,6 +158,8 @@ func _on_js_net_player_remove(args: Array) -> void:
 	var peer_id: int = int(args[0])
 	remote_players.erase(peer_id)
 	player_left.emit(peer_id)
+	if remote_players.is_empty():
+		_activate_cloud_lobby()
 
 
 func _on_js_net_chat(args: Array) -> void:
@@ -277,6 +286,12 @@ func _process(delta: float) -> void:
 			"is_moving": moving and dir.length() > 0.02,
 			"shirt_col": cp["shirt"],
 			"trouser_col": cp["trouser"],
+			"gender": String(cp.get("gender", "Male")),
+			"skin_idx": int(cp.get("skin_idx", 1)),
+			"hair_idx": int(cp.get("hair_idx", 0)),
+			"shirt_idx": int(cp.get("shirt_idx", 0)),
+			"trouser_idx": int(cp.get("trouser_idx", 0)),
+			"clout_rank": String(cp.get("clout_rank", "Coursemate")),
 			"is_ai": true
 		}
 

@@ -336,7 +336,14 @@ func _ready() -> void:
 	if NetworkManager:
 		NetworkManager.broadcast_money_transfer("Femi [CSC]", 1000, "Test CampusPay Transfer")
 		NetworkManager._on_js_net_transfer(["Chidinma [LAW]", 2500, "Test Credit"])
-	print("  -> CampusPay P2P Money Transfer & Returning Cloud Profile Restore OK")
+	var net_p2 = net_p_scene.instantiate()
+	add_child(net_p2)
+	net_p2.apply_full_drip("Female", 2, 4, 2, 1, "Campus Legend")
+	assert(net_p2.visual_root.has_node("FemaleSkirtMesh"), "NetworkPlayer must build FemaleSkirtMesh when apply_full_drip is called")
+	assert(net_p2.name_label.text.contains("LIVE PLAYER"), "NetworkPlayer label must display LIVE PLAYER")
+	net_p2.queue_free()
+	TimeSystem.sync_to_shared_world_clock()
+	print("  -> CampusPay P2P Money Transfer, 3D Multiplayer Drip Sync & Shared World Clock OK")
 
 	print("========================================================")
 	print("   ALL 6 TEST PHASES PASSED WITH ZERO CRASHES OR ERRORS!")

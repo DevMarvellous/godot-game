@@ -71,7 +71,7 @@ func _on_minute_passed() -> void:
 func update_object_display() -> void:
 	match object_type:
 		ObjectType.BED:
-			prompt_message = "[E] Sleep until 07:00 (End Day)"
+			prompt_message = "[E] Power Rest in Bed (Restore 100% Energy)"
 			object_name = "Hostel Bed"
 		ObjectType.DESK:
 			prompt_message = "[E] Study & Lecture Options"
@@ -168,26 +168,33 @@ func interact(player: CharacterBody3D) -> void:
 	match object_type:
 		ObjectType.BED:
 			StudentProfile.load_from_disk()
+			var is_mp_synced: bool = OS.has_feature("web") or (NetworkManager != null and NetworkManager.get_real_player_count() > 0)
 			if player.has_method("play_sleep_animation"):
 				player.play_sleep_animation(self, func():
-					TimeSystem.sleep_until(7)
+					if not is_mp_synced:
+						TimeSystem.sleep_until(7)
+					else:
+						TimeSystem.sync_to_shared_world_clock()
 					needs.energy = needs.max_energy
 					needs.stat_changed.emit(&"energy", needs.energy, needs.max_energy)
 					if StudentProfile.owned_upgrades.has("hostel_fan"):
 						needs.modify_faith(15.0)
-						_show_feedback(player, "Slept with your rechargeable fan on! Deep, cool sleep. Energy 100%, Faith +15!")
+						_show_feedback(player, "Power rested with your rechargeable fan on! Energy 100%, Faith +15!")
 					else:
-						_show_feedback(player, "Woke up at 07:00 AM! Full Energy restored.")
+						_show_feedback(player, "Power rest complete! Energy 100% restored.")
 				)
 			else:
-				TimeSystem.sleep_until(7)
+				if not is_mp_synced:
+					TimeSystem.sleep_until(7)
+				else:
+					TimeSystem.sync_to_shared_world_clock()
 				needs.energy = needs.max_energy
 				needs.stat_changed.emit(&"energy", needs.energy, needs.max_energy)
 				if StudentProfile.owned_upgrades.has("hostel_fan"):
 					needs.modify_faith(15.0)
-					_show_feedback(player, "Slept with your rechargeable fan on! Deep, cool sleep. Energy 100%, Faith +15!")
+					_show_feedback(player, "Power rested with your rechargeable fan on! Energy 100%, Faith +15!")
 				else:
-					_show_feedback(player, "Slept until 07:00! Full Energy restored.")
+					_show_feedback(player, "Power rest complete! Energy 100% restored.")
 
 		ObjectType.DESK:
 			menu_requested.emit(&"study", player)

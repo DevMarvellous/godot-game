@@ -891,7 +891,16 @@ func _process_network_puppets() -> void:
 				add_child(puppet)
 				if puppet.name_label:
 					PropBuilder3D.configure_proximity_label(puppet.name_label, 8.0, 22)
-				if p_data.has("shirt_col"):
+				if puppet.has_method("apply_full_drip") and p_data.has("gender"):
+					puppet.apply_full_drip(
+						String(p_data.get("gender", "Male")),
+						int(p_data.get("skin_idx", 1)),
+						int(p_data.get("hair_idx", 0)),
+						int(p_data.get("shirt_idx", 0)),
+						int(p_data.get("trouser_idx", 0)),
+						String(p_data.get("clout_rank", ""))
+					)
+				elif p_data.has("shirt_col"):
 					puppet.apply_appearance(
 						Color(0.35, 0.22, 0.14),
 						p_data.get("shirt_col", Color(0.2, 0.6, 0.4)),

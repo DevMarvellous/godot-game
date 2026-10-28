@@ -46,7 +46,8 @@ func _ready() -> void:
 
 	# Visual setup with proximity fade so room isn't cluttered from afar
 	if name_label:
-		name_label.text = "%s\n[%s]" % [character_name, character_role]
+		name_label.text = "[NPC] %s\n(%s)" % [character_name, character_role]
+		name_label.modulate = Color(1.0, 0.92, 0.68)
 		PropBuilder3D.configure_proximity_label(name_label, 7.5, 22)
 	apply_character_data()
 
@@ -72,7 +73,8 @@ func _ready() -> void:
 
 func apply_character_data() -> void:
 	if name_label:
-		name_label.text = "%s\n[%s]" % [character_name, character_role]
+		name_label.text = "[NPC] %s\n(%s)" % [character_name, character_role]
+		name_label.modulate = Color(1.0, 0.92, 0.68)
 	if torso_mesh:
 		var mat: StandardMaterial3D = StandardMaterial3D.new()
 		mat.albedo_color = shirt_color

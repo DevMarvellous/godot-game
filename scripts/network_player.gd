@@ -315,3 +315,86 @@ func apply_appearance(skin_col: Color, shirt_col: Color, trouser_col: Color, hai
 	if right_leg:
 		right_leg.set_surface_override_material(0, leg_mat)
 
+
+## Applies full Male/Female 3D silhouette, hairstyle/cap mesh, melanin complexion, and clout title to a multiplayer puppet!
+func apply_full_drip(gender_str: String, skin_idx: int, hair_idx: int, shirt_idx: int, trouser_idx: int, clout_rank: String = "") -> void:
+	const WardrobeStore = preload("res://scripts/data/wardrobe_data.gd")
+	var skin_item: Dictionary = WardrobeStore.COMPLEXIONS[clampi(skin_idx, 0, WardrobeStore.COMPLEXIONS.size() - 1)]
+	var outfit_item: Dictionary = WardrobeStore.OUTFITS[clampi(shirt_idx, 0, WardrobeStore.OUTFITS.size() - 1)]
+	var hair_item: Dictionary = WardrobeStore.HAIRSTYLES[clampi(hair_idx, 0, WardrobeStore.HAIRSTYLES.size() - 1)]
+	var tr_item: Dictionary = CharacterCustomizer.TROUSER_STYLES[clampi(trouser_idx, 0, CharacterCustomizer.TROUSER_STYLES.size() - 1)]
+	var skin_col: Color = skin_item.get("color", Color(0.35, 0.22, 0.14))
+	var shirt_col: Color = outfit_item.get("top_color", Color(0.12, 0.55, 0.32))
+	var trouser_col: Color = tr_item.get("color", outfit_item.get("bottom_color", Color(0.15, 0.22, 0.32)))
+	var hair_col: Color = hair_item.get("default_color", Color(0.08, 0.08, 0.08))
+	apply_appearance(skin_col, shirt_col, trouser_col, hair_col)
+
+	if name_label:
+		var rank_tag: String = (" • " + RoomManager.clean_godot_text(clout_rank)) if clout_rank != "" else ""
+		name_label.text = "%s\n● [LIVE PLAYER%s]" % [student_name, rank_tag]
+		name_label.modulate = Color(0.35, 1.0, 0.68)
+
+	if not visual_root:
+		return
+
+	# Female vs Male 3D Silhouette (Skirt / Bust / Proportions)
+	var is_female: bool = (gender_str.to_lower() == "female")
+	var fem_skirt: MeshInstance3D = visual_root.get_node_or_null("FemaleSkirtMesh") as MeshInstance3D
+	if not fem_skirt:
+		fem_skirt = MeshInstance3D.new()
+		fem_skirt.name = "FemaleSkirtMesh"
+		var cyl := CylinderMesh.new()
+		cyl.top_radius = 0.22
+		cyl.bottom_radius = 0.35
+		cyl.height = 0.44
+		fem_skirt.mesh = cyl
+		fem_skirt.position = Vector3(0, 0.56, 0)
+		visual_root.add_child(fem_skirt)
+	fem_skirt.visible = is_female and (trouser_idx != 0)
+	if fem_skirt.visible:
+		var sk_mat := StandardMaterial3D.new()
+		sk_mat.albedo_color = shirt_col if shirt_idx == 2 else trouser_col
+		sk_mat.roughness = 0.55
+		fem_skirt.material_override = sk_mat
+
+	if torso_mesh:
+		torso_mesh.scale = Vector3(0.86, 0.96, 0.88) if is_female else Vector3(1.0, 1.0, 1.0)
+
+	# 3D Hairstyle / Cap Mesh shape
+	if hair_mesh:
+		var h_mat := StandardMaterial3D.new()
+		h_mat.albedo_color = hair_col
+		h_mat.roughness = 0.8
+		match hair_idx:
+			0:
+				var m0 := BoxMesh.new()
+				m0.size = Vector3(0.37, 0.12, 0.37)
+				hair_mesh.mesh = m0
+				hair_mesh.position = Vector3(0, 1.63, 0)
+			1:
+				var m1 := BoxMesh.new()
+				m1.size = Vector3(0.38, 0.28, 0.38)
+				hair_mesh.mesh = m1
+				hair_mesh.position = Vector3(0, 1.70, 0)
+			2:
+				var m2 := SphereMesh.new()
+				m2.radius = 0.28
+				m2.height = 0.52
+				hair_mesh.mesh = m2
+				hair_mesh.position = Vector3(0, 1.68, 0)
+			3:
+				var m3 := CylinderMesh.new()
+				m3.top_radius = 0.18
+				m3.bottom_radius = 0.21
+				m3.height = 0.22
+				hair_mesh.mesh = m3
+				hair_mesh.position = Vector3(0, 1.70, 0)
+			4, _:
+				var m4 := CylinderMesh.new()
+				m4.top_radius = 0.26
+				m4.bottom_radius = 0.22
+				m4.height = 0.10
+				hair_mesh.mesh = m4
+				hair_mesh.position = Vector3(0.03, 1.66, 0)
+		hair_mesh.set_surface_override_material(0, h_mat)
+

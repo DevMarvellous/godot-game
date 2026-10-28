@@ -22,6 +22,21 @@ var paused: bool = false
 var _accumulator: float = 0.0
 
 
+func _ready() -> void:
+	if OS.has_feature("web"):
+		sync_to_shared_world_clock()
+
+
+## Syncs the campus clock to a deterministic repeating 40-minute cycle based on UTC time
+## so all online players across the world share the exact same Campus Hour, Minute & Day/Night!
+func sync_to_shared_world_clock() -> void:
+	var unix_sec: float = Time.get_unix_time_from_system()
+	var total_game_mins: int = int(floor(unix_sec * game_minutes_per_second))
+	minute_of_day = posmod(total_game_mins, MINUTES_PER_DAY)
+	day = 1 + posmod(int(floor(float(total_game_mins) / float(MINUTES_PER_DAY))), 7)
+	minute_passed.emit()
+
+
 func _process(delta: float) -> void:
 	if paused:
 		return

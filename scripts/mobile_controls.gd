@@ -154,6 +154,11 @@ func _on_interact_pressed() -> void:
 func _toggle_transit_sheet() -> void:
 	if SoundManager:
 		SoundManager.play_click()
+	if OS.has_feature("web"):
+		var win = JavaScriptBridge.get_interface("window")
+		if win and win.openNativeCampusMap:
+			win.openNativeCampusMap()
+		return
 	if transit_sheet:
 		transit_sheet.visible = not transit_sheet.visible
 		if transit_sheet.visible and emote_sheet:
@@ -195,6 +200,16 @@ func _on_js_hud_action(args: Array) -> void:
 	if args.is_empty():
 		return
 	var act: String = str(args[0])
+	if act.begins_with("travel:"):
+		var dest_str: String = act.substr(7)
+		if dest_str != "":
+			_on_transit_dest_pressed(StringName(dest_str))
+		return
+	if act.begins_with("emote:"):
+		var emote_id: String = act.substr(6)
+		if emote_id != "":
+			_on_emote_selected(emote_id)
+		return
 	match act:
 		"emote":
 			_toggle_emote_sheet()
@@ -265,14 +280,14 @@ func _adapt_desktop_vs_mobile_ui() -> void:
 	var vp_size: Vector2 = get_viewport().get_visible_rect().size
 	var is_desktop_landscape: bool = vp_size.x >= 900.0 and vp_size.x > vp_size.y * 1.15
 	if desktop_hint_bar:
-		desktop_hint_bar.visible = is_desktop_landscape
+		desktop_hint_bar.visible = is_desktop_landscape and not OS.has_feature("web")
 	if joystick:
-		joystick.modulate.a = 0.42 if is_desktop_landscape else 0.95
+		joystick.modulate.a = 0.35 if is_desktop_landscape else 0.92
 	var buttons_row: HBoxContainer = get_node_or_null("TouchZone/ButtonsRow") as HBoxContainer
 	if buttons_row:
-		# On narrow portrait screens (< 700px), stack ButtonsRow cleanly below ObjectiveContainer (y=132..168)
-		# On wide screens (>= 700px), place side-by-side at y=92..128
-		if vp_size.x < 700.0:
+		if OS.has_feature("web"):
+			buttons_row.visible = false
+		elif vp_size.x < 700.0:
 			buttons_row.offset_top = 132.0
 			buttons_row.offset_bottom = 168.0
 		else:
@@ -440,6 +455,11 @@ func _create_emote_ui() -> void:
 func _toggle_emote_sheet() -> void:
 	if SoundManager:
 		SoundManager.play_click()
+	if OS.has_feature("web"):
+		var win = JavaScriptBridge.get_interface("window")
+		if win and win.openNativeCampusEmote:
+			win.openNativeCampusEmote()
+		return
 	if emote_sheet:
 		emote_sheet.visible = not emote_sheet.visible
 		if emote_sheet.visible and transit_sheet:

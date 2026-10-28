@@ -757,7 +757,47 @@ func _init_chat_seed_data() -> void:
 
 
 func _render_chat_app() -> void:
-	app_title.text = "💬 CAMPUSCHAT (WHATSAPP)"
+	app_title.text = "💬 CAMPUSCHAT & ONLINE LOBBY"
+
+	# 0. Live Online Friends & 1-Click Room Teleport Card
+	var lobby_card: PanelContainer = _create_card(Color(0.06, 0.16, 0.14, 0.96), Color(0.20, 0.85, 0.55, 0.85), 12)
+	var lobby_vbox: VBoxContainer = VBoxContainer.new()
+	lobby_vbox.add_theme_constants_override("separation", 4)
+	lobby_card.add_child(lobby_vbox)
+
+	var lobby_head: Label = Label.new()
+	var peers: Dictionary = NetworkManager.get_online_players() if NetworkManager else {}
+	lobby_head.text = "● LIVE PLAYERS ON CAMPUS (%d ONLINE):" % maxi(1, peers.size())
+	lobby_head.add_theme_font_size_override("font_size", 11)
+	lobby_head.add_theme_color_override("font_color", Color(0.35, 0.98, 0.65))
+	lobby_vbox.add_child(lobby_head)
+
+	var room_map: Dictionary = {
+		"HostelRoom": &"hostel", "Main": &"courtyard", "Courtyard": &"courtyard",
+		"MamaPutRoom": &"mama_put", "MallRoom": &"bistro", "LectureHallRoom": &"class",
+		"LectureTheatre2Room": &"class2", "LibraryRoom": &"library", "StadiumRoom": &"stadium",
+		"ChapelRoom": &"chapel", "SalonRoom": &"salon", "GardenRoom": &"garden",
+		"SubRoom": &"sub", "SenateRoom": &"senate", "TechHubRoom": &"tech_hub"
+	}
+
+	var shown_cnt: int = 0
+	for pid in peers.keys():
+		if shown_cnt >= 4:
+			break
+		shown_cnt += 1
+		var pinfo: Dictionary = peers[pid]
+		var pname: String = RoomManager.clean_godot_text(String(pinfo.get("name", "Coursemate")))
+		var proom: String = String(pinfo.get("room", "Courtyard"))
+		var target_dest: StringName = room_map.get(proom, &"courtyard")
+		var join_btn: Button = _create_styled_button("● %s — In %s [JOIN ➔]" % [pname, proom], Color(0.10, 0.36, 0.25, 0.95), 30)
+		join_btn.pressed.connect(func():
+			if SoundManager: SoundManager.play_click()
+			close_phone()
+			transit_requested.emit(target_dest)
+		)
+		lobby_vbox.add_child(join_btn)
+
+	dynamic_app_container.add_child(lobby_card)
 
 	# Channel Navigation Tabs
 	var tab_row: HBoxContainer = HBoxContainer.new()
@@ -1732,6 +1772,19 @@ func _render_id_card_app() -> void:
 	v_box.add_child(barcode)
 
 	dynamic_app_container.add_child(id_card)
+
+	var switch_btn: Button = _create_styled_button("Switch Account / Edit Avatar & Dept", Color(0.55, 0.22, 0.16, 0.95), 38)
+	switch_btn.pressed.connect(func():
+		if SoundManager: SoundManager.play_click()
+		close_phone()
+		if OS.has_feature("web"):
+			var win = JavaScriptBridge.get_interface("window")
+			if win and win.switchCampusAccount:
+				win.switchCampusAccount()
+		elif RoomManager:
+			RoomManager.change_room(&"admission")
+	)
+	dynamic_app_container.add_child(switch_btn)
 
 
 # ==============================================================================

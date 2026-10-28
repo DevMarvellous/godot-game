@@ -63,8 +63,13 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_adapt_stage_camera_for_viewport)
 	_adapt_stage_camera_for_viewport()
 
-	# If on Web, notify the HTML shell that Godot engine has loaded and the 3D stage is ready!
+	# If on Web, hide the 3D podium so there is ONLY ONE model (the crisp HTML 2D Studio),
+	# pre-load the Campus Courtyard in the background for instant 0ms entry, and notify HTML shell!
 	if OS.has_feature("web"):
+		if is_instance_valid(stage_podium):
+			stage_podium.visible = false
+		set_process(false)
+		ResourceLoader.load_threaded_request("res://scenes/main.tscn")
 		_notify_web_stage_ready()
 
 

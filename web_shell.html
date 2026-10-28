@@ -149,18 +149,19 @@ html, body, #canvas {
 	user-select: none;
 }
 
-/* 3. Native HTML Mobile Admissions Portal Overlay */
+/* 3. Native HTML Full-Screen Centered Admissions Studio (Strictly ONE Model!) */
 #admissions-overlay {
 	position: fixed;
 	top: 0; left: 0; right: 0; bottom: 0;
 	z-index: 60;
 	display: flex;
 	justify-content: center;
-	align-items: flex-end;
-	background: rgba(0, 0, 0, 0.45);
+	align-items: center;
+	padding: 12px;
+	background: radial-gradient(circle at 50% 20%, #0e3824 0%, #050d09 100%);
 	pointer-events: none;
 	opacity: 0;
-	transition: opacity 0.3s ease;
+	transition: opacity 0.25s ease;
 }
 
 #admissions-overlay.active {
@@ -171,37 +172,14 @@ html, body, #canvas {
 .portal-sheet {
 	width: 100%;
 	max-width: 520px;
-	max-height: 84vh;
-	background: var(--card-bg);
+	max-height: 92vh;
+	background: rgba(11, 22, 16, 0.98);
 	border: 2px solid var(--border-col);
-	border-bottom: none;
-	border-radius: 24px 24px 0 0;
-	box-shadow: 0 -10px 40px rgba(0,0,0,0.85), 0 0 25px rgba(245, 197, 24, 0.15);
-	backdrop-filter: blur(16px);
+	border-radius: 22px;
+	box-shadow: 0 16px 48px rgba(0,0,0,0.88), 0 0 28px rgba(245, 197, 24, 0.16);
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-	animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-	transform: translate3d(0, 0, 0);
-	will-change: transform;
-}
-
-@keyframes slideUp {
-	from { transform: translateY(100%); }
-	to { transform: translateY(0); }
-}
-
-@media (min-width: 769px) {
-	#admissions-overlay {
-		align-items: center;
-		justify-content: flex-end;
-		padding-right: 40px;
-	}
-	.portal-sheet {
-		max-height: 92vh;
-		border-radius: 20px;
-		border-bottom: 2px solid var(--border-col);
-	}
 }
 
 .portal-header {
@@ -611,12 +589,11 @@ html, body, #canvas {
 		<div class="portal-sheet">
 			<div class="portal-header">
 				<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
-					<span id="engine-stream-pill" style="font-size:10px; font-weight:700; color:#fcd34d; background:rgba(0,0,0,0.35); border:1px solid rgba(245,197,24,0.4); border-radius:10px; padding:2px 8px;">⚡ Streaming 3D Engine...</span>
-					<span class="portal-crest" style="margin:0;">🏛️</span>
-					<button type="button" onclick="togglePeekStage()" id="peek-stage-btn" style="font-size:10px; font-weight:700; color:#a3e6be; background:rgba(0,0,0,0.35); border:1px solid rgba(163,230,190,0.4); border-radius:10px; padding:2px 8px; cursor:pointer;">👁️ 3D Stage</button>
+					<span id="engine-stream-pill" style="font-size:10px; font-weight:700; color:#fcd34d; background:rgba(0,0,0,0.35); border:1px solid rgba(245,197,24,0.4); border-radius:10px; padding:2px 8px;">⚡ Ready in Background</span>
+					<span class="portal-crest" style="margin:0;">🏛️ MY CAMPUS LIFE</span>
+					<span style="font-size:10px; font-weight:700; color:#6ee7b7;">🇳🇬 Lagos Campus</span>
 				</div>
-				<h1 class="portal-h1">MY CAMPUS LIFE</h1>
-				<div class="portal-h2">Sign In, Dress Up &amp; Pick Preferred Department</div>
+				<div class="portal-h2" style="margin-top:4px;">Sign In, Dress Your Avatar &amp; Pick Preferred Department</div>
 				<div class="step-bar">
 					<div class="step-chip active" id="chip-step-0" onclick="switchStep(0)">1. Google Sign-In &amp; Identity</div>
 					<div class="step-chip" id="chip-step-1" onclick="switchStep(1)">2. Dress-Up &amp; Department</div>
@@ -624,19 +601,18 @@ html, body, #canvas {
 			</div>
 
 			<div class="portal-body" id="portal-body">
-				<!-- Instant Live Avatar Dressing Display (Always Visible!) -->
-				<div id="live-avatar-stage" style="background: linear-gradient(180deg, rgba(16, 42, 30, 0.95) 0%, rgba(9, 20, 15, 0.98) 100%); border: 1.5px solid rgba(245, 197, 24, 0.45); border-radius: 16px; padding: 10px 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; box-shadow: inset 0 0 24px rgba(0,0,0,0.6);">
-					<div id="avatar-svg-box" style="width: 112px; height: 148px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 65%, rgba(245, 197, 24, 0.18), transparent 70%); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
+				<!-- ONE Clean, Crisp 2D Vector Student Character Studio -->
+				<div id="live-avatar-stage" style="background: linear-gradient(180deg, rgba(16, 42, 30, 0.95) 0%, rgba(9, 20, 15, 0.98) 100%); border: 1.5px solid rgba(245, 197, 24, 0.45); border-radius: 16px; padding: 10px 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 14px; box-shadow: inset 0 0 24px rgba(0,0,0,0.6);">
+					<div id="avatar-svg-box" style="width: 118px; height: 152px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 65%, rgba(245, 197, 24, 0.18), transparent 70%); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
 						<!-- Populated dynamically by renderLiveAvatarSVG() -->
 					</div>
 					<div style="flex: 1; min-width: 0;">
-						<div style="font-size: 11px; color: #34d399; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase;">✨ LIVE STUDENT MODEL</div>
+						<div style="font-size: 11px; color: #34d399; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase;">✨ STUDENT AVATAR PREVIEW</div>
 						<div id="avatar-summary-name" style="font-size: 15px; font-weight: 800; color: #f8fafc; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Tunde Adeleke (@tunde)</div>
 						<div id="avatar-summary-drip" style="font-size: 12px; color: #fcd34d; font-weight: 700; margin-top: 3px;">👨 Male • Casual Campus Fit</div>
 						<div id="avatar-summary-sub" style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Fresh Fade • Warm Chestnut • Dark Chinos</div>
 						<div style="display: flex; gap: 6px; margin-top: 8px;">
-							<button type="button" class="chip-btn" style="padding: 4px 10px; font-size: 11px;" onclick="randomizeDrip()">🎲 Random Drip</button>
-							<button type="button" class="chip-btn" style="padding: 4px 10px; font-size: 11px;" onclick="switchStep(ADMISSION_STATE.step === 1 ? 0 : 1)" id="quick-drip-toggle-btn">👕 Dress &amp; Dept</button>
+							<button type="button" class="chip-btn" style="padding: 5px 12px; font-size: 11px;" onclick="randomizeDrip()">🎲 Randomize Outfit &amp; Hair</button>
 						</div>
 					</div>
 				</div>
@@ -757,14 +733,104 @@ html, body, #canvas {
 		<div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap;">
 			<div style="display: flex; align-items: center; gap: 5px; pointer-events: auto; max-width: 100%;">
 				<button type="button" id="html-hud-mission-btn" onclick="triggerGodotHudAction('objective')" style="background: rgba(10, 22, 32, 0.92); color: #fcd34d; border: 1.5px solid #f5c518; border-radius: 10px; padding: 6px 10px; font-size: 12px; font-weight: 700; cursor: pointer; max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">🎯 Explore Campus [GO ➔]</button>
-				<button type="button" onclick="triggerGodotHudAction('tasks')" style="background: rgba(14, 28, 40, 0.92); color: #34d399; border: 1.5px solid #34d399; border-radius: 10px; padding: 6px 10px; font-size: 12px; font-weight: 700; cursor: pointer;">📋 Tasks</button>
+				<button type="button" onclick="openNativeCampusTasks()" style="background: rgba(14, 28, 40, 0.92); color: #34d399; border: 1.5px solid #34d399; border-radius: 10px; padding: 6px 10px; font-size: 12px; font-weight: 700; cursor: pointer;">📋 Tasks</button>
 			</div>
 			<div style="display: flex; align-items: center; gap: 5px; pointer-events: auto; flex-wrap: wrap;">
-				<button type="button" onclick="triggerGodotHudAction('emote')" style="background: rgba(15, 23, 42, 0.92); color: #fcd34d; border: 1.5px solid rgba(245, 197, 24, 0.75); border-radius: 10px; padding: 6px 9px; font-size: 12px; font-weight: 700; cursor: pointer;">💃 Emote</button>
-				<button type="button" onclick="triggerGodotHudAction('chat')" style="background: rgba(15, 23, 42, 0.92); color: #f8fafc; border: 1.5px solid rgba(148, 163, 184, 0.6); border-radius: 10px; padding: 6px 9px; font-size: 12px; font-weight: 700; cursor: pointer;">💬 Chat</button>
+				<button type="button" onclick="openNativeCampusEmote()" style="background: rgba(15, 23, 42, 0.92); color: #fcd34d; border: 1.5px solid rgba(245, 197, 24, 0.75); border-radius: 10px; padding: 6px 9px; font-size: 12px; font-weight: 700; cursor: pointer;">💃 Emote</button>
+				<button type="button" onclick="openNativeCampusChat()" style="background: rgba(15, 23, 42, 0.92); color: #f8fafc; border: 1.5px solid rgba(148, 163, 184, 0.6); border-radius: 10px; padding: 6px 9px; font-size: 12px; font-weight: 700; cursor: pointer;">💬 Chat</button>
 				<button type="button" onclick="triggerGodotHudAction('phone')" style="background: rgba(15, 23, 42, 0.92); color: #38bdf8; border: 1.5px solid rgba(56, 189, 248, 0.75); border-radius: 10px; padding: 6px 9px; font-size: 12px; font-weight: 700; cursor: pointer;">📱 Phone</button>
-				<button type="button" onclick="triggerGodotHudAction('map')" style="background: rgba(15, 23, 42, 0.92); color: #34d399; border: 1.5px solid rgba(52, 211, 153, 0.75); border-radius: 10px; padding: 6px 9px; font-size: 12px; font-weight: 700; cursor: pointer;">🚌 Map</button>
+				<button type="button" onclick="openNativeCampusMap()" style="background: rgba(15, 23, 42, 0.92); color: #34d399; border: 1.5px solid rgba(52, 211, 153, 0.75); border-radius: 10px; padding: 6px 9px; font-size: 12px; font-weight: 700; cursor: pointer;">🚌 Map</button>
 				<button type="button" id="html-hud-view-btn" onclick="triggerGodotHudAction('view')" style="background: rgba(15, 23, 42, 0.92); color: #e2e8f0; border: 1.5px solid rgba(148, 163, 184, 0.6); border-radius: 10px; padding: 6px 9px; font-size: 12px; font-weight: 700; cursor: pointer;">🎥 Top View</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- 2C. Native HTML Campus Map & Fast-Travel Modal (100% Crisp HTML!) -->
+	<div id="native-map-overlay" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:75; background:rgba(0,0,0,0.68); display:none; align-items:center; justify-content:center; padding:14px; backdrop-filter:blur(6px);" onclick="if(event.target===this)this.style.display='none'">
+		<div style="background:rgba(10,20,16,0.98); border:2px solid #34d399; border-radius:18px; width:100%; max-width:460px; max-height:86vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 16px 48px rgba(0,0,0,0.9);">
+			<div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid rgba(52,211,153,0.3); background:rgba(16,42,30,0.95);">
+				<div>
+					<strong style="color:#34d399; font-size:15px;">🚌 CAMPUS DANFO &amp; KEKE PARK</strong>
+					<div style="font-size:11px; color:#cbd5e1;">Tap any building to fast-travel immediately</div>
+				</div>
+				<button type="button" onclick="document.getElementById('native-map-overlay').style.display='none'" style="background:transparent; border:none; color:#cbd5e1; font-size:20px; cursor:pointer;">✕</button>
+			</div>
+			<div style="padding:12px 16px; overflow-y:auto; display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('courtyard')">🏛️ Central Courtyard</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('hostel')">🛏️ Hostel Room 112</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('class')">📚 Faculty Hall LT1</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('class2')">📐 Sciences Hall LT2</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('mama_put')">🍲 Mama Put Buka</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('library')">📖 Central Library</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('bistro')">🛍️ Campus Mall</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('sub')">🎱 SUB Arcade &amp; Snooker</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('stadium')">⚽ Football Stadium</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('tech_hub')">💻 Tech Hub &amp; Clinic</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('salon')">💈 Barbing Salon</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('chapel')">⛪ Fellowship Chapel</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('garden')">🌳 Love Garden</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('senate')">📜 Senate Building</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('gate')">🚕 Main Campus Gate</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlMapDest('atm')">💳 Campus ATM</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- 2D. Native HTML Emote Picker Modal (100% Crisp HTML!) -->
+	<div id="native-emote-overlay" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:75; background:rgba(0,0,0,0.68); display:none; align-items:center; justify-content:center; padding:14px; backdrop-filter:blur(6px);" onclick="if(event.target===this)this.style.display='none'">
+		<div style="background:rgba(12,18,28,0.98); border:2px solid #f5c518; border-radius:18px; width:100%; max-width:400px; padding:16px; box-shadow:0 16px 48px rgba(0,0,0,0.9);">
+			<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+				<strong style="color:#f5c518; font-size:15px;">💃 CAMPUS EMOTES &amp; VIBES</strong>
+				<button type="button" onclick="document.getElementById('native-emote-overlay').style.display='none'" style="background:transparent; border:none; color:#cbd5e1; font-size:20px; cursor:pointer;">✕</button>
+			</div>
+			<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('shaku')">💃 Legwork / Shaku</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('zanku')">🔥 Zanku / Gbese!</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('wave')">👋 Wave Coursemate</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('selfie')">🤳 Drip Check / Pose</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('sit')">🪑 Sit &amp; Rest (+Energy)</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('study')">📚 Focused Study</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('celebrate')">🎉 Victory Cheer</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('pray')">🙏 Faith &amp; Prayer</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- 2E. Native HTML Semester Missions & Story Modal (100% Crisp HTML!) -->
+	<div id="native-tasks-overlay" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:75; background:rgba(0,0,0,0.68); display:none; align-items:center; justify-content:center; padding:14px; backdrop-filter:blur(6px);" onclick="if(event.target===this)this.style.display='none'">
+		<div style="background:rgba(10,18,28,0.98); border:2px solid #f5c518; border-radius:18px; width:100%; max-width:460px; max-height:85vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 16px 48px rgba(0,0,0,0.9);">
+			<div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid rgba(245,197,24,0.3);">
+				<strong style="color:#f5c518; font-size:15px;">📋 CAMPUS MISSIONS &amp; ACTIVITIES</strong>
+				<button type="button" onclick="document.getElementById('native-tasks-overlay').style.display='none'" style="background:transparent; border:none; color:#cbd5e1; font-size:20px; cursor:pointer;">✕</button>
+			</div>
+			<div style="padding:14px 16px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;">
+				<div style="background:rgba(16,42,30,0.9); border:1px solid #34d399; border-radius:10px; padding:10px 12px; font-size:12px; color:#ecfdf5;">
+					<strong style="color:#fcd34d;">🎓 Semester Goal:</strong> Attend lectures, hustle gigs, confirm your department at the Senate Building, and stack ₦25,000+ with 4.50+ CGPA!
+				</div>
+				<button type="button" class="drip-card" onclick="selectHtmlMapDest('senate')">
+					<div class="drip-info"><span class="drip-name">🏛️ Confirm Department at Senate</span><span class="drip-desc">Pass Departmental Screening for +₦5,000 Merit Grant</span></div>
+					<span style="color:#34d399; font-weight:800; font-size:12px;">GO ➔</span>
+				</button>
+				<button type="button" class="drip-card" onclick="selectHtmlMapDest('class')">
+					<div class="drip-info"><span class="drip-name">📚 Attend Lecture at LT1 / Study</span><span class="drip-desc">Boost your CGPA toward First Class Honours</span></div>
+					<span style="color:#34d399; font-weight:800; font-size:12px;">GO ➔</span>
+				</button>
+				<button type="button" class="drip-card" onclick="selectHtmlMapDest('mama_put')">
+					<div class="drip-info"><span class="drip-name">🍲 Eat Hot Jollof at Mama Put</span><span class="drip-desc">Refill Hunger &amp; Energy with firewood Jollof &amp; Dodo</span></div>
+					<span style="color:#34d399; font-weight:800; font-size:12px;">GO ➔</span>
+				</button>
+				<button type="button" class="drip-card" onclick="selectHtmlMapDest('tech_hub')">
+					<div class="drip-info"><span class="drip-name">💻 Silicon Lagoon Hackathon &amp; Clinic</span><span class="drip-desc">Win +₦4,500 at the Tech Hub or heal at Nurse Amaka's Clinic</span></div>
+					<span style="color:#34d399; font-weight:800; font-size:12px;">GO ➔</span>
+				</button>
+				<button type="button" class="drip-card" onclick="selectHtmlMapDest('sub')">
+					<div class="drip-info"><span class="drip-name">🎱 Play 9-Ball Snooker at SUB Arcade</span><span class="drip-desc">Challenge coursemates &amp; win cash pots</span></div>
+					<span style="color:#34d399; font-weight:800; font-size:12px;">GO ➔</span>
+				</button>
+				<button type="button" class="drip-card" onclick="selectHtmlMapDest('bistro')">
+					<div class="drip-info"><span class="drip-name">🛍️ Upgrade Drip &amp; Hostel at Campus Mall</span><span class="drip-desc">Buy Senator Native, Agbada, Laptop &amp; Generator</span></div>
+					<span style="color:#34d399; font-weight:800; font-size:12px;">GO ➔</span>
+				</button>
 			</div>
 		</div>
 	</div>
@@ -806,7 +872,7 @@ html, body, #canvas {
 		</div>
 	</div>
 
-	<button id="web-cloud-db-btn" onclick="openCloudDbModal()" style="position:fixed; top:10px; right:118px; z-index:45; background:rgba(12, 24, 18, 0.85); color:#34d399; border:1px solid rgba(52, 211, 153, 0.55); border-radius:8px; padding:6px 10px; font-size:11px; font-weight:700; cursor:pointer; backdrop-filter:blur(4px);">☁️ Cloud DB</button>
+	<button id="web-cloud-db-btn" onclick="openCloudDbModal()" style="display:none; position:fixed; top:10px; right:118px; z-index:45; background:rgba(12, 24, 18, 0.85); color:#34d399; border:1px solid rgba(52, 211, 153, 0.55); border-radius:8px; padding:6px 10px; font-size:11px; font-weight:700; cursor:pointer; backdrop-filter:blur(4px);">☁️ Cloud DB</button>
 	<button id="web-fullscreen-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
 
 	<script src="$GODOT_URL"></script>
@@ -1828,6 +1894,20 @@ window.triggerGodotHudAction = function(actionName) {
 	if (c && actionName !== 'chat') c.focus();
 };
 
+window.switchCampusAccount = function() {
+	_hasSubmittedAdmission = false;
+	const htmlHud = document.getElementById('campus-html-hud');
+	if (htmlHud) htmlHud.style.display = 'none';
+	const cloudBtn = document.getElementById('web-cloud-db-btn');
+	if (cloudBtn) cloudBtn.style.display = 'block';
+	const overlay = document.getElementById('admissions-overlay');
+	if (overlay) {
+		overlay.style.display = 'flex';
+		overlay.classList.add('active');
+	}
+	switchStep(0);
+};
+
 // Initialize the portal & live SVG mannequin immediately on DOM ready (0ms perceived load time!)
 setTimeout(() => {
 	checkSavedStudentBanner();
@@ -1866,6 +1946,34 @@ window.submitNativeCampusChat = function() {
 	if (msg && window.godotSendLocalChat) {
 		window.godotSendLocalChat(msg);
 	}
+};
+
+/* =======================================================
+   NATIVE HTML MAP, EMOTE, AND TASKS MODALS (CRISP 100% HTML)
+   ======================================================= */
+window.openNativeCampusMap = function() {
+	const m = document.getElementById('native-map-overlay');
+	if (m) m.style.display = 'flex';
+};
+window.selectHtmlMapDest = function(dest) {
+	const m = document.getElementById('native-map-overlay');
+	if (m) m.style.display = 'none';
+	const t = document.getElementById('native-tasks-overlay');
+	if (t) t.style.display = 'none';
+	window.triggerGodotHudAction('travel:' + dest);
+};
+window.openNativeCampusEmote = function() {
+	const m = document.getElementById('native-emote-overlay');
+	if (m) m.style.display = 'flex';
+};
+window.selectHtmlEmote = function(emoteId) {
+	const m = document.getElementById('native-emote-overlay');
+	if (m) m.style.display = 'none';
+	window.triggerGodotHudAction('emote:' + emoteId);
+};
+window.openNativeCampusTasks = function() {
+	const m = document.getElementById('native-tasks-overlay');
+	if (m) m.style.display = 'flex';
 };
 
 /* =======================================================
@@ -2030,7 +2138,13 @@ function handleIncomingRealtimePacket(pkt) {
 			rot_y: pkt.rot_y || 0,
 			moving: !!pkt.moving,
 			shirt_col: pkt.shirt_col || '#1e824c',
-			trouser_col: pkt.trouser_col || '#273746'
+			trouser_col: pkt.trouser_col || '#273746',
+			gender: pkt.gender || 'Male',
+			skin_idx: pkt.skin_idx ?? 1,
+			hair_idx: pkt.hair_idx ?? 0,
+			shirt_idx: pkt.shirt_idx ?? 0,
+			trouser_idx: pkt.trouser_idx ?? 0,
+			clout_rank: pkt.clout_rank || '100L Fresher'
 		}));
 	} else if (pkt.event === 'chat' && window.godotReceiveNetChat) {
 		window.godotReceiveNetChat(pkt.sender || 'Coursemate', pkt.message || '', pid);
@@ -2064,6 +2178,18 @@ window.supabaseRealtimeBroadcast = function(payload) {
 	const trouser = TROUSERS[ADMISSION_STATE.trouserIdx] || TROUSERS[0];
 	payload.shirt_col = outfit.top;
 	payload.trouser_col = trouser.color;
+	payload.gender = ADMISSION_STATE.gender || 'Male';
+	payload.skin_idx = ADMISSION_STATE.skinIdx ?? 1;
+	payload.hair_idx = ADMISSION_STATE.hairIdx ?? 0;
+	payload.shirt_idx = ADMISSION_STATE.shirtIdx ?? 0;
+	payload.trouser_idx = ADMISSION_STATE.trouserIdx ?? 0;
+	const wBal = ADMISSION_STATE.walletBalance || 5000;
+	const cVal = ADMISSION_STATE.cgpa || 3.5;
+	payload.clout_rank = (wBal >= 25000 && cVal >= 4.5) ? 'Campus Legend'
+		: (wBal >= 15000) ? 'Campus Big Boy'
+		: (cVal >= 4.5) ? 'First Class Scholar'
+		: (cVal >= 3.8) ? 'Deans List'
+		: '100L Fresher';
 
 	if (campusBroadcastChannel) {
 		try { campusBroadcastChannel.postMessage(payload); } catch (e) {}
