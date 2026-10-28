@@ -12,8 +12,8 @@ signal slept(hours_slept: int)
 const MINUTES_PER_DAY: int = 1440
 const WEEKDAY_NAMES: PackedStringArray = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
-## 2.0 means a full 24-hour day takes 12 real minutes.
-@export var game_minutes_per_second: float = 2.0
+## 0.6 means passive time ticks gently while actions (lectures, gigs, shuttles, sleep) advance the clock intentionally.
+@export var game_minutes_per_second: float = 0.6
 
 var day: int = 1
 var minute_of_day: int = 7 * 60 # Game starts at 07:00 on Day 1 (Monday)

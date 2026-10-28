@@ -19,10 +19,10 @@ var faith: float = 70.0
 var cgpa: float = 3.50
 var money: int = 5000 # Starting allowance in Naira (₦)
 
-# Decay per in-game minute. 16 waking hours ≈ -48 energy, -77 hunger.
-@export var energy_decay_per_minute: float = 0.05
-@export var hunger_decay_per_minute: float = 0.08
-@export var faith_decay_per_minute: float = 0.01
+# Gentle passive decay per in-game minute (Lagos Life style pacing).
+@export var energy_decay_per_minute: float = 0.025
+@export var hunger_decay_per_minute: float = 0.035
+@export var faith_decay_per_minute: float = 0.008
 
 var is_handling_passout: bool = false
 
@@ -79,8 +79,6 @@ func _trigger_passout(reason: String) -> void:
 	var player: Node = get_parent()
 	if player and player.is_inside_tree() and player.has_method("display_notification"):
 		player.display_notification(reason)
-
-	player_passed_out.emit(reason)
 
 
 func emit_all_stats() -> void:

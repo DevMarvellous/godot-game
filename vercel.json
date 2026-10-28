@@ -2,7 +2,7 @@
   "version": 2,
   "name": "my-campus-life",
   "public": true,
-  "buildCommand": null,
+  "buildCommand": "node -e \"const fs=require('fs'); const u=process.env.SUPABASE_URL||process.env.NEXT_PUBLIC_SUPABASE_URL||''; const k=process.env.SUPABASE_ANON_KEY||process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY||''; if(u&&k){fs.writeFileSync('docs/cloud_config.js','window.MY_CAMPUS_CLOUD_CONFIG='+JSON.stringify({SUPABASE_URL:u,SUPABASE_ANON_KEY:k})+';\\n'); console.log('Injected Vercel Environment Variables into docs/cloud_config.js');}\"",
   "outputDirectory": "docs",
   "headers": [
     {

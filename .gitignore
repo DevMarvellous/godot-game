@@ -2,3 +2,8 @@
 .godot/
 /android/
 builds/
+
+# Environment variables & secret keys (NEVER commit to GitHub)
+.env
+.env.local
+.env.*

@@ -22,6 +22,7 @@ var emote_btn: Button = null
 var emote_sheet: PanelContainer = null
 var desktop_hint_bar: PanelContainer = null
 var bound_player: Player3D = null
+var _js_cb_hud_action: Variant = null
 
 
 func _ready() -> void:
@@ -42,6 +43,14 @@ func _ready() -> void:
 		transit_sheet.visible = false
 	_create_emote_ui()
 	_create_desktop_ui_bar()
+	if OS.has_feature("web"):
+		var buttons_row: HBoxContainer = get_node_or_null("TouchZone/ButtonsRow") as HBoxContainer
+		if buttons_row:
+			buttons_row.visible = false
+		var win = JavaScriptBridge.get_interface("window")
+		if win:
+			_js_cb_hud_action = JavaScriptBridge.create_callback(_on_js_hud_action)
+			win.godotOnHtmlHudAction = _js_cb_hud_action
 	get_viewport().size_changed.connect(_adapt_desktop_vs_mobile_ui)
 	_adapt_desktop_vs_mobile_ui()
 
@@ -176,6 +185,35 @@ func _on_zoom_pressed() -> void:
 		var label: String = bound_player.cycle_camera_zoom()
 		if zoom_btn:
 			zoom_btn.text = "▲ %s" % label
+		if OS.has_feature("web"):
+			var win = JavaScriptBridge.get_interface("window")
+			if win:
+				win.updateCampusHtmlHud(JSON.stringify({"view_label": "🎥 %s" % label}))
+
+
+func _on_js_hud_action(args: Array) -> void:
+	if args.is_empty():
+		return
+	var act: String = str(args[0])
+	match act:
+		"emote":
+			_toggle_emote_sheet()
+		"chat":
+			_on_chat_pressed()
+		"phone":
+			_on_phone_pressed()
+		"map":
+			_toggle_transit_sheet()
+		"view":
+			_on_zoom_pressed()
+		"tasks":
+			var hud_node: HUD = get_parent().get_node_or_null("HUD") as HUD if get_parent() else null
+			if hud_node:
+				hud_node.trigger_tasks_sheet()
+		"objective":
+			var hud_node2: HUD = get_parent().get_node_or_null("HUD") as HUD if get_parent() else null
+			if hud_node2:
+				hud_node2.trigger_objective_click()
 
 
 func _create_desktop_ui_bar() -> void:
@@ -213,7 +251,7 @@ func _create_desktop_ui_bar() -> void:
 	desktop_hint_bar.add_theme_stylebox_override(&"panel", bar_style)
 
 	var hint_lbl := Label.new()
-	hint_lbl.text = "⌨️ [WASD / Click] Move  •  [E] Interact  •  [V / Scroll] 3D Perspective  •  [P] Phone  •  [C] Chat  •  [M] Map  •  [G] Emote"
+	hint_lbl.text = "[WASD / Click] Move  •  [E] Interact  •  [V / Scroll] 3D Perspective  •  [P] Phone  •  [C] Chat  •  [M] Map  •  [G] Emote"
 	hint_lbl.add_theme_font_size_override(&"font_size", 11)
 	hint_lbl.add_theme_color_override(&"font_color", Color(0.88, 0.94, 1.0, 0.92))
 	hint_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -324,7 +362,7 @@ func _create_emote_ui() -> void:
 	emote_sheet.add_child(vbox)
 
 	var title_lbl := Label.new()
-	title_lbl.text = "💃 CAMPUS EMOTES & VIBES"
+	title_lbl.text = "★ CAMPUS EMOTES & VIBES"
 	title_lbl.add_theme_font_size_override(&"font_size", 16)
 	title_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.25))
 	title_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -344,15 +382,15 @@ func _create_emote_ui() -> void:
 	vbox.add_child(grid)
 
 	var emote_options: Array[Dictionary] = [
-		{"id": "shaku", "label": "💃 Legwork / Shaku", "color": Color(0.95, 0.65, 0.15)},
-		{"id": "zanku", "label": "🔥 Zanku / Gbese!", "color": Color(1.0, 0.35, 0.25)},
-		{"id": "wave", "label": "👋 Wave Coursemate", "color": Color(0.3, 0.75, 1.0)},
-		{"id": "selfie", "label": "🤳 Drip Check / Pose", "color": Color(0.95, 0.45, 0.85)},
-		{"id": "sit", "label": "🪑 Sit & Rest (+Energy)", "color": Color(0.4, 0.85, 0.5)},
-		{"id": "study", "label": "📚 Focused Study", "color": Color(0.65, 0.55, 1.0)},
-		{"id": "celebrate", "label": "🎉 Victory Cheer", "color": Color(1.0, 0.45, 0.65)},
-		{"id": "eat", "label": "🍲 Quick Snack", "color": Color(0.9, 0.75, 0.3)},
-		{"id": "pray", "label": "🙏 Faith & Prayer", "color": Color(0.85, 0.9, 1.0)}
+		{"id": "shaku", "label": "★ Legwork / Shaku", "color": Color(0.95, 0.65, 0.15)},
+		{"id": "zanku", "label": "★ Zanku / Gbese!", "color": Color(1.0, 0.35, 0.25)},
+		{"id": "wave", "label": "● Wave Coursemate", "color": Color(0.3, 0.75, 1.0)},
+		{"id": "selfie", "label": "◆ Drip Check / Pose", "color": Color(0.95, 0.45, 0.85)},
+		{"id": "sit", "label": "■ Sit & Rest (+Energy)", "color": Color(0.4, 0.85, 0.5)},
+		{"id": "study", "label": "■ Focused Study", "color": Color(0.65, 0.55, 1.0)},
+		{"id": "celebrate", "label": "★ Victory Cheer", "color": Color(1.0, 0.45, 0.65)},
+		{"id": "eat", "label": "● Quick Snack", "color": Color(0.9, 0.75, 0.3)},
+		{"id": "pray", "label": "✦ Faith & Prayer", "color": Color(0.85, 0.9, 1.0)}
 	]
 
 	for opt in emote_options:

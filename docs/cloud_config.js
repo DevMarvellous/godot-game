@@ -1,12 +1,15 @@
 /**
  * MY CAMPUS LIFE - CLOUD DATABASE CONFIGURATION
  * ---------------------------------------------
- * Paste your free Supabase Project URL and Anon Public Key below
- * (or enter them anytime in the in-game "☁️ Cloud DB" button).
- * No Godot rebuild required!
+ * SECURITY BEST PRACTICE:
+ * Do NOT paste keys into this git-tracked file!
+ * Instead, add SUPABASE_URL and SUPABASE_ANON_KEY in:
+ *   Vercel Dashboard -> Project Settings -> Environment Variables
+ * Vercel's buildCommand (in vercel.json) automatically injects them at deploy time!
  */
 window.MY_CAMPUS_CLOUD_CONFIG = {
-  SUPABASE_URL: "",      // e.g. "https://abcdefghijklm.supabase.co"
-  SUPABASE_ANON_KEY: ""  // e.g. "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  SUPABASE_URL: "",
+  SUPABASE_ANON_KEY: ""
 };
+
 

@@ -25,6 +25,7 @@ var tasks_sheet: PanelContainer = null
 var clout_status_btn: Button = null
 var _cached_energy: float = 100.0
 var _cached_hunger: float = 100.0
+var _cached_faith: float = 100.0
 var _cached_money: int = 5000
 var _cached_cgpa: float = 3.5
 var _current_obj_dest: StringName = &"class"
@@ -33,12 +34,29 @@ var _current_obj_dest: StringName = &"class"
 func _ready() -> void:
 	TimeSystem.minute_passed.connect(_update_time_display)
 	_create_objective_pill_ui()
+	if OS.has_feature("web"):
+		var top_panel: Control = get_node_or_null("TopPanel") as Control
+		if top_panel:
+			top_panel.visible = false
+		var obj_cont: Control = get_node_or_null("ObjectiveContainer") as Control
+		if obj_cont:
+			obj_cont.visible = false
 	_update_time_display()
 	_create_event_toast_ui()
 
 	if CampusEvents:
 		if not CampusEvents.event_triggered.is_connected(_on_campus_event_triggered):
 			CampusEvents.event_triggered.connect(_on_campus_event_triggered)
+
+
+func trigger_tasks_sheet() -> void:
+	_toggle_tasks_sheet()
+
+
+func trigger_objective_click() -> void:
+	if SoundManager:
+		SoundManager.play_click()
+	objective_clicked.emit(_current_obj_dest)
 
 
 func _create_objective_pill_ui() -> void:
@@ -413,7 +431,8 @@ func _refresh_objective_pill() -> void:
 	if not objective_btn:
 		return
 	var info: Dictionary = PropBuilder3D.get_smart_objective(_cached_energy, _cached_hunger, _cached_money, _cached_cgpa)
-	objective_btn.text = "%s  [TAP]" % String(info.get("text", "🎯 Explore Campus"))
+	var mission_str: String = String(info.get("text", "🎯 Explore Campus"))
+	objective_btn.text = "%s  [TAP]" % mission_str
 	objective_btn.add_theme_color_override(&"font_color", info.get("color", Color.WHITE))
 	_current_obj_dest = info.get("dest", &"sub")
 	if clout_status_btn:
@@ -424,6 +443,26 @@ func _refresh_objective_pill() -> void:
 		clout_status_btn.add_theme_color_override(&"font_color", Color(0.85, 0.96, 0.90))
 	if tasks_sheet and tasks_sheet.visible:
 		_populate_tasks_sheet()
+	_sync_web_html_hud(mission_str)
+
+
+func _sync_web_html_hud(mission_str: String = "") -> void:
+	if not OS.has_feature("web"):
+		return
+	var win = JavaScriptBridge.get_interface("window")
+	if not win:
+		return
+	var payload := {
+		"time": "%s • %s" % [TimeSystem.get_time_string(), TimeSystem.get_day_string()],
+		"schedule": Schedule.get_next_event_text(),
+		"wallet": "₦%s" % _format_number(_cached_money),
+		"cgpa": "CGPA %.2f" % _cached_cgpa,
+		"energy": _cached_energy,
+		"hunger": _cached_hunger,
+		"faith": _cached_faith,
+		"mission": "%s [TAP]" % (mission_str if mission_str != "" else "🎯 Explore Campus")
+	}
+	win.updateCampusHtmlHud(JSON.stringify(payload))
 
 
 func _create_event_toast_ui() -> void:
@@ -495,8 +534,8 @@ func show_event_banner(title: String, description: String) -> void:
 	if not toast_panel or not toast_title or not toast_desc:
 		return
 
-	toast_title.text = title
-	toast_desc.text = description
+	toast_title.text = RoomManager.clean_godot_text(title)
+	toast_desc.text = RoomManager.clean_godot_text(description)
 
 	if toast_tween and toast_tween.is_valid():
 		toast_tween.kill()
@@ -555,6 +594,7 @@ func _on_stat_changed(stat_name: StringName, current_value: float, max_value: fl
 				hunger_bar.max_value = max_value
 				hunger_bar.value = current_value
 		&"faith":
+			_cached_faith = current_value
 			if faith_bar:
 				faith_bar.max_value = max_value
 				faith_bar.value = current_value
