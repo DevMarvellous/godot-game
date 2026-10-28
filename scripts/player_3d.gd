@@ -270,11 +270,15 @@ func _create_clout_badge() -> void:
 		return
 	clout_badge_label = Label3D.new()
 	clout_badge_label.name = "CloutBadgeLabel"
-	clout_badge_label.position = Vector3(0, 1.98, 0)
+	clout_badge_label.position = Vector3(0, 2.18, 0)
 	clout_badge_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	clout_badge_label.font_size = 34
-	clout_badge_label.outline_size = 8
-	clout_badge_label.modulate = Color(1.0, 0.90, 0.45, 0.95)
+	clout_badge_label.pixel_size = 0.0022
+	clout_badge_label.font_size = 18
+	clout_badge_label.outline_size = 3
+	clout_badge_label.modulate = Color(1.0, 0.92, 0.60, 0.85)
+	# On Web, player identity is displayed cleanly in the native HTML HUD bar
+	if OS.has_feature("web"):
+		clout_badge_label.visible = false
 	add_child(clout_badge_label)
 
 

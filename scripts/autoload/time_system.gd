@@ -19,6 +19,11 @@ var day: int = 1
 var minute_of_day: int = 7 * 60 # Game starts at 07:00 on Day 1 (Monday)
 var paused: bool = false
 
+var current_day: int:
+	get: return day
+var current_hour: int:
+	get: return get_hour()
+
 var _accumulator: float = 0.0
 
 
@@ -113,3 +118,10 @@ func get_time_string() -> String:
 
 func get_day_string() -> String:
 	return "Day %d (%s)" % [day, WEEKDAY_NAMES[get_weekday_index()]]
+
+
+func get_weekday_name() -> String:
+	var idx: int = get_weekday_index()
+	if idx >= 0 and idx < WEEKDAY_NAMES.size():
+		return WEEKDAY_NAMES[idx]
+	return "Mon"

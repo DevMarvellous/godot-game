@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#14532d" />
+      <stop offset="55%" stop-color="#064e3b" />
+      <stop offset="100%" stop-color="#022c22" />
+    </radialGradient>
+    <linearGradient id="goldRim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="35%" stop-color="#eab308" />
+      <stop offset="70%" stop-color="#ca8a04" />
+      <stop offset="100%" stop-color="#854d0e" />
+    </linearGradient>
+    <linearGradient id="metallicGold" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="25%" stop-color="#fde047" />
+      <stop offset="50%" stop-color="#eab308" />
+      <stop offset="85%" stop-color="#ca8a04" />
+      <stop offset="100%" stop-color="#713f12" />
+    </linearGradient>
+    <linearGradient id="capTopGrad" x1="10%" y1="20%" x2="90%" y2="80%">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="50%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="capUnderGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#000000" flood-opacity="0.65" />
+    </filter>
+    <filter id="goldGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Squircle Base Frame -->
+  <rect x="16" y="16" width="480" height="480" rx="108" fill="url(#bgGlow)" stroke="url(#goldRim)" stroke-width="8" filter="url(#softShadow)" />
+  <rect x="28" y="28" width="456" height="456" rx="96" fill="none" stroke="rgba(254, 240, 138, 0.18)" stroke-width="2" />
+
+  <!-- Academic Gold Laurel Leaves -->
+  <g fill="url(#metallicGold)" opacity="0.9">
+    <path d="M110 330 C110 375, 135 425, 205 445 C190 425, 185 395, 195 370 C170 385, 135 380, 122 355 Z" />
+    <path d="M95 275 C90 310, 108 345, 145 365 C138 345, 138 320, 150 300 C125 315, 108 300, 102 285 Z" />
+    <path d="M102 215 C95 245, 108 275, 138 290 C138 270, 145 250, 158 238 C132 245, 115 230, 108 220 Z" />
+
+    <path d="M402 330 C402 375, 377 425, 307 445 C322 425, 327 395, 317 370 C342 385, 377 380, 390 355 Z" />
+    <path d="M417 275 C422 310, 404 345, 367 365 C374 345, 374 320, 362 300 C387 315, 404 300, 410 285 Z" />
+    <path d="M410 215 C417 245, 404 275, 374 290 C374 270, 367 250, 354 238 C380 245, 397 230, 404 220 Z" />
+  </g>
+
+  <!-- 3D Graduation Mortarboard Cap -->
+  <g filter="url(#softShadow)">
+    <path d="M180 185 Q256 230 332 185 L332 218 Q256 265 180 218 Z" fill="url(#capUnderGrad)" stroke="#090d16" stroke-width="2" />
+    <polygon points="256,80 410,145 256,210 102,145" fill="url(#capTopGrad)" stroke="#475569" stroke-width="2.5" />
+    <polygon points="256,88 398,145 256,202 114,145" fill="none" stroke="rgba(255, 255, 255, 0.22)" stroke-width="1.5" />
+    <ellipse cx="256" cy="145" rx="15" ry="10" fill="url(#metallicGold)" stroke="#78350f" stroke-width="1.5" />
+    <path d="M256 145 C215 152, 168 180, 160 225 L155 270" fill="none" stroke="url(#goldRim)" stroke-width="5.5" stroke-linecap="round" />
+    <path d="M155 270 L146 315 Q155 324 164 315 L157 270 Z" fill="url(#metallicGold)" stroke="#92400e" stroke-width="1" />
+    <rect x="151" y="278" width="10" height="4.5" rx="2" fill="#fef08a" />
+  </g>
+
+  <!-- Gleaming 3D Metallic Gold NAIRA (₦) Sign -->
+  <g filter="url(#goldGlow)" transform="translate(256, 325)">
+    <g fill="#713f12" transform="translate(3.5, 4.5)">
+      <rect x="-62" y="-68" width="24" height="124" rx="7" />
+      <rect x="38" y="-68" width="24" height="124" rx="7" />
+      <polygon points="-52,-56 -34,-56 52,44 34,44" />
+      <rect x="-78" y="-25" width="156" height="15" rx="5" />
+      <rect x="-78" y="9" width="156" height="15" rx="5" />
+    </g>
+    <g fill="url(#metallicGold)" stroke="#fef08a" stroke-width="1.5">
+      <rect x="-62" y="-68" width="24" height="124" rx="7" />
+      <rect x="38" y="-68" width="24" height="124" rx="7" />
+      <polygon points="-54,-56 -36,-56 54,44 36,44" />
+      <rect x="-78" y="-25" width="156" height="15" rx="5" />
+      <rect x="-78" y="9" width="156" height="15" rx="5" />
+    </g>
+    <polygon points="62,-72 69,-55 86,-53 71,-40 75,-22 60,-33 45,-22 49,-40 34,-53 51,-55" fill="#fef08a" filter="url(#goldGlow)" />
+  </g>
+</svg>
+

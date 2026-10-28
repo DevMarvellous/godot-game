@@ -3,19 +3,36 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-	<title>My Campus Life</title>
+	<title>My Campus Life — 3D Nigerian University Simulator &amp; Multiplayer</title>
 	<link rel="icon" type="image/svg+xml" href="./logo.svg">
 	<link rel="alternate icon" type="image/png" href="./app_icon_v1.jpg">
 	<link rel="apple-touch-icon" href="./app_icon_v1.jpg">
 	<link rel="manifest" href="./manifest.json">
-	<meta name="description" content="Authentic Nigerian University Life-Sim: Lectures, Danfo Shuttles, Mama Put, Hostel Living & Hustles!">
-	<meta property="og:title" content="My Campus Life">
-	<meta property="og:description" content="Authentic Nigerian University Life-Sim: Lectures, Danfo Shuttles, Mama Put, Hostel Living & Hustles!">
-	<meta property="og:image" content="./app_icon_v1.jpg">
+	<meta name="description" content="Play My Campus Life: the ultimate 3D Nigerian university simulator in your browser! Attend lectures, catch Danfo shuttles, live in hostels, chop Mama Put, and hustle on CampusPay. Free to play, zero download!">
+	<meta name="keywords" content="My Campus Life, Lagos Life, Nigerian Game, University Simulator, Godot Web, Online Multiplayer, Campus Life Nigeria">
+	<meta name="author" content="DevMarvellous">
+
+	<!-- Open Graph / WhatsApp / Facebook / Discord / LinkedIn -->
+	<meta property="og:type" content="website">
+	<meta property="og:site_name" content="My Campus Life">
+	<meta property="og:url" content="https://mycampuslife.vercel.app/">
+	<meta property="og:title" content="My Campus Life — 3D Nigerian University Simulator">
+	<meta property="og:description" content="Experience authentic Nigerian campus life online! 34 departments, 16 campus zones, live multiplayer, CampusPay money transfers, and hostel gist. Play now in your browser!">
+	<meta property="og:image" content="https://mycampuslife.vercel.app/og-preview.jpg">
+	<meta property="og:image:secure_url" content="https://mycampuslife.vercel.app/og-preview.jpg">
+	<meta property="og:image:type" content="image/jpeg">
+	<meta property="og:image:width" content="1200">
+	<meta property="og:image:height" content="630">
+	<meta property="og:image:alt" content="My Campus Life — Official Game Banner">
+
+	<!-- Twitter / X Card (Large Image) -->
 	<meta name="twitter:card" content="summary_large_image">
-	<meta name="twitter:title" content="My Campus Life">
-	<meta name="twitter:description" content="Authentic Nigerian University Life-Sim: Lectures, Danfo Shuttles, Mama Put, Hostel Living & Hustles!">
-	<meta name="twitter:image" content="./app_icon_v1.jpg">
+	<meta name="twitter:url" content="https://mycampuslife.vercel.app/">
+	<meta name="twitter:title" content="My Campus Life — 3D Nigerian University Simulator">
+	<meta name="twitter:description" content="Experience authentic Nigerian campus life online! 34 departments, 16 campus zones, live multiplayer, CampusPay money transfers, and hostel gist. Play now in your browser!">
+	<meta name="twitter:image" content="https://mycampuslife.vercel.app/og-preview.jpg">
+	<meta name="twitter:image:alt" content="My Campus Life — Official Game Banner">
+
 	<meta name="theme-color" content="#064e3b">
 	<style>
 :root {
@@ -183,7 +200,7 @@ html, body, #canvas {
 .portal-sheet {
 	width: 100%;
 	max-width: 520px;
-	max-height: 92vh;
+	max-height: min(740px, calc(100dvh - 20px));
 	background: rgba(11, 22, 16, 0.98);
 	border: 2px solid var(--border-col);
 	border-radius: 22px;
@@ -527,7 +544,7 @@ html, body, #canvas {
 
 /* Bottom Actions */
 .portal-footer {
-	padding: 12px 18px 18px 18px;
+	padding: 10px 18px 14px 18px;
 	background: rgba(10, 20, 15, 0.95);
 	border-top: 1px solid rgba(255,255,255,0.1);
 	display: flex;

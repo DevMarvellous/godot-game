@@ -53,6 +53,7 @@
 
 | Asset | Preview | Description |
 | :--- | :--- | :--- |
+| **Social Share Banner (OG)** | [`docs/og-preview.jpg`](./docs/og-preview.jpg) | 1200×630 share card for WhatsApp, Twitter, Facebook |
 | **Horizontal Banner** | [`docs/logo_horizontal.svg`](./docs/logo_horizontal.svg) | Full banner with emblem, title, and badges |
 | **Square Vector Crest** | [`docs/logo.svg`](./docs/logo.svg) | 3D mortarboard, gold Naira sign, and laurel crest |
 | **Minimal Icon** | [`docs/logo_minimal.svg`](./docs/logo_minimal.svg) | Clean squircle icon for favicons and web apps |
