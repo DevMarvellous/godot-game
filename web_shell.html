@@ -5,10 +5,18 @@
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 	<title>My Campus Life</title>
 	<link rel="icon" type="image/svg+xml" href="./logo.svg">
-	<link rel="alternate icon" type="image/png" href="./icon.png">
-	<link rel="apple-touch-icon" href="./icon.png">
+	<link rel="alternate icon" type="image/png" href="./app_icon_v1.jpg">
+	<link rel="apple-touch-icon" href="./app_icon_v1.jpg">
+	<link rel="manifest" href="./manifest.json">
 	<meta name="description" content="Authentic Nigerian University Life-Sim: Lectures, Danfo Shuttles, Mama Put, Hostel Living & Hustles!">
-	<meta name="theme-color" content="#0b5334">
+	<meta property="og:title" content="My Campus Life">
+	<meta property="og:description" content="Authentic Nigerian University Life-Sim: Lectures, Danfo Shuttles, Mama Put, Hostel Living & Hustles!">
+	<meta property="og:image" content="./app_icon_v1.jpg">
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="My Campus Life">
+	<meta name="twitter:description" content="Authentic Nigerian University Life-Sim: Lectures, Danfo Shuttles, Mama Put, Hostel Living & Hustles!">
+	<meta name="twitter:image" content="./app_icon_v1.jpg">
+	<meta name="theme-color" content="#064e3b">
 	<style>
 :root {
 	--campus-green: #0b5334;
@@ -571,6 +579,7 @@ html, body, #canvas {
 	<!-- 1. Engine Loading Splash (Only shown if user finishes onboarding before 3D engine finishes streaming) -->
 	<div id="status" style="display: none;">
 		<div class="loader-card">
+			<img src="./logo.svg" alt="My Campus Life" style="width: 84px; height: 84px; border-radius: 18px; margin: 0 auto 10px auto; display: block; box-shadow: 0 8px 24px rgba(0,0,0,0.6);">
 			<div class="campus-title">🏛️ MY CAMPUS LIFE</div>
 			<div class="campus-sub">Official Nigerian University Simulator</div>
 
@@ -593,7 +602,10 @@ html, body, #canvas {
 			<div class="portal-header">
 				<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
 					<span id="engine-stream-pill" style="font-size:10px; font-weight:700; color:#fcd34d; background:rgba(0,0,0,0.35); border:1px solid rgba(245,197,24,0.4); border-radius:10px; padding:2px 8px;">⚡ Ready in Background</span>
-					<span class="portal-crest" style="margin:0;">🏛️ MY CAMPUS LIFE</span>
+					<div style="display:flex; align-items:center; gap:6px;">
+						<img src="./logo.svg" alt="Logo" style="width:22px; height:22px; border-radius:5px; vertical-align:middle;">
+						<span class="portal-crest" style="margin:0;">MY CAMPUS LIFE</span>
+					</div>
 					<span style="font-size:10px; font-weight:700; color:#6ee7b7;">🇳🇬 Lagos Campus</span>
 				</div>
 				<div class="portal-h2" style="margin-top:4px;">Sign In, Dress Your Avatar &amp; Pick Preferred Department</div>

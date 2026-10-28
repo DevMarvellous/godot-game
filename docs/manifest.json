@@ -1,0 +1,29 @@
+{
+  "name": "My Campus Life",
+  "short_name": "CampusLife",
+  "description": "Authentic Nigerian University Life-Sim: Lectures, Danfo Shuttles, Mama Put, Hostel Living & Hustles!",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#064e3b",
+  "theme_color": "#064e3b",
+  "icons": [
+    {
+      "src": "./logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./logo_minimal.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "./app_icon_v1.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
+
