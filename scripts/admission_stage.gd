@@ -192,10 +192,23 @@ func finalize_admission(profile_data: Dictionary) -> void:
 	if SoundManager:
 		SoundManager.play_bell()
 
+	# NOTE: RoomManager.current_room defaults to "courtyard", so change_room(&"courtyard")
+	# would early-return and leave the player stuck on the empty admission stage.
+	# Always force the scene change explicitly, using the pre-loaded scene when ready.
+	var main_path: String = "res://scenes/main.tscn"
+	var packed: PackedScene = null
+	if ResourceLoader.load_threaded_get_status(main_path) != ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+		packed = ResourceLoader.load_threaded_get(main_path) as PackedScene
+	if packed == null:
+		packed = load(main_path) as PackedScene
 	if RoomManager:
-		RoomManager.change_room(&"courtyard")
-	else:
-		get_tree().change_scene_to_file("res://scenes/main.tscn")
+		RoomManager.current_room = &"courtyard"
+		RoomManager.is_transitioning = false
+	var err: Error = get_tree().change_scene_to_packed(packed) if packed else get_tree().change_scene_to_file(main_path)
+	if err != OK:
+		push_error("Failed to enter campus courtyard (Error %d)" % err)
+	elif RoomManager:
+		RoomManager.room_loaded.emit(&"courtyard")
 
 
 ## Bridge between JavaScript HTML overlay and Godot GDScript

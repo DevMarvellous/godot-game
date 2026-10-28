@@ -4,7 +4,7 @@
 // Incrementing CACHE_VERSION will kick off the install event and force
 // previously cached resources to be updated from the network.
 /** @type {string} */
-const CACHE_VERSION = '1793200208|645719820';
+const CACHE_VERSION = '1793200728|58346763';
 /** @type {string} */
 const CACHE_PREFIX = 'My Campus Life-sw-cache-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
