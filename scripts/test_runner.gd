@@ -343,7 +343,21 @@ func _ready() -> void:
 	assert(net_p2.name_label.text.contains("LIVE PLAYER"), "NetworkPlayer label must display LIVE PLAYER")
 	net_p2.queue_free()
 	TimeSystem.sync_to_shared_world_clock()
-	print("  -> CampusPay P2P Money Transfer, 3D Multiplayer Drip Sync & Shared World Clock OK")
+
+	# Test SoundManager Volume setters & Audio Bus Controls
+	SoundManager.set_master_volume(0.75)
+	assert(absf(SoundManager.master_volume - 0.75) < 0.01, "SoundManager master_volume must be 0.75")
+	SoundManager.set_music_volume(0.60)
+	assert(absf(SoundManager.music_volume - 0.60) < 0.01, "SoundManager music_volume must be 0.60")
+	SoundManager.set_sfx_volume(0.85)
+	assert(absf(SoundManager.sfx_volume - 0.85) < 0.01, "SoundManager sfx_volume must be 0.85")
+
+	# Test Player set_camera_zoom_preset
+	var set_cam_name: String = player.set_camera_zoom_preset(1)
+	assert(set_cam_name == "Classic 3/4", "set_camera_zoom_preset(1) must return Classic 3/4")
+	assert(player.cam_zoom_preset_idx == 1, "cam_zoom_preset_idx must be 1")
+
+	print("  -> CampusPay P2P Money Transfer, Audio Volume Setters, Camera Presets & 3D Multiplayer Drip Sync OK")
 
 	print("========================================================")
 	print("   ALL 6 TEST PHASES PASSED WITH ZERO CRASHES OR ERRORS!")

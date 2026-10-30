@@ -527,6 +527,10 @@ func _create_event_toast_ui() -> void:
 
 func _on_campus_event_triggered(_event_id: StringName, title: String, description: String) -> void:
 	show_event_banner(title, description)
+	if OS.has_feature("web"):
+		var win = JavaScriptBridge.get_interface("window")
+		if win and win.showCampusHtmlToast:
+			win.showCampusHtmlToast(title, description)
 
 
 ## Shows an animated banner at the top of the screen

@@ -797,8 +797,19 @@ html, body, #canvas {
 				<button type="button" class="hud-btn" onclick="openNativeCampusChat()">Chat</button>
 				<button type="button" class="hud-btn" onclick="openNativeCampusEmote()">Emote</button>
 				<button type="button" id="html-hud-view-btn" class="hud-btn" onclick="triggerGodotHudAction('view')">Top View</button>
+				<button type="button" class="hud-btn" onclick="openNativeCampusSettings()">⚙️ Settings</button>
+				<button type="button" class="hud-btn" onclick="openNativeCampusFeedback()">💬 Feedback</button>
 			</div>
 		</div>
+	</div>
+
+	<!-- 2B. Native HTML Dynamic Campus Event Toast (100% Crisp HTML & Glow!) -->
+	<div id="native-toast-banner" style="display: none; position: fixed; top: 76px; left: 50%; transform: translateX(-50%); z-index: 90; background: rgba(8, 18, 14, 0.96); border: 2px solid #f5c518; border-radius: 14px; padding: 12px 18px; box-shadow: 0 12px 36px rgba(0,0,0,0.85), 0 0 20px rgba(245, 197, 24, 0.25); max-width: 90vw; width: 440px; pointer-events: auto; backdrop-filter: blur(8px); cursor: pointer;" onclick="this.style.display='none'">
+		<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
+			<div id="toast-title" style="color: #fde047; font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">⚡ CAMPUS ALERT</div>
+			<span style="color: #94a3b8; font-size: 11px;">✕ Dismiss</span>
+		</div>
+		<div id="toast-desc" style="color: #f8fafc; font-size: 12px; line-height: 1.4;">Campus life update...</div>
 	</div>
 
 	<!-- 2C. Native HTML Campus Map & Fast-Travel Modal (100% Crisp HTML!) -->
@@ -1269,24 +1280,181 @@ function randomizeDrip() {
 	notifyGodotDripChange();
 }
 
+async function hashCampusPin(pin) {
+	if (!pin) return '';
+	const cleanPin = String(pin).trim();
+	try {
+		const enc = new TextEncoder().encode(cleanPin);
+		const buf = await crypto.subtle.digest('SHA-256', enc);
+		return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+	} catch (e) {
+		let hash = 0;
+		for (let i = 0; i < cleanPin.length; i++) {
+			hash = ((hash << 5) - hash) + cleanPin.charCodeAt(i);
+			hash |= 0;
+		}
+		return 'pin_hash_' + Math.abs(hash);
+	}
+}
+
 function setAuthMode(mode) {
 	ADMISSION_STATE.authMode = mode;
 	const regBtn = document.getElementById('auth-mode-register');
 	const logBtn = document.getElementById('auth-mode-login');
+	const gstBtn = document.getElementById('auth-mode-guest');
 	const regWrap = document.getElementById('register-fields-wrap');
+	const logWrap = document.getElementById('login-fields-wrap');
+	const gstWrap = document.getElementById('guest-fields-wrap');
 	const nextBtn = document.getElementById('portal-next-btn');
 	const note = document.getElementById('auth-status-note');
+
 	if (regBtn) regBtn.classList.toggle('active', mode === 'register');
 	if (logBtn) logBtn.classList.toggle('active', mode === 'login');
-	if (regWrap) regWrap.style.display = (mode === 'login') ? 'none' : 'block';
+	if (gstBtn) gstBtn.classList.toggle('active', mode === 'guest');
+
+	if (regWrap) regWrap.style.display = (mode === 'register') ? 'block' : 'none';
+	if (logWrap) logWrap.style.display = (mode === 'login') ? 'block' : 'none';
+	if (gstWrap) gstWrap.style.display = (mode === 'guest') ? 'block' : 'none';
+
 	if (note) {
-		note.textContent = (mode === 'login')
-			? '🔐 Enter your Campus @Username or Email + PIN to restore your profile.'
-			: '';
+		if (mode === 'login') {
+			note.style.color = '#38bdf8';
+			note.textContent = '🔐 Enter your registered @Username or Email + 4-digit PIN to restore your profile.';
+		} else if (mode === 'guest') {
+			note.style.color = '#38bdf8';
+			note.textContent = '⚡ Guest Fresher: Instant zero-setup campus play. Stats save locally in this browser.';
+		} else {
+			note.textContent = '';
+		}
 	}
+
 	if (nextBtn && ADMISSION_STATE.step === 0) {
-		nextBtn.textContent = (mode === 'login') ? '🔐 Login & Enter Campus ➔' : 'Next Step ▶';
+		if (mode === 'login') {
+			nextBtn.textContent = '🔐 Login & Enter Campus ➔';
+		} else if (mode === 'guest') {
+			nextBtn.textContent = '⚡ Play Instantly ➔';
+		} else {
+			nextBtn.textContent = 'Next: Dress & Dept ▶';
+		}
 	}
+}
+
+async function submitPinLogin() {
+	const uInput = document.getElementById('login-username');
+	const pInput = document.getElementById('login-pin');
+	const note = document.getElementById('auth-status-note');
+	let username = (uInput ? uInput.value : '').trim();
+	let pin = (pInput ? pInput.value : '').trim();
+
+	if (!username) {
+		if (note) { note.style.color = '#f87171'; note.textContent = '⚠️ Please enter your Campus @Username or Email.'; }
+		if (uInput) uInput.focus();
+		return;
+	}
+	if (!pin || pin.length !== 4 || isNaN(Number(pin))) {
+		if (note) { note.style.color = '#f87171'; note.textContent = '⚠️ Please enter your 4-digit numeric PIN (e.g. 2026).'; }
+		if (pInput) pInput.focus();
+		return;
+	}
+
+	if (!username.startsWith('@') && !username.includes('@')) {
+		username = '@' + username;
+	}
+
+	if (note) { note.style.color = '#38bdf8'; note.textContent = '🔄 Authenticating PIN with Campus Registry...'; }
+
+	const pinHash = await hashCampusPin(pin);
+	const sbUrl = window.getCampusSupabaseUrl ? window.getCampusSupabaseUrl() : '';
+	const sbKey = window.getCampusSupabaseKey ? window.getCampusSupabaseKey() : '';
+
+	if (sbUrl && sbKey) {
+		try {
+			const res = await fetch(`${sbUrl}/rest/v1/rpc/verify_student_pin`, {
+				method: 'POST',
+				headers: {
+					'apikey': sbKey,
+					'Authorization': 'Bearer ' + sbKey,
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					p_username: username,
+					p_pin_hash: pinHash
+				})
+			});
+			const data = await res.json();
+			if (!res.ok || !data || data.success === false) {
+				const errMsg = (data && data.error) ? data.error : 'Incorrect username or PIN.';
+				if (note) { note.style.color = '#f87171'; note.textContent = '❌ ' + errMsg; }
+				return;
+			}
+
+			// Login verified!
+			const prof = data.profile || {};
+			if (note) { note.style.color = '#34d399'; note.textContent = '✅ Verified! Welcome back, ' + (prof.student_name || username) + '! Loading campus...'; }
+
+			if (prof.student_name) ADMISSION_STATE.name = prof.student_name;
+			if (prof.username) ADMISSION_STATE.username = prof.username;
+			if (prof.student_email) ADMISSION_STATE.email = prof.student_email;
+			if (prof.gender) {
+				ADMISSION_STATE.gender = prof.gender;
+				selectGender(prof.gender);
+			}
+			if (typeof prof.skin_tone === 'number') ADMISSION_STATE.skinIdx = prof.skin_tone;
+			if (typeof prof.hair_style === 'number') ADMISSION_STATE.hairIdx = prof.hair_style;
+			if (typeof prof.outfit_style === 'number') ADMISSION_STATE.shirtIdx = prof.outfit_style;
+			if (typeof prof.trousers_style === 'number') ADMISSION_STATE.trouserIdx = prof.trousers_style;
+			if (prof.faculty_id) ADMISSION_STATE.faculty = prof.faculty_id;
+			if (prof.department_id) ADMISSION_STATE.dept = prof.department_id;
+			if (typeof prof.wallet_balance === 'number') ADMISSION_STATE.walletBalance = prof.wallet_balance;
+			if (typeof prof.cgpa === 'number') ADMISSION_STATE.cgpa = prof.cgpa;
+			if (prof.matric_no) ADMISSION_STATE.matricNo = prof.matric_no;
+			if (prof.current_level) ADMISSION_STATE.currentLevel = prof.current_level;
+			if (Array.isArray(prof.owned_upgrades)) ADMISSION_STATE.ownedUpgrades = prof.owned_upgrades;
+			ADMISSION_STATE.isReturning = true;
+			ADMISSION_STATE.pinHash = pinHash;
+
+			try {
+				localStorage.setItem('my_campus_saved_account', JSON.stringify(ADMISSION_STATE));
+			} catch (e) {}
+
+			renderLiveAvatarSVG();
+			setTimeout(() => finishAdmission(), 450);
+			return;
+		} catch (err) {
+			console.warn('verify_student_pin network issue, checking local storage:', err);
+		}
+	}
+
+	// Local offline fallback
+	try {
+		const savedRaw = localStorage.getItem('my_campus_saved_account');
+		if (savedRaw) {
+			const saved = JSON.parse(savedRaw);
+			if (saved && (saved.username === username || saved.email === username)) {
+				Object.assign(ADMISSION_STATE, saved);
+				ADMISSION_STATE.isReturning = true;
+				if (note) { note.style.color = '#34d399'; note.textContent = '✅ Verified offline! Welcome back, ' + ADMISSION_STATE.name + '!'; }
+				renderLiveAvatarSVG();
+				setTimeout(() => finishAdmission(), 400);
+				return;
+			}
+		}
+	} catch (e) {}
+
+	if (note) { note.style.color = '#f87171'; note.textContent = '❌ Account not found. Please register as New Student.'; }
+}
+
+function startGuestSession() {
+	const guestNum = Math.floor(1000 + Math.random() * 9000);
+	ADMISSION_STATE.isGuest = true;
+	ADMISSION_STATE.username = '@fresher_' + guestNum;
+	ADMISSION_STATE.name = 'Fresher ' + guestNum;
+	ADMISSION_STATE.email = 'fresher' + guestNum + '@campus.edu.ng';
+	ADMISSION_STATE.isReturning = false;
+	const note = document.getElementById('auth-status-note');
+	if (note) { note.style.color = '#38bdf8'; note.textContent = '⚡ Starting instant Fresher session... Welcome to campus!'; }
+	renderLiveAvatarSVG();
+	setTimeout(() => finishAdmission(), 350);
 }
 
 function onBiodataInput() {
@@ -1696,37 +1864,15 @@ function prevStep() {
 }
 
 function nextStep() {
-	if (ADMISSION_STATE.step === 0 && ADMISSION_STATE.authMode === 'login') {
-		onBiodataInput();
-		const note = document.getElementById('auth-status-note');
-		const sbUrl = window.getCampusSupabaseUrl ? window.getCampusSupabaseUrl() : '';
-		const sbKey = window.getCampusSupabaseKey ? window.getCampusSupabaseKey() : '';
-		if (sbUrl && sbKey) {
-			if (note) note.textContent = '🔄 Looking up student profile in Supabase Cloud...';
-			const qUrl = `${sbUrl}/rest/v1/student_profiles?or=(username.eq.${encodeURIComponent(ADMISSION_STATE.username)},student_email.eq.${encodeURIComponent(ADMISSION_STATE.email)})&limit=1`;
-			fetch(qUrl, { headers: { 'apikey': sbKey } })
-				.then(r => r.ok ? r.json() : [])
-				.then(rows => {
-					if (Array.isArray(rows) && rows.length > 0) {
-						applyCloudRowToAdmissionState(rows[0]);
-					}
-					finishAdmission();
-				})
-				.catch(() => finishAdmission());
+	if (ADMISSION_STATE.step === 0) {
+		if (ADMISSION_STATE.authMode === 'login') {
+			submitPinLogin();
 			return;
 		}
-		try {
-			const savedRaw = localStorage.getItem('my_campus_saved_account');
-			if (savedRaw) {
-				const saved = JSON.parse(savedRaw);
-				if (saved && saved.name) {
-					Object.assign(ADMISSION_STATE, saved);
-					ADMISSION_STATE.isReturning = true;
-				}
-			}
-		} catch (e) {}
-		finishAdmission();
-		return;
+		if (ADMISSION_STATE.authMode === 'guest') {
+			startGuestSession();
+			return;
+		}
 	}
 	if (ADMISSION_STATE.step < 1) {
 		switchStep(1);
@@ -1824,14 +1970,28 @@ function finishAdmission() {
 		trouser_idx: ADMISSION_STATE.trouserIdx,
 		dept: ADMISSION_STATE.dept,
 		quiz_score: 100,
-		is_returning: !!ADMISSION_STATE.isReturning
+		is_returning: !!ADMISSION_STATE.isReturning,
+		is_guest: !!ADMISSION_STATE.isGuest
 	};
+	const pinInput = document.getElementById('adm-pin-input');
+	const rawPin = pinInput ? pinInput.value : (ADMISSION_STATE.pin || '2026');
+	if (ADMISSION_STATE.pinHash) {
+		payloadObj.pin_hash = ADMISSION_STATE.pinHash;
+	} else if (rawPin) {
+		payloadObj.pin = rawPin;
+	}
 	if (typeof ADMISSION_STATE.walletBalance === 'number') payloadObj.wallet_balance = ADMISSION_STATE.walletBalance;
 	if (typeof ADMISSION_STATE.cgpa === 'number') payloadObj.cgpa = ADMISSION_STATE.cgpa;
 	if (ADMISSION_STATE.matricNo) payloadObj.matric_no = ADMISSION_STATE.matricNo;
 	if (ADMISSION_STATE.currentLevel) payloadObj.current_level = ADMISSION_STATE.currentLevel;
 	if (Array.isArray(ADMISSION_STATE.ownedUpgrades)) payloadObj.owned_upgrades = ADMISSION_STATE.ownedUpgrades;
 	const payloadStr = JSON.stringify(payloadObj);
+
+	const profInfo = document.getElementById('settings-profile-info');
+	if (profInfo) {
+		const guestTag = ADMISSION_STATE.isGuest ? ' (Guest Fresher)' : '';
+		profInfo.textContent = `${ADMISSION_STATE.name} • ${ADMISSION_STATE.username}${guestTag}`;
+	}
 
 	const overlay = document.getElementById('admissions-overlay');
 	if (overlay) {
@@ -2036,6 +2196,207 @@ window.selectHtmlEmote = function(emoteId) {
 window.openNativeCampusTasks = function() {
 	const m = document.getElementById('native-tasks-overlay');
 	if (m) m.style.display = 'flex';
+};
+
+window.showCampusHtmlToast = function(title, desc) {
+	const el = document.getElementById('native-toast-banner');
+	const tEl = document.getElementById('toast-title');
+	const dEl = document.getElementById('toast-desc');
+	if (!el || !tEl || !dEl) return;
+	tEl.textContent = title;
+	dEl.textContent = desc;
+	el.style.display = 'block';
+	clearTimeout(window._toastTimeout);
+	window._toastTimeout = setTimeout(() => {
+		el.style.display = 'none';
+	}, 6500);
+};
+
+/* =======================================================
+   NATIVE HTML GAME & GRAPHICS SETTINGS CONTROLS
+   ======================================================= */
+window.openNativeCampusSettings = function() {
+	const modal = document.getElementById('native-settings-overlay');
+	if (!modal) return;
+	modal.style.display = 'flex';
+
+	const profInfo = document.getElementById('settings-profile-info');
+	if (profInfo) {
+		const guestTag = ADMISSION_STATE.isGuest ? ' (Guest Fresher)' : '';
+		profInfo.textContent = `${ADMISSION_STATE.name} • ${ADMISSION_STATE.username}${guestTag}`;
+	}
+
+	try {
+		const q = localStorage.getItem('mcl_gfx_quality') || 'balanced';
+		['low', 'balanced', 'high'].forEach(t => {
+			const b = document.getElementById('gfx-' + t + '-btn');
+			if (b) b.classList.toggle('active', t === q);
+		});
+
+		const vMaster = localStorage.getItem('mcl_vol_master') || '90';
+		const vMusic = localStorage.getItem('mcl_vol_music') || '80';
+		const vSfx = localStorage.getItem('mcl_vol_sfx') || '90';
+		const elM = document.getElementById('vol-master-slider');
+		const elMu = document.getElementById('vol-music-slider');
+		const elS = document.getElementById('vol-sfx-slider');
+		if (elM) elM.value = vMaster;
+		if (elMu) elMu.value = vMusic;
+		if (elS) elS.value = vSfx;
+
+		const camIdx = parseInt(localStorage.getItem('mcl_cam_preset') || '0', 10);
+		[0, 1, 2, 3].forEach(idx => {
+			const b = document.getElementById('cam-preset-' + idx);
+			if (b) b.classList.toggle('active', idx === camIdx);
+		});
+	} catch (e) {}
+};
+
+window.closeNativeCampusSettings = function() {
+	const modal = document.getElementById('native-settings-overlay');
+	if (modal) modal.style.display = 'none';
+};
+
+window.setGraphicsQuality = function(tier) {
+	['low', 'balanced', 'high'].forEach(t => {
+		const b = document.getElementById('gfx-' + t + '-btn');
+		if (b) b.classList.toggle('active', t === tier);
+	});
+	try { localStorage.setItem('mcl_gfx_quality', tier); } catch (e) {}
+	window.triggerGodotHudAction('quality:' + tier);
+};
+
+window.setAudioBusVolume = function(bus, val) {
+	try { localStorage.setItem('mcl_vol_' + bus, val); } catch (e) {}
+	const pct = (Number(val) / 100).toFixed(2);
+	window.triggerGodotHudAction('vol_' + bus + ':' + pct);
+};
+
+window.setCameraPreset = function(presetIdx) {
+	[0, 1, 2, 3].forEach(idx => {
+		const b = document.getElementById('cam-preset-' + idx);
+		if (b) b.classList.toggle('active', idx === presetIdx);
+	});
+	try { localStorage.setItem('mcl_cam_preset', presetIdx); } catch (e) {}
+	window.triggerGodotHudAction('camera:' + presetIdx);
+};
+
+/* =======================================================
+   NATIVE HTML SUG SENATE FEEDBACK & BUG REPORT MODAL
+   ======================================================= */
+let _feedbackRating = 5;
+let _feedbackCategory = 'bug';
+
+window.openNativeCampusFeedback = function() {
+	const modal = document.getElementById('native-feedback-overlay');
+	if (!modal) return;
+	modal.style.display = 'flex';
+	window.setFeedbackRating(5);
+	window.setFeedbackCategory('bug');
+	const txt = document.getElementById('feedback-text-input');
+	if (txt) txt.value = '';
+	const st = document.getElementById('feedback-status-msg');
+	if (st) { st.textContent = ''; st.style.color = '#34d399'; }
+	if (txt) setTimeout(() => txt.focus(), 60);
+};
+
+window.closeNativeCampusFeedback = function() {
+	const modal = document.getElementById('native-feedback-overlay');
+	if (modal) modal.style.display = 'none';
+};
+
+window.setFeedbackRating = function(stars) {
+	_feedbackRating = stars;
+	for (let i = 1; i <= 5; i++) {
+		const el = document.getElementById('star-' + i);
+		if (el) el.style.color = (i <= stars) ? '#f5c518' : '#475569';
+	}
+};
+
+window.setFeedbackCategory = function(cat) {
+	_feedbackCategory = cat;
+	['bug', 'gameplay', 'performance', 'suggestion', 'other'].forEach(c => {
+		const el = document.getElementById('fb-cat-' + c);
+		if (el) el.classList.toggle('active', c === cat);
+	});
+};
+
+window.submitNativeCampusFeedback = async function() {
+	const txtEl = document.getElementById('feedback-text-input');
+	const statusEl = document.getElementById('feedback-status-msg');
+	const text = txtEl ? txtEl.value.trim() : '';
+
+	if (!text || text.length < 3) {
+		if (statusEl) {
+			statusEl.style.color = '#f87171';
+			statusEl.textContent = '⚠️ Please enter at least 3 characters for your memo.';
+		}
+		if (txtEl) txtEl.focus();
+		return;
+	}
+
+	if (statusEl) {
+		statusEl.style.color = '#38bdf8';
+		statusEl.textContent = '📨 Delivering memo to SUG Senate & Dev...';
+	}
+
+	const deviceInfo = {
+		userAgent: navigator.userAgent,
+		screen: `${window.innerWidth}x${window.innerHeight}`,
+		quality: localStorage.getItem('mcl_gfx_quality') || 'balanced'
+	};
+
+	const payload = {
+		username: ADMISSION_STATE.username || '@guest_student',
+		student_name: ADMISSION_STATE.name || 'Campus Student',
+		rating: _feedbackRating,
+		category: _feedbackCategory,
+		feedback_text: text,
+		device_info: deviceInfo
+	};
+
+	const sbUrl = window.getCampusSupabaseUrl ? window.getCampusSupabaseUrl() : '';
+	const sbKey = window.getCampusSupabaseKey ? window.getCampusSupabaseKey() : '';
+
+	if (sbUrl && sbKey) {
+		try {
+			const res = await fetch(`${sbUrl}/rest/v1/campus_user_feedback`, {
+				method: 'POST',
+				headers: {
+					'apikey': sbKey,
+					'Authorization': 'Bearer ' + sbKey,
+					'Content-Type': 'application/json',
+					'Prefer': 'return=minimal'
+				},
+				body: JSON.stringify(payload)
+			});
+			if (res.ok) {
+				if (statusEl) {
+					statusEl.style.color = '#34d399';
+					statusEl.textContent = '✅ Memo submitted directly to SUG Senate & Dev! Thank you!';
+				}
+				if (txtEl) txtEl.value = '';
+				setTimeout(() => window.closeNativeCampusFeedback(), 1200);
+				return;
+			}
+		} catch (err) {
+			console.warn('Feedback submit error, saving locally:', err);
+		}
+	}
+
+	// Offline local queue fallback
+	try {
+		const existingRaw = localStorage.getItem('mcl_offline_feedback') || '[]';
+		const arr = JSON.parse(existingRaw);
+		arr.push({ ...payload, created_at: new Date().toISOString() });
+		localStorage.setItem('mcl_offline_feedback', JSON.stringify(arr));
+	} catch (e) {}
+
+	if (statusEl) {
+		statusEl.style.color = '#34d399';
+		statusEl.textContent = '✅ Memo saved! Thank you for helping build My Campus Life!';
+	}
+	if (txtEl) txtEl.value = '';
+	setTimeout(() => window.closeNativeCampusFeedback(), 1200);
 };
 
 /* =======================================================

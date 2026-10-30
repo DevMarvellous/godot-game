@@ -252,6 +252,12 @@ func _apply_camera_preset(idx: int, instant: bool = false) -> String:
 	return String(mode.get("name", "3D Perspective"))
 
 
+func set_camera_zoom_preset(idx: int, instant: bool = false) -> String:
+	var mode_name: String = _apply_camera_preset(idx, instant)
+	display_notification("🎥 View: %s" % mode_name)
+	return mode_name
+
+
 ## Cycle camera view modes: 3D Perspective / Close-Up Drip / Classic 3/4 / Wide Overview
 func cycle_camera_zoom() -> String:
 	cam_zoom_preset_idx = (cam_zoom_preset_idx + 1) % CAM_VIEW_MODES.size()

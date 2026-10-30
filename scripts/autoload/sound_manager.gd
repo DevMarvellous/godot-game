@@ -22,6 +22,26 @@ var _boombox_active: bool = false
 var _audio_players: Array[AudioStreamPlayer] = []
 const POOL_SIZE: int = 5
 
+var master_volume: float = 1.0
+var music_volume: float = 0.8
+var sfx_volume: float = 0.9
+
+
+func set_master_volume(pct: float) -> void:
+	master_volume = clampf(pct, 0.0, 1.0)
+	var db: float = linear_to_db(master_volume) if master_volume > 0.001 else -80.0
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(&"Master"), db)
+
+
+func set_music_volume(pct: float) -> void:
+	music_volume = clampf(pct, 0.0, 1.0)
+	if _music_player:
+		_music_player.volume_db = (linear_to_db(music_volume) if music_volume > 0.001 else -80.0) - 6.0
+
+
+func set_sfx_volume(pct: float) -> void:
+	sfx_volume = clampf(pct, 0.0, 1.0)
+
 
 func _ready() -> void:
 	instance = self
@@ -35,18 +55,19 @@ func _ready() -> void:
 
 
 func _play(stream: AudioStreamWAV, volume_db: float = 0.0) -> void:
-	if not stream:
+	if not stream or sfx_volume <= 0.001:
 		return
+	var final_db: float = volume_db + linear_to_db(sfx_volume)
 	for player in _audio_players:
 		if not player.playing:
 			player.stream = stream
-			player.volume_db = volume_db
+			player.volume_db = final_db
 			player.play()
 			return
 	# If all busy, reuse first player
 	var fallback = _audio_players[0]
 	fallback.stream = stream
-	fallback.volume_db = volume_db
+	fallback.volume_db = final_db
 	fallback.play()
 
 

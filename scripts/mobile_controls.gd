@@ -210,6 +210,44 @@ func _on_js_hud_action(args: Array) -> void:
 		if emote_id != "":
 			_on_emote_selected(emote_id)
 		return
+	if act.begins_with("quality:"):
+		var tier: String = act.substr(8)
+		match tier:
+			"low":
+				get_viewport().scaling_3d_scale = 0.75
+				get_viewport().positional_shadow_atlas_size = 512
+			"balanced":
+				get_viewport().scaling_3d_scale = 1.0
+				get_viewport().positional_shadow_atlas_size = 1024
+			"high":
+				get_viewport().scaling_3d_scale = 1.0
+				get_viewport().positional_shadow_atlas_size = 2048
+		return
+	if act.begins_with("vol_"):
+		var parts: PackedStringArray = act.substr(4).split(":")
+		if parts.size() == 2:
+			var bus: String = parts[0]
+			var val: float = float(parts[1])
+			if SoundManager:
+				match bus:
+					"master":
+						SoundManager.set_master_volume(val)
+					"music":
+						SoundManager.set_music_volume(val)
+					"sfx":
+						SoundManager.set_sfx_volume(val)
+		return
+	if act.begins_with("camera:"):
+		var cam_idx: int = int(act.substr(7))
+		if bound_player and bound_player.has_method("set_camera_zoom_preset"):
+			var mode_name: String = bound_player.set_camera_zoom_preset(cam_idx, false)
+			if zoom_btn:
+				zoom_btn.text = "▲ %s" % mode_name
+			if OS.has_feature("web"):
+				var win = JavaScriptBridge.get_interface("window")
+				if win:
+					win.updateCampusHtmlHud(JSON.stringify({"view_label": "🎥 %s" % mode_name}))
+		return
 	match act:
 		"emote":
 			_toggle_emote_sheet()
@@ -221,6 +259,18 @@ func _on_js_hud_action(args: Array) -> void:
 			_toggle_transit_sheet()
 		"view":
 			_on_zoom_pressed()
+		"settings":
+			if OS.has_feature("web"):
+				var win = JavaScriptBridge.get_interface("window")
+				if win and win.openNativeCampusSettings:
+					win.openNativeCampusSettings()
+			else:
+				_on_phone_pressed()
+		"feedback":
+			if OS.has_feature("web"):
+				var win = JavaScriptBridge.get_interface("window")
+				if win and win.openNativeCampusFeedback:
+					win.openNativeCampusFeedback()
 		"tasks":
 			var hud_node: HUD = get_parent().get_node_or_null("HUD") as HUD if get_parent() else null
 			if hud_node:

@@ -1830,6 +1830,99 @@ func _render_settings_app() -> void:
 
 		dynamic_app_container.add_child(wp_card)
 
+	# Audio Volume Controls Card
+	var audio_card: PanelContainer = _create_card(Color(0.09, 0.14, 0.22, 0.92), Color(0.25, 0.45, 0.70, 0.6), 12)
+	var a_vbox: VBoxContainer = VBoxContainer.new()
+	audio_card.add_child(a_vbox)
+
+	var a_head: Label = Label.new()
+	a_head.text = "🔊 AUDIO VOLUME CONTROLS"
+	a_head.add_theme_font_size_override("font_size", 12)
+	a_head.add_theme_color_override("font_color", Color(0.9, 0.85, 0.4))
+	a_vbox.add_child(a_head)
+
+	var a_row: HBoxContainer = HBoxContainer.new()
+	var mute_btn: Button = Button.new()
+	mute_btn.text = "🔇 Mute"
+	mute_btn.custom_minimum_size = Vector2(70, 30)
+	mute_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	mute_btn.pressed.connect(func():
+		if SoundManager:
+			SoundManager.set_master_volume(0.0)
+			SoundManager.play_click()
+	)
+	a_row.add_child(mute_btn)
+
+	var half_btn: Button = Button.new()
+	half_btn.text = "🔉 50%"
+	half_btn.custom_minimum_size = Vector2(70, 30)
+	half_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	half_btn.pressed.connect(func():
+		if SoundManager:
+			SoundManager.set_master_volume(0.5)
+			SoundManager.set_music_volume(0.5)
+			SoundManager.set_sfx_volume(0.5)
+			SoundManager.play_click()
+	)
+	a_row.add_child(half_btn)
+
+	var full_btn: Button = Button.new()
+	full_btn.text = "🔊 100%"
+	full_btn.custom_minimum_size = Vector2(70, 30)
+	full_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	full_btn.pressed.connect(func():
+		if SoundManager:
+			SoundManager.set_master_volume(1.0)
+			SoundManager.set_music_volume(0.85)
+			SoundManager.set_sfx_volume(0.95)
+			SoundManager.play_click()
+	)
+	a_row.add_child(full_btn)
+	a_vbox.add_child(a_row)
+
+	dynamic_app_container.add_child(audio_card)
+
+	# Student Feedback & Account Actions Card
+	var action_card: PanelContainer = _create_card(Color(0.08, 0.14, 0.12, 0.92), Color(0.20, 0.65, 0.40, 0.6), 12)
+	var act_vbox: VBoxContainer = VBoxContainer.new()
+	action_card.add_child(act_vbox)
+
+	var act_head: Label = Label.new()
+	act_head.text = "🎓 STUDENT SUPPORT & SUG SENATE"
+	act_head.add_theme_font_size_override("font_size", 12)
+	act_head.add_theme_color_override("font_color", Color(0.4, 0.9, 0.6))
+	act_vbox.add_child(act_head)
+
+	var fb_btn: Button = Button.new()
+	fb_btn.text = "💬 Memo to SUG Senate / Feedback"
+	fb_btn.custom_minimum_size = Vector2(0, 34)
+	fb_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	fb_btn.add_theme_font_size_override("font_size", 11)
+	fb_btn.pressed.connect(func():
+		if SoundManager: SoundManager.play_click()
+		if OS.has_feature("web"):
+			var win = JavaScriptBridge.get_interface("window")
+			if win and win.openNativeCampusFeedback:
+				win.openNativeCampusFeedback()
+	)
+	act_vbox.add_child(fb_btn)
+
+	var switch_btn: Button = Button.new()
+	switch_btn.text = "🔄 Switch Student Account"
+	switch_btn.custom_minimum_size = Vector2(0, 32)
+	switch_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	switch_btn.add_theme_font_size_override("font_size", 11)
+	switch_btn.pressed.connect(func():
+		if SoundManager: SoundManager.play_click()
+		if OS.has_feature("web"):
+			var win = JavaScriptBridge.get_interface("window")
+			if win and win.switchCampusAccount:
+				win.switchCampusAccount()
+	)
+	act_vbox.add_child(switch_btn)
+
+	dynamic_app_container.add_child(action_card)
+
 	# Sound & System Diagnostics
 	var info_card: PanelContainer = _create_card(Color(0.08, 0.11, 0.16, 0.9), Color(0.20, 0.30, 0.45, 0.6), 12)
 	var i_vbox: VBoxContainer = VBoxContainer.new()
