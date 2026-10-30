@@ -34,6 +34,10 @@
 	<meta name="twitter:image:alt" content="My Campus Life — Official Game Banner">
 
 	<meta name="theme-color" content="#064e3b">
+
+	<!-- High-speed parallel asset preloading for fastest WebAssembly boot -->
+	<link rel="preload" href="./index.wasm" as="fetch" type="application/wasm" crossorigin>
+	<link rel="preload" href="./index.pck" as="fetch" type="application/octet-stream" crossorigin>
 	<script>
 	// Aggressively unregister all stale Service Workers and purge browser caches on page load
 	(function() {

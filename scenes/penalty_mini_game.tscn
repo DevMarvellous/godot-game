@@ -1,0 +1,225 @@
+[gd_scene format=3 uid="uid://penalty001"]
+
+[ext_resource type="Script" path="res://scripts/penalty_mini_game.gd" id="1_penalty"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_overlay"]
+bg_color = Color(0.04, 0.06, 0.09, 0.88)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.07, 0.12, 0.10, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.7, 0.4, 0.7)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 18.0
+content_margin_top = 18.0
+content_margin_right = 18.0
+content_margin_bottom = 18.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font_size = 20
+font_color = Color(1, 0.88, 0.2, 1)
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
+[node name="PenaltyMiniGame" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_penalty")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_overlay")
+
+[node name="ModalPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -210.0
+offset_top = -240.0
+offset_right = 210.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="VBox" type="VBoxContainer" parent="ModalPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="ModalPanel/VBox"]
+layout_mode = 2
+text = "🏆 DEAN'S CUP PENALTY SHOOTOUT"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="ModalPanel/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.95, 0.65, 1)
+theme_override_font_sizes/font_size = 13
+text = "Pick your target corner, match stake, and time your strike power!"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="StakeSection" type="VBoxContainer" parent="ModalPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="StakeHeader" type="Label" parent="ModalPanel/VBox/StakeSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Select Match Stake:"
+
+[node name="StakeButtonsRow" type="HBoxContainer" parent="ModalPanel/VBox/StakeSection"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BtnStake0" type="Button" parent="ModalPanel/VBox/StakeSection/StakeButtonsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = "🟢 Practice (₦0)"
+
+[node name="BtnStake500" type="Button" parent="ModalPanel/VBox/StakeSection/StakeButtonsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = "🟡 League (₦500)"
+
+[node name="BtnStake1500" type="Button" parent="ModalPanel/VBox/StakeSection/StakeButtonsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = "🔴 Final (₦1,500)"
+
+[node name="StakeInfoLabel" type="Label" parent="ModalPanel/VBox/StakeSection"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 1)
+theme_override_font_sizes/font_size = 11
+text = "Stake: Free Practice • Payout: ₦500 Athletic Bonus on Goal"
+horizontal_alignment = 1
+
+[node name="CornersSection" type="VBoxContainer" parent="ModalPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="CornersHeader" type="Label" parent="ModalPanel/VBox/CornersSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Select Strike Corner:"
+
+[node name="CornersTopRow" type="HBoxContainer" parent="ModalPanel/VBox/CornersSection"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="BtnTopLeft" type="Button" parent="ModalPanel/VBox/CornersSection/CornersTopRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "↖ Top Bins (L)"
+
+[node name="BtnRoof" type="Button" parent="ModalPanel/VBox/CornersSection/CornersTopRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "⬆ Roof (C)"
+
+[node name="BtnTopRight" type="Button" parent="ModalPanel/VBox/CornersSection/CornersTopRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "↗ Stamp (R)"
+
+[node name="CornersBottomRow" type="HBoxContainer" parent="ModalPanel/VBox/CornersSection"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="BtnBottomLeft" type="Button" parent="ModalPanel/VBox/CornersSection/CornersBottomRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "↙ Driver (L)"
+
+[node name="BtnPanenka" type="Button" parent="ModalPanel/VBox/CornersSection/CornersBottomRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "⬇ Panenka"
+
+[node name="BtnBottomRight" type="Button" parent="ModalPanel/VBox/CornersSection/CornersBottomRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "↘ Post (R)"
+
+[node name="PowerSection" type="VBoxContainer" parent="ModalPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PowerHeader" type="Label" parent="ModalPanel/VBox/PowerSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Strike Power Meter (Sweet Spot: 55% - 88%):"
+
+[node name="PowerBar" type="ProgressBar" parent="ModalPanel/VBox/PowerSection"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+value = 60.0
+
+[node name="ActionsVBox" type="VBoxContainer" parent="ModalPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="StrikeBtn" type="Button" parent="ModalPanel/VBox/ActionsVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "⚽ STRIKE PENALTY KICK!"
+
+[node name="ExitBtn" type="Button" parent="ModalPanel/VBox/ActionsVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "🏃 Exit Pitch"

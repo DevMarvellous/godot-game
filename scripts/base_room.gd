@@ -28,6 +28,7 @@ const ExamHallScene = preload("res://scenes/exam_hall_menu.tscn")
 const HostelCookingScene = preload("res://scenes/hostel_cooking_dialog.tscn")
 const BackpackScene = preload("res://scenes/backpack_menu.tscn")
 const FridgeScene = preload("res://scenes/fridge_dialog.tscn")
+const PenaltyScene = preload("res://scenes/penalty_mini_game.tscn")
 var phone_menu: Control = null
 var salon_menu: Control = null
 var chat_menu: Control = null
@@ -44,6 +45,7 @@ var exam_hall_menu: Control = null
 var hostel_cooking_dialog: Control = null
 var backpack_menu: Control = null
 var fridge_dialog: Control = null
+var penalty_menu: Control = null
 var remote_player_nodes: Dictionary = {}
 var active_ceiling_fans: Array[Node3D] = []
 var _saved_room_lights: Dictionary = {}
@@ -561,6 +563,14 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 				snooker_menu.game_closed.connect(func(_winnings): _on_menu_closed())
 		if snooker_menu:
 			snooker_menu.open_game(p)
+	elif menu_type == &"penalty":
+		if not penalty_menu and menus_layer:
+			penalty_menu = PenaltyScene.instantiate()
+			menus_layer.add_child(penalty_menu)
+			if penalty_menu.has_signal("dialog_closed"):
+				penalty_menu.dialog_closed.connect(_on_menu_closed)
+		if penalty_menu:
+			penalty_menu.open_penalty(p)
 	elif menu_type == &"gigs":
 		if not gigs_menu and menus_layer:
 			gigs_menu = GigsScene.instantiate()

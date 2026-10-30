@@ -53,7 +53,7 @@ anchor_right = 1.0
 offset_left = 24.0
 offset_top = 40.0
 offset_right = -24.0
-offset_bottom = 180.0
+offset_bottom = 210.0
 grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
@@ -70,17 +70,45 @@ horizontal_alignment = 1
 [node name="ScoreLabel" type="Label" parent="TopPanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "Balls Potted: 0  |  Arcade Cash: ₦0"
+theme_override_font_sizes/font_size = 15
+text = "Stake: Practice • Balls Potted: 0  |  Arcade Cash: ₦0"
 horizontal_alignment = 1
 
 [node name="StatusLabel" type="Label" parent="TopPanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.35, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 14
-text = "Drag finger on table to aim cue • Adjust power & strike!"
+theme_override_font_sizes/font_size = 13
+text = "Drag finger on table to aim cue • Choose stake & strike!"
 horizontal_alignment = 1
+
+[node name="StakeRow" type="HBoxContainer" parent="TopPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BtnStakeFree" type="Button" parent="TopPanel/VBox/StakeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "🟢 Practice (₦0)"
+
+[node name="BtnStakeHustle" type="Button" parent="TopPanel/VBox/StakeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "🟡 Hustle (₦500)"
+
+[node name="BtnStakePro" type="Button" parent="TopPanel/VBox/StakeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "🔴 High-Roller (₦1,500)"
 
 [node name="BottomControls" type="PanelContainer" parent="."]
 layout_mode = 1
@@ -147,4 +175,3 @@ text = "Exit to Lounge"
 [connection signal="pressed" from="BottomControls/VBox/StrikeBtn" to="." method="strike"]
 [connection signal="pressed" from="BottomControls/VBox/ActionsRow/ResetBtn" to="." method="reset_table"]
 [connection signal="pressed" from="BottomControls/VBox/ActionsRow/ExitBtn" to="." method="close_game"]
-

@@ -34,6 +34,10 @@
 	<meta name="twitter:image:alt" content="My Campus Life — Official Game Banner">
 
 	<meta name="theme-color" content="#064e3b">
+
+	<!-- High-speed parallel asset preloading for fastest WebAssembly boot -->
+	<link rel="preload" href="./index.wasm" as="fetch" type="application/wasm" crossorigin>
+	<link rel="preload" href="./index.pck" as="fetch" type="application/octet-stream" crossorigin>
 	<script>
 	// Aggressively unregister all stale Service Workers and purge browser caches on page load
 	(function() {
@@ -975,7 +979,7 @@ html, body, #canvas {
 	}, true);
 })();
 
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":4675380,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":4695300,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 

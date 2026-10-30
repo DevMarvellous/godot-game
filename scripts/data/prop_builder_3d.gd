@@ -392,6 +392,48 @@ static func get_smart_objective(energy: float, hunger: float, money: int, cgpa: 
 			"dest": &"library",
 			"color": Color(0.38, 0.86, 1.0)
 		}
+
+	# Dynamic Hour-Aware Campus Goals & Endless Hustles
+	var h: int = TimeSystem.current_hour
+	var day_str: String = TimeSystem.get_day_string()
+
+	if day_str == "Sunday" and h >= 8 and h <= 13:
+		return {
+			"text": "⛪ Sunday Service: Worship & Piano at Campus Chapel",
+			"dest": &"chapel",
+			"color": Color(1.0, 0.88, 0.45)
+		}
+	elif h >= 7 and h < 11:
+		return {
+			"text": "⚽ Dean's Cup Derby: Score Penalty Kick in the Stadium",
+			"dest": &"stadium",
+			"color": Color(0.35, 0.95, 0.58)
+		}
+	elif h >= 11 and h < 14:
+		return {
+			"text": "🍲 Campus Lunch: Fresh Jollof Rice & Plantain at Mama Put",
+			"dest": &"mama_put",
+			"color": Color(1.0, 0.65, 0.28)
+		}
+	elif h >= 14 and h < 17:
+		return {
+			"text": "💻 Freelance Tech Hub: Complete Coding Tasks for Cash",
+			"dest": &"tech_hub",
+			"color": Color(0.35, 0.85, 1.0)
+		}
+	elif h >= 17 and h < 20:
+		return {
+			"text": "🎱 SUB Arcade: Play 9-Ball Snooker Stake Match",
+			"dest": &"sub",
+			"color": Color(0.95, 0.55, 0.85)
+		}
+	elif h >= 20 and h < 22:
+		return {
+			"text": "🌳 Evening Relaxation: Chill with mates at Love Garden",
+			"dest": &"garden",
+			"color": Color(0.55, 0.95, 0.65)
+		}
+
 	return {
 		"text": "🎯 Campus Hustle: Explore SUB, Library, or catch a Danfo Shuttle",
 		"dest": &"sub",

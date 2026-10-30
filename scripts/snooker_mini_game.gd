@@ -43,6 +43,8 @@ var balls_moving: bool = false
 var current_player: CharacterBody3D = null
 var session_winnings: int = 0
 var score_balls_potted: int = 0
+var active_stake: int = 0
+var stake_paid: bool = false
 
 # UI elements
 @onready var score_label: Label = %ScoreLabel if has_node("%ScoreLabel") else null
@@ -50,19 +52,57 @@ var score_balls_potted: int = 0
 @onready var strike_btn: Button = %StrikeBtn if has_node("%StrikeBtn") else null
 @onready var exit_btn: Button = %ExitBtn if has_node("%ExitBtn") else null
 @onready var power_bar: ProgressBar = %PowerBar if has_node("%PowerBar") else null
+@onready var btn_stake_free: Button = %BtnStakeFree if has_node("%BtnStakeFree") else null
+@onready var btn_stake_hustle: Button = %BtnStakeHustle if has_node("%BtnStakeHustle") else null
+@onready var btn_stake_pro: Button = %BtnStakePro if has_node("%BtnStakePro") else null
 
 
 func _ready() -> void:
 	visible = false
 	set_process_input(true)
+	if btn_stake_free: btn_stake_free.pressed.connect(func(): _set_stake(0))
+	if btn_stake_hustle: btn_stake_hustle.pressed.connect(func(): _set_stake(500))
+	if btn_stake_pro: btn_stake_pro.pressed.connect(func(): _set_stake(1500))
+	_update_stake_buttons()
 	reset_table()
+
+
+func _set_stake(s: int) -> void:
+	active_stake = s
+	stake_paid = false
+	_update_stake_buttons()
+	reset_table()
+	if SoundManager:
+		SoundManager.play_click()
+	if status_label:
+		if active_stake == 0:
+			status_label.text = "🟢 Practice Mode: Free table • Win ₦250/ball (₦1,000 for 8-ball)"
+			status_label.add_theme_color_override(&"font_color", Color(0.4, 0.95, 0.5))
+		elif active_stake == 500:
+			status_label.text = "🟡 Campus Hustle: ₦500 Stake • Win ₦600/ball (₦3,000 for 8-ball)"
+			status_label.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.2))
+		else:
+			status_label.text = "🔴 High-Roller Table: ₦1,500 Stake • Win ₦1,500/ball (₦6,000 for 8-ball)"
+			status_label.add_theme_color_override(&"font_color", Color(1.0, 0.45, 0.45))
+	_update_ui()
+
+
+func _update_stake_buttons() -> void:
+	if btn_stake_free:
+		btn_stake_free.add_theme_color_override(&"font_color", Color(0.4, 1.0, 0.5) if active_stake == 0 else Color(0.7, 0.7, 0.7))
+	if btn_stake_hustle:
+		btn_stake_hustle.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.2) if active_stake == 500 else Color(0.7, 0.7, 0.7))
+	if btn_stake_pro:
+		btn_stake_pro.add_theme_color_override(&"font_color", Color(1.0, 0.45, 0.45) if active_stake == 1500 else Color(0.7, 0.7, 0.7))
 
 
 func open_game(player: CharacterBody3D = null) -> void:
 	current_player = player
 	session_winnings = 0
 	score_balls_potted = 0
+	stake_paid = false
 	reset_table()
+	_update_stake_buttons()
 	visible = true
 	_update_ui()
 
@@ -244,10 +284,13 @@ func _pocket_ball(b: Ball) -> void:
 	b.vel = Vector2.ZERO
 
 	if b.is_cue:
-		# Scratch! Penalty
-		session_winnings = maxi(0, session_winnings - 200)
+		# Scratch penalty scaled to active stake
+		var pen: int = 100
+		if active_stake == 500: pen = 300
+		elif active_stake == 1500: pen = 600
+		session_winnings = maxi(0, session_winnings - pen)
 		if status_label:
-			status_label.text = "⚠️ FOUL! Cue Ball Pocketed! -₦200 Penalty"
+			status_label.text = "⚠️ FOUL! Cue Ball Pocketed! -₦%d Penalty" % pen
 			status_label.add_theme_color_override(&"font_color", Color(1.0, 0.3, 0.3))
 		if SoundManager:
 			SoundManager.play_alert()
@@ -259,11 +302,19 @@ func _pocket_ball(b: Ball) -> void:
 		)
 	else:
 		score_balls_potted += 1
-		var reward: int = 500
+		var reward: int = 250
+		var eight_reward: int = 1000
+		if active_stake == 500:
+			reward = 600
+			eight_reward = 3000
+		elif active_stake == 1500:
+			reward = 1500
+			eight_reward = 6000
+
 		if b.number == 8:
-			reward = 2500
+			reward = eight_reward
 			if status_label:
-				status_label.text = "🏆 8-BALL POTTED! BIG JACKPOT! +₦2,500!"
+				status_label.text = "🏆 8-BALL POTTED! BIG ARCADE JACKPOT! +₦%d!" % reward
 				status_label.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.2))
 		else:
 			if status_label:
@@ -283,6 +334,21 @@ func strike() -> void:
 	if balls_moving or not cue_ball or cue_ball.potted:
 		return
 
+	# Handle stake payment on first strike of frame
+	if active_stake > 0 and not stake_paid:
+		if current_player:
+			var needs: NeedsManager = current_player.get_node_or_null("NeedsManager") as NeedsManager
+			if needs and needs.money < active_stake:
+				if status_label:
+					status_label.text = "⚠️ Sapa Alert! Insufficient wallet cash for ₦%d stake!" % active_stake
+					status_label.add_theme_color_override(&"font_color", Color(1.0, 0.35, 0.35))
+				if SoundManager:
+					SoundManager.play_alert()
+				return
+			if needs:
+				needs.modify_money(-active_stake)
+		stake_paid = true
+
 	if current_player and current_player.has_method("play_snooker_shot_animation"):
 		current_player.play_snooker_shot_animation()
 
@@ -295,7 +361,10 @@ func strike() -> void:
 
 func _update_ui() -> void:
 	if score_label:
-		score_label.text = "Balls Potted: %d  |  Winnings: ₦%d" % [score_balls_potted, session_winnings]
+		var mode_name = "Practice (₦0)"
+		if active_stake == 500: mode_name = "Hustle (₦500)"
+		elif active_stake == 1500: mode_name = "High-Roller (₦1,500)"
+		score_label.text = "Mode: %s | Potted: %d | Winnings: ₦%d" % [mode_name, score_balls_potted, session_winnings]
 
 
 func _draw() -> void:
@@ -346,4 +415,3 @@ func _draw() -> void:
 		if not b.is_cue:
 			draw_circle(b.pos, BALL_RADIUS * 0.45, Color.WHITE)
 			draw_circle(b.pos, BALL_RADIUS * 0.22, b.color)
-

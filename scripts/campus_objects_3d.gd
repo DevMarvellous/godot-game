@@ -110,8 +110,12 @@ func update_object_display() -> void:
 			prompt_message = "[E] Praise, Piano & Prayer (+35 Faith, Peace of Mind)"
 			object_name = "Chapel Prayer Bench"
 		ObjectType.STADIUM_SPORTS:
-			prompt_message = "[E] Football Penalty Shootout & Drills"
-			object_name = "Penalty Shootout Spot"
+			if object_name.contains("Track") or object_name.contains("Running") or object_name.contains("Sprint"):
+				prompt_message = "[E] Sprint 400m Olympic Track (+25 Energy, +20 Faith)"
+				object_name = "Stadium 400m Running Track"
+			else:
+				prompt_message = "[E] Dean's Cup Penalty Shootout Contest"
+				object_name = "Penalty Shootout Spot"
 		ObjectType.GARDEN_GAZEBO:
 			prompt_message = "[E] Relax Under Acacia Shade (+25 Energy, +20 Faith)"
 			object_name = "Love Garden Relaxation Bench"
@@ -265,29 +269,10 @@ func interact(player: CharacterBody3D) -> void:
 			_show_feedback(player, "Deep worship and prayer! Peace of Mind granted. Faith +35, Energy +15!")
 
 		ObjectType.STADIUM_SPORTS:
-			TimeSystem.advance_minutes(25)
-			if player.has_method("play_penalty_kick_animation"):
-				player.play_penalty_kick_animation()
-			elif SoundManager:
-				SoundManager.play_whistle()
-			# Physically kick the 3D football towards the goal net!
-			var ball: RigidBody3D = get_tree().current_scene.get_node_or_null("StadiumFixtures/InteractiveFootball") as RigidBody3D
-			if ball:
-				ball.global_position = Vector3(0, 0.4, -4.0)
-				ball.linear_velocity = Vector3.ZERO
-				ball.angular_velocity = Vector3.ZERO
-				ball.apply_central_impulse(Vector3(randf_range(-3.5, 3.5), 7.2, -18.0))
-
-			PropBuilder3D.advance_quest_if_matching(5, player)
-			if randi() % 100 < 70:
-				needs.modify_money(1000)
-				needs.modify_energy(15.0)
-				if player.has_method("play_celebrate_animation"):
-					player.play_celebrate_animation("⚽ GOAL! +₦1,000")
-				_show_feedback(player, "GOAL! Curled into top corner! Coach awards you ₦1,000 & Athletic Fame!")
+			if object_name.contains("Track") or object_name.contains("Running") or object_name.contains("Sprint"):
+				menu_requested.emit(&"track_sprint", player)
 			else:
-				needs.modify_energy(10.0)
-				_show_feedback(player, "Good penalty strike! Sweated out all the exam fatigue. Energy +10!")
+				menu_requested.emit(&"penalty", player)
 
 		ObjectType.GARDEN_GAZEBO:
 			needs.modify_energy(25.0)
