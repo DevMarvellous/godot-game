@@ -26,6 +26,9 @@ var has_nav_target: bool = false
 @onready var hair_braids: MeshInstance3D = $Visuals/HairBraids if has_node("Visuals/HairBraids") else null
 @onready var hair_cap: MeshInstance3D = $Visuals/HairCap if has_node("Visuals/HairCap") else null
 @onready var hair_headwrap: MeshInstance3D = $Visuals/HairHeadwrap if has_node("Visuals/HairHeadwrap") else null
+@onready var hair_cornrows: MeshInstance3D = $Visuals/HairCornrows if has_node("Visuals/HairCornrows") else null
+@onready var hair_puffs: MeshInstance3D = $Visuals/HairPuffs if has_node("Visuals/HairPuffs") else null
+@onready var hair_fila: MeshInstance3D = $Visuals/HairFila if has_node("Visuals/HairFila") else null
 @onready var senator_tunic: MeshInstance3D = $Visuals/SenatorTunic if has_node("Visuals/SenatorTunic") else null
 @onready var corporate_tie: MeshInstance3D = $Visuals/CorporateTie if has_node("Visuals/CorporateTie") else null
 @onready var hoodie_cowl: MeshInstance3D = $Visuals/HoodieCowl if has_node("Visuals/HoodieCowl") else null
@@ -658,8 +661,8 @@ func apply_appearance(
 		skin_mat.roughness = 0.7
 		head_mesh.set_surface_override_material(0, skin_mat)
 
-	# 2. Distinct 3D Hair Meshes (Afro, Braids, Cap, Gele/Headwrap, Low Cut)
-	var all_hairs: Array[MeshInstance3D] = [hair_low_cut, hair_afro, hair_braids, hair_cap, hair_headwrap]
+	# 2. Distinct 3D Hair Meshes (Afro, Braids, Cap, Gele/Headwrap, Cornrows, Puffs, Fila, Low Cut)
+	var all_hairs: Array[MeshInstance3D] = [hair_low_cut, hair_afro, hair_braids, hair_cap, hair_headwrap, hair_cornrows, hair_puffs, hair_fila]
 	for h in all_hairs:
 		if is_instance_valid(h):
 			h.visible = false
@@ -674,6 +677,12 @@ func apply_appearance(
 			active_hair = hair_cap if hair_cap else hair_low_cut
 		"headwrap":
 			active_hair = hair_headwrap if hair_headwrap else hair_low_cut
+		"cornrows":
+			active_hair = hair_cornrows if hair_cornrows else hair_low_cut
+		"puff_afro":
+			active_hair = hair_puffs if hair_puffs else hair_low_cut
+		"fila_cap":
+			active_hair = hair_fila if hair_fila else hair_low_cut
 		_:
 			active_hair = hair_low_cut
 
@@ -681,9 +690,12 @@ func apply_appearance(
 		active_hair.visible = true
 		var hair_mat: StandardMaterial3D = StandardMaterial3D.new()
 		if hair_type == "headwrap":
-			hair_mat.albedo_color = Color(0.72, 0.14, 0.42) if hair_color == Color(0.08, 0.08, 0.08) else hair_color
+			hair_mat.albedo_color = Color(0.85, 0.45, 0.15) if hair_color == Color(0.08, 0.08, 0.08) else hair_color
 			hair_mat.metallic = 0.35
-			hair_mat.roughness = 0.45
+			hair_mat.roughness = 0.40
+		elif hair_type == "fila_cap":
+			hair_mat.albedo_color = Color(0.68, 0.16, 0.22) if hair_color == Color(0.08, 0.08, 0.08) else hair_color
+			hair_mat.roughness = 0.70
 		else:
 			hair_mat.albedo_color = hair_color
 			hair_mat.roughness = 0.85
@@ -1452,6 +1464,176 @@ func play_wave_animation() -> void:
 		NetworkManager.broadcast_emote("wave")
 
 
+## Joyous Praise Jump & Hallelujah Celebration
+func play_praise_jump_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	if is_sitting:
+		stand_up()
+	cancel_emote()
+	is_emoting = true
+	_idle_time = 0.0
+	spawn_floating_stat("🙌 HALLELUJAH! PRAISE GOD! (+15 Faith)", Color(1.0, 0.88, 0.35))
+	if SoundManager:
+		SoundManager.play_bell()
+	if needs_manager:
+		needs_manager.modify_faith(15.0)
+
+	var tw: Tween = create_tween()
+	_active_emote_tween = tw
+	tw.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+	# 1. Crouch prep
+	tw.tween_property(torso_mesh, "position:y", 0.78, 0.16)
+	tw.parallel().tween_property(left_leg, "rotation:x", 0.45, 0.16)
+	tw.parallel().tween_property(right_leg, "rotation:x", 0.45, 0.16)
+	tw.parallel().tween_property(left_arm, "rotation:x", 0.6, 0.16)
+	tw.parallel().tween_property(right_arm, "rotation:x", 0.6, 0.16)
+
+	# 2. Joyous vertical praise leap into air with hands raised to heaven
+	tw.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(torso_mesh, "position:y", 1.45, 0.28)
+	tw.parallel().tween_property(head_mesh, "position:y", 1.95, 0.28)
+	tw.parallel().tween_property(head_mesh, "rotation:x", -0.45, 0.28)
+	tw.parallel().tween_property(left_arm, "rotation:x", -2.8, 0.28)
+	tw.parallel().tween_property(right_arm, "rotation:x", -2.8, 0.28)
+	tw.parallel().tween_property(left_arm, "rotation:z", -0.35, 0.28)
+	tw.parallel().tween_property(right_arm, "rotation:z", 0.35, 0.28)
+	tw.parallel().tween_property(left_leg, "rotation:x", -0.2, 0.28)
+	tw.parallel().tween_property(right_leg, "rotation:x", -0.2, 0.28)
+
+	# 3. Repeat double joy bounce in the air
+	tw.tween_property(left_arm, "rotation:z", -0.55, 0.15)
+	tw.parallel().tween_property(right_arm, "rotation:z", 0.55, 0.15)
+	tw.tween_property(left_arm, "rotation:z", -0.35, 0.15)
+	tw.parallel().tween_property(right_arm, "rotation:z", 0.35, 0.15)
+
+	# 4. Smooth landing
+	tw.set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	tw.tween_property(torso_mesh, "position:y", 0.95, 0.24)
+	tw.parallel().tween_property(head_mesh, "position:y", 1.45, 0.24)
+	tw.parallel().tween_property(head_mesh, "rotation:x", 0.0, 0.24)
+	tw.parallel().tween_property(left_arm, "rotation", Vector3.ZERO, 0.24)
+	tw.parallel().tween_property(right_arm, "rotation", Vector3.ZERO, 0.24)
+	tw.parallel().tween_property(left_leg, "rotation", Vector3.ZERO, 0.24)
+	tw.parallel().tween_property(right_leg, "rotation", Vector3.ZERO, 0.24)
+	tw.tween_callback(func(): cancel_emote())
+	if NetworkManager:
+		NetworkManager.broadcast_emote("pray")
+
+
+## Odogwu Stride (Confident Nigerian Boss Swagger)
+func play_odogwu_stride_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	if is_sitting:
+		stand_up()
+	cancel_emote()
+	is_emoting = true
+	_idle_time = 0.0
+	spawn_floating_stat("👑 ODOGWU SWAGGER! Full Clout!", Color(1.0, 0.82, 0.24))
+	if SoundManager:
+		SoundManager.play_click()
+
+	var tw: Tween = create_tween()
+	_active_emote_tween = tw
+	tw.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	tw.tween_property(torso_mesh, "rotation:x", -0.15, 0.2)
+	tw.parallel().tween_property(head_mesh, "rotation:x", -0.12, 0.2)
+
+	for i in range(3):
+		tw.tween_property(left_arm, "rotation:x", -0.75, 0.18)
+		tw.parallel().tween_property(right_arm, "rotation:x", 0.75, 0.18)
+		tw.parallel().tween_property(torso_mesh, "rotation:y", 0.15, 0.18)
+		tw.parallel().tween_property(torso_mesh, "position:y", 1.02, 0.18)
+
+		tw.tween_property(left_arm, "rotation:x", 0.75, 0.18)
+		tw.parallel().tween_property(right_arm, "rotation:x", -0.75, 0.18)
+		tw.parallel().tween_property(torso_mesh, "rotation:y", -0.15, 0.18)
+		tw.parallel().tween_property(torso_mesh, "position:y", 0.95, 0.18)
+
+	tw.tween_property(torso_mesh, "rotation", Vector3.ZERO, 0.2)
+	tw.parallel().tween_property(head_mesh, "rotation", Vector3.ZERO, 0.2)
+	tw.parallel().tween_property(left_arm, "rotation", Vector3.ZERO, 0.2)
+	tw.parallel().tween_property(right_arm, "rotation", Vector3.ZERO, 0.2)
+	tw.parallel().tween_property(torso_mesh, "position:y", 0.95, 0.2)
+	tw.tween_callback(func(): cancel_emote())
+	if NetworkManager:
+		NetworkManager.broadcast_emote("celebrate")
+
+
+## Convocation Graduation / Matriculation Dance
+func play_graduation_dance_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	if is_sitting:
+		stand_up()
+	cancel_emote()
+	is_emoting = true
+	_idle_time = 0.0
+	spawn_floating_stat("🎓 FIRST CLASS GRADUATE ENERGY!", Color(0.35, 0.9, 1.0))
+	if SoundManager:
+		SoundManager.play_cheer()
+
+	var tw: Tween = create_tween()
+	_active_emote_tween = tw
+	tw.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+	for i in range(4):
+		tw.tween_property(torso_mesh, "rotation:z", 0.2, 0.14)
+		tw.parallel().tween_property(left_arm, "rotation:x", -1.4, 0.14)
+		tw.parallel().tween_property(right_arm, "rotation:x", -0.6, 0.14)
+		tw.parallel().tween_property(torso_mesh, "position:y", 1.05, 0.14)
+
+		tw.tween_property(torso_mesh, "rotation:z", -0.2, 0.14)
+		tw.parallel().tween_property(left_arm, "rotation:x", -0.6, 0.14)
+		tw.parallel().tween_property(right_arm, "rotation:x", -1.4, 0.14)
+		tw.parallel().tween_property(torso_mesh, "position:y", 0.95, 0.14)
+
+	tw.tween_property(torso_mesh, "rotation", Vector3.ZERO, 0.2)
+	tw.parallel().tween_property(left_arm, "rotation", Vector3.ZERO, 0.2)
+	tw.parallel().tween_property(right_arm, "rotation", Vector3.ZERO, 0.2)
+	tw.tween_callback(func(): cancel_emote())
+	if NetworkManager:
+		NetworkManager.broadcast_emote("celebrate")
+
+
+## Scholarly Concentration & Thinking Pose
+func play_serious_concentration_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	if is_sitting:
+		stand_up()
+	cancel_emote()
+	is_emoting = true
+	_idle_time = 0.0
+	spawn_floating_stat("📖 SCHOLARLY CONCENTRATION!", Color(0.4, 0.85, 0.5))
+	if SoundManager:
+		SoundManager.play_click()
+
+	var tw: Tween = create_tween()
+	_active_emote_tween = tw
+	tw.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+	tw.tween_property(head_mesh, "rotation:x", 0.35, 0.25)
+	tw.parallel().tween_property(head_mesh, "rotation:y", 0.15, 0.25)
+	tw.parallel().tween_property(right_arm, "rotation:x", -1.8, 0.25)
+	tw.parallel().tween_property(right_arm, "rotation:z", -0.4, 0.25)
+	tw.parallel().tween_property(left_arm, "rotation:x", -0.4, 0.25)
+	tw.parallel().tween_property(torso_mesh, "rotation:x", 0.12, 0.25)
+
+	tw.tween_interval(1.8)
+
+	tw.tween_property(head_mesh, "rotation", Vector3.ZERO, 0.25)
+	tw.parallel().tween_property(right_arm, "rotation", Vector3.ZERO, 0.25)
+	tw.parallel().tween_property(left_arm, "rotation", Vector3.ZERO, 0.25)
+	tw.parallel().tween_property(torso_mesh, "rotation", Vector3.ZERO, 0.25)
+	tw.tween_callback(func(): cancel_emote())
+	if NetworkManager:
+		NetworkManager.broadcast_emote("study")
+
+
 ## Dispatches an emote by identifier and broadcasts over network
 func play_emote(emote_name: String) -> void:
 	match emote_name.to_lower():
@@ -1459,6 +1641,14 @@ func play_emote(emote_name: String) -> void:
 			play_zanku_animation()
 		"shaku", "dance":
 			play_shaku_dance_animation()
+		"praise_jump", "praise", "hallelujah":
+			play_praise_jump_animation()
+		"odogwu_stride", "odogwu", "swagger":
+			play_odogwu_stride_animation()
+		"graduation_dance", "graduation", "matriculation":
+			play_graduation_dance_animation()
+		"serious_concentration", "concentration", "think":
+			play_serious_concentration_animation()
 		"flex", "breathe":
 			play_flex_animation()
 		"wahala", "shock", "abeg":
@@ -1494,14 +1684,6 @@ func play_emote(emote_name: String) -> void:
 			if NetworkManager: NetworkManager.broadcast_emote("pray")
 		"kick", "penalty":
 			play_penalty_kick_animation()
-		"snooker", "pool":
-			play_snooker_shot_animation()
-		"cook", "cooking":
-			play_cooking_animation()
-		"haircut", "salon", "fade":
-			play_salon_haircut_animation()
-		_:
-			play_wave_animation()
 		"snooker", "pool":
 			play_snooker_shot_animation()
 		"cook", "cooking":

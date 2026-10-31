@@ -10,6 +10,7 @@ extends "res://scripts/base_room.gd"
 
 @onready var ceiling_fan_1: MeshInstance3D = get_node_or_null("ChapelFixtures/CeilingFan1") as MeshInstance3D
 @onready var ceiling_fan_2: MeshInstance3D = get_node_or_null("ChapelFixtures/CeilingFan2") as MeshInstance3D
+@onready var praise_game: Control = get_node_or_null("MenusLayer/ChapelPraiseGame") as Control
 
 
 func _ready() -> void:
@@ -21,6 +22,37 @@ func _ready() -> void:
 		active_ceiling_fans.append(ceiling_fan_1)
 	if ceiling_fan_2:
 		active_ceiling_fans.append(ceiling_fan_2)
+
+	if praise_game and praise_game.has_signal("concert_closed"):
+		praise_game.concert_closed.connect(_on_menu_closed)
+
+
+func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> void:
+	if menu_type == &"chapel_praise":
+		_open_praise_game(p)
+		return
+
+	super._on_fixture_menu_requested(menu_type, p)
+
+
+func _open_praise_game(p: CharacterBody3D) -> void:
+	if not praise_game:
+		praise_game = get_node_or_null("MenusLayer/ChapelPraiseGame") as Control
+	if not praise_game:
+		var ml: CanvasLayer = get_node_or_null("MenusLayer") as CanvasLayer
+		if ml:
+			const PraiseScene = preload("res://scenes/chapel_praise_game.tscn")
+			praise_game = PraiseScene.instantiate() as Control
+			ml.add_child(praise_game)
+			if praise_game.has_signal("concert_closed"):
+				praise_game.concert_closed.connect(_on_menu_closed)
+	if praise_game:
+		_close_all_active_modals(praise_game)
+		if p:
+			p.set_physics_process(false)
+			p.velocity = Vector3.ZERO
+		if praise_game.has_method("open_concert"):
+			praise_game.open_concert(p)
 
 
 func _on_player_passed_out(_reason: String) -> void:

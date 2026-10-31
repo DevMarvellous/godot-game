@@ -389,12 +389,34 @@ func apply_full_drip(gender_str: String, skin_idx: int, hair_idx: int, shirt_idx
 				m3.height = 0.22
 				hair_mesh.mesh = m3
 				hair_mesh.position = Vector3(0, 1.70, 0)
-			4, _:
-				var m4 := CylinderMesh.new()
-				m4.top_radius = 0.26
-				m4.bottom_radius = 0.22
-				m4.height = 0.10
+			4:
+				# 4. Royal Gele (Tiered Pleated Avant-Garde Headwrap)
+				var m4 := BoxMesh.new()
+				m4.size = Vector3(0.66, 0.24, 0.32)
 				hair_mesh.mesh = m4
-				hair_mesh.position = Vector3(0.03, 1.66, 0)
+				hair_mesh.position = Vector3(0, 1.66, -0.02)
+				h_mat.metallic = 0.35
+				h_mat.roughness = 0.40
+			5:
+				# 5. Fulani Braids & Cornrows
+				var m5 := BoxMesh.new()
+				m5.size = Vector3(0.44, 0.18, 0.44)
+				hair_mesh.mesh = m5
+				hair_mesh.position = Vector3(0, 1.64, 0)
+			6:
+				# 6. Twin Afro Puffs
+				var m6 := SphereMesh.new()
+				m6.radius = 0.18
+				m6.height = 0.30
+				hair_mesh.mesh = m6
+				hair_mesh.position = Vector3(0, 1.68, 0)
+			7, _:
+				# 7. Traditional Fila / Ozo Cap
+				var m7 := CylinderMesh.new()
+				m7.top_radius = 0.22
+				m7.bottom_radius = 0.24
+				m7.height = 0.22
+				hair_mesh.mesh = m7
+				hair_mesh.position = Vector3(0, 1.68, 0)
 		hair_mesh.set_surface_override_material(0, h_mat)
 

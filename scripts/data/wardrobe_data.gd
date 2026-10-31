@@ -47,11 +47,35 @@ const HAIRSTYLES: Array[Dictionary] = [
 	},
 	{
 		"id": "headwrap",
-		"name": "Traditional Headwrap / Gele",
+		"name": "Traditional Royal Gele / Headwrap",
 		"mesh_type": "headwrap",
 		"price": 1500,
 		"default_color": Color(0.85, 0.45, 0.15),
-		"description": "Regal cultural headwrap perfect for Sunday fellowship and matriculation."
+		"description": "Regal tiered Aso-Oke fan-pleated gele perfect for Sunday fellowship and matriculation."
+	},
+	{
+		"id": "cornrows",
+		"name": "Fulani Braids & Cornrows",
+		"mesh_type": "cornrows",
+		"price": 1000,
+		"default_color": Color(0.06, 0.06, 0.06),
+		"description": "Geometric Fulani braided ridges with neat hanging side strands."
+	},
+	{
+		"id": "puff_afro",
+		"name": "Twin Afro Puffs",
+		"mesh_type": "puff_afro",
+		"price": 800,
+		"default_color": Color(0.08, 0.08, 0.08),
+		"description": "Playful and bouncy double afro puff buns with colorful hair ties."
+	},
+	{
+		"id": "fila_cap",
+		"name": "Traditional Fila / Ozo Cap",
+		"mesh_type": "fila_cap",
+		"price": 1400,
+		"default_color": Color(0.68, 0.16, 0.22),
+		"description": "Stately embroidered cultural cap folded elegantly to the side."
 	}
 ]
 

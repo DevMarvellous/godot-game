@@ -60,10 +60,10 @@ func _ready() -> void:
 			)
 			tested_combos += 1
 	player.play_dressing_animation()
-	var emotes_list = ["zanku", "gbese", "shaku", "flex", "wahala", "focus", "selfie", "wave", "choplife", "juggle", "sit", "study", "pray"]
+	var emotes_list = ["zanku", "gbese", "shaku", "flex", "wahala", "focus", "selfie", "wave", "choplife", "juggle", "sit", "study", "pray", "praise_jump", "odogwu_stride", "graduation_dance", "serious_concentration"]
 	for em in emotes_list:
 		player.play_emote(em)
-	print("  -> Player3D hair & outfit 3D mesh swapping + 12 procedural eased Nigerian emotes OK (Tested %d combos, %d emotes)" % [tested_combos, emotes_list.size()])
+	print("  -> Player3D hair & outfit 3D mesh swapping + %d procedural eased Nigerian emotes OK (Tested %d combos, %d emotes)" % [emotes_list.size(), tested_combos, emotes_list.size()])
 
 	# 3. Test Phone System & Wallpapers
 	print("[3/6] Verifying Phone System...")
@@ -426,6 +426,33 @@ func _ready() -> void:
 	assert(quiz_menu.visible == false, "Quiz menu should be hidden after closing")
 	quiz_menu.queue_free()
 	print("  -> Inter-Department Academic Quiz Tournament, Lifelines & Prize Multipliers OK")
+
+	# Test Campus Fellowship Praise Concert Mini-Game
+	print("[6g/6] Verifying Campus Fellowship Praise Concert & Rhythm Ministration...")
+	var hymn_data = load("res://scripts/data/hymn_praise_data.gd")
+	assert(hymn_data.PRAISE_SONGS.size() >= 5, "Must have at least 5 praise songs!")
+	for s in hymn_data.PRAISE_SONGS:
+		assert(s.has("title") and s.has("notes") and s.has("scripture"), "Each song must have title, notes, and scripture!")
+		assert(s["notes"].size() > 0, "Each praise song must have rhythm notes!")
+
+	var praise_scene = load("res://scenes/chapel_praise_game.tscn")
+	var praise_game = praise_scene.instantiate()
+	add_child(praise_game)
+	praise_game.open_concert(player, 0)
+	assert(praise_game.visible == true, "Praise concert should be visible after opening")
+	assert(praise_game.is_playing == true, "Song should be playing")
+	assert(praise_game.active_notes.size() > 0, "Notes should be spawned on tracks")
+	# Simulate hitting lane 0
+	praise_game._on_lane_hit(0)
+	# Finish song and verify rewards
+	var prev_money = player.needs_manager.money if player.needs_manager else 0
+	praise_game._finish_song()
+	assert(praise_game.results_panel.visible == true, "Results panel should be shown after ministration")
+	assert(player.needs_manager.money >= prev_money, "Praise ministration should award fellowship love offering!")
+	praise_game.close_concert()
+	assert(praise_game.visible == false, "Praise concert should be hidden after close")
+	praise_game.queue_free()
+	print("  -> Campus Fellowship Praise Concert, Rhythm Harmonies & Faith Offering OK")
 
 	print("========================================================")
 	print("   ALL 6 TEST PHASES PASSED WITH ZERO CRASHES OR ERRORS!")

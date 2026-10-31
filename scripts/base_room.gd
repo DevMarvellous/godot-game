@@ -613,6 +613,17 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 					quiz_node.tournament_closed.connect(_on_menu_closed)
 		if quiz_node and quiz_node.has_method("open_tournament"):
 			quiz_node.open_tournament(p)
+	elif menu_type == &"chapel_praise":
+		var praise_node: Node = menus_layer.get_node_or_null("ChapelPraiseGame") if menus_layer else null
+		if not praise_node and menus_layer:
+			var praise_sc: PackedScene = load("res://scenes/chapel_praise_game.tscn")
+			if praise_sc:
+				praise_node = praise_sc.instantiate()
+				menus_layer.add_child(praise_node)
+				if praise_node.has_signal("concert_closed"):
+					praise_node.concert_closed.connect(_on_menu_closed)
+		if praise_node and praise_node.has_method("open_concert"):
+			praise_node.open_concert(p)
 	elif menu_type == &"gigs":
 		if not gigs_menu and menus_layer:
 			gigs_menu = GigsScene.instantiate()

@@ -142,8 +142,8 @@ func update_object_display() -> void:
 			prompt_message = "[E] Department Practical Coursework Station"
 			object_name = "Department Project & Coursework Station"
 		ObjectType.CHAPEL_PIANO:
-			prompt_message = "[E] Worship Piano & Keyboard (+40 Faith, 20m)"
-			object_name = "Campus Chapel Grand Piano"
+			prompt_message = "[E] Fellowship Praise Concert (Rhythm Worship)"
+			object_name = "Worship Organ & Piano"
 		ObjectType.GATE_SECURITY:
 			prompt_message = "[E] Security Checkpoint (Show Student Matric ID)"
 			object_name = "Campus Security Clearance Barrier"
@@ -323,12 +323,7 @@ func interact(player: CharacterBody3D) -> void:
 			menu_requested.emit(&"coursework", player)
 
 		ObjectType.CHAPEL_PIANO:
-			needs.modify_faith(40.0)
-			needs.modify_energy(15.0)
-			TimeSystem.advance_minutes(20)
-			if player.has_method("play_pray_animation"):
-				player.play_pray_animation()
-			_show_feedback(player, "Played uplifting hymns on the chapel piano! Faith +40, Energy +15!")
+			menu_requested.emit(&"chapel_praise", player)
 
 		ObjectType.GATE_SECURITY:
 			StudentProfile.load_from_disk()

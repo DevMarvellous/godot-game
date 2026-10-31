@@ -458,7 +458,11 @@ func _create_emote_ui() -> void:
 		{"id": "juggle", "label": "★ Keepy-Uppy Juggle", "color": Color(0.35, 0.95, 0.65)},
 		{"id": "sit", "label": "■ Sit & Rest (+Energy)", "color": Color(0.4, 0.85, 0.5)},
 		{"id": "study", "label": "■ Focused Study", "color": Color(0.65, 0.55, 1.0)},
-		{"id": "pray", "label": "✦ Faith & Prayer", "color": Color(0.85, 0.9, 1.0)}
+		{"id": "pray", "label": "✦ Faith & Prayer", "color": Color(0.85, 0.9, 1.0)},
+		{"id": "praise_jump", "label": "✦ Praise Jump / Hallelujah", "color": Color(1.0, 0.88, 0.35)},
+		{"id": "odogwu_stride", "label": "★ Odogwu Swagger Stride", "color": Color(1.0, 0.82, 0.24)},
+		{"id": "graduation_dance", "label": "★ First Class Grad Dance", "color": Color(0.35, 0.9, 1.0)},
+		{"id": "serious_concentration", "label": "■ Scholarly Concentration", "color": Color(0.4, 0.85, 0.5)}
 	]
 
 	for opt in emote_options:
