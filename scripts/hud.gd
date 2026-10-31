@@ -340,7 +340,7 @@ func _populate_tasks_sheet() -> void:
 		{"label": "⚽ Stadium Penalty", "dest": &"stadium"},
 		{"label": "🎱 SUB Snooker", "dest": &"sub"},
 		{"label": "🍗 Mama Put", "dest": &"mama_put"},
-		{"label": "💃 Love Garden", "dest": &"garden"}
+		{"label": "🌿 Peace Park", "dest": &"garden"}
 	]
 	for spot in fun_spots:
 		var f_btn := Button.new()

@@ -88,13 +88,50 @@ const EVENTS: Array[Dictionary] = [
 		"title": "📋 SURPRISE HOSTEL ROOM INSPECTION!",
 		"desc": "Hall warden checked your bunk bed and reading desk! Good hygiene and tidy room confirmed. Commendation given!",
 		"effect": "warden"
+	},
+	{
+		"id": &"boiling_ring_panic",
+		"title": "⚠️ HALL WARDEN BOILING RING INSPECTION!",
+		"desc": "KPA KPA KPA! Hall Warden is knocking at your door! Hide the boiling ring and hotplate inside the wardrobe before you get caught!",
+		"effect": "boiling_ring"
+	},
+	{
+		"id": &"chapel_choir_mob",
+		"title": "🎶 CAMPUS PRAISE & WORSHIP FLASH MOB!",
+		"desc": "The Joint Campus Fellowship choir erupts into an acoustic praise chorus across the academic quad! Faith and joy overflow (+35 Faith, +20 Energy)!",
+		"effect": "praise_mob"
+	},
+	{
+		"id": &"family_alert",
+		"title": "📱 OPAY CREDIT ALERT: +₦6,000 BLESSING!",
+		"desc": "Uncle in Ibadan pings: 'God bless your studies, buy good food and handouts.' Wallet credited +₦6,000!",
+		"effect": "family_blessing"
+	},
+	{
+		"id": &"fellowship_bread",
+		"title": "🥖 BROTHER EMMANUEL FELLOWSHIP GIFTS!",
+		"desc": "Coursemates gifted you freshly baked oven bread and chilled fruit juice for revision night! Hunger restored (+35 Hunger, +20 Faith).",
+		"effect": "fellowship_snack"
 	}
 ]
+
+var real_time_elapsed: float = 0.0
+var next_event_interval: float = 160.0 # 2.5 to 3.5 minutes real time
 
 
 func _ready() -> void:
 	if TimeSystem:
 		TimeSystem.minute_passed.connect(_on_minute_passed)
+	next_event_interval = randf_range(150.0, 210.0)
+
+
+func _process(delta: float) -> void:
+	real_time_elapsed += delta
+	if real_time_elapsed >= next_event_interval:
+		real_time_elapsed = 0.0
+		next_event_interval = randf_range(160.0, 240.0)
+		var total_mins: int = TimeSystem.get_total_minutes() if TimeSystem else 0
+		_trigger_random_event(total_mins)
 
 
 func _on_minute_passed() -> void:
@@ -103,8 +140,16 @@ func _on_minute_passed() -> void:
 		return
 
 	# Dynamic chance after cooldown so events pop regularly and campus feels alive!
-	if randf() < 0.08:
+	if randf() < 0.12:
 		_trigger_random_event(current_total_minutes)
+
+
+func trigger_event_by_id(target_id: StringName) -> bool:
+	for ev in EVENTS:
+		if ev["id"] == target_id:
+			_apply_event_effect(ev)
+			return true
+	return false
 
 
 func _trigger_random_event(current_time: int) -> void:
@@ -221,6 +266,41 @@ func _apply_event_effect(ev: Dictionary) -> void:
 				if needs:
 					needs.modify_faith(20.0)
 			sound_to_play = "coin"
+
+		"boiling_ring":
+			var player = _get_active_player()
+			if player:
+				var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
+				if needs:
+					needs.modify_faith(10.0)
+			sound_to_play = "alert"
+
+		"praise_mob":
+			var player = _get_active_player()
+			if player:
+				var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
+				if needs:
+					needs.modify_faith(35.0)
+					needs.modify_energy(20.0)
+			sound_to_play = "bell"
+
+		"family_blessing":
+			var player = _get_active_player()
+			if player:
+				var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
+				if needs:
+					needs.modify_money(6000)
+					needs.modify_faith(20.0)
+			sound_to_play = "coin"
+
+		"fellowship_snack":
+			var player = _get_active_player()
+			if player:
+				var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
+				if needs:
+					needs.modify_hunger(35.0)
+					needs.modify_faith(20.0)
+			sound_to_play = "bell"
 
 	var sm = get_node_or_null("/root/SoundManager")
 	if sm:

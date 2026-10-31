@@ -297,7 +297,7 @@ func _on_power_state_changed(has_power: bool) -> void:
 
 
 func _on_campus_event_triggered(event_id: StringName, event_title: String, _event_desc: String) -> void:
-	if event_id == &"warden_inspection" and room_id == &"hostel":
+	if (event_id == &"warden_inspection" or event_id == &"boiling_ring_panic") and room_id == &"hostel":
 		_trigger_warden_panic()
 	elif player and player.has_method("display_notification"):
 		player.display_notification("%s" % event_title)
@@ -324,10 +324,10 @@ func _create_warden_panic_ui() -> void:
 	warden_banner_ui = PanelContainer.new()
 	warden_banner_ui.name = "WardenPanicBanner"
 	warden_banner_ui.anchors_preset = Control.PRESET_CENTER_TOP
-	warden_banner_ui.offset_left = -260.0
-	warden_banner_ui.offset_top = 100.0
-	warden_banner_ui.offset_right = 260.0
-	warden_banner_ui.offset_bottom = 165.0
+	warden_banner_ui.offset_left = -280.0
+	warden_banner_ui.offset_top = 95.0
+	warden_banner_ui.offset_right = 280.0
+	warden_banner_ui.offset_bottom = 195.0
 
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0.85, 0.15, 0.15, 0.94)
@@ -347,7 +347,7 @@ func _create_warden_panic_ui() -> void:
 	warden_banner_ui.add_theme_stylebox_override(&"panel", style)
 
 	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override(&"separation", 4)
+	vbox.add_theme_constant_override(&"separation", 6)
 	warden_banner_ui.add_child(vbox)
 
 	warden_countdown_label = Label.new()
@@ -358,11 +358,31 @@ func _create_warden_panic_ui() -> void:
 	vbox.add_child(warden_countdown_label)
 
 	var sub_lbl := Label.new()
-	sub_lbl.text = "⚡ Sprint to Wardrobe or Desk Drawer and press [E] to stow coil!"
+	sub_lbl.text = "⚡ Sprint to Wardrobe and press [E] or tap button below!"
 	sub_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	sub_lbl.add_theme_font_size_override(&"font_size", 13)
+	sub_lbl.add_theme_font_size_override(&"font_size", 12)
 	sub_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.9, 0.35))
 	vbox.add_child(sub_lbl)
+
+	var stow_btn := Button.new()
+	stow_btn.text = "🛡️ STOW BOILING RING IN WARDROBE (TAP TO HIDE)"
+	stow_btn.custom_minimum_size = Vector2(0, 34)
+	stow_btn.focus_mode = Control.FOCUS_NONE
+	stow_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	stow_btn.add_theme_font_size_override(&"font_size", 12)
+	var btn_style := StyleBoxFlat.new()
+	btn_style.bg_color = Color(0.12, 0.65, 0.32, 0.95)
+	btn_style.corner_radius_top_left = 8
+	btn_style.corner_radius_top_right = 8
+	btn_style.corner_radius_bottom_right = 8
+	btn_style.corner_radius_bottom_left = 8
+	btn_style.content_margin_top = 4.0
+	btn_style.content_margin_bottom = 4.0
+	stow_btn.add_theme_stylebox_override(&"normal", btn_style)
+	stow_btn.add_theme_stylebox_override(&"hover", btn_style)
+	stow_btn.add_theme_stylebox_override(&"pressed", btn_style)
+	stow_btn.pressed.connect(_resolve_warden_success)
+	vbox.add_child(stow_btn)
 
 	if menus_layer:
 		menus_layer.add_child(warden_banner_ui)
@@ -375,10 +395,10 @@ func _resolve_warden_caught() -> void:
 	if player:
 		var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
 		if needs:
-			needs.modify_money(-1500)
-			needs.modify_faith(-15.0)
+			needs.modify_money(-500)
+			needs.modify_faith(-10.0)
 		if player.has_method("display_notification"):
-			player.display_notification("🚨 CAUGHT! Warden seized boiling ring + ₦1,500 Disciplinary Fine!")
+			player.display_notification("⚠️ Warden spotted boiling ring! 'Careful with appliances! Warning given!' Faith -10, ₦500 fine.")
 
 
 func _resolve_warden_success() -> void:
@@ -391,12 +411,12 @@ func _resolve_warden_success() -> void:
 	if player:
 		var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
 		if needs:
-			needs.modify_money(1000)
-			needs.modify_faith(20.0)
+			needs.modify_money(1500)
+			needs.modify_faith(25.0)
 		if player.has_method("play_celebrate_animation"):
-			player.play_celebrate_animation("🎖️ WARDEN COMMENDATION! +₦1,000")
+			player.play_celebrate_animation("🎖️ WARDEN COMMENDATION! +₦1,500")
 		if player.has_method("display_notification"):
-			player.display_notification("Phew! Contraband hidden! Warden: 'Clean room, student! Commendation awarded!' +₦1,000!")
+			player.display_notification("🛡️ Contraband stowed! Warden inspects: 'Very tidy Christian scholar! Commendation awarded!' +₦1,500, +25 Faith!")
 
 
 func _configure_dynamic_hostel_room() -> void:

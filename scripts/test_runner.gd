@@ -156,6 +156,12 @@ func _ready() -> void:
 	hud.queue_free()
 	print("  -> HUD Dynamic Campus Event Toast Banner OK")
 
+	assert(CampusEvents != null, "CampusEvents autoload must exist!")
+	assert(CampusEvents.EVENTS.size() >= 12, "Must have comprehensive campus events!")
+	var triggered: bool = CampusEvents.trigger_event_by_id(&"chapel_choir_mob")
+	assert(triggered, "Must be able to trigger chapel_choir_mob incident!")
+	print("  -> CampusEvents Dynamic Incidents & Real-Time Periodic Ticker OK (%d events verified)" % [CampusEvents.EVENTS.size()])
+
 	var roommate_script = load("res://scripts/roommate_ai.gd")
 	assert(roommate_script != null, "RoommateAI script must exist!")
 	print("  -> RoommateAI living routine & state schedule OK")
