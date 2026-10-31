@@ -167,7 +167,7 @@ room_id = &"stadium"
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 14, 0)
 light_color = Color(1, 0.98, 0.92, 1)
 light_energy = 1.35
-shadow_enabled = true
+shadow_enabled = false
 
 [node name="PitchFloor" type="StaticBody3D" parent="."]
 collision_layer = 4

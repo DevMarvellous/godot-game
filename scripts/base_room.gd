@@ -160,6 +160,13 @@ func _ready() -> void:
 	_connect_interactive_fixtures()
 	_gather_ceiling_fans(self)
 
+	# Web performance: disable real-time shadow passes to eliminate GPU draw call stutter
+	if OS.has_feature("web") or OS.has_feature("mobile"):
+		var room_lights: Array[Light3D] = []
+		_gather_room_lights(self, room_lights)
+		for l in room_lights:
+			l.shadow_enabled = false
+
 	if CampusEvents:
 		if not CampusEvents.power_state_changed.is_connected(_on_power_state_changed):
 			CampusEvents.power_state_changed.connect(_on_power_state_changed)
