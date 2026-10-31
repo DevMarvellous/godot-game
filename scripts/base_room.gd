@@ -602,6 +602,17 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 				penalty_menu.dialog_closed.connect(_on_menu_closed)
 		if penalty_menu:
 			penalty_menu.open_penalty(p)
+	elif menu_type == &"quiz_battle":
+		var quiz_node: Node = menus_layer.get_node_or_null("QuizBattleMenu") if menus_layer else null
+		if not quiz_node and menus_layer:
+			var quiz_sc: PackedScene = load("res://scenes/quiz_battle_menu.tscn")
+			if quiz_sc:
+				quiz_node = quiz_sc.instantiate()
+				menus_layer.add_child(quiz_node)
+				if quiz_node.has_signal("tournament_closed"):
+					quiz_node.tournament_closed.connect(_on_menu_closed)
+		if quiz_node and quiz_node.has_method("open_tournament"):
+			quiz_node.open_tournament(p)
 	elif menu_type == &"gigs":
 		if not gigs_menu and menus_layer:
 			gigs_menu = GigsScene.instantiate()

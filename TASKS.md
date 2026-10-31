@@ -18,19 +18,7 @@ Connect Google OAuth credentials so players can sign in with one tap using their
 
 ---
 
-## Task 2: Inter-Department Academic Quiz Tournament
-### What Needs to be Done
-Build a competitive and educational quiz game where departments challenge each other for academic honours and faculty trophies.
-
-### How to Do It
-1. In lecture hall room gd and coursework menu gd, add a Quiz Tournament mode at the lecturer podium.
-2. Present fast 30 second multiple choice questions from general studies, science, engineering, and history.
-3. Award Continuous Assessment points, CGPA boosts, and the Faculty Academic Shield to high scorers.
-4. Display a Dean Honor Roll leaderboard ranking the top student scholars.
-
----
-
-## Task 3: Campus Fellowship Praise Concert
+## Task 2: Campus Fellowship Praise Concert
 ### What Needs to be Done
 Add an interactive musical and worship event at the University Chapel with Christian praise songs and student choir participation.
 
@@ -42,7 +30,7 @@ Add an interactive musical and worship event at the University Chapel with Chris
 
 ---
 
-## Task 4: Student Entrepreneurship and Freelance Creative Agency
+## Task 3: Student Entrepreneurship and Freelance Creative Agency
 ### What Needs to be Done
 Allow students to earn honest income through creative talents like graphic design, laptop coding, photography, baking, and academic tutoring.
 
@@ -56,7 +44,7 @@ Allow students to earn honest income through creative talents like graphic desig
 
 ---
 
-## Task 5: Hostel Room Customization and Study Hub
+## Task 4: Hostel Room Customization and Study Hub
 ### What Needs to be Done
 Allow players to personalize their hostel room with useful furniture, study lamps, bookshelves, and home decor.
 
@@ -67,7 +55,7 @@ Allow players to personalize their hostel room with useful furniture, study lamp
 
 ---
 
-## Task 6: Dean Cup Faculty Football Championship
+## Task 5: Dean Cup Faculty Football Championship
 ### What Needs to be Done
 Expand the newly renovated football stadium with a full tournament mode where faculties compete for the championship trophy with zero gambling.
 
@@ -79,9 +67,9 @@ Expand the newly renovated football stadium with a full tournament mode where fa
 
 ---
 
-## Task 7: WhatsApp and Social Shareable Student Life Card
+## Task 6: WhatsApp and Social Shareable Student Life Card
 ### What Needs to be Done
-Add a 1-tap phone button that generates a clean, shareable student ID badge card summarizing your student achievements and avatar drip.
+Add a 1 tap phone button that generates a clean, shareable student ID badge card summarizing your student achievements and avatar drip.
 
 ### How to Do It
 1. In web shell html, build an HTML canvas renderer styled like a modern university student ID card.
@@ -90,7 +78,7 @@ Add a 1-tap phone button that generates a clean, shareable student ID badge card
 
 ---
 
-## Task 8: In-Game Settings and Direct Player Feedback
+## Task 7: In-Game Settings and Direct Player Feedback
 ### What Needs to be Done
 Add a comprehensive settings menu with audio controls, performance toggles, and a direct bug feedback box.
 
@@ -102,7 +90,7 @@ Add a comprehensive settings menu with audio controls, performance toggles, and 
 
 ---
 
-## Task 9: Driveable Campus Danfo Bus and Keke Shuttle
+## Task 8: Driveable Campus Danfo Bus and Keke Shuttle
 ### What Needs to be Done
 Let players drive the yellow Danfo bus or tricycle Keke around the campus ring road to transport students between faculties.
 
@@ -111,3 +99,14 @@ Let players drive the yellow Danfo bus or tricycle Keke around the campus ring r
 2. Create simple arcade vehicle physics with forward drive, reverse, steering, and braking.
 3. Place passenger stops at Hostel, Lecture Hall, Library, and Stadium.
 4. Picking up waiting student NPCs and dropping them at their destination rewards 150 Naira transport fare per trip.
+
+---
+
+## Task 9: Nigerian Emote and Wardrobe Hairstyles Expansion
+### What Needs to be Done
+Expand the student wardrobe with additional authentic hairstyles, dresses, and expressive Nigerian campus emotes.
+
+### How to Do It
+1. In wardrobe data gd, add more hairstyles including cornrows, puff afro braids, and traditional gele headwrap.
+2. In player 3d gd, add expressive emotes: Odogwu Stride, Praise Jump, Graduation Dance, and Serious Concentration.
+3. Enhance the phone emote selector UI with clear icons and bright text for high contrast on mobile screens.

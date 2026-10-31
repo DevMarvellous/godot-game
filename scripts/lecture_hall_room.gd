@@ -14,6 +14,7 @@ extends "res://scripts/base_room.gd"
 @onready var ceiling_fan_1: MeshInstance3D = get_node_or_null("LectureFixtures/CeilingFan1") as MeshInstance3D
 @onready var ceiling_fan_2: MeshInstance3D = get_node_or_null("LectureFixtures/CeilingFan2") as MeshInstance3D
 @onready var blackboard_notes: Label3D = get_node_or_null("LectureFixtures/BlackboardNotes") as Label3D
+@onready var quiz_battle_menu: Control = get_node_or_null("MenusLayer/QuizBattleMenu") as Control
 
 var has_consulted_lecturer: bool = false
 
@@ -27,6 +28,9 @@ func _ready() -> void:
 		active_ceiling_fans.append(ceiling_fan_1)
 	if ceiling_fan_2:
 		active_ceiling_fans.append(ceiling_fan_2)
+
+	if quiz_battle_menu:
+		quiz_battle_menu.tournament_closed.connect(_on_menu_closed)
 
 	_update_blackboard_curriculum()
 
@@ -63,8 +67,32 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 	elif menu_type == &"podium_consult":
 		_consult_lecturer(p)
 		return
+	elif menu_type == &"quiz_battle":
+		_open_quiz_battle(p)
+		return
 
 	super._on_fixture_menu_requested(menu_type, p)
+
+
+func _open_quiz_battle(p: CharacterBody3D) -> void:
+	if not quiz_battle_menu:
+		quiz_battle_menu = get_node_or_null("MenusLayer/QuizBattleMenu") as Control
+	if not quiz_battle_menu:
+		var ml: CanvasLayer = get_node_or_null("MenusLayer") as CanvasLayer
+		if ml:
+			const QuizBattleScene = preload("res://scenes/quiz_battle_menu.tscn")
+			quiz_battle_menu = QuizBattleScene.instantiate() as Control
+			ml.add_child(quiz_battle_menu)
+			if quiz_battle_menu.has_signal("tournament_closed"):
+				quiz_battle_menu.tournament_closed.connect(_on_menu_closed)
+	if quiz_battle_menu:
+		_close_all_active_modals(quiz_battle_menu)
+		if p:
+			p.set_physics_process(false)
+			p.velocity = Vector3.ZERO
+		if quiz_battle_menu.has_method("open_tournament"):
+			quiz_battle_menu.open_tournament(p)
+
 
 
 func _sign_attendance_sheet(p: CharacterBody3D) -> void:

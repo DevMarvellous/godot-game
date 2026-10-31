@@ -32,6 +32,15 @@ var live_config: Dictionary = {
 	}
 }
 
+# Concurrency & Rate-Limiting Protection (Shields Supabase Free Tier for 500+ Players)
+var _last_sync_timestamp: float = 0.0
+const SYNC_DEBOUNCE_SECONDS: float = 30.0
+var _cached_deans_list: Array = []
+var _cached_deans_timestamp: float = 0.0
+var _cached_wealth_list: Array = []
+var _cached_wealth_timestamp: float = 0.0
+const LEADERBOARD_CACHE_SECONDS: float = 300.0 # 5 minutes
+
 # HTTP Request node for async REST calls
 var http_request: HTTPRequest = null
 
@@ -169,6 +178,12 @@ func sync_profile_to_cloud(profile: Dictionary) -> void:
 		profile_synced.emit(true, "Progress Saved to Browser Storage (Offline)")
 		return
 
+	var now: float = Time.get_ticks_msec() / 1000.0
+	if now - _last_sync_timestamp < SYNC_DEBOUNCE_SECONDS:
+		profile_synced.emit(true, "Local Save Active (Synced recently)")
+		return
+	_last_sync_timestamp = now
+
 	var s_url: String = DatabaseConfig.get_supabase_url()
 	var s_key: String = DatabaseConfig.get_supabase_anon_key()
 	var bearer_tok: String = auth_token if auth_token != "" else s_key
@@ -228,6 +243,11 @@ func _on_sync_completed(_result: int, response_code: int, _headers: PackedString
 
 ## Fetch Global Dean's List Leaderboard (Top 10 Highest CGPA)
 func fetch_deans_list_leaderboard() -> void:
+	var now: float = Time.get_ticks_msec() / 1000.0
+	if _cached_deans_list.size() > 0 and (now - _cached_deans_timestamp < LEADERBOARD_CACHE_SECONDS):
+		leaderboard_received.emit("deans_list", _cached_deans_list)
+		return
+
 	if not DatabaseConfig.is_cloud_configured():
 		# Simulated authentic Nigerian campus Dean's List
 		var mock_deans_list: Array = [
@@ -240,6 +260,8 @@ func fetch_deans_list_leaderboard() -> void:
 			{"name": "Zainab Bello", "dept": "ACC", "cgpa": 4.65, "title": "First Class Honours (Social Sciences)"},
 			{"name": "Emeka Balogun", "dept": "EEE", "cgpa": 4.58, "title": "First Class Honours (Engineering)"}
 		]
+		_cached_deans_list = mock_deans_list
+		_cached_deans_timestamp = now
 		leaderboard_received.emit("deans_list", mock_deans_list)
 		return
 
@@ -251,6 +273,8 @@ func fetch_deans_list_leaderboard() -> void:
 		if code == 200:
 			var data = JSON.parse_string(body.get_string_from_utf8())
 			if data is Array:
+				_cached_deans_list = data
+				_cached_deans_timestamp = Time.get_ticks_msec() / 1000.0
 				leaderboard_received.emit("deans_list", data)
 	, CONNECT_ONE_SHOT)
 	http_request.request(url, headers, HTTPClient.METHOD_GET)
@@ -258,6 +282,11 @@ func fetch_deans_list_leaderboard() -> void:
 
 ## Fetch Campus Wealth Leaderboard (Richest Hustlers)
 func fetch_wealth_leaderboard() -> void:
+	var now: float = Time.get_ticks_msec() / 1000.0
+	if _cached_wealth_list.size() > 0 and (now - _cached_wealth_timestamp < LEADERBOARD_CACHE_SECONDS):
+		leaderboard_received.emit("wealth", _cached_wealth_list)
+		return
+
 	if not DatabaseConfig.is_cloud_configured():
 		var mock_wealth: Array = [
 			{"name": "Emeka Tech O.", "dept": "CSC", "wallet_balance": 185000, "title": "Lead Software Contractor"},
@@ -267,6 +296,8 @@ func fetch_wealth_leaderboard() -> void:
 			{"name": "Segun Alabi", "dept": "CSC", "wallet_balance": 74000, "title": "SUB Snooker Champion"},
 			{"name": "Kemi Adeleke", "dept": "NAS", "wallet_balance": 62000, "title": "Buka Food Supplies"}
 		]
+		_cached_wealth_list = mock_wealth
+		_cached_wealth_timestamp = now
 		leaderboard_received.emit("wealth", mock_wealth)
 		return
 
@@ -278,6 +309,8 @@ func fetch_wealth_leaderboard() -> void:
 		if code == 200:
 			var data = JSON.parse_string(body.get_string_from_utf8())
 			if data is Array:
+				_cached_wealth_list = data
+				_cached_wealth_timestamp = Time.get_ticks_msec() / 1000.0
 				leaderboard_received.emit("wealth", data)
 	, CONNECT_ONE_SHOT)
 	http_request.request(url, headers, HTTPClient.METHOD_GET)

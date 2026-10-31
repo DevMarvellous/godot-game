@@ -388,6 +388,45 @@ func _ready() -> void:
 
 	print("  -> CampusPay P2P Money Transfer, Audio Volume Setters, Camera Presets & 3D Multiplayer Drip Sync OK")
 
+	# Test Quiz Battle Tournament & TV Game Show
+	print("[6f/6] Verifying Inter-Department Quiz Tournament & Lifelines...")
+	var quiz_data = load("res://scripts/data/quiz_battle_data.gd")
+	assert(quiz_data.QUESTIONS.size() >= 18, "Quiz questions must be at least 18!")
+	assert(quiz_data.ROUND_TIERS.size() == 5, "Quiz round tiers must be 5!")
+	var round_qs = quiz_data.get_round_questions(5)
+	assert(round_qs.size() == 5, "get_round_questions(5) must return 5 questions!")
+	for q in round_qs:
+		assert(q.has("question") and q.has("options") and q.has("correct"), "Each question must have question, options, and correct index!")
+		assert(q["options"].size() == 4, "Each quiz question must have 4 multiple-choice options!")
+		assert(q.has("emeka_hint") and q.has("tobi_hint"), "Each quiz question must have Emeka and Tobi hints!")
+
+	var quiz_menu_scene = load("res://scenes/quiz_battle_menu.tscn")
+	var quiz_menu = quiz_menu_scene.instantiate()
+	add_child(quiz_menu)
+	quiz_menu.open_tournament(player)
+	assert(quiz_menu.visible == true, "Quiz menu should be visible after opening")
+	assert(quiz_menu.questions.size() == 5, "Quiz menu should have 5 loaded questions")
+	# Test 50/50 Lifeline
+	quiz_menu._on_50_50_pressed()
+	assert(quiz_menu.lifeline_50_used == true, "50/50 lifeline should be marked used")
+	# Test Ask Emeka Lifeline
+	quiz_menu._on_ask_emeka_pressed()
+	assert(quiz_menu.lifeline_emeka_used == true, "Emeka lifeline should be marked used")
+	assert(quiz_menu.hint_dialog_panel.visible == true, "Hint dialog should display Emeka's advice")
+	# Test Ask Tobi Lifeline
+	quiz_menu._on_ask_tobi_pressed()
+	assert(quiz_menu.lifeline_tobi_used == true, "Tobi lifeline should be marked used")
+	# Test Answering Correctly
+	var current_q = quiz_menu.questions[quiz_menu.current_round_idx]
+	var correct_idx: int = int(current_q["correct"])
+	quiz_menu._on_option_selected(correct_idx)
+	assert(quiz_menu.total_cash_won > 0, "Correct answer should award cash")
+	assert(quiz_menu.total_cgpa_won > 0.0, "Correct answer should award CGPA")
+	quiz_menu.close_tournament()
+	assert(quiz_menu.visible == false, "Quiz menu should be hidden after closing")
+	quiz_menu.queue_free()
+	print("  -> Inter-Department Academic Quiz Tournament, Lifelines & Prize Multipliers OK")
+
 	print("========================================================")
 	print("   ALL 6 TEST PHASES PASSED WITH ZERO CRASHES OR ERRORS!")
 	print("========================================================\n")

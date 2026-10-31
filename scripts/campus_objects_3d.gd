@@ -55,6 +55,9 @@ func _ready() -> void:
 
 func _on_minute_passed() -> void:
 	if object_type == ObjectType.DESK:
+		if name.contains("Quiz") or object_name.contains("Quiz") or name.contains("Podium") or object_name.contains("Podium"):
+			prompt_message = "[E] Inter-Department Quiz Tournament"
+			return
 		var lec_idx: int = Schedule.get_current_lecture_index()
 		if lec_idx != -1 and not Schedule.is_attended(lec_idx):
 			var lec: Dictionary = Schedule.get_lecture(lec_idx)
@@ -74,8 +77,12 @@ func update_object_display() -> void:
 			prompt_message = "[E] Power Rest in Bed (Restore 100% Energy)"
 			object_name = "Hostel Bed"
 		ObjectType.DESK:
-			prompt_message = "[E] Study & Lecture Options"
-			object_name = "Lecture & Study Desk"
+			if name.contains("Quiz") or object_name.contains("Quiz") or name.contains("Podium") or object_name.contains("Podium"):
+				prompt_message = "[E] Inter-Department Quiz Tournament"
+				object_name = "Quiz Battle Tournament Podium"
+			else:
+				prompt_message = "[E] Study & Lecture Options"
+				object_name = "Lecture & Study Desk"
 		ObjectType.CAFETERIA:
 			prompt_message = "[E] Open Campus Canteen Menu"
 			object_name = "Mama Cashout Campus Canteen"
@@ -201,7 +208,10 @@ func interact(player: CharacterBody3D) -> void:
 					_show_feedback(player, "Power rest complete! Energy 100% restored.")
 
 		ObjectType.DESK:
-			menu_requested.emit(&"study", player)
+			if name.contains("Quiz") or object_name.contains("Quiz") or name.contains("Podium") or object_name.contains("Podium"):
+				menu_requested.emit(&"quiz_battle", player)
+			else:
+				menu_requested.emit(&"study", player)
 
 		ObjectType.CAFETERIA:
 			menu_requested.emit(&"food", player)

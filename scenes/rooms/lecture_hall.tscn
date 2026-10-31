@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://scenes/mobile_controls.tscn" id="8_mobile"]
 [ext_resource type="PackedScene" path="res://scenes/ca_test_menu.tscn" id="9_catest"]
 [ext_resource type="PackedScene" path="res://scenes/dialogue_menu.tscn" id="10_dialogue"]
+[ext_resource type="PackedScene" path="res://scenes/quiz_battle_menu.tscn" id="11_quiz"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
 size = Vector3(26, 0.4, 22)
@@ -360,5 +361,7 @@ layer = 2
 [node name="DialogueMenu" parent="MenusLayer" instance=ExtResource("10_dialogue")]
 
 [node name="SummaryMenu" parent="MenusLayer" instance=ExtResource("7_summary")]
+
+[node name="QuizBattleMenu" parent="MenusLayer" instance=ExtResource("11_quiz")]
 
 [node name="MobileControls" parent="." instance=ExtResource("8_mobile")]

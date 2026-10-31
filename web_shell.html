@@ -135,6 +135,17 @@ html, body, #canvas {
 	transition: width 0.2s ease;
 }
 
+@keyframes shimmerPulse {
+	0% { background-position: -200% 0; }
+	100% { background-position: 200% 0; }
+}
+
+.progress-bar-fill.pulse-shimmer {
+	background: linear-gradient(90deg, #10b981 0%, #f5c518 50%, #10b981 100%);
+	background-size: 200% 100%;
+	animation: shimmerPulse 1.4s infinite linear;
+}
+
 .progress-text {
 	font-size: 13px;
 	color: #e2e8f0;
@@ -2768,26 +2779,59 @@ setTimeout(() => {
 	}
 
 	const streamPill = document.getElementById('engine-stream-pill');
+	let _compileInterval = null;
+	let _simulatedPct = 90;
+	const _compileSteps = [
+		'⚡ Initializing WebAssembly Virtual Machine...',
+		'🎮 Compiling 3D Compatibility Shaders...',
+		'🎒 Loading Student Wardrobe & Sound Bus...',
+		'🏫 Assembling Federal University Campus...',
+		'🎓 Entering Federal University Campus...'
+	];
+	let _stepIndex = 0;
+
+	function _startCompilationSequence() {
+		if (_compileInterval) return;
+		if (fillBar) fillBar.classList.add('pulse-shimmer');
+		_compileInterval = setInterval(() => {
+			if (_simulatedPct < 98) {
+				_simulatedPct += 1;
+				if (fillBar) fillBar.style.width = _simulatedPct + '%';
+				if (_stepIndex < _compileSteps.length - 1 && _simulatedPct % 2 === 0) {
+					_stepIndex++;
+					if (percentText) percentText.textContent = _compileSteps[_stepIndex];
+					if (streamPill && !_isEngineStageReady) streamPill.textContent = `⚡ 3D Engine (${_simulatedPct}%)`;
+				}
+			}
+		}, 350);
+	}
 
 	engine.startGame({
 		'onProgress': function (current, total) {
 			if (current > 0 && total > 0) {
 				const pct = Math.min(100, Math.floor((current / total) * 100));
-				if (fillBar) fillBar.style.width = pct + '%';
-				if (pct >= 95) {
-					if (percentText) percentText.textContent = '⚡ Compiling 3D Engine & Shaders...';
-					if (streamPill && !_isEngineStageReady) streamPill.textContent = '⚡ Starting 3D World...';
+				if (pct >= 90) {
+					if (fillBar) fillBar.style.width = Math.max(pct, _simulatedPct) + '%';
+					_startCompilationSequence();
 				} else {
-					if (percentText) percentText.textContent = `Streaming Campus Assets (${pct}%)...`;
+					if (fillBar) fillBar.style.width = pct + '%';
+					if (percentText) percentText.textContent = `Streaming Campus 3D Assets (${pct}%)...`;
 					if (streamPill && !_isEngineStageReady) streamPill.textContent = `⚡ 3D Engine (${pct}%)`;
 				}
 			} else {
-				if (percentText) percentText.textContent = 'Entering Federal University Campus...';
+				if (percentText) percentText.textContent = 'Streaming Campus Assets...';
 			}
 		},
 	}).then(() => {
-		if (fillBar) fillBar.style.width = '100%';
-		if (percentText) percentText.textContent = 'Entering Federal University Campus...';
+		if (_compileInterval) {
+			clearInterval(_compileInterval);
+			_compileInterval = null;
+		}
+		if (fillBar) {
+			fillBar.classList.remove('pulse-shimmer');
+			fillBar.style.width = '100%';
+		}
+		if (percentText) percentText.textContent = '🎓 Entering Federal University Campus...';
 		if (streamPill) streamPill.textContent = '⚡ 3D Engine Ready!';
 		if (statusOverlay && !_pendingAdmissionPayload) statusOverlay.style.display = 'none';
 		// If stage didn't trigger callback within 500ms, mark ready automatically
@@ -2797,6 +2841,10 @@ setTimeout(() => {
 			}
 		}, 500);
 	}).catch((err) => {
+		if (_compileInterval) {
+			clearInterval(_compileInterval);
+			_compileInterval = null;
+		}
 		console.error(err);
 		if (statusOverlay) statusOverlay.style.display = 'flex';
 		setStatusNotice(err && err.message ? err.message : String(err));
