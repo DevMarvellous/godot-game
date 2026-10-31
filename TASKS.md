@@ -1,91 +1,139 @@
-# 📋 Campus Life Simulator — Launch & Action Roadmap (TASKS.md)
+# My Campus Life - Upcoming Tasks Roadmap
 
-This document tracks all human-action items for you (domain, branding, web hosting, HTML5 export) as well as technical game engine and multiplayer milestones.
-
----
-
-## 🧑‍💻 Section A: Human Tasks (Things YOU Need To Do)
-
-### 1. Game Branding & Domain
-- [ ] **Finalize Official Game Title**:
-  - Suggestions: *Lagos Campus Life*, *Naija Uni Quest*, *Campus Wahala*, *Matric 101*, *Varsity 9ja*, *Federal Uni Simulator*.
-- [ ] **Game Icon & Favicon**:
-  - Need a 512×512 PNG app icon (student wearing grad cap / backpack / hostel gate).
-- [ ] **Domain & Hosting (Hostinger / Namecheap / Cloudflare)**:
-  - Buy domain (e.g. `.com`, `.ng`, `.fun`, or `.site`).
-  - Configure DNS (point A/CNAME record to Hostinger Web or Cloudflare Pages / GitHub Pages).
-- [ ] **Hosting Setup**:
-  - **Option 1 (Zero-Cost Starter)**: GitHub Pages (via repository `Settings -> Pages`).
-  - **Option 2 (Custom Domain on Hostinger)**: Upload export files to `public_html`.
-  - **Crucial Web Headers (SharedArrayBuffer)**: Set up `.htaccess` or Cloudflare Transform Rules to include:
-    ```apache
-    Cross-Origin-Opener-Policy: same-origin
-    Cross-Origin-Embedder-Policy: require-corp
-    ```
-
-### 2. Godot Web HTML5 Export Templates
-- [ ] Open Godot 4.7.
-- [ ] Click **Editor -> Manage Export Templates**.
-- [ ] Click **Download and Install** (ensures `web.zip` template is installed on your PC).
-- [ ] In **Project -> Export**:
-  - Add **Web** preset.
-  - Export Path: `build/web/index.html`.
+This file contains all the tasks that still need to be done. It does not list finished items. Each task explains what needs to be created and how to build it. All features are designed to be wholesome, fun, clean, and engaging for all players.
 
 ---
 
-## 🛠️ Section B: Game Architecture & Outside-The-Box Polish
+## Task 1: Connect Google Sign In with Supabase
+### What Needs to be Done
+Connect Google OAuth credentials so players can sign in with one tap using their real Google account.
 
-- [x] **Female & Male Hostel Differentiation**:
-  - Dynamically switches title between *Moremi Hall* (Female) and *Hall 2* (Male).
-  - Dynamically swaps roommate NPC between *Chisom* (female) and *Segun* (male).
-- [ ] **Roommate Personality Archetypes**:
-  - *The Bookworm*: Always studying, shares past questions.
-  - *The Chef*: Always boiling Indomie, offers free food when sapa strikes.
-  - *The Pastor/Prayer Warrior*: Wakes everyone up for morning devotion (+Faith, -Sleep).
-  - *The Hustler*: Selling crypto, perfumes, and hostel snacks.
-
-### 2. Multi-Vendor Cafeteria (Mama Put & Senate Bistro)
-- [x] **Mama Put (Affordable Campus Joint)**:
-  - *Mama Cashout*: Jollof rice, fried fish, plantain.
-  - *Iya Basira*: Amala lafun, ewedu, gbegiri, goat meat.
-  - *Mallam Danladi*: Indomie, suya beef, cold malt & zobo.
-- [x] **The Senate Bistro & VIP Lounge (High-End Dining)**:
-  - *Chef Pierre*: Gourmet iced latte focus boosters, continental steaks.
-
-### 3. Sports & Recreation
-- [x] **Dean's Cup Football Stadium**:
-  - Full pitch with goalposts, boundary fences, interactive physics soccer ball.
-  - *Coach Balogun* athletic training & tournament dialogue.
-
-### 4. Interactive Phone & Group Chat
-- [x] **CampuSApp Messaging**:
-  - Official 100L Departmental Group Chat with pinned course rep deadlines and live banter.
-
-### 5. Gameplay Mechanics & Feel
-- [x] **Stamina & Sprinting**: Shift key / double push moves player 1.55x faster with dynamic stride gait.
-- [ ] **Hostel Inspection Random Event**: Hall warden checks for banned hot plates / boiling rings.
-- [ ] **Rain / Heatwave Weather System**: Random weather changes campus ambient lighting.
+### How to Do It
+1. Open Google Cloud Console under Credentials.
+2. Create an OAuth 2.0 Client ID for Web application.
+3. Add https://mycampuslife.vercel.app and http://localhost:8000 under Authorized JavaScript Origins.
+4. Add https://qissxomdrgimimkedwpy.supabase.co/auth/v1/callback under Authorized Redirect URIs.
+5. Copy the Client ID and Client Secret into the Supabase Dashboard under Authentication Providers Google.
+6. Test in web shell html that clicking the Google button signs the user in and restores their cloud profile.
 
 ---
 
-## 💰 Section C: Game Monetization & Ad Placement Architecture
+## Task 2: Enlarge and Clarify Campus Rooms
+### What Needs to be Done
+Make key campus rooms more spacious, visually clear, and easier to navigate on both mobile and desktop screens.
 
-### 1. Rewarded Video Ads (Highest eCPM & Player-Friendly)
-- **Concept**: Players *choose* to watch a short 15-30s ad in exchange for high-value in-game perks.
-- **Triggers**:
-  - 📺 **Sapa Bailout**: Watch an ad on the phone app for instant ₦1,500 + 25% Energy recharge.
-  - ⚡ **Exam Panic Study Pass**: Watch an ad when entering an exam with low stamina to get a +10 Continuous Assessment bonus mark.
-  - 🚌 **Free Keke Shuttle Pass**: Watch 1 ad for 5 free instant campus trips without paying ₦100 fare.
+### How to Do It
+1. Open room scene files like hostel room, lecture hall, library hall, and campus mall.
+2. Widen the floor boundaries by 25 to 40 percent so the player avatar has ample room to walk freely.
+3. Clean up object placement and arrange study desks, beds, and shop counters with wider walking aisles.
+4. Improve camera positioning with a clearer top view angle so walls do not block the player view.
+5. Keep real time shadow passes turned off on web to maintain smooth 60 frames per second on all phones.
 
-### 2. In-Game Native Campus Billboards
-- **Concept**: Realistic 3D billboard meshes placed around the football stadium and campus courtyard.
-- **Placement**:
-  - Football stadium perimeter fences.
-  - Campus ATM booth walls.
-  - Can display real sponsor banners (e.g. telecom networks, fintech apps, campus food brands) without interrupting gameplay.
+---
 
-### 3. Web Monetization Providers (HTML5)
-- **Google AdSense for Games / H5 Games Ads**: Directly integrates with Godot HTML5 canvas.
-- **GameDistribution / CrazyGames SDK**: Built-in rewarded ad API that can trigger Javascript calls from Godot (`JavaScriptBridge.eval()`).
+## Task 3: Wholesome Campus Comedy and Random Incidents
+### What Needs to be Done
+Add clean, funny campus events that surprise players and make daily student life entertaining without any sinful or worldly elements.
 
+### How to Do It
+1. In campus events gd, add a timer that triggers a random wholesome event every 3 to 5 minutes.
+2. Event 1 - Boiling Ring Panic: Hall warden knocks on the corridor door. The player has 20 seconds to run and stow their hotplate inside the wardrobe before receiving a funny warning.
+3. Event 2 - Up NEPA Celebration: Power returns across the campus with students cheering, fans spinning, and battery charging restored.
+4. Event 3 - Mama Put Jollof Rice Promo: Mama Cashout announces a buy one get one free lunch hour, offering double energy food packs.
+5. Event 4 - Surprise Pop Attendance: The lecturer announces five bonus Continuous Assessment marks for anyone seated in the front rows within 90 seconds.
 
+---
+
+## Task 4: Inter-Department Academic Quiz Tournament
+### What Needs to be Done
+Build a competitive and educational quiz game where departments challenge each other for academic honours and faculty trophies.
+
+### How to Do It
+1. In lecture hall room gd and coursework menu gd, add a Quiz Tournament mode at the lecturer podium.
+2. Present fast 30-second multiple choice questions from general studies, science, engineering, and history.
+3. Award Continuous Assessment points, CGPA boosts, and the Faculty Academic Shield to high scorers.
+4. Display a Dean Honor Roll leaderboard ranking the top student scholars.
+
+---
+
+## Task 5: Campus Fellowship Praise Concert
+### What Needs to be Done
+Add an interactive musical and worship event at the University Chapel with Christian praise songs and student choir participation.
+
+### How to Do It
+1. In chapel room gd, add an interactive organ piano and choir podium.
+2. When the player walks to the choir stage, trigger an interactive rhythm mini game where tapping keys plays uplifting praise melodies.
+3. Boost the player Faith and Energy stats by 30 points upon completing a fellowship session.
+4. Add Sister Blessing and student choir NPCs singing and welcoming new freshers with encouraging scriptures.
+
+---
+
+## Task 6: Student Entrepreneurship and Freelance Creative Agency
+### What Needs to be Done
+Allow students to earn honest income through creative talents like graphic design, laptop coding, photography, baking, and academic tutoring.
+
+### How to Do It
+1. In campus gigs menu gd, expand the Student Union Building work stations.
+2. Add interactive mini tasks:
+   - Graphic Design Station: Design flyers for campus conferences to earn 2,500 Naira.
+   - Code Bug Bounty: Fix software bugs at Silicon Lagoon Tech Hub to earn 3,500 Naira.
+   - Handout Printing Hustle: Fast typing and printing of past questions for freshers to earn 1,800 Naira.
+   - Peer Tutoring: Teach junior 100L students before exams to earn 2,000 Naira and raise academic reputation.
+
+---
+
+## Task 7: Hostel Room Customization and Study Hub
+### What Needs to be Done
+Allow players to personalize their hostel room with useful furniture, study lamps, bookshelves, and home decor.
+
+### How to Do It
+1. In mall items data gd, add new placeable room items: Study Lamp, Double Deck Bookshelf, QASA Standing Fan, Ergonomic Desk Chair, and Campus Map Wall Poster.
+2. In base room gd, save owned furniture in student profile and display them in the hostel room upon entry.
+3. High level study furniture grants passive study focus buffs, speeding up exam preparation.
+
+---
+
+## Task 8: Dean Cup Faculty Football Championship
+### What Needs to be Done
+Expand the newly renovated football stadium with a full tournament mode where faculties compete for the championship trophy with zero gambling.
+
+### How to Do It
+1. In stadium room gd, connect the interactive football and goalposts into a 5-round penalty shootout challenge against Goalkeeper Emeka.
+2. Players aim shots at corners using power meters for pure skill and fun.
+3. Scoring goals earns the Faculty Gold Cup trophy and celebratory crowd cheers with zero monetary wagering.
+4. Add athletic 400m sprint timing laps on the track to train student stamina.
+
+---
+
+## Task 9: WhatsApp and Social Shareable Student Life Card
+### What Needs to be Done
+Add a 1-tap phone button that generates a clean, shareable student ID badge card summarizing your student achievements and avatar drip.
+
+### How to Do It
+1. In web shell html, build an HTML canvas renderer styled like a modern university student ID card.
+2. Include student name, department, CGPA grade, 3D avatar picture, and a wholesome personality title like First Class Scholar, Campus Athlete, Master Baker, or Fellowship Leader.
+3. Connect the browser Web Share API so the player can share the badge image directly to WhatsApp Status or download it to their phone gallery.
+
+---
+
+## Task 10: In-Game Settings and Direct Player Feedback
+### What Needs to be Done
+Add a comprehensive settings menu with audio controls, performance toggles, and a direct bug feedback box.
+
+### How to Do It
+1. In scenes hud tscn and phone system gd, add an easy to reach Settings button.
+2. Include volume sliders for Master, Background Music, and Sound Effects.
+3. Include camera view switcher for Top View, Classic Angle, and 3D Perspective.
+4. Include a Send Feedback box that writes user comments, ratings, and device model straight into the Supabase campus user feedback table.
+
+---
+
+## Task 11: Driveable Campus Danfo Bus and Keke Shuttle
+### What Needs to be Done
+Let players drive the yellow Danfo bus or tricycle Keke around the campus ring road to transport students between faculties.
+
+### How to Do It
+1. In campus gate scene, place an interactive yellow Danfo bus.
+2. Create simple arcade vehicle physics with forward drive, reverse, steering, and braking.
+3. Place passenger stops at Hostel, Lecture Hall, Library, and Stadium.
+4. Picking up waiting student NPCs and dropping them at their destination rewards 150 Naira transport fare per trip.

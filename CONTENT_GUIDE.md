@@ -69,7 +69,7 @@ At startup, the game fetches live configuration from two sources in priority ord
 | `stadium` | `res://scenes/rooms/football_stadium.tscn` | Sports Stadium & Football Pitch |
 | `chapel` | `res://scenes/rooms/chapel_hall.tscn` | University Fellowship Chapel |
 | `sub` | `res://scenes/rooms/sub_building.tscn` | Student Union Building (SUB) & Business Centre |
-| `garden` | `res://scenes/rooms/campus_garden.tscn` | Botanical Garden & Love Garden Gazebo |
+| `garden` | `res://scenes/rooms/campus_garden.tscn` | Campus Botanical Gardens & Peace Park Gazebo |
 | `salon` | `res://scenes/rooms/barbing_salon.tscn` | Executive Barber & Hair Salon |
 | `gate` | `res://scenes/rooms/campus_gate.tscn` | Main Campus Security Gate & Shuttle Park |
 | `senate` | `res://scenes/rooms/senate_building.tscn` | University Senate & Registry Building |

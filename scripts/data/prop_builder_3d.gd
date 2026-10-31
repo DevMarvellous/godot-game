@@ -429,7 +429,7 @@ static func get_smart_objective(energy: float, hunger: float, money: int, cgpa: 
 		}
 	elif h >= 20 and h < 22:
 		return {
-			"text": "🌳 Evening Relaxation: Chill with mates at Love Garden",
+			"text": "🌳 Evening Refreshment: Walk and reflect at Botanical Gardens",
 			"dest": &"garden",
 			"color": Color(0.55, 0.95, 0.65)
 		}

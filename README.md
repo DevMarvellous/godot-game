@@ -40,7 +40,7 @@
   9. Sports Complex & Football Stadium
   10. University Fellowship Chapel
   11. Executive Barbing & Styling Salon
-  12. Botanical Garden & Love Garden Gazebo
+  12. Campus Botanical Gardens & Peace Park Gazebo
   13. Main Campus Security Gate & Danfo Shuttle Park
   14. University Senate & Registry Building
   15. Great Hall of Convocation & Alumni Arena
