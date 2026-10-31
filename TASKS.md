@@ -18,45 +18,19 @@ Connect Google OAuth credentials so players can sign in with one tap using their
 
 ---
 
-## Task 2: Enlarge and Clarify Campus Rooms
-### What Needs to be Done
-Make key campus rooms more spacious, visually clear, and easier to navigate on both mobile and desktop screens.
-
-### How to Do It
-1. Open room scene files like hostel room, lecture hall, library hall, and campus mall.
-2. Widen the floor boundaries by 25 to 40 percent so the player avatar has ample room to walk freely.
-3. Clean up object placement and arrange study desks, beds, and shop counters with wider walking aisles.
-4. Improve camera positioning with a clearer top view angle so walls do not block the player view.
-5. Keep real time shadow passes turned off on web to maintain smooth 60 frames per second on all phones.
-
----
-
-## Task 3: Wholesome Campus Comedy and Random Incidents
-### What Needs to be Done
-Add clean, funny campus events that surprise players and make daily student life entertaining without any sinful or worldly elements.
-
-### How to Do It
-1. In campus events gd, add a timer that triggers a random wholesome event every 3 to 5 minutes.
-2. Event 1 - Boiling Ring Panic: Hall warden knocks on the corridor door. The player has 20 seconds to run and stow their hotplate inside the wardrobe before receiving a funny warning.
-3. Event 2 - Up NEPA Celebration: Power returns across the campus with students cheering, fans spinning, and battery charging restored.
-4. Event 3 - Mama Put Jollof Rice Promo: Mama Cashout announces a buy one get one free lunch hour, offering double energy food packs.
-5. Event 4 - Surprise Pop Attendance: The lecturer announces five bonus Continuous Assessment marks for anyone seated in the front rows within 90 seconds.
-
----
-
-## Task 4: Inter-Department Academic Quiz Tournament
+## Task 2: Inter-Department Academic Quiz Tournament
 ### What Needs to be Done
 Build a competitive and educational quiz game where departments challenge each other for academic honours and faculty trophies.
 
 ### How to Do It
 1. In lecture hall room gd and coursework menu gd, add a Quiz Tournament mode at the lecturer podium.
-2. Present fast 30-second multiple choice questions from general studies, science, engineering, and history.
+2. Present fast 30 second multiple choice questions from general studies, science, engineering, and history.
 3. Award Continuous Assessment points, CGPA boosts, and the Faculty Academic Shield to high scorers.
 4. Display a Dean Honor Roll leaderboard ranking the top student scholars.
 
 ---
 
-## Task 5: Campus Fellowship Praise Concert
+## Task 3: Campus Fellowship Praise Concert
 ### What Needs to be Done
 Add an interactive musical and worship event at the University Chapel with Christian praise songs and student choir participation.
 
@@ -68,7 +42,7 @@ Add an interactive musical and worship event at the University Chapel with Chris
 
 ---
 
-## Task 6: Student Entrepreneurship and Freelance Creative Agency
+## Task 4: Student Entrepreneurship and Freelance Creative Agency
 ### What Needs to be Done
 Allow students to earn honest income through creative talents like graphic design, laptop coding, photography, baking, and academic tutoring.
 
@@ -82,7 +56,7 @@ Allow students to earn honest income through creative talents like graphic desig
 
 ---
 
-## Task 7: Hostel Room Customization and Study Hub
+## Task 5: Hostel Room Customization and Study Hub
 ### What Needs to be Done
 Allow players to personalize their hostel room with useful furniture, study lamps, bookshelves, and home decor.
 
@@ -93,19 +67,19 @@ Allow players to personalize their hostel room with useful furniture, study lamp
 
 ---
 
-## Task 8: Dean Cup Faculty Football Championship
+## Task 6: Dean Cup Faculty Football Championship
 ### What Needs to be Done
 Expand the newly renovated football stadium with a full tournament mode where faculties compete for the championship trophy with zero gambling.
 
 ### How to Do It
-1. In stadium room gd, connect the interactive football and goalposts into a 5-round penalty shootout challenge against Goalkeeper Emeka.
+1. In stadium room gd, connect the interactive football and goalposts into a 5 round penalty shootout challenge against Goalkeeper Emeka.
 2. Players aim shots at corners using power meters for pure skill and fun.
 3. Scoring goals earns the Faculty Gold Cup trophy and celebratory crowd cheers with zero monetary wagering.
 4. Add athletic 400m sprint timing laps on the track to train student stamina.
 
 ---
 
-## Task 9: WhatsApp and Social Shareable Student Life Card
+## Task 7: WhatsApp and Social Shareable Student Life Card
 ### What Needs to be Done
 Add a 1-tap phone button that generates a clean, shareable student ID badge card summarizing your student achievements and avatar drip.
 
@@ -116,7 +90,7 @@ Add a 1-tap phone button that generates a clean, shareable student ID badge card
 
 ---
 
-## Task 10: In-Game Settings and Direct Player Feedback
+## Task 8: In-Game Settings and Direct Player Feedback
 ### What Needs to be Done
 Add a comprehensive settings menu with audio controls, performance toggles, and a direct bug feedback box.
 
@@ -128,7 +102,7 @@ Add a comprehensive settings menu with audio controls, performance toggles, and 
 
 ---
 
-## Task 11: Driveable Campus Danfo Bus and Keke Shuttle
+## Task 9: Driveable Campus Danfo Bus and Keke Shuttle
 ### What Needs to be Done
 Let players drive the yellow Danfo bus or tricycle Keke around the campus ring road to transport students between faculties.
 
