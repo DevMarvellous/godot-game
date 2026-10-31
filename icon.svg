@@ -1,190 +1,121 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <!-- Background Radial Emerald Glow -->
-    <radialGradient id="bgGlow" cx="50%" cy="30%" r="70%">
-      <stop offset="0%" stop-color="#15803d" />
-      <stop offset="45%" stop-color="#064e3b" />
-      <stop offset="85%" stop-color="#022c22" />
-      <stop offset="100%" stop-color="#011a14" />
+    <!-- Background Radial Gradient (Obsidian to Vibrant Tropical Emerald) -->
+    <radialGradient id="bgGrad" cx="50%" cy="38%" r="68%">
+      <stop offset="0%" stop-color="#064e3b" />
+      <stop offset="45%" stop-color="#022c22" />
+      <stop offset="100%" stop-color="#011611" />
     </radialGradient>
 
-    <!-- Metallic Gold Gradient -->
-    <linearGradient id="goldRim" x1="0%" y1="0%" x2="100%" y2="100%">
+    <!-- Electric Gold & Neon Lime Rim Gradient -->
+    <linearGradient id="neonRim" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#fef08a" />
-      <stop offset="25%" stop-color="#fde047" />
-      <stop offset="55%" stop-color="#eab308" />
-      <stop offset="80%" stop-color="#ca8a04" />
-      <stop offset="100%" stop-color="#854d0e" />
+      <stop offset="30%" stop-color="#f59e0b" />
+      <stop offset="65%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
     </linearGradient>
 
-    <!-- 3D Gleaming Specular Gold -->
-    <linearGradient id="metallicGold" x1="15%" y1="0%" x2="85%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff" />
+    <!-- 3D Gold Extrusion Gradient -->
+    <linearGradient id="textGold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
       <stop offset="20%" stop-color="#fef08a" />
-      <stop offset="45%" stop-color="#f59e0b" />
-      <stop offset="75%" stop-color="#b45309" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="85%" stop-color="#d97706" />
       <stop offset="100%" stop-color="#78350f" />
     </linearGradient>
 
-    <!-- Parchment Book Page Gradient -->
-    <linearGradient id="parchmentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#fef3c7" />
-      <stop offset="50%" stop-color="#fffbeb" />
-      <stop offset="100%" stop-color="#fef3c7" />
+    <!-- Sunglasses Tint & Reflection -->
+    <linearGradient id="lensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="40%" stop-color="#0f172a" />
+      <stop offset="70%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#06b6d4" />
     </linearGradient>
 
-    <!-- Mortarboard Cap Shading -->
-    <linearGradient id="capTopGrad" x1="10%" y1="20%" x2="90%" y2="80%">
-      <stop offset="0%" stop-color="#475569" />
-      <stop offset="40%" stop-color="#1e293b" />
-      <stop offset="100%" stop-color="#0b1120" />
+    <!-- Headphone Cushion Gradient -->
+    <linearGradient id="headphoneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="50%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#831843" />
     </linearGradient>
 
-    <!-- National Green-White-Green Ribbon Gradient -->
-    <linearGradient id="naijaSash" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#047857" />
-      <stop offset="33%" stop-color="#047857" />
-      <stop offset="33.1%" stop-color="#ffffff" />
-      <stop offset="66.9%" stop-color="#ffffff" />
-      <stop offset="67%" stop-color="#047857" />
-      <stop offset="100%" stop-color="#047857" />
-    </linearGradient>
-
-    <!-- Drop Shadows & Glow Filters -->
-    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#000000" flood-opacity="0.7" />
-    </filter>
-    <filter id="goldGlow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="5" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    <!-- Glow & Shadow Filters -->
+    <filter id="badgeShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.75" />
     </filter>
   </defs>
 
-  <!-- Squircle Base Frame -->
-  <rect x="16" y="16" width="480" height="480" rx="108" fill="url(#bgGlow)" stroke="url(#goldRim)" stroke-width="8" filter="url(#softShadow)" />
-  <rect x="28" y="28" width="456" height="456" rx="96" fill="none" stroke="rgba(254, 240, 138, 0.22)" stroke-width="2" />
+  <!-- Squircle Base Card -->
+  <rect x="20" y="20" width="472" height="472" rx="108" fill="url(#bgGrad)" stroke="url(#neonRim)" stroke-width="8" filter="url(#badgeShadow)" />
+  <rect x="32" y="32" width="448" height="448" rx="96" fill="none" stroke="rgba(245, 158, 11, 0.25)" stroke-width="2" />
 
-  <!-- Heraldic Shield Inner Inset -->
-  <g opacity="0.12">
-    <path d="M256 52 C350 52 400 90 400 190 C400 320 256 420 256 420 C256 420 112 320 112 190 C112 90 162 52 256 52 Z" fill="none" stroke="#fde047" stroke-width="3" />
+  <!-- Radiating Campus Energy Rays -->
+  <g opacity="0.15" stroke="#f59e0b" stroke-width="3" stroke-dasharray="8 12">
+    <line x1="256" y1="230" x2="60" y2="60" />
+    <line x1="256" y1="230" x2="452" y2="60" />
+    <line x1="256" y1="230" x2="40" y2="230" />
+    <line x1="256" y1="230" x2="472" y2="230" />
+    <line x1="256" y1="230" x2="100" y2="380" />
+    <line x1="256" y1="230" x2="412" y2="380" />
   </g>
 
-  <!-- Green-White-Green University Merit Chevron -->
-  <g opacity="0.35" transform="translate(0, 10)">
-    <polygon points="120,70 160,70 256,155 352,70 392,70 256,190" fill="url(#naijaSash)" />
+  <!-- Tropical Palm Fronds -->
+  <g opacity="0.25" stroke="#10b981" stroke-width="4" fill="none">
+    <path d="M 40 280 C 70 240, 110 230, 150 250" />
+    <path d="M 40 280 C 65 260, 95 260, 130 280" />
+    <path d="M 472 280 C 442 240, 402 230, 362 250" />
+    <path d="M 472 280 C 447 260, 417 260, 382 280" />
   </g>
 
-  <!-- Academic Gold Laurel Wreath (Celebrating First Class Honors) -->
-  <g fill="url(#metallicGold)" opacity="0.95" filter="url(#softShadow)">
-    <!-- Left Wreath Leaf Pairs -->
-    <path d="M125 335 C125 365, 145 405, 195 422 C185 407, 180 382, 186 362 C168 377, 142 372, 133 352 Z" />
-    <path d="M106 288 C100 318, 116 348, 146 362 C141 346, 141 326, 151 311 C131 321, 116 312, 111 297 Z" />
-    <path d="M104 235 C98 260, 112 288, 138 298 C136 282, 142 266, 153 255 C132 261, 116 250, 110 239 Z" />
-    <path d="M118 182 C114 204, 126 228, 148 236 C148 221, 154 208, 166 200 C146 202, 130 193, 124 185 Z" />
-    <path d="M142 135 C140 154, 152 174, 172 179 C172 166, 179 154, 190 148 C172 147, 158 140, 150 135 Z" />
+  <!-- COOL CAMPUS STUDENT AVATAR (SHADES + HEADPHONES) -->
+  <g transform="translate(0, -15)">
+    <path d="M 172 170 C 172 90, 340 90, 340 170" fill="none" stroke="url(#headphoneGrad)" stroke-width="18" stroke-linecap="round" />
+    <path d="M 176 170 C 176 98, 336 98, 336 170" fill="none" stroke="#fef08a" stroke-width="4" opacity="0.7" stroke-linecap="round" />
 
-    <!-- Right Wreath Leaf Pairs -->
-    <path d="M387 335 C387 365, 367 405, 317 422 C327 407, 332 382, 326 362 C344 377, 370 372, 379 352 Z" />
-    <path d="M406 288 C412 318, 396 348, 366 362 C371 346, 371 326, 361 311 C381 321, 396 312, 401 297 Z" />
-    <path d="M408 235 C414 260, 400 288, 374 298 C376 282, 370 266, 359 255 C380 261, 396 250, 402 239 Z" />
-    <path d="M394 182 C398 204, 386 228, 364 236 C364 221, 358 208, 346 200 C366 202, 382 193, 388 185 Z" />
-    <path d="M370 135 C372 154, 360 174, 340 179 C340 166, 333 154, 322 148 C340 147, 354 140, 362 135 Z" />
-  </g>
+    <circle cx="256" cy="180" r="66" fill="#6e4632" stroke="#3d2419" stroke-width="4" />
 
-  <!-- Open Illuminated Book of Learning (Foundation of University Excellence) -->
-  <g filter="url(#softShadow)" transform="translate(0, 175)">
-    <!-- Book Hardcover Base -->
-    <path d="M145 155 Q256 185 367 155 L372 172 Q256 202 140 172 Z" fill="#78350f" stroke="#451a03" stroke-width="2" />
-    <!-- Book Gilded Spine Center -->
-    <polygon points="253,88 259,88 259,186 253,186" fill="url(#metallicGold)" />
+    <path d="M 194 165 C 194 115, 318 115, 318 165 C 318 175, 194 175, 194 165 Z" fill="#171717" />
+    <circle cx="215" cy="132" r="14" fill="#262626" />
+    <circle cx="240" cy="124" r="16" fill="#262626" />
+    <circle cx="272" cy="124" r="16" fill="#262626" />
+    <circle cx="297" cy="132" r="14" fill="#262626" />
 
-    <!-- Left Open Page -->
-    <path d="M148 95 Q205 80 254 90 L254 165 Q205 155 146 170 Z" fill="url(#parchmentGrad)" stroke="#d97706" stroke-width="1.5" />
-    <!-- Right Open Page -->
-    <path d="M364 95 Q307 80 258 90 L258 165 Q307 155 366 170 Z" fill="url(#parchmentGrad)" stroke="#d97706" stroke-width="1.5" />
+    <rect x="156" y="152" width="28" height="58" rx="14" fill="#0f172a" stroke="url(#headphoneGrad)" stroke-width="4" />
+    <circle cx="170" cy="181" r="7" fill="#10b981" />
+    <rect x="328" y="152" width="28" height="58" rx="14" fill="#0f172a" stroke="url(#headphoneGrad)" stroke-width="4" />
+    <circle cx="342" cy="181" r="7" fill="#10b981" />
 
-    <!-- Subtle Faint Text Lines on Book -->
-    <g stroke="rgba(180, 83, 9, 0.4)" stroke-width="2" stroke-linecap="round">
-      <line x1="168" y1="112" x2="238" y2="108" />
-      <line x1="168" y1="125" x2="238" y2="121" />
-      <line x1="168" y1="138" x2="232" y2="134" />
-      <line x1="168" y1="151" x2="225" y2="147" />
-
-      <line x1="274" y1="108" x2="344" y2="112" />
-      <line x1="274" y1="121" x2="344" y2="125" />
-      <line x1="280" y1="134" x2="344" y2="138" />
-      <line x1="287" y1="147" x2="344" y2="151" />
-    </g>
-  </g>
-
-  <!-- Gleaming 3D Metallic Gold NAIRA (₦) Sign (Campus Hustle, Merit & Clout) -->
-  <g filter="url(#goldGlow)" transform="translate(256, 292)">
-    <!-- 3D Extrusion Shadow -->
-    <g fill="#713f12" transform="translate(2.5, 3.5)">
-      <rect x="-44" y="-48" width="18" height="88" rx="5" />
-      <rect x="26" y="-48" width="18" height="88" rx="5" />
-      <polygon points="-36,-40 -23,-40 36,30 23,30" />
-      <rect x="-56" y="-18" width="112" height="11" rx="3.5" />
-      <rect x="-56" y="6" width="112" height="11" rx="3.5" />
+    <g filter="url(#badgeShadow)">
+      <rect x="246" y="174" width="20" height="6" rx="2" fill="#f59e0b" />
+      <path d="M 198 168 L 246 170 C 248 188, 244 204, 222 204 C 200 204, 196 188, 198 168 Z" fill="url(#lensGrad)" stroke="#f59e0b" stroke-width="4" />
+      <path d="M 266 170 L 314 168 C 316 188, 312 204, 290 204 C 268 204, 264 188, 266 170 Z" fill="url(#lensGrad)" stroke="#f59e0b" stroke-width="4" />
+      <line x1="206" y1="174" x2="218" y2="198" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.75" />
+      <line x1="274" y1="174" x2="286" y2="198" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.75" />
     </g>
 
-    <!-- Front Metallic Gold Face -->
-    <g fill="url(#metallicGold)" stroke="#fef08a" stroke-width="1.5">
-      <rect x="-44" y="-48" width="18" height="88" rx="5" />
-      <rect x="26" y="-48" width="18" height="88" rx="5" />
-      <polygon points="-38,-40 -25,-40 38,30 25,30" />
-      <rect x="-56" y="-18" width="112" height="11" rx="3.5" />
-      <rect x="-56" y="6" width="112" height="11" rx="3.5" />
-    </g>
-
-    <!-- Sparkle of Academic Distinction -->
-    <polygon points="46,-52 50,-40 62,-38 52,-28 55,-16 44,-24 33,-16 36,-28 26,-38 38,-40" fill="#ffffff" filter="url(#goldGlow)" />
+    <path d="M 238 222 Q 256 236 274 222" fill="none" stroke="#fef08a" stroke-width="4" stroke-linecap="round" />
+    <circle cx="190" cy="204" r="4.5" fill="#fef08a" stroke="#d97706" stroke-width="1.5" />
   </g>
 
-  <!-- 3D Graduation Mortarboard Cap (Hovering Above Book) -->
-  <g filter="url(#softShadow)">
-    <!-- Skull Cap Base Underneath -->
-    <path d="M190 148 Q256 182 322 148 L322 174 Q256 208 190 174 Z" fill="#0f172a" stroke="#020617" stroke-width="2" />
-
-    <!-- Mortarboard Diamond Rhombus (Top Plane) -->
-    <polygon points="256,66 398,122 256,178 114,122" fill="url(#capTopGrad)" stroke="#64748b" stroke-width="2.5" />
-
-    <!-- Inner Rhombus Specular Bevel Line -->
-    <polygon points="256,73 388,122 256,171 124,122" fill="none" stroke="rgba(255, 255, 255, 0.22)" stroke-width="1.5" />
-
-    <!-- Golden Center Button -->
-    <ellipse cx="256" cy="122" rx="14" ry="9" fill="url(#metallicGold)" stroke="#78350f" stroke-width="1.5" />
-
-    <!-- Flowing Golden Silk Tassel -->
-    <path d="M256 122 C220 128, 172 152, 164 192 L160 234" fill="none" stroke="url(#goldRim)" stroke-width="5.5" stroke-linecap="round" />
-    <!-- Tassel Fringe/Brush -->
-    <path d="M160 234 L152 274 Q160 282 168 274 L162 234 Z" fill="url(#metallicGold)" stroke="#92400e" stroke-width="1" />
-    <!-- Tassel Ring Band -->
-    <rect x="156" y="242" width="9" height="4" rx="2" fill="#fef08a" />
+  <!-- DYNAMIC 3D GAMING TYPOGRAPHY -->
+  <g transform="translate(0, 260)">
+    <rect x="206" y="0" width="100" height="32" rx="16" fill="#10b981" stroke="#fef08a" stroke-width="2.5" filter="url(#badgeShadow)" />
+    <text x="256" y="22" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="18" fill="#ffffff" text-anchor="middle" letter-spacing="4">MY</text>
   </g>
 
-  <!-- Prestigious Graduation Banner: "MY CAMPUS LIFE • EST. 2026" -->
-  <g filter="url(#softShadow)" transform="translate(0, 422)">
-    <!-- Ribbon Shadow/Back Wings -->
-    <path d="M68 20 L104 -2 L104 40 Z" fill="#451a03" />
-    <path d="M444 20 L408 -2 L408 40 Z" fill="#451a03" />
+  <g transform="translate(256, 345)">
+    <text x="0" y="6" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="64" fill="#022c22" text-anchor="middle" letter-spacing="2">CAMPUS</text>
+    <text x="0" y="4" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="64" fill="#78350f" text-anchor="middle" letter-spacing="2">CAMPUS</text>
+    <text x="0" y="0" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="64" fill="url(#textGold)" stroke="#18181b" stroke-width="3" text-anchor="middle" letter-spacing="2">CAMPUS</text>
+  </g>
 
-    <!-- Left Wing Cutout Ribbon -->
-    <polygon points="56,3 104,-2 104,40 56,35 68,19" fill="#092618" stroke="url(#goldRim)" stroke-width="2" />
-    <!-- Right Wing Cutout Ribbon -->
-    <polygon points="456,3 408,-2 408,40 456,35 444,19" fill="#092618" stroke="url(#goldRim)" stroke-width="2" />
+  <g transform="translate(256, 415)">
+    <text x="0" y="6" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="66" fill="#022c22" text-anchor="middle" letter-spacing="6">LIFE</text>
+    <text x="0" y="4" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="66" fill="#047857" text-anchor="middle" letter-spacing="6">LIFE</text>
+    <text x="0" y="0" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="66" fill="#10b981" stroke="#fef08a" stroke-width="2.5" text-anchor="middle" letter-spacing="6">LIFE</text>
+  </g>
 
-    <!-- Main Ribbon Banner Body -->
-    <rect x="92" y="0" width="328" height="48" rx="12" fill="#062e1e" stroke="url(#goldRim)" stroke-width="3" />
-    <rect x="98" y="5" width="316" height="38" rx="8" fill="none" stroke="rgba(254, 240, 138, 0.28)" stroke-width="1" />
-
-    <!-- Title Typography: MY CAMPUS LIFE -->
-    <text x="256" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Impact', sans-serif" font-size="21" font-weight="900" letter-spacing="2.5" text-anchor="middle" fill="url(#metallicGold)">
-      MY CAMPUS LIFE
-    </text>
-    <!-- Subtitle: EST. 2026 -->
-    <text x="256" y="39" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="9" font-weight="800" letter-spacing="3" text-anchor="middle" fill="#fde047">
-      • EST. 2026 • NIGERIA •
-    </text>
+  <g transform="translate(256, 462)">
+    <text x="0" y="0" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="13" fill="#fde047" text-anchor="middle" letter-spacing="3" opacity="0.95">★ 3D NAIJA SIMULATOR ★</text>
   </g>
 </svg>

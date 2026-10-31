@@ -271,3 +271,4 @@ func strike() -> void:
 		is_striking = false
 		is_charging = true
 	)
+

@@ -50,24 +50,24 @@ signal transit_requested(destination_name: StringName)
 
 const WALLPAPERS: Array[Dictionary] = [
 	{
-		"name": "Deep Midnight AMOLED",
-		"bg": Color(0.06, 0.08, 0.12, 0.98),
-		"border": Color(0.24, 0.30, 0.40, 1.0)
+		"name": "Emerald Quad Green",
+		"bg": Color(0.06, 0.16, 0.11, 0.98),
+		"border": Color(0.20, 0.85, 0.52, 1.0)
+	},
+	{
+		"name": "Electric Cyan Blue",
+		"bg": Color(0.05, 0.14, 0.24, 0.98),
+		"border": Color(0.25, 0.75, 1.0, 1.0)
 	},
 	{
 		"name": "Golden Sunset Amber",
-		"bg": Color(0.18, 0.08, 0.12, 0.98),
-		"border": Color(0.85, 0.45, 0.20, 1.0)
-	},
-	{
-		"name": "Emerald Quad Green",
-		"bg": Color(0.04, 0.13, 0.08, 0.98),
-		"border": Color(0.20, 0.70, 0.45, 1.0)
+		"bg": Color(0.18, 0.09, 0.05, 0.98),
+		"border": Color(1.0, 0.65, 0.20, 1.0)
 	},
 	{
 		"name": "Royal Campus Purple",
-		"bg": Color(0.12, 0.06, 0.20, 0.98),
-		"border": Color(0.65, 0.35, 0.90, 1.0)
+		"bg": Color(0.14, 0.07, 0.22, 0.98),
+		"border": Color(0.80, 0.45, 1.0, 1.0)
 	}
 ]
 
@@ -207,8 +207,10 @@ func _style_circular_app_logos() -> void:
 		var lbl := Label.new()
 		lbl.text = String(cfg["title"])
 		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		lbl.add_theme_font_size_override(&"font_size", 11)
-		lbl.add_theme_color_override(&"font_color", Color(0.92, 0.96, 1.0, 0.96))
+		lbl.add_theme_font_size_override(&"font_size", 12)
+		lbl.add_theme_color_override(&"font_color", Color(1.0, 1.0, 1.0, 1.0))
+		lbl.add_theme_constant_override(&"outline_size", 3)
+		lbl.add_theme_color_override(&"font_outline_color", Color(0.02, 0.04, 0.06, 0.9))
 		cell_vbox.add_child(lbl)
 
 	# Style Dock Buttons as Circular Logos too

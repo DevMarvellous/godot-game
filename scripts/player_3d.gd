@@ -680,9 +680,17 @@ func apply_appearance(
 	if is_instance_valid(active_hair):
 		active_hair.visible = true
 		var hair_mat: StandardMaterial3D = StandardMaterial3D.new()
-		hair_mat.albedo_color = hair_color
-		hair_mat.roughness = 0.85
+		if hair_type == "headwrap":
+			hair_mat.albedo_color = Color(0.72, 0.14, 0.42) if hair_color == Color(0.08, 0.08, 0.08) else hair_color
+			hair_mat.metallic = 0.35
+			hair_mat.roughness = 0.45
+		else:
+			hair_mat.albedo_color = hair_color
+			hair_mat.roughness = 0.85
 		active_hair.set_surface_override_material(0, hair_mat)
+		for child in active_hair.get_children():
+			if child is MeshInstance3D:
+				child.set_surface_override_material(0, hair_mat)
 
 	# 3. Distinct 3D Outfit Meshes (Senator Tunic, Tie, Hoodie, Gown, Casual)
 	var all_outfit_details: Array[MeshInstance3D] = [senator_tunic, corporate_tie, hoodie_cowl, gown_flare]
@@ -1116,7 +1124,7 @@ func play_collapse_animation(reason: String, on_teleport: Callable = Callable())
 	fade_tw.tween_property(fade_rect, "color:a", 0.0, 0.6)
 
 
-## Authentic Nigerian campus celebration dance (Legwork / Shaku-Shaku)
+## Authentic Nigerian celebration dance (Legwork / Shaku-Shaku) with smooth procedural interpolation
 func play_shaku_dance_animation() -> void:
 	if not visual_root or not is_inside_tree():
 		return
@@ -1125,61 +1133,294 @@ func play_shaku_dance_animation() -> void:
 	cancel_emote()
 	is_emoting = true
 	_idle_time = 0.0
-	spawn_floating_stat("💃 Gbe Body! Shaku Shaku!", Color(1.0, 0.85, 0.2))
+	spawn_floating_stat("💃 SHAKU SHAKU! Gbe Body!", Color(1.0, 0.85, 0.2))
 	if SoundManager:
 		SoundManager.play_coin()
 
-	var dance_tw: Tween = create_tween()
-	_active_emote_tween = dance_tw
+	var tw: Tween = create_tween()
+	_active_emote_tween = tw
+	tw.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
-	# 2 lively legwork cycles
+	# 2 dynamic rhythmic Afrobeats cycles with smooth torso rolls & arm swings
 	for i in range(2):
-		dance_tw.tween_callback(func():
-			if left_leg: left_leg.rotation.x = -0.75
-			if right_leg: right_leg.rotation.x = 0.35
-			if right_arm: right_arm.rotation.x = -1.1
-			if left_arm: left_arm.rotation.z = -0.6
-			if torso_mesh:
-				torso_mesh.rotation.y = 0.25
-				torso_mesh.position.y = 1.05
-		)
-		dance_tw.tween_interval(0.18)
+		tw.tween_property(torso_mesh, "rotation:y", 0.35, 0.16)
+		tw.parallel().tween_property(torso_mesh, "position:y", 1.05, 0.16)
+		tw.parallel().tween_property(left_leg, "rotation:x", -0.65, 0.16)
+		tw.parallel().tween_property(right_leg, "rotation:x", 0.35, 0.16)
+		tw.parallel().tween_property(right_arm, "rotation:x", -1.15, 0.16)
+		tw.parallel().tween_property(left_arm, "rotation:z", -0.75, 0.16)
 
-		dance_tw.tween_callback(func():
-			if left_leg: left_leg.rotation.x = 0.35
-			if right_leg: right_leg.rotation.x = -0.75
-			if left_arm: left_arm.rotation.x = -1.1
-			if right_arm: right_arm.rotation.z = 0.6
-			if torso_mesh:
-				torso_mesh.rotation.y = -0.25
-				torso_mesh.position.y = 1.05
-		)
-		dance_tw.tween_interval(0.18)
+		tw.tween_property(torso_mesh, "rotation:y", -0.35, 0.16)
+		tw.parallel().tween_property(torso_mesh, "position:y", 1.05, 0.16)
+		tw.parallel().tween_property(left_leg, "rotation:x", 0.35, 0.16)
+		tw.parallel().tween_property(right_leg, "rotation:x", -0.65, 0.16)
+		tw.parallel().tween_property(left_arm, "rotation:x", -1.15, 0.16)
+		tw.parallel().tween_property(right_arm, "rotation:z", 0.75, 0.16)
 
-	# Hop jump with hands raised
-	dance_tw.tween_callback(func():
-		if torso_mesh:
-			torso_mesh.position.y = 1.25
-			torso_mesh.rotation.y = 0.0
-		if left_arm and right_arm:
-			left_arm.rotation.x = -2.4
-			right_arm.rotation.x = -2.4
-		if left_leg and right_leg:
-			left_leg.rotation.x = -0.2
-			right_leg.rotation.x = -0.2
-	)
-	dance_tw.tween_interval(0.28)
+	# Hop jump celebratory finish
+	tw.tween_property(torso_mesh, "position:y", 1.25, 0.22)
+	tw.parallel().tween_property(torso_mesh, "rotation:y", 0.0, 0.22)
+	tw.parallel().tween_property(left_arm, "rotation:x", -2.4, 0.22)
+	tw.parallel().tween_property(right_arm, "rotation:x", -2.4, 0.22)
+	tw.parallel().tween_property(left_leg, "rotation:x", -0.2, 0.22)
+	tw.parallel().tween_property(right_leg, "rotation:x", -0.2, 0.22)
 
-	# Settle back to standing
-	dance_tw.tween_callback(func():
-		cancel_emote()
-	)
+	tw.tween_property(torso_mesh, "position:y", 0.95, 0.2)
+	tw.parallel().tween_property(left_arm, "rotation:x", 0.0, 0.2)
+	tw.parallel().tween_property(right_arm, "rotation:x", 0.0, 0.2)
+	tw.parallel().tween_property(left_leg, "rotation:x", 0.0, 0.2)
+	tw.parallel().tween_property(right_leg, "rotation:x", 0.0, 0.2)
 
+	tw.tween_callback(func(): cancel_emote())
 	if NetworkManager:
 		NetworkManager.broadcast_emote("shaku")
 
 
-## Friendly wave greeting to nearby coursemates
+## Energetic Zanku & Gbese Legwork (High kick, crossed arms, ground stomp)
+func play_zanku_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	if is_sitting:
+		stand_up()
+	cancel_emote()
+	is_emoting = true
+	_idle_time = 0.0
+	spawn_floating_stat("🔥 ZANKU / GBESE! Oya Legwork!", Color(1.0, 0.45, 0.15))
+	if SoundManager:
+		SoundManager.play_click()
+
+	var tw: Tween = create_tween()
+	_active_emote_tween = tw
+	tw.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+	for i in range(2):
+		# High knee kick with right leg + crossed chest arms
+		tw.tween_property(right_leg, "rotation:x", -1.5, 0.18)
+		tw.parallel().tween_property(left_leg, "rotation:x", 0.3, 0.18)
+		tw.parallel().tween_property(torso_mesh, "rotation:x", -0.28, 0.18)
+		tw.parallel().tween_property(torso_mesh, "position:y", 1.15, 0.18)
+		tw.parallel().tween_property(left_arm, "rotation:x", -1.4, 0.18)
+		tw.parallel().tween_property(left_arm, "rotation:z", 0.6, 0.18)
+		tw.parallel().tween_property(right_arm, "rotation:x", -1.4, 0.18)
+		tw.parallel().tween_property(right_arm, "rotation:z", -0.6, 0.18)
+
+		# Ground stomp
+		tw.tween_property(right_leg, "rotation:x", 0.0, 0.14)
+		tw.parallel().tween_property(left_leg, "rotation:x", 0.0, 0.14)
+		tw.parallel().tween_property(torso_mesh, "position:y", 0.95, 0.14)
+		tw.parallel().tween_property(torso_mesh, "rotation:x", 0.1, 0.14)
+
+		# Alternate left leg high kick
+		tw.tween_property(left_leg, "rotation:x", -1.5, 0.18)
+		tw.parallel().tween_property(right_leg, "rotation:x", 0.3, 0.18)
+		tw.parallel().tween_property(torso_mesh, "position:y", 1.15, 0.18)
+		tw.parallel().tween_property(left_arm, "rotation:x", -0.8, 0.18)
+		tw.parallel().tween_property(right_arm, "rotation:x", -0.8, 0.18)
+
+		tw.tween_property(left_leg, "rotation:x", 0.0, 0.14)
+		tw.parallel().tween_property(torso_mesh, "position:y", 0.95, 0.14)
+
+	tw.tween_callback(func(): cancel_emote())
+	if NetworkManager:
+		NetworkManager.broadcast_emote("zanku")
+
+
+## "Who Dey Breathe?!" Chest Thump & Swagger Flex
+func play_flex_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	if is_sitting:
+		stand_up()
+	cancel_emote()
+	is_emoting = true
+	_idle_time = 0.0
+	spawn_floating_stat("👑 WHO DEY BREATHE?! Big Flex!", Color(1.0, 0.85, 0.25))
+	if SoundManager:
+		SoundManager.play_coin()
+
+	var tw: Tween = create_tween()
+	_active_emote_tween = tw
+	tw.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+	# 1. Pectoral chest thump x2
+	for i in range(2):
+		tw.tween_property(right_arm, "rotation:x", -1.6, 0.14)
+		tw.parallel().tween_property(right_arm, "rotation:z", -0.5, 0.14)
+		tw.parallel().tween_property(torso_mesh, "rotation:x", 0.15, 0.14)
+		tw.tween_property(right_arm, "rotation:x", -1.1, 0.12)
+		tw.parallel().tween_property(torso_mesh, "rotation:x", -0.1, 0.12)
+
+	# 2. Swagger lean back with spread arms
+	tw.tween_property(torso_mesh, "rotation:x", -0.25, 0.25)
+	tw.parallel().tween_property(left_arm, "rotation:z", -1.0, 0.25)
+	tw.parallel().tween_property(right_arm, "rotation:z", 1.0, 0.25)
+	tw.parallel().tween_property(head_mesh, "rotation:x", -0.2, 0.25)
+	tw.tween_interval(1.2)
+
+	tw.tween_property(torso_mesh, "rotation", Vector3.ZERO, 0.3)
+	tw.parallel().tween_property(left_arm, "rotation", Vector3.ZERO, 0.3)
+	tw.parallel().tween_property(right_arm, "rotation", Vector3.ZERO, 0.3)
+	tw.parallel().tween_property(head_mesh, "rotation", Vector3.ZERO, 0.3)
+	tw.tween_callback(func(): cancel_emote())
+	if NetworkManager:
+		NetworkManager.broadcast_emote("flex")
+
+
+## "God Abeg / Wahala Dey!" Hands on head in shock/disbelief
+func play_wahala_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	if is_sitting:
+		stand_up()
+	cancel_emote()
+	is_emoting = true
+	_idle_time = 0.0
+	spawn_floating_stat("😱 WAHALA DEY! God Abeg!", Color(1.0, 0.35, 0.35))
+	if SoundManager:
+		SoundManager.play_alert()
+
+	var tw: Tween = create_tween()
+	_active_emote_tween = tw
+	tw.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+	# Hands clutching head
+	tw.tween_property(left_arm, "rotation:x", -2.4, 0.2)
+	tw.parallel().tween_property(left_arm, "rotation:z", 0.65, 0.2)
+	tw.parallel().tween_property(right_arm, "rotation:x", -2.4, 0.2)
+	tw.parallel().tween_property(right_arm, "rotation:z", -0.65, 0.2)
+	tw.parallel().tween_property(head_mesh, "rotation:x", 0.3, 0.2)
+	tw.parallel().tween_property(torso_mesh, "rotation:x", 0.2, 0.2)
+
+	# Head shaking in disbelief
+	for i in range(3):
+		tw.tween_property(head_mesh, "rotation:y", 0.35, 0.12)
+		tw.tween_property(head_mesh, "rotation:y", -0.35, 0.12)
+	tw.tween_property(head_mesh, "rotation:y", 0.0, 0.1)
+
+	# Drop hands in resignation
+	tw.tween_property(left_arm, "rotation", Vector3.ZERO, 0.3)
+	tw.parallel().tween_property(right_arm, "rotation", Vector3.ZERO, 0.3)
+	tw.parallel().tween_property(head_mesh, "rotation", Vector3.ZERO, 0.3)
+	tw.parallel().tween_property(torso_mesh, "rotation", Vector3.ZERO, 0.3)
+	tw.tween_callback(func(): cancel_emote())
+	if NetworkManager:
+		NetworkManager.broadcast_emote("wahala")
+
+
+## "Focus Dance" - Rhythmic Afrobeats snap & head groove
+func play_focus_dance_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	if is_sitting:
+		stand_up()
+	cancel_emote()
+	is_emoting = true
+	_idle_time = 0.0
+	spawn_floating_stat("🕺 FOCUS DANCE! Campus Rhythm!", Color(0.35, 0.85, 1.0))
+	if SoundManager:
+		SoundManager.play_click()
+
+	var tw: Tween = create_tween()
+	_active_emote_tween = tw
+	tw.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	for i in range(3):
+		tw.tween_property(torso_mesh, "rotation:z", 0.15, 0.15)
+		tw.parallel().tween_property(head_mesh, "rotation:z", -0.12, 0.15)
+		tw.parallel().tween_property(right_arm, "rotation:x", -1.3, 0.15)
+		tw.parallel().tween_property(right_arm, "rotation:z", 0.4, 0.15)
+		tw.parallel().tween_property(left_arm, "rotation:x", -0.5, 0.15)
+
+		tw.tween_property(torso_mesh, "rotation:z", -0.15, 0.15)
+		tw.parallel().tween_property(head_mesh, "rotation:z", 0.12, 0.15)
+		tw.parallel().tween_property(left_arm, "rotation:x", -1.3, 0.15)
+		tw.parallel().tween_property(left_arm, "rotation:z", -0.4, 0.15)
+		tw.parallel().tween_property(right_arm, "rotation:x", -0.5, 0.15)
+
+	tw.tween_property(torso_mesh, "rotation", Vector3.ZERO, 0.2)
+	tw.parallel().tween_property(head_mesh, "rotation", Vector3.ZERO, 0.2)
+	tw.parallel().tween_property(left_arm, "rotation", Vector3.ZERO, 0.2)
+	tw.parallel().tween_property(right_arm, "rotation", Vector3.ZERO, 0.2)
+	tw.tween_callback(func(): cancel_emote())
+	if NetworkManager:
+		NetworkManager.broadcast_emote("focus")
+
+
+## "Chop Life / Cheers" Toast with celebratory arm pumps
+func play_choplife_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	if is_sitting:
+		stand_up()
+	cancel_emote()
+	is_emoting = true
+	_idle_time = 0.0
+	spawn_floating_stat("🍗 CHOP LIFE! Sapa Cancelled!", Color(1.0, 0.65, 0.25))
+	if SoundManager:
+		SoundManager.play_cheer()
+
+	var tw: Tween = create_tween()
+	_active_emote_tween = tw
+	tw.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+	# Both hands raised in toast
+	tw.tween_property(left_arm, "rotation:x", -2.2, 0.22)
+	tw.parallel().tween_property(right_arm, "rotation:x", -2.2, 0.22)
+	tw.parallel().tween_property(torso_mesh, "position:y", 1.18, 0.22)
+
+	# 3 happy bounces
+	for i in range(3):
+		tw.tween_property(torso_mesh, "position:y", 1.25, 0.14)
+		tw.tween_property(torso_mesh, "position:y", 1.05, 0.14)
+
+	tw.tween_property(left_arm, "rotation", Vector3.ZERO, 0.3)
+	tw.parallel().tween_property(right_arm, "rotation", Vector3.ZERO, 0.3)
+	tw.parallel().tween_property(torso_mesh, "position:y", 0.95, 0.3)
+	tw.tween_callback(func(): cancel_emote())
+	if NetworkManager:
+		NetworkManager.broadcast_emote("celebrate")
+
+
+## Football Keepy-Uppy Ball Juggling
+func play_juggle_animation() -> void:
+	if not visual_root or not is_inside_tree():
+		return
+	if is_sitting:
+		stand_up()
+	cancel_emote()
+	is_emoting = true
+	_idle_time = 0.0
+	spawn_floating_stat("⚽ KEEPY-UPPY! Baller Steeze!", Color(0.35, 0.95, 0.65))
+	if SoundManager:
+		SoundManager.play_whistle()
+
+	var tw: Tween = create_tween()
+	_active_emote_tween = tw
+	tw.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+	for i in range(3):
+		# Right foot flick up
+		tw.tween_property(right_leg, "rotation:x", -1.1, 0.15)
+		tw.parallel().tween_property(torso_mesh, "position:y", 1.05, 0.15)
+		tw.parallel().tween_property(left_arm, "rotation:z", -0.5, 0.15)
+		tw.parallel().tween_property(right_arm, "rotation:z", 0.5, 0.15)
+		tw.tween_property(right_leg, "rotation:x", 0.0, 0.12)
+		tw.parallel().tween_property(torso_mesh, "position:y", 0.95, 0.12)
+
+		# Left foot flick up
+		tw.tween_property(left_leg, "rotation:x", -1.1, 0.15)
+		tw.parallel().tween_property(torso_mesh, "position:y", 1.05, 0.15)
+		tw.tween_property(left_leg, "rotation:x", 0.0, 0.12)
+		tw.parallel().tween_property(torso_mesh, "position:y", 0.95, 0.12)
+
+	tw.tween_property(left_arm, "rotation", Vector3.ZERO, 0.2)
+	tw.parallel().tween_property(right_arm, "rotation", Vector3.ZERO, 0.2)
+	tw.tween_callback(func(): cancel_emote())
+	if NetworkManager:
+		NetworkManager.broadcast_emote("kick")
+
+
+## Friendly wave greeting to nearby coursemates with smooth arm easing
 func play_wave_animation() -> void:
 	if not visual_root or not is_inside_tree():
 		return
@@ -1192,32 +1433,21 @@ func play_wave_animation() -> void:
 	if SoundManager:
 		SoundManager.play_bell()
 
-	var wave_tw: Tween = create_tween()
-	_active_emote_tween = wave_tw
+	var tw: Tween = create_tween()
+	_active_emote_tween = tw
+	tw.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
-	wave_tw.tween_callback(func():
-		if right_arm:
-			right_arm.rotation.x = -2.4
-			right_arm.rotation.z = 0.4
-		if head_mesh:
-			head_mesh.rotation.z = -0.15
-	)
-	wave_tw.tween_interval(0.15)
+	tw.tween_property(right_arm, "rotation:x", -2.4, 0.2)
+	tw.parallel().tween_property(right_arm, "rotation:z", 0.45, 0.2)
+	tw.parallel().tween_property(head_mesh, "rotation:z", -0.15, 0.2)
 
 	for i in range(3):
-		wave_tw.tween_callback(func():
-			if right_arm: right_arm.rotation.z = -0.25
-		)
-		wave_tw.tween_interval(0.12)
-		wave_tw.tween_callback(func():
-			if right_arm: right_arm.rotation.z = 0.45
-		)
-		wave_tw.tween_interval(0.12)
+		tw.tween_property(right_arm, "rotation:z", -0.3, 0.14)
+		tw.tween_property(right_arm, "rotation:z", 0.45, 0.14)
 
-	wave_tw.tween_callback(func():
-		cancel_emote()
-	)
-
+	tw.tween_property(right_arm, "rotation", Vector3.ZERO, 0.25)
+	tw.parallel().tween_property(head_mesh, "rotation", Vector3.ZERO, 0.25)
+	tw.tween_callback(func(): cancel_emote())
 	if NetworkManager:
 		NetworkManager.broadcast_emote("wave")
 
@@ -1225,17 +1455,26 @@ func play_wave_animation() -> void:
 ## Dispatches an emote by identifier and broadcasts over network
 func play_emote(emote_name: String) -> void:
 	match emote_name.to_lower():
-		"shaku", "dance", "gbese":
+		"zanku", "gbese":
+			play_zanku_animation()
+		"shaku", "dance":
 			play_shaku_dance_animation()
-		"zanku":
-			play_shaku_dance_animation()
-			spawn_floating_stat("🔥 Zanku Legwork! +Fun", Color(1.0, 0.55, 0.2))
-		"selfie":
+		"flex", "breathe":
+			play_flex_animation()
+		"wahala", "shock", "abeg":
+			play_wahala_animation()
+		"focus":
+			play_focus_dance_animation()
+		"selfie", "drip":
 			play_dressing_animation()
-			spawn_floating_stat("🤳 Drip Check 100%!", Color(0.95, 0.55, 0.95))
+			spawn_floating_stat("🤳 DRIP CHECK 100%!", Color(0.95, 0.55, 0.95))
 			if NetworkManager: NetworkManager.broadcast_emote("celebrate")
 		"wave":
 			play_wave_animation()
+		"choplife", "cheers", "toast":
+			play_choplife_animation()
+		"juggle", "football":
+			play_juggle_animation()
 		"sit":
 			if is_sitting:
 				stand_up()
@@ -1253,8 +1492,16 @@ func play_emote(emote_name: String) -> void:
 		"pray":
 			play_pray_animation()
 			if NetworkManager: NetworkManager.broadcast_emote("pray")
-		"kick", "penalty", "football":
+		"kick", "penalty":
 			play_penalty_kick_animation()
+		"snooker", "pool":
+			play_snooker_shot_animation()
+		"cook", "cooking":
+			play_cooking_animation()
+		"haircut", "salon", "fade":
+			play_salon_haircut_animation()
+		_:
+			play_wave_animation()
 		"snooker", "pool":
 			play_snooker_shot_animation()
 		"cook", "cooking":

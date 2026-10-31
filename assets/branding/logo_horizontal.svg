@@ -1,21 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 260" width="960" height="260">
   <defs>
-    <radialGradient id="hBgGlow" cx="20%" cy="40%" r="65%">
-      <stop offset="0%" stop-color="#14532d" />
-      <stop offset="55%" stop-color="#064e3b" />
-      <stop offset="100%" stop-color="#021f18" />
+    <radialGradient id="hBgGlow" cx="20%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#064e3b" />
+      <stop offset="60%" stop-color="#022c22" />
+      <stop offset="100%" stop-color="#011611" />
     </radialGradient>
-    <linearGradient id="hGoldRim" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="hNeonRim" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#fef08a" />
-      <stop offset="40%" stop-color="#eab308" />
-      <stop offset="100%" stop-color="#ca8a04" />
+      <stop offset="35%" stop-color="#f59e0b" />
+      <stop offset="70%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
     </linearGradient>
-    <linearGradient id="hMetallicGold" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="hTextGold" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#fffbeb" />
-      <stop offset="25%" stop-color="#fde047" />
-      <stop offset="50%" stop-color="#eab308" />
-      <stop offset="85%" stop-color="#ca8a04" />
-      <stop offset="100%" stop-color="#713f12" />
+      <stop offset="20%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="85%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#78350f" />
+    </linearGradient>
+    <linearGradient id="hHeadphoneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="50%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#831843" />
+    </linearGradient>
+    <linearGradient id="hLensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="50%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#06b6d4" />
     </linearGradient>
     <filter id="hShadow" x="-10%" y="-10%" width="120%" height="120%">
       <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.6" />
@@ -23,63 +34,42 @@
   </defs>
 
   <!-- Background Card -->
-  <rect x="8" y="8" width="944" height="244" rx="36" fill="url(#hBgGlow)" stroke="url(#hGoldRim)" stroke-width="4" filter="url(#hShadow)" />
+  <rect x="8" y="8" width="944" height="244" rx="36" fill="url(#hBgGlow)" stroke="url(#hNeonRim)" stroke-width="4" filter="url(#hShadow)" />
 
-  <!-- Left Icon Emblem (Scale 0.44 placed at x: 30, y: 16) -->
-  <g transform="translate(30, 16) scale(0.44)">
-    <rect x="16" y="16" width="480" height="480" rx="108" fill="#042f24" stroke="url(#hGoldRim)" stroke-width="8" />
-    <!-- Mortarboard Cap -->
-    <polygon points="256,66 398,122 256,178 114,122" fill="#1e293b" stroke="#64748b" stroke-width="3" />
-    <ellipse cx="256" cy="122" rx="14" ry="9" fill="url(#hMetallicGold)" />
-    <path d="M256 122 C220 128, 172 152, 164 192 L160 234" fill="none" stroke="url(#hGoldRim)" stroke-width="6" />
-    <!-- Book of knowledge -->
-    <path d="M148 270 Q205 255 254 265 L254 340 Q205 330 146 345 Z" fill="#fffbeb" stroke="#d97706" stroke-width="2" />
-    <path d="M364 270 Q307 255 258 265 L258 340 Q307 330 366 345 Z" fill="#fffbeb" stroke="#d97706" stroke-width="2" />
-    <!-- Gold Naira Sign -->
-    <g transform="translate(256, 305)" fill="url(#hMetallicGold)" stroke="#fef08a" stroke-width="2">
-      <rect x="-44" y="-48" width="18" height="88" rx="5" />
-      <rect x="26" y="-48" width="18" height="88" rx="5" />
-      <polygon points="-38,-40 -25,-40 38,30 25,30" />
-      <rect x="-56" y="-18" width="112" height="11" rx="3.5" />
-      <rect x="-56" y="6" width="112" height="11" rx="3.5" />
-    </g>
-    <!-- Laurel Wreath -->
-    <g fill="url(#hMetallicGold)" opacity="0.95">
-      <path d="M125 335 C125 365, 145 405, 195 422 C185 407, 180 382, 186 362 C168 377, 142 372, 133 352 Z" />
-      <path d="M106 288 C100 318, 116 348, 146 362 C141 346, 141 326, 151 311 C131 321, 116 312, 111 297 Z" />
-      <path d="M387 335 C387 365, 367 405, 317 422 C327 407, 332 382, 326 362 C344 377, 370 372, 379 352 Z" />
-      <path d="M406 288 C412 318, 396 348, 366 362 C371 346, 371 326, 361 311 C381 321, 396 312, 401 297 Z" />
-    </g>
+  <!-- Left Icon Emblem (Student Avatar with Headphones & Shades) -->
+  <g transform="translate(36, 16) scale(0.44)">
+    <rect x="16" y="16" width="480" height="480" rx="108" fill="#022c22" stroke="url(#hNeonRim)" stroke-width="8" />
+    <!-- Headphone Arc -->
+    <path d="M 172 170 C 172 90, 340 90, 340 170" fill="none" stroke="url(#hHeadphoneGrad)" stroke-width="18" stroke-linecap="round" />
+    <!-- Face Silhouette -->
+    <circle cx="256" cy="180" r="66" fill="#6e4632" stroke="#3d2419" stroke-width="4" />
+    <!-- Afro-Fade -->
+    <path d="M 194 165 C 194 115, 318 115, 318 165 Z" fill="#171717" />
+    <!-- Headphone Cups -->
+    <rect x="156" y="152" width="28" height="58" rx="14" fill="#0f172a" stroke="url(#hHeadphoneGrad)" stroke-width="4" />
+    <rect x="328" y="152" width="28" height="58" rx="14" fill="#0f172a" stroke="url(#hHeadphoneGrad)" stroke-width="4" />
+    <!-- Sunglasses -->
+    <rect x="246" y="174" width="20" height="6" rx="2" fill="#f59e0b" />
+    <path d="M 198 168 L 246 170 C 248 188, 244 204, 222 204 C 200 204, 196 188, 198 168 Z" fill="url(#hLensGrad)" stroke="#f59e0b" stroke-width="4" />
+    <path d="M 266 170 L 314 168 C 316 188, 312 204, 290 204 C 268 204, 264 188, 266 170 Z" fill="url(#hLensGrad)" stroke="#f59e0b" stroke-width="4" />
+    <path d="M 238 222 Q 256 236 274 222" fill="none" stroke="#fef08a" stroke-width="4" stroke-linecap="round" />
+    <!-- Mini Typography on Badge -->
+    <text x="256" y="380" font-family="system-ui, sans-serif" font-weight="900" font-size="64" fill="url(#hTextGold)" text-anchor="middle">MCL</text>
   </g>
 
   <!-- Typography Right Section -->
-  <g transform="translate(285, 0)">
-    <!-- Sub-tagline pill -->
-    <rect x="0" y="44" width="260" height="28" rx="14" fill="rgba(245,197,24,0.15)" stroke="rgba(245,197,24,0.5)" stroke-width="1.5" />
-    <text x="130" y="63" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="800" letter-spacing="1.5" text-anchor="middle" fill="#fde047">
-      🇳🇬 NIGERIAN UNIVERSITY SIMULATOR
-    </text>
+  <g transform="translate(280, 52)">
+    <!-- Pill Badge: NAIJA 3D SIMULATOR -->
+    <rect x="0" y="0" width="220" height="28" rx="14" fill="#10b981" stroke="#fef08a" stroke-width="2" />
+    <text x="110" y="19" font-family="system-ui, sans-serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="3">★ 3D NAIJA SIMULATOR ★</text>
 
     <!-- Main Title: MY CAMPUS LIFE -->
-    <text x="0" y="132" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Impact', sans-serif" font-size="58" font-weight="900" letter-spacing="3" fill="url(#hMetallicGold)" filter="url(#hShadow)">
-      MY CAMPUS LIFE
-    </text>
-
-    <!-- Subtitle description -->
-    <text x="2" y="172" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="17" font-weight="600" fill="#cbd5e1">
-      Lectures • Danfo Shuttles • Hostels • Mama Put • CampusPay Hustles
-    </text>
-
-    <!-- Tag badges -->
-    <g transform="translate(2, 196)">
-      <rect x="0" y="0" width="134" height="24" rx="6" fill="#10b981" />
-      <text x="67" y="16" font-family="sans-serif" font-size="11" font-weight="800" text-anchor="middle" fill="#042f24">LIVE MULTIPLAYER</text>
-
-      <rect x="142" y="0" width="138" height="24" rx="6" fill="#eab308" />
-      <text x="211" y="16" font-family="sans-serif" font-size="11" font-weight="800" text-anchor="middle" fill="#422006">SUPABASE CLOUD</text>
-
-      <rect x="288" y="0" width="144" height="24" rx="6" fill="#38bdf8" />
-      <text x="360" y="16" font-family="sans-serif" font-size="11" font-weight="800" text-anchor="middle" fill="#0c4a6e">34 DEPARTMENTS</text>
+    <g transform="translate(0, 78)">
+      <text x="0" y="4" font-family="system-ui, sans-serif" font-weight="900" font-size="52" fill="#022c22" letter-spacing="2">MY CAMPUS LIFE</text>
+      <text x="0" y="0" font-family="system-ui, sans-serif" font-weight="900" font-size="52" fill="url(#hTextGold)" stroke="#18181b" stroke-width="2" letter-spacing="2">MY CAMPUS LIFE</text>
     </g>
+
+    <!-- Subtitle: University Life, Gigs & Banter -->
+    <text x="2" y="128" font-family="system-ui, sans-serif" font-weight="700" font-size="16" fill="#a7f3d0" letter-spacing="1">Hostels • Mama Put • Danfo Shuttles • Gigs • Snooker • Sports</text>
   </g>
 </svg>

@@ -16,8 +16,15 @@ size = Vector3(38, 0.4, 28)
 size = Vector3(38, 0.4, 28)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grass"]
-albedo_color = Color(0.18, 0.54, 0.24, 1)
-roughness = 0.85
+albedo_color = Color(0.09, 0.70, 0.22, 1)
+roughness = 0.82
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grass_stripe"]
+albedo_color = Color(0.13, 0.80, 0.27, 1)
+roughness = 0.82
+
+[sub_resource type="BoxMesh" id="BoxMesh_stripe"]
+size = Vector3(4.5, 0.015, 21.0)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_wall_h"]
 size = Vector3(38, 3.5, 0.5)
@@ -45,7 +52,42 @@ transparency = 1
 albedo_color = Color(0.95, 0.95, 0.95, 0.35)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_white"]
-albedo_color = Color(0.95, 0.95, 0.95, 1)
+albedo_color = Color(0.96, 0.96, 0.96, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_concrete"]
+albedo_color = Color(0.72, 0.74, 0.78, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_seat_green"]
+albedo_color = Color(0.05, 0.62, 0.30, 1)
+roughness = 0.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_seat_yellow"]
+albedo_color = Color(0.96, 0.72, 0.08, 1)
+roughness = 0.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_seat_white"]
+albedo_color = Color(0.92, 0.94, 0.96, 1)
+roughness = 0.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal"]
+albedo_color = Color(0.28, 0.32, 0.38, 1)
+metallic = 0.65
+roughness = 0.35
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dugout_roof"]
+transparency = 1
+albedo_color = Color(0.12, 0.45, 0.85, 0.60)
+roughness = 0.15
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floodlight_glow"]
+albedo_color = Color(1.0, 0.98, 0.88, 1)
+emission_enabled = true
+emission = Color(1.0, 0.96, 0.82, 1)
+emission_energy_multiplier = 4.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_flag_red"]
+albedo_color = Color(0.92, 0.18, 0.18, 1)
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_ball"]
 radius = 0.35
@@ -61,8 +103,19 @@ roughness = 0.3
 [sub_resource type="BoxMesh" id="BoxMesh_line_h"]
 size = Vector3(28, 0.04, 0.15)
 
-[sub_resource type="BoxMesh" id="BoxMesh_line_v"]
-size = Vector3(0.15, 0.04, 20)
+[sub_resource type="BoxMesh" id="BoxMesh_line_side"]
+size = Vector3(0.15, 0.04, 21.0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pen_front"]
+size = Vector3(12.0, 0.04, 0.15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pen_side"]
+size = Vector3(0.15, 0.04, 4.5)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_spot"]
+top_radius = 0.2
+bottom_radius = 0.2
+height = 0.04
 
 [sub_resource type="BoxMesh" id="BoxMesh_track"]
 size = Vector3(36, 0.02, 3.0)
@@ -71,15 +124,49 @@ size = Vector3(36, 0.02, 3.0)
 albedo_color = Color(0.72, 0.32, 0.22, 1)
 roughness = 0.85
 
+[sub_resource type="BoxMesh" id="BoxMesh_bleacher_step1"]
+size = Vector3(3.2, 0.45, 18.0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bleacher_step2"]
+size = Vector3(2.4, 0.90, 18.0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bleacher_step3"]
+size = Vector3(1.6, 1.35, 18.0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_canopy"]
+size = Vector3(4.2, 0.12, 18.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_seat"]
+size = Vector3(0.48, 0.38, 0.48)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pole"]
+top_radius = 0.12
+bottom_radius = 0.16
+height = 9.5
+
+[sub_resource type="BoxMesh" id="BoxMesh_flood_head"]
+size = Vector3(2.2, 1.2, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_flood_bulb"]
+size = Vector3(0.55, 0.45, 0.08)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_flag_pole"]
+top_radius = 0.025
+bottom_radius = 0.035
+height = 1.6
+
+[sub_resource type="BoxMesh" id="BoxMesh_flag_cloth"]
+size = Vector3(0.02, 0.36, 0.52)
+
 [node name="FootballField" type="Node3D"]
 script = ExtResource("1_room")
 room_name = "University Sports Complex & Football Stadium"
 room_id = &"stadium"
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 12, 0)
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 14, 0)
 light_color = Color(1, 0.98, 0.92, 1)
-light_energy = 1.3
+light_energy = 1.35
 shadow_enabled = true
 
 [node name="PitchFloor" type="StaticBody3D" parent="."]
@@ -94,6 +181,21 @@ shape = SubResource("BoxShape3D_pitch")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
 mesh = SubResource("BoxMesh_pitch")
 surface_material_override/0 = SubResource("StandardMaterial3D_grass")
+
+[node name="GrassStripe1" type="MeshInstance3D" parent="PitchFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0.005, 0)
+mesh = SubResource("BoxMesh_stripe")
+surface_material_override/0 = SubResource("StandardMaterial3D_grass_stripe")
+
+[node name="GrassStripe2" type="MeshInstance3D" parent="PitchFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0.005, 0)
+mesh = SubResource("BoxMesh_stripe")
+surface_material_override/0 = SubResource("StandardMaterial3D_grass_stripe")
+
+[node name="GrassStripe3" type="MeshInstance3D" parent="PitchFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0.005, 0)
+mesh = SubResource("BoxMesh_stripe")
+surface_material_override/0 = SubResource("StandardMaterial3D_grass_stripe")
 
 [node name="RunningTrackNorth" type="MeshInstance3D" parent="PitchFloor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, -12.5)
@@ -152,6 +254,41 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
 mesh = SubResource("BoxMesh_line_h")
 surface_material_override/0 = SubResource("StandardMaterial3D_white")
 
+[node name="PitchLineWest" type="MeshInstance3D" parent="StadiumFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.0, 0.02, 0)
+mesh = SubResource("BoxMesh_line_side")
+surface_material_override/0 = SubResource("StandardMaterial3D_white")
+
+[node name="PitchLineEast" type="MeshInstance3D" parent="StadiumFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.0, 0.02, 0)
+mesh = SubResource("BoxMesh_line_side")
+surface_material_override/0 = SubResource("StandardMaterial3D_white")
+
+[node name="PenBoxFrontNorth" type="MeshInstance3D" parent="StadiumFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -6.0)
+mesh = SubResource("BoxMesh_pen_front")
+surface_material_override/0 = SubResource("StandardMaterial3D_white")
+
+[node name="PenBoxLeftNorth" type="MeshInstance3D" parent="StadiumFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.0, 0.02, -8.25)
+mesh = SubResource("BoxMesh_pen_side")
+surface_material_override/0 = SubResource("StandardMaterial3D_white")
+
+[node name="PenBoxRightNorth" type="MeshInstance3D" parent="StadiumFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.0, 0.02, -8.25)
+mesh = SubResource("BoxMesh_pen_side")
+surface_material_override/0 = SubResource("StandardMaterial3D_white")
+
+[node name="PenaltySpotNorth" type="MeshInstance3D" parent="StadiumFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -7.5)
+mesh = SubResource("CylinderMesh_spot")
+surface_material_override/0 = SubResource("StandardMaterial3D_white")
+
+[node name="CenterSpot" type="MeshInstance3D" parent="StadiumFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)
+mesh = SubResource("CylinderMesh_spot")
+surface_material_override/0 = SubResource("StandardMaterial3D_white")
+
 [node name="GoalPostCrossbar" type="MeshInstance3D" parent="StadiumFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4, -10.5)
 mesh = SubResource("BoxMesh_post_bar")
@@ -171,6 +308,326 @@ surface_material_override/0 = SubResource("StandardMaterial3D_white")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -11.1)
 mesh = SubResource("BoxMesh_net")
 surface_material_override/0 = SubResource("StandardMaterial3D_net")
+
+[node name="CornerFlagNW" type="Node3D" parent="StadiumFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.0, 0, -10.5)
+
+[node name="Pole" type="MeshInstance3D" parent="StadiumFixtures/CornerFlagNW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+mesh = SubResource("CylinderMesh_flag_pole")
+surface_material_override/0 = SubResource("StandardMaterial3D_white")
+
+[node name="Flag" type="MeshInstance3D" parent="StadiumFixtures/CornerFlagNW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.26, 1.35, 0)
+mesh = SubResource("BoxMesh_flag_cloth")
+surface_material_override/0 = SubResource("StandardMaterial3D_flag_red")
+
+[node name="CornerFlagNE" type="Node3D" parent="StadiumFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.0, 0, -10.5)
+
+[node name="Pole" type="MeshInstance3D" parent="StadiumFixtures/CornerFlagNE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+mesh = SubResource("CylinderMesh_flag_pole")
+surface_material_override/0 = SubResource("StandardMaterial3D_white")
+
+[node name="Flag" type="MeshInstance3D" parent="StadiumFixtures/CornerFlagNE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.26, 1.35, 0)
+mesh = SubResource("BoxMesh_flag_cloth")
+surface_material_override/0 = SubResource("StandardMaterial3D_flag_red")
+
+[node name="CornerFlagSW" type="Node3D" parent="StadiumFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.0, 0, 10.5)
+
+[node name="Pole" type="MeshInstance3D" parent="StadiumFixtures/CornerFlagSW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+mesh = SubResource("CylinderMesh_flag_pole")
+surface_material_override/0 = SubResource("StandardMaterial3D_white")
+
+[node name="Flag" type="MeshInstance3D" parent="StadiumFixtures/CornerFlagSW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.26, 1.35, 0)
+mesh = SubResource("BoxMesh_flag_cloth")
+surface_material_override/0 = SubResource("StandardMaterial3D_flag_red")
+
+[node name="CornerFlagSE" type="Node3D" parent="StadiumFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.0, 0, 10.5)
+
+[node name="Pole" type="MeshInstance3D" parent="StadiumFixtures/CornerFlagSE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+mesh = SubResource("CylinderMesh_flag_pole")
+surface_material_override/0 = SubResource("StandardMaterial3D_white")
+
+[node name="Flag" type="MeshInstance3D" parent="StadiumFixtures/CornerFlagSE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.26, 1.35, 0)
+mesh = SubResource("BoxMesh_flag_cloth")
+surface_material_override/0 = SubResource("StandardMaterial3D_flag_red")
+
+[node name="WestGrandstand" type="Node3D" parent="StadiumFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.8, 0, 0)
+
+[node name="Step1" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.22, 0)
+mesh = SubResource("BoxMesh_bleacher_step1")
+surface_material_override/0 = SubResource("StandardMaterial3D_concrete")
+
+[node name="Step2" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 0.45, 0)
+mesh = SubResource("BoxMesh_bleacher_step2")
+surface_material_override/0 = SubResource("StandardMaterial3D_concrete")
+
+[node name="Step3" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, 0.68, 0)
+mesh = SubResource("BoxMesh_bleacher_step3")
+surface_material_override/0 = SubResource("StandardMaterial3D_concrete")
+
+[node name="CanopyRoof" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(0.985, -0.174, 0, 0.174, 0.985, 0, 0, 0, 1, 0, 3.8, 0)
+mesh = SubResource("BoxMesh_canopy")
+surface_material_override/0 = SubResource("StandardMaterial3D_dugout_roof")
+
+[node name="CanopyPillarN" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 1.9, -8.5)
+mesh = SubResource("CylinderMesh_pole")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="CanopyPillarS" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 1.9, 8.5)
+mesh = SubResource("CylinderMesh_pole")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="SeatG1" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0.55, -6.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_green")
+
+[node name="SeatG2" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0.55, -4.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_green")
+
+[node name="SeatG3" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0.55, -2.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_green")
+
+[node name="SeatG4" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0.55, 0.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_green")
+
+[node name="SeatG5" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0.55, 2.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_green")
+
+[node name="SeatG6" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0.55, 4.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_green")
+
+[node name="SeatG7" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 0.55, 6.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_green")
+
+[node name="SeatY1" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 1.0, -5.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_yellow")
+
+[node name="SeatY2" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 1.0, -3.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_yellow")
+
+[node name="SeatY3" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 1.0, -1.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_yellow")
+
+[node name="SeatY4" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 1.0, 1.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_yellow")
+
+[node name="SeatY5" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 1.0, 3.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_yellow")
+
+[node name="SeatY6" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 1.0, 5.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_yellow")
+
+[node name="SeatW1" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 1.45, -4.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_white")
+
+[node name="SeatW2" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 1.45, 0.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_white")
+
+[node name="SeatW3" type="MeshInstance3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 1.45, 4.0)
+mesh = SubResource("BoxMesh_seat")
+surface_material_override/0 = SubResource("StandardMaterial3D_seat_white")
+
+[node name="GrandstandCheerBanner" type="Label3D" parent="StadiumFixtures/WestGrandstand"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2.1, 2.8, 0)
+text = "★ HOME OF CHAMPIONS: ALL-VARSITY ATHLETICS & FOOTBALL DEAN'S CUP ★\n\"UNITED WE DRIBBLE, TOGETHER WE SCORE! 🏆 🇳🇬\""
+font_size = 20
+outline_size = 6
+modulate = Color(1, 0.92, 0.25, 1)
+
+[node name="EastDugout" type="Node3D" parent="StadiumFixtures"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.2, 0, 0)
+
+[node name="DugoutBenchHome" type="MeshInstance3D" parent="StadiumFixtures/EastDugout"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, -3.5)
+mesh = SubResource("BoxMesh_bleacher_step1")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="DugoutRoofHome" type="MeshInstance3D" parent="StadiumFixtures/EastDugout"]
+transform = Transform3D(0.966, 0.259, 0, -0.259, 0.966, 0, 0, 0, 1, -0.3, 2.2, -3.5)
+mesh = SubResource("BoxMesh_canopy")
+surface_material_override/0 = SubResource("StandardMaterial3D_dugout_roof")
+
+[node name="HomeDugoutSign" type="Label3D" parent="StadiumFixtures/EastDugout"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -1.2, 2.4, -3.5)
+text = "⚽ HOME TEAM DUGOUT\n[ COACH & RESERVES BENCH ]"
+font_size = 18
+outline_size = 5
+modulate = Color(0.2, 0.9, 0.45, 1)
+
+[node name="DugoutBenchAway" type="MeshInstance3D" parent="StadiumFixtures/EastDugout"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 3.5)
+mesh = SubResource("BoxMesh_bleacher_step1")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="DugoutRoofAway" type="MeshInstance3D" parent="StadiumFixtures/EastDugout"]
+transform = Transform3D(0.966, 0.259, 0, -0.259, 0.966, 0, 0, 0, 1, -0.3, 2.2, 3.5)
+mesh = SubResource("BoxMesh_canopy")
+surface_material_override/0 = SubResource("StandardMaterial3D_dugout_roof")
+
+[node name="AwayDugoutSign" type="Label3D" parent="StadiumFixtures/EastDugout"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -1.2, 2.4, 3.5)
+text = "⚽ VISITING TEAM DUGOUT\n[ TECHNICAL BENCH ]"
+font_size = 18
+outline_size = 5
+modulate = Color(1.0, 0.65, 0.2, 1)
+
+[node name="FloodlightNW" type="Node3D" parent="StadiumFixtures"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -17.5, 0, -12.5)
+
+[node name="Mast" type="MeshInstance3D" parent="StadiumFixtures/FloodlightNW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.75, 0)
+mesh = SubResource("CylinderMesh_pole")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="Head" type="MeshInstance3D" parent="StadiumFixtures/FloodlightNW"]
+transform = Transform3D(1, 0, 0, 0, 0.906, 0.423, 0, -0.423, 0.906, 0, 9.4, 0.3)
+mesh = SubResource("BoxMesh_flood_head")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="Bulb1" type="MeshInstance3D" parent="StadiumFixtures/FloodlightNW/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.25, 0.16)
+mesh = SubResource("BoxMesh_flood_bulb")
+surface_material_override/0 = SubResource("StandardMaterial3D_floodlight_glow")
+
+[node name="Bulb2" type="MeshInstance3D" parent="StadiumFixtures/FloodlightNW/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.25, 0.16)
+mesh = SubResource("BoxMesh_flood_bulb")
+surface_material_override/0 = SubResource("StandardMaterial3D_floodlight_glow")
+
+[node name="Bulb3" type="MeshInstance3D" parent="StadiumFixtures/FloodlightNW/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0.16)
+mesh = SubResource("BoxMesh_flood_bulb")
+surface_material_override/0 = SubResource("StandardMaterial3D_floodlight_glow")
+
+[node name="LightNW" type="OmniLight3D" parent="StadiumFixtures/FloodlightNW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 8.5, 1.5)
+light_color = Color(1.0, 0.98, 0.90, 1)
+light_energy = 2.2
+omni_range = 22.0
+
+[node name="FloodlightNE" type="Node3D" parent="StadiumFixtures"]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, 17.5, 0, -12.5)
+
+[node name="Mast" type="MeshInstance3D" parent="StadiumFixtures/FloodlightNE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.75, 0)
+mesh = SubResource("CylinderMesh_pole")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="Head" type="MeshInstance3D" parent="StadiumFixtures/FloodlightNE"]
+transform = Transform3D(1, 0, 0, 0, 0.906, 0.423, 0, -0.423, 0.906, 0, 9.4, 0.3)
+mesh = SubResource("BoxMesh_flood_head")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="Bulb1" type="MeshInstance3D" parent="StadiumFixtures/FloodlightNE/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.25, 0.16)
+mesh = SubResource("BoxMesh_flood_bulb")
+surface_material_override/0 = SubResource("StandardMaterial3D_floodlight_glow")
+
+[node name="Bulb2" type="MeshInstance3D" parent="StadiumFixtures/FloodlightNE/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.25, 0.16)
+mesh = SubResource("BoxMesh_flood_bulb")
+surface_material_override/0 = SubResource("StandardMaterial3D_floodlight_glow")
+
+[node name="LightNE" type="OmniLight3D" parent="StadiumFixtures/FloodlightNE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 8.5, 1.5)
+light_color = Color(1.0, 0.98, 0.90, 1)
+light_energy = 2.2
+omni_range = 22.0
+
+[node name="FloodlightSW" type="Node3D" parent="StadiumFixtures"]
+transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, -17.5, 0, 12.5)
+
+[node name="Mast" type="MeshInstance3D" parent="StadiumFixtures/FloodlightSW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.75, 0)
+mesh = SubResource("CylinderMesh_pole")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="Head" type="MeshInstance3D" parent="StadiumFixtures/FloodlightSW"]
+transform = Transform3D(1, 0, 0, 0, 0.906, 0.423, 0, -0.423, 0.906, 0, 9.4, 0.3)
+mesh = SubResource("BoxMesh_flood_head")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="Bulb1" type="MeshInstance3D" parent="StadiumFixtures/FloodlightSW/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.25, 0.16)
+mesh = SubResource("BoxMesh_flood_bulb")
+surface_material_override/0 = SubResource("StandardMaterial3D_floodlight_glow")
+
+[node name="LightSW" type="OmniLight3D" parent="StadiumFixtures/FloodlightSW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 8.5, -1.5)
+light_color = Color(1.0, 0.98, 0.90, 1)
+light_energy = 2.2
+omni_range = 22.0
+
+[node name="FloodlightSE" type="Node3D" parent="StadiumFixtures"]
+transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, 17.5, 0, 12.5)
+
+[node name="Mast" type="MeshInstance3D" parent="StadiumFixtures/FloodlightSE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.75, 0)
+mesh = SubResource("CylinderMesh_pole")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="Head" type="MeshInstance3D" parent="StadiumFixtures/FloodlightSE"]
+transform = Transform3D(1, 0, 0, 0, 0.906, 0.423, 0, -0.423, 0.906, 0, 9.4, 0.3)
+mesh = SubResource("BoxMesh_flood_head")
+surface_material_override/0 = SubResource("StandardMaterial3D_metal")
+
+[node name="Bulb1" type="MeshInstance3D" parent="StadiumFixtures/FloodlightSE/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 0.25, 0.16)
+mesh = SubResource("BoxMesh_flood_bulb")
+surface_material_override/0 = SubResource("StandardMaterial3D_floodlight_glow")
+
+[node name="LightSE" type="OmniLight3D" parent="StadiumFixtures/FloodlightSE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 8.5, -1.5)
+light_color = Color(1.0, 0.98, 0.90, 1)
+light_energy = 2.2
+omni_range = 22.0
 
 [node name="SignLabel" type="Label3D" parent="StadiumFixtures"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, -13.5)

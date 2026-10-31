@@ -54,6 +54,7 @@ var is_warden_panic_active: bool = false
 var is_contraband_hidden: bool = false
 var warden_banner_ui: PanelContainer = null
 var warden_countdown_label: Label = null
+var autonomous_peers: Array[Dictionary] = []
 
 @onready var food_menu: Control = $MenusLayer/FoodMenu if has_node("MenusLayer/FoodMenu") else null
 @onready var study_menu: Control = $MenusLayer/StudyMenu if has_node("MenusLayer/StudyMenu") else null
@@ -171,6 +172,8 @@ func _ready() -> void:
 		if hud and hud.has_method("_refresh_objective_pill"):
 			hud._refresh_objective_pill()
 
+	_init_autonomous_coursemates()
+
 
 func _polish_room_decor_and_ambient_npcs() -> void:
 	if NetworkManager:
@@ -242,6 +245,7 @@ func _process(delta: float) -> void:
 			_resolve_warden_caught()
 
 	_process_network_puppets()
+	_process_autonomous_coursemates(delta)
 
 
 func _gather_room_lights(node: Node, result: Array[Light3D]) -> void:
@@ -1143,4 +1147,285 @@ func _on_network_puppet_interacted(puppet: NetworkPlayer, p: CharacterBody3D) ->
 		_on_menu_closed()
 	))
 
+	# 6. Stadium Penalty Shootout Contest
+	if room_id == &"stadium":
+		vbox.add_child(make_action_btn.call("⚽ Challenge to Penalty Shootout Contest!", Color(0.10, 0.48, 0.25, 0.95), func():
+			if is_instance_valid(puppet):
+				puppet.show_chat("Oya penalty shootout! Make we see your shooting power! ⚽")
+			modal.queue_free()
+			_on_menu_closed()
+			_on_fixture_menu_requested(&"penalty", p)
+		))
+
+	# 7. Beg for Urgent 2K / Pocket Money Assistance
+	vbox.add_child(make_action_btn.call("🤝 Beg for Urgent 2K / Pocket Money Assistance", Color(0.42, 0.30, 0.12, 0.95), func():
+		var nm: NeedsManager = p.get_node_or_null("NeedsManager") as NeedsManager if p else null
+		if nm:
+			if nm.money < 2500:
+				nm.modify_money(1000)
+				nm.modify_faith(15.0)
+				nm.modify_fun(10.0)
+				if SoundManager:
+					SoundManager.play_cheer()
+				if is_instance_valid(puppet):
+					puppet.play_emote("celebrate")
+					puppet.show_chat("No wahala my guy! Take ₦1,000 make sapa no finish you! We rise by lifting others! 🤝💸")
+				if p and p.has_method("display_notification"):
+					p.display_notification("🤝 %s sent you +₦1,000 allowance via CampusPay! (+15 Faith)" % puppet.student_name)
+			else:
+				if is_instance_valid(puppet):
+					puppet.play_emote("shaku")
+					puppet.show_chat("Chairman! With all the money inside your account you still dey find urgent 2k? Big man flex! 😂")
+				if p and p.has_method("display_notification"):
+					p.display_notification("😂 %s: 'Big boy! Your account balance is heavy, go buy us cold drinks!'")
+		modal.queue_free()
+		_on_menu_closed()
+	))
+
 	menus_layer.add_child(modal)
+
+
+func _init_autonomous_coursemates() -> void:
+	if autonomous_peers.size() > 0:
+		return
+	var peer_configs: Array[Dictionary] = _get_autonomous_peer_configs_for_room()
+	for i in range(peer_configs.size()):
+		var cfg: Dictionary = peer_configs[i]
+		var puppet: NetworkPlayer = NetworkPlayerScene.instantiate() as NetworkPlayer
+		puppet.peer_id = -(1001 + i)
+		puppet.student_name = String(cfg.get("name", "Coursemate"))
+		var spawn_pos: Vector3 = cfg.get("pos", Vector3(1.0, 0.1, 1.0))
+		puppet.position = spawn_pos
+		add_child(puppet)
+
+		var gender: String = String(cfg.get("gender", "Male"))
+		var skin_idx: int = int(cfg.get("skin_idx", 1))
+		var hair_idx: int = int(cfg.get("hair_idx", 0))
+		var shirt_idx: int = int(cfg.get("shirt_idx", 0))
+		var tr_idx: int = int(cfg.get("trouser_idx", 0))
+		var dept: String = String(cfg.get("dept", "100L"))
+		puppet.apply_full_drip(gender, skin_idx, hair_idx, shirt_idx, tr_idx, dept)
+		if puppet.name_label:
+			puppet.name_label.text = "%s\n🎓 [%s]" % [puppet.student_name, dept]
+			puppet.name_label.modulate = Color(0.40, 0.88, 1.0)
+			PropBuilder3D.configure_proximity_label(puppet.name_label, 8.5, 22)
+
+		if puppet.has_signal("peer_interacted"):
+			puppet.peer_interacted.connect(_on_network_puppet_interacted)
+
+		var lines_arr: Array[String] = []
+		for l in cfg.get("banter", []):
+			lines_arr.append(String(l))
+
+		autonomous_peers.append({
+			"node": puppet,
+			"home_pos": spawn_pos,
+			"target_pos": spawn_pos,
+			"timer": randf_range(3.5, 8.0),
+			"is_walking": false,
+			"banter": lines_arr,
+			"role": String(cfg.get("role", "Coursemate"))
+		})
+
+
+func _process_autonomous_coursemates(delta: float) -> void:
+	for entry in autonomous_peers:
+		var node: NetworkPlayer = entry.get("node")
+		if not is_instance_valid(node):
+			continue
+		var is_walking: bool = bool(entry.get("is_walking", false))
+		var target: Vector3 = entry.get("target_pos", node.global_position)
+
+		if is_walking:
+			var curr_pos: Vector3 = node.global_position
+			var diff: Vector3 = target - curr_pos
+			diff.y = 0.0
+			var dist: float = diff.length()
+			if dist < 0.25:
+				entry["is_walking"] = false
+				entry["timer"] = randf_range(5.0, 12.0)
+				node.update_network_transform(target, node.visual_root.rotation.y if node.visual_root else 0.0, false)
+				var emotes: Array[String] = ["wave", "shaku", "flex", "celebrate", "sit", "study"]
+				if randf() > 0.4:
+					node.play_emote(emotes[randi() % emotes.size()])
+			else:
+				var move_dir: Vector3 = diff.normalized()
+				var next_pos: Vector3 = curr_pos + move_dir * (2.2 * delta)
+				var rot_y: float = atan2(-move_dir.x, -move_dir.z)
+				node.global_position = next_pos
+				node.update_network_transform(next_pos, rot_y, true)
+		else:
+			var t: float = float(entry.get("timer", 5.0)) - delta
+			entry["timer"] = t
+			if t <= 0.0:
+				entry["timer"] = randf_range(6.0, 14.0)
+				var roll: float = randf()
+				if roll < 0.45:
+					var home: Vector3 = entry.get("home_pos", node.global_position)
+					var angle: float = randf() * TAU
+					var r: float = randf_range(2.0, 5.0)
+					var new_dest: Vector3 = home + Vector3(cos(angle) * r, 0.0, sin(angle) * r)
+					new_dest.x = clampf(new_dest.x, -14.0, 14.0)
+					new_dest.z = clampf(new_dest.z, -10.0, 10.0)
+					entry["target_pos"] = new_dest
+					entry["is_walking"] = true
+				elif roll < 0.75:
+					var lines: Array = entry.get("banter", [])
+					if not lines.is_empty():
+						var line: String = lines[randi() % lines.size()]
+						node.show_chat(line)
+				else:
+					var emotes: Array[String] = ["wave", "shaku", "celebrate", "flex"]
+					node.play_emote(emotes[randi() % emotes.size()])
+
+
+func _get_autonomous_peer_configs_for_room() -> Array[Dictionary]:
+	match room_id:
+		&"stadium":
+			return [
+				{
+					"name": "Tunde", "gender": "Male", "dept": "CSC 200L",
+					"role": "Computing FC Winger", "pos": Vector3(-5.0, 0.1, 0.0),
+					"skin_idx": 1, "hair_idx": 1, "shirt_idx": 1, "trouser_idx": 0,
+					"banter": [
+						"Coach dey drill us today o! 10 laps round track!",
+						"Who dey breathe?! Computing FC all the way!",
+						"I need cold PowerPro isotonic drink after this sprint!",
+						"The pitch grass is so fresh! Premier league standard!"
+					]
+				},
+				{
+					"name": "Folake", "gender": "Female", "dept": "MASS COMM 100L",
+					"role": "Campus Sports Blogger", "pos": Vector3(-15.5, 0.7, -2.0),
+					"skin_idx": 2, "hair_idx": 2, "shirt_idx": 2, "trouser_idx": 1,
+					"banter": [
+						"TikTok live stream is buzzing! 2,000 views on Dean's Cup!",
+						"These new stadium bleachers look magnificent!",
+						"Computing FC must carry the Dean's Cup this year!",
+						"Dugout seats are so comfy, coach is enjoying!"
+					]
+				},
+				{
+					"name": "Korede", "gender": "Male", "dept": "ENG 300L",
+					"role": "Penalty Specialist", "pos": Vector3(2.5, 0.1, -4.5),
+					"skin_idx": 0, "hair_idx": 0, "shirt_idx": 3, "trouser_idx": 0,
+					"banter": [
+						"Make we take penalty shootout! If you score, I owe you cold Malt!",
+						"Captain Emeka think say he fit save my curve shot!",
+						"Oya let's dance Gbese on the center pitch!"
+					]
+				}
+			]
+		&"library":
+			return [
+				{
+					"name": "Chinedu", "gender": "Male", "dept": "MEDICINE 200L",
+					"role": "Medical Scholar", "pos": Vector3(-2.8, 0.1, -1.5),
+					"skin_idx": 0, "hair_idx": 0, "shirt_idx": 1, "trouser_idx": 0,
+					"banter": [
+						"Quiet in the library please, Anatomy 201 no be beans!",
+						"Study carrels give 2x CGPA focus.",
+						"Have you reviewed the 2024 past questions?"
+					]
+				},
+				{
+					"name": "Amina", "gender": "Female", "dept": "LAW 100L",
+					"role": "Law Undergrad", "pos": Vector3(2.5, 0.1, 1.5),
+					"skin_idx": 2, "hair_idx": 2, "shirt_idx": 0, "trouser_idx": 1,
+					"banter": [
+						"Constitutional Law assignment is 15 pages!",
+						"My laptop battery is low, thank God for library sockets.",
+						"Success requires discipline and midnight candles!"
+					]
+				}
+			]
+		&"lecture", &"lecture2":
+			return [
+				{
+					"name": "Ibrahim", "gender": "Male", "dept": "CSC 100L",
+					"role": "Course Rep", "pos": Vector3(-2.2, 0.1, 0.0),
+					"skin_idx": 1, "hair_idx": 0, "shirt_idx": 0, "trouser_idx": 0,
+					"banter": [
+						"Lecturer is coming with test papers!",
+						"Sit near the front row for maximum comprehension.",
+						"Who has extra pen for attendance sheet?"
+					]
+				},
+				{
+					"name": "Blessing", "gender": "Female", "dept": "ACCOUNTING 200L",
+					"role": "Honours Scholar", "pos": Vector3(2.0, 0.1, 0.5),
+					"skin_idx": 0, "hair_idx": 3, "shirt_idx": 2, "trouser_idx": 0,
+					"banter": [
+						"Balance sheet must balance by fire by force!",
+						"Take good lecture notes, CA test is 30 marks!"
+					]
+				}
+			]
+		&"mama_put":
+			return [
+				{
+					"name": "Damilola", "gender": "Male", "dept": "ECONOMICS 300L",
+					"role": "Campus Foodie", "pos": Vector3(-1.8, 0.1, 1.0),
+					"skin_idx": 2, "hair_idx": 1, "shirt_idx": 3, "trouser_idx": 0,
+					"banter": [
+						"Mama Cashout Jollof + fried plantain is life-saving!",
+						"Sapa was dealing with me until I came here.",
+						"Let's link up for a cold drink!"
+					]
+				},
+				{
+					"name": "Zainab", "gender": "Female", "dept": "MASS COMM 200L",
+					"role": "Lifestyle Influencer", "pos": Vector3(2.0, 0.1, -1.0),
+					"skin_idx": 1, "hair_idx": 2, "shirt_idx": 1, "trouser_idx": 1,
+					"banter": [
+						"Nothing beats hot Amala with Gbegiri & Ewedu!",
+						"CampusPay makes paying for food so fast.",
+						"Eat well so you have energy for afternoon class!"
+					]
+				}
+			]
+		&"hostel":
+			return [
+				{
+					"name": "Tobi", "gender": "Male", "dept": "100L Roommate",
+					"role": "Hostel Guy", "pos": Vector3(1.5, 0.1, 1.0),
+					"skin_idx": 1, "hair_idx": 1, "shirt_idx": 0, "trouser_idx": 0,
+					"banter": [
+						"NEPA brought light! Charge your power bank quick!",
+						"Watch out for hall warden inspections!",
+						"Who used my boiling ring without asking?!"
+					]
+				},
+				{
+					"name": "Ngozi", "gender": "Female", "dept": "200L Roommate",
+					"role": "Hostel Roommate", "pos": Vector3(-1.5, 0.1, 1.8),
+					"skin_idx": 0, "hair_idx": 2, "shirt_idx": 2, "trouser_idx": 1,
+					"banter": [
+						"I bought extra noodles in the fridge!",
+						"Let's review past questions before evening gist!"
+					]
+				}
+			]
+		_:
+			return [
+				{
+					"name": "Sadiq", "gender": "Male", "dept": "ELECT ENG 400L",
+					"role": "Faculty Senator", "pos": Vector3(2.0, 0.1, 2.5),
+					"skin_idx": 2, "hair_idx": 1, "shirt_idx": 0, "trouser_idx": 0,
+					"banter": [
+						"Aluta Continua! Congress holds this Friday at the SUB!",
+						"Danfo bus shuttle just brought 40 students from town.",
+						"Keep your CGPA above 4.50 to claim Senate scholarship!"
+					]
+				},
+				{
+					"name": "Funke", "gender": "Female", "dept": "BIOCHEM 200L",
+					"role": "Fashion Rep", "pos": Vector3(-2.5, 0.1, -2.0),
+					"skin_idx": 1, "hair_idx": 3, "shirt_idx": 2, "trouser_idx": 1,
+					"banter": [
+						"Campus drip is 10/10 today! Rate my fit!",
+						"I'm heading to the Mall to buy new sunglasses.",
+						"Don't forget to submit assignment before 4 PM!"
+					]
+				}
+			]

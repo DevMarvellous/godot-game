@@ -60,7 +60,10 @@ func _ready() -> void:
 			)
 			tested_combos += 1
 	player.play_dressing_animation()
-	print("  -> Player3D hair & outfit 3D mesh swapping + dressing spin animation OK (Tested %d combos)" % tested_combos)
+	var emotes_list = ["zanku", "gbese", "shaku", "flex", "wahala", "focus", "selfie", "wave", "choplife", "juggle", "sit", "study", "pray"]
+	for em in emotes_list:
+		player.play_emote(em)
+	print("  -> Player3D hair & outfit 3D mesh swapping + 12 procedural eased Nigerian emotes OK (Tested %d combos, %d emotes)" % [tested_combos, emotes_list.size()])
 
 	# 3. Test Phone System & Wallpapers
 	print("[3/6] Verifying Phone System...")
@@ -271,6 +274,11 @@ func _ready() -> void:
 		var inst = scene.instantiate()
 		add_child(inst)
 		inst._process(0.016)
+		if r_path.contains("football_stadium"):
+			assert(inst.has_node("StadiumFixtures/WestGrandstand"), "Stadium must have WestGrandstand bleachers!")
+			assert(inst.has_node("StadiumFixtures/CornerFlagNW"), "Stadium must have corner flags!")
+			assert(inst.has_node("StadiumFixtures/FloodlightNW"), "Stadium must have floodlight towers!")
+			assert(inst.autonomous_peers.size() >= 2, "Stadium must spawn autonomous coursemates!")
 		inst.queue_free()
 		print("  -> Room OK: %s" % r_path.get_file())
 

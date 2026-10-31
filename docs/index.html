@@ -34,24 +34,13 @@
 	<meta name="twitter:image:alt" content="My Campus Life — Official Game Banner">
 
 	<meta name="theme-color" content="#064e3b">
-
-	<!-- High-speed parallel asset preloading for fastest WebAssembly boot -->
-	<link rel="preload" href="./index.wasm" as="fetch" type="application/wasm" crossorigin>
-	<link rel="preload" href="./index.pck" as="fetch" type="application/octet-stream" crossorigin>
 	<script>
-	// Aggressively unregister all stale Service Workers and purge browser caches on page load
+	// Unregister any stale legacy service workers once
 	(function() {
 		if ('serviceWorker' in navigator) {
 			navigator.serviceWorker.getRegistrations().then(function(regs) {
 				for (var i = 0; i < regs.length; i++) {
 					regs[i].unregister();
-				}
-			}).catch(function() {});
-		}
-		if ('caches' in window) {
-			caches.keys().then(function(names) {
-				for (var i = 0; i < names.length; i++) {
-					caches.delete(names[i]);
 				}
 			}).catch(function() {});
 		}
@@ -857,13 +846,17 @@ html, body, #canvas {
 				<button type="button" onclick="document.getElementById('native-emote-overlay').style.display='none'" style="background:transparent; border:none; color:#cbd5e1; font-size:20px; cursor:pointer;">✕</button>
 			</div>
 			<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('shaku')">💃 Legwork / Shaku</button>
 				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('zanku')">🔥 Zanku / Gbese!</button>
-				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('wave')">👋 Wave Coursemate</button>
-				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('selfie')">🤳 Drip Check / Pose</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('shaku')">💃 Shaku Legwork</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('flex')">👑 Who Dey Breathe?!</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('wahala')">😱 Wahala Dey / Abeg!</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('focus')">🕺 Focus Dance</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('selfie')">🤳 Drip Check / Spin</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('wave')">👋 Oya Wave / Aluta</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('choplife')">🍗 Chop Life / Toast</button>
+				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('juggle')">⚽ Keepy-Uppy Juggle</button>
 				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('sit')">🪑 Sit &amp; Rest (+Energy)</button>
 				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('study')">📚 Focused Study</button>
-				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('celebrate')">🎉 Victory Cheer</button>
 				<button type="button" class="chip-btn" style="padding:10px; text-align:left; border-radius:10px;" onclick="selectHtmlEmote('pray')">🙏 Faith &amp; Prayer</button>
 			</div>
 		</div>
@@ -979,7 +972,7 @@ html, body, #canvas {
 	}, true);
 })();
 
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":4695300,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":4637620,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -2783,41 +2776,34 @@ setTimeout(() => {
 			if (current > 0 && total > 0) {
 				const pct = Math.min(100, Math.floor((current / total) * 100));
 				if (fillBar) fillBar.style.width = pct + '%';
-				if (percentText) percentText.textContent = `Loading Campus Assets (${pct}%)...`;
-				if (streamPill && !_isEngineStageReady) streamPill.textContent = `⚡ 3D Engine (${pct}%)`;
+				if (pct >= 95) {
+					if (percentText) percentText.textContent = '⚡ Compiling 3D Engine & Shaders...';
+					if (streamPill && !_isEngineStageReady) streamPill.textContent = '⚡ Starting 3D World...';
+				} else {
+					if (percentText) percentText.textContent = `Streaming Campus Assets (${pct}%)...`;
+					if (streamPill && !_isEngineStageReady) streamPill.textContent = `⚡ 3D Engine (${pct}%)`;
+				}
 			} else {
 				if (percentText) percentText.textContent = 'Entering Federal University Campus...';
 			}
 		},
 	}).then(() => {
+		if (fillBar) fillBar.style.width = '100%';
+		if (percentText) percentText.textContent = 'Entering Federal University Campus...';
+		if (streamPill) streamPill.textContent = '⚡ 3D Engine Ready!';
 		if (statusOverlay && !_pendingAdmissionPayload) statusOverlay.style.display = 'none';
 		// If stage didn't trigger callback within 500ms, mark ready automatically
 		setTimeout(() => {
 			if (!_isEngineStageReady) {
 				window.onCampusStageReady();
 			}
-		}, 600);
+		}, 500);
 	}).catch((err) => {
 		console.error(err);
 		if (statusOverlay) statusOverlay.style.display = 'flex';
 		setStatusNotice(err && err.message ? err.message : String(err));
 	});
 }());
-	</script>
-	<script>
-// Aggressively remove all legacy service workers and clear cache storage
-if ('serviceWorker' in navigator) {
-	navigator.serviceWorker.getRegistrations().then((regs) => {
-		regs.forEach((reg) => {
-			reg.unregister();
-		});
-	}).catch(() => {});
-}
-if ('caches' in window) {
-	caches.keys().then((keys) => {
-		keys.forEach((k) => caches.delete(k));
-	}).catch(() => {});
-}
 	</script>
 </body>
 </html>

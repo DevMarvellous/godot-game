@@ -439,7 +439,12 @@ func _refresh_objective_pill() -> void:
 		var online_cnt: int = 1
 		if NetworkManager and NetworkManager.has_method("get_online_players"):
 			online_cnt = maxi(1, NetworkManager.get_online_players().size())
-		clout_status_btn.text = "%s  •  🟢 %d Online  •  📖 Story" % [compute_clout_rank(), online_cnt]
+		var peer_cnt: int = 0
+		var cur_scene = get_tree().current_scene
+		if cur_scene and "autonomous_peers" in cur_scene:
+			peer_cnt = cur_scene.autonomous_peers.size()
+		var peer_str: String = ("  •  🎓 %d Coursemates" % peer_cnt) if peer_cnt > 0 else ""
+		clout_status_btn.text = "%s  •  🟢 %d Online%s  •  📖 Story" % [compute_clout_rank(), online_cnt, peer_str]
 		clout_status_btn.add_theme_color_override(&"font_color", Color(0.85, 0.96, 0.90))
 	if tasks_sheet and tasks_sheet.visible:
 		_populate_tasks_sheet()

@@ -447,14 +447,17 @@ func _create_emote_ui() -> void:
 	vbox.add_child(grid)
 
 	var emote_options: Array[Dictionary] = [
-		{"id": "shaku", "label": "★ Legwork / Shaku", "color": Color(0.95, 0.65, 0.15)},
-		{"id": "zanku", "label": "★ Zanku / Gbese!", "color": Color(1.0, 0.35, 0.25)},
-		{"id": "wave", "label": "● Wave Coursemate", "color": Color(0.3, 0.75, 1.0)},
-		{"id": "selfie", "label": "◆ Drip Check / Pose", "color": Color(0.95, 0.45, 0.85)},
+		{"id": "zanku", "label": "★ Zanku / Gbese!", "color": Color(1.0, 0.45, 0.15)},
+		{"id": "shaku", "label": "★ Shaku Legwork", "color": Color(0.95, 0.75, 0.2)},
+		{"id": "flex", "label": "★ Who Dey Breathe?!", "color": Color(1.0, 0.85, 0.3)},
+		{"id": "wahala", "label": "● Wahala Dey / Abeg!", "color": Color(1.0, 0.35, 0.35)},
+		{"id": "focus", "label": "● Focus Dance", "color": Color(0.35, 0.85, 1.0)},
+		{"id": "selfie", "label": "◆ Drip Check / Spin", "color": Color(0.95, 0.55, 0.95)},
+		{"id": "wave", "label": "● Oya Wave Coursemate", "color": Color(0.3, 0.85, 1.0)},
+		{"id": "choplife", "label": "★ Chop Life / Toast", "color": Color(1.0, 0.65, 0.25)},
+		{"id": "juggle", "label": "★ Keepy-Uppy Juggle", "color": Color(0.35, 0.95, 0.65)},
 		{"id": "sit", "label": "■ Sit & Rest (+Energy)", "color": Color(0.4, 0.85, 0.5)},
 		{"id": "study", "label": "■ Focused Study", "color": Color(0.65, 0.55, 1.0)},
-		{"id": "celebrate", "label": "★ Victory Cheer", "color": Color(1.0, 0.45, 0.65)},
-		{"id": "eat", "label": "● Quick Snack", "color": Color(0.9, 0.75, 0.3)},
 		{"id": "pray", "label": "✦ Faith & Prayer", "color": Color(0.85, 0.9, 1.0)}
 	]
 

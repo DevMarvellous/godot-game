@@ -68,9 +68,19 @@ height = 0.16
 [sub_resource type="BoxMesh" id="BoxMesh_visor_bill"]
 size = Vector3(0.24, 0.04, 0.18)
 
-[sub_resource type="TorusMesh" id="TorusMesh_headwrap"]
-inner_radius = 0.22
-outer_radius = 0.32
+[sub_resource type="BoxMesh" id="BoxMesh_braid_strand"]
+size = Vector3(0.08, 0.44, 0.10)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_gele_base"]
+top_radius = 0.28
+bottom_radius = 0.25
+height = 0.16
+
+[sub_resource type="BoxMesh" id="BoxMesh_gele_fan"]
+size = Vector3(0.68, 0.24, 0.44)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gele_wing"]
+size = Vector3(0.32, 0.18, 0.26)
 
 [sub_resource type="BoxMesh" id="BoxMesh_tunic"]
 size = Vector3(0.58, 0.44, 0.38)
@@ -125,6 +135,16 @@ visible = false
 mesh = SubResource("BoxMesh_braids")
 surface_material_override/0 = SubResource("StandardMaterial3D_hair")
 
+[node name="BraidStrandLeft" type="MeshInstance3D" parent="Visuals/HairBraids"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.18, -0.20, 0.05)
+mesh = SubResource("BoxMesh_braid_strand")
+surface_material_override/0 = SubResource("StandardMaterial3D_hair")
+
+[node name="BraidStrandRight" type="MeshInstance3D" parent="Visuals/HairBraids"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.18, -0.20, 0.05)
+mesh = SubResource("BoxMesh_braid_strand")
+surface_material_override/0 = SubResource("StandardMaterial3D_hair")
+
 [node name="HairCap" type="MeshInstance3D" parent="Visuals"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.60, 0)
 visible = false
@@ -137,9 +157,24 @@ mesh = SubResource("BoxMesh_visor_bill")
 surface_material_override/0 = SubResource("StandardMaterial3D_hair")
 
 [node name="HairHeadwrap" type="MeshInstance3D" parent="Visuals"]
-transform = Transform3D(1, 0, 0, 0, 0.95, 0.31, 0, -0.31, 0.95, 0, 1.58, 0)
+transform = Transform3D(1, 0, 0, 0, 0.98, -0.18, 0, 0.18, 0.98, 0, 1.56, 0)
 visible = false
-mesh = SubResource("TorusMesh_headwrap")
+mesh = SubResource("CylinderMesh_gele_base")
+surface_material_override/0 = SubResource("StandardMaterial3D_hair")
+
+[node name="GeleFan" type="MeshInstance3D" parent="Visuals/HairHeadwrap"]
+transform = Transform3D(0.96, 0, 0.28, 0.08, 0.96, -0.27, -0.27, 0.28, 0.92, 0, 0.14, -0.04)
+mesh = SubResource("BoxMesh_gele_fan")
+surface_material_override/0 = SubResource("StandardMaterial3D_hair")
+
+[node name="GeleWingLeft" type="MeshInstance3D" parent="Visuals/HairHeadwrap"]
+transform = Transform3D(0.86, 0.5, 0, -0.5, 0.86, 0, 0, 0, 1, -0.30, 0.10, 0.02)
+mesh = SubResource("BoxMesh_gele_wing")
+surface_material_override/0 = SubResource("StandardMaterial3D_hair")
+
+[node name="GeleWingRight" type="MeshInstance3D" parent="Visuals/HairHeadwrap"]
+transform = Transform3D(0.86, -0.5, 0, 0.5, 0.86, 0, 0, 0, 1, 0.30, 0.10, 0.02)
+mesh = SubResource("BoxMesh_gele_wing")
 surface_material_override/0 = SubResource("StandardMaterial3D_hair")
 
 [node name="SenatorTunic" type="MeshInstance3D" parent="Visuals"]
